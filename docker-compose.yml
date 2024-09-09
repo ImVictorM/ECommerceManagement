@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: src/WebApi/Dockerfile
+    depends_on:
+     - database
+    ports:
+     - 8000:8080
+  database:
+    image: "postgres:latest"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-4WXUms893U6j4GE&Hvk3S*hqcqebFgo!vZi}
+      POSTGRES_DB: ecommerce-management
+    ports:
+     - 8001:5432
+    volumes:
+     - ./.containers/database:/var/lib/postgresql/data
+
