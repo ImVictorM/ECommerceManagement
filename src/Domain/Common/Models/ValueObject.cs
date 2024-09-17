@@ -9,7 +9,7 @@ public abstract class ValueObject: IEquatable<ValueObject>
 {   
     /// <summary>
     /// Define the equality components for the value object.
-    /// Subclasses must implement this to indicate the properties used for equality.
+    /// Indicate the properties used for equality comparison.
     /// </summary>
     /// <returns>An enumerable of the properties used to define equality.</returns>
     protected abstract IEnumerable<object> GetEqualityComponents();

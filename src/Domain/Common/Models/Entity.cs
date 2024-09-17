@@ -12,6 +12,15 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
     /// Gets the entity's unique identifier.
     /// </summary>
     public TId Id { get; protected set; }
+    /// <summary>
+    /// Gets the date when the entity was created.
+    /// </summary>
+    public DateTimeOffset? CreatedAt { get; protected set; }
+
+    /// <summary>
+    /// Gets the date when the entity was last updated.
+    /// </summary>
+    public DateTimeOffset? UpdatedAt { get; protected set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Entity{TId}"/> class with the specified identifier.
