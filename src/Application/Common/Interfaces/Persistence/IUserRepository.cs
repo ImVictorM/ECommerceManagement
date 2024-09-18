@@ -1,6 +1,6 @@
 using Domain.Users;
 
-namespace Application.Persistence;
+namespace Application.Common.Interfaces.Persistence;
 
 /// <summary>
 /// Repository to interact and persist user data.

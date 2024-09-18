@@ -1,9 +1,9 @@
 using MediatR;
 using Application.Authentication.Common;
-using Application.Common.Interfaces;
-using Application.Persistence;
 using Domain.Users;
 using Application.Common.Errors;
+using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces.Authentication;
 
 namespace Application.Authentication.Commands.Register;
 

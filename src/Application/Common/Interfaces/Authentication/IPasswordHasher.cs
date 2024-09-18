@@ -1,4 +1,4 @@
-namespace Application.Common.Interfaces;
+namespace Application.Common.Interfaces.Authentication;
 
 /// <summary>
 /// A service to hash and verify passwords.

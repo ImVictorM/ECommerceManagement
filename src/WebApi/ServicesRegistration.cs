@@ -25,7 +25,6 @@ public static class ServicesRegistration
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-
         services.AddProblemDetails(
             options => options.CustomizeProblemDetails = context =>
             {
@@ -38,7 +37,7 @@ public static class ServicesRegistration
         config.Scan(ApplicationAssemblyReference.Assembly);
 
         services.AddSingleton(config);
-        services.AddSingleton<IMapper, ServiceMapper>();
+        services.AddScoped<IMapper, ServiceMapper>();
 
         return services;
     }

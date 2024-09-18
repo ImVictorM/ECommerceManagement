@@ -11,38 +11,19 @@ namespace WebApi.Endpoints;
 /// <summary>
 /// Wraps the routes related to authentication.
 /// </summary>
-public sealed class AuthenticationEndpoints : CarterModule
+public sealed class AuthenticationEndpoints : ICarterModule
 {
-    /// <summary>
-    /// Mediatr sender service.
-    /// </summary>
-    private readonly ISender _sender;
-
-    /// <summary>
-    /// Mapper service.
-    /// </summary>
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AuthenticationEndpoints"/> class.
-    /// </summary>
-    /// <param name="sender">Mediatr sender service.</param>
-    /// <param name="mapper">Mapper service.</param>
-    public AuthenticationEndpoints(ISender sender, IMapper mapper) : base("/auth")
-    {
-        _sender = sender;
-        _mapper = mapper;
-    }
-
     /// <summary>
     /// Add the routes related to authentication.
     /// </summary>
     /// <param name="app">The application instance.</param>
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/register", Register);
-        app.MapPost("/login", Login);
-        app.MapPost("/self", AuthByToken);
+        var authenticationGroup = app.MapGroup("/auth");
+
+        authenticationGroup.MapPost("/register", Register);
+        authenticationGroup.MapPost("/login", Login);
+        authenticationGroup.MapPost("/self", AuthByToken);
     }
 
     /// <summary>
@@ -50,13 +31,17 @@ public sealed class AuthenticationEndpoints : CarterModule
     /// </summary>
     /// <param name="request">The request object.</param>
     /// <returns>An authentication response containing the token.</returns>
-    private async Task<IResult> Register(RegisterRequest request)
+    private async Task<IResult> Register(
+        RegisterRequest request,
+        ISender sender,
+        IMapper mapper
+    )
     {
-        var command = _mapper.Map<RegisterCommand>(request);
+        var command = mapper.Map<RegisterCommand>(request);
 
-        AuthenticationResult result = await _sender.Send(command);
+        AuthenticationResult result = await sender.Send(command);
 
-        return Results.Created("", _mapper.Map<AuthenticationResponse>(result));
+        return Results.Created("", mapper.Map<AuthenticationResponse>(result));
     }
 
     /// <summary>
@@ -64,13 +49,17 @@ public sealed class AuthenticationEndpoints : CarterModule
     /// </summary>
     /// <param name="request">The request object.</param>
     /// <returns>An authentication response containing the user token.</returns>
-    private async Task<IResult> Login(LoginRequest request)
+    private async Task<IResult> Login(
+        LoginRequest request,
+        ISender sender,
+        IMapper mapper
+    )
     {
-        var query = _mapper.Map<LoginQuery>(request);
+        var query = mapper.Map<LoginQuery>(request);
 
-        AuthenticationResult result = await _sender.Send(query);
+        AuthenticationResult result = await sender.Send(query);
 
-        return Results.Ok(_mapper.Map<AuthenticationResponse>(result));
+        return Results.Ok(mapper.Map<AuthenticationResponse>(result));
     }
 
     /// <summary>

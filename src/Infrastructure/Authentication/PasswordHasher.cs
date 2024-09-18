@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Authentication;
 
 namespace Infrastructure.Authentication;
 

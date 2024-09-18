@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Infrastructure.Authentication;
-using Application.Common.Interfaces;
-using Application.Persistence;
 using Infrastructure.Persistence;
+using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces.Authentication;
 
 namespace Infrastructure;
 
@@ -27,9 +27,9 @@ public static class ServicesRegistration
     )
     {
         services.Configure<JwtSettings>(configuration?.GetSection(JwtSettings.SectionName)!);
-        services.AddSingleton<IJwtTokenService, JwtTokenService>();
-        services.AddSingleton<IPasswordHasher, PasswordHasher>();
-        services.AddSingleton<IUserRepository, UserRepository>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

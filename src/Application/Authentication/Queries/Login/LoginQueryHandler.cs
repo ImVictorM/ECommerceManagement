@@ -1,7 +1,7 @@
 using Application.Authentication.Common;
 using Application.Common.Errors;
-using Application.Common.Interfaces;
-using Application.Persistence;
+using Application.Common.Interfaces.Authentication;
+using Application.Common.Interfaces.Persistence;
 using Domain.Users;
 using MediatR;
 

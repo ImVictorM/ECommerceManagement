@@ -1,4 +1,5 @@
-﻿using Carter;
+using Carter;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace WebApi.Endpoints;
@@ -6,22 +7,22 @@ namespace WebApi.Endpoints;
 /// <summary>
 /// Endpoints to handle errors.
 /// </summary>
-public sealed class ErrorEndpoints : CarterModule
+public sealed class ErrorEndpoints : ICarterModule
 {
     /// <summary>
     /// Base endpoint for handling errors.
     /// </summary>
-    public const string BaseEndpoint = "/error";
+    public static readonly string BaseEndpoint = "/error";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ErrorEndpoints"/> class.
+    /// Add the routes related to errors.
     /// </summary>
-    public ErrorEndpoints() : base(BaseEndpoint) { }
-
-    /// <inheritdoc/>
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    /// <param name="app">The application instance.</param>
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.Map("/", HandleGlobalErrors);
+        var errorGroup = app.MapGroup(BaseEndpoint);
+
+        errorGroup.Map("/", HandleGlobalErrors);
     }
 
     /// <summary>
@@ -45,7 +46,25 @@ public sealed class ErrorEndpoints : CarterModule
         // Handle custom errors
         return exception switch
         {
+            ValidationException validationException => HandleValidationException(validationException),
             _ => Results.Problem(),
         };
+    }
+
+    /// <summary>
+    /// Generates an validation error response.
+    /// </summary>
+    /// <param name="validationException"></param>
+    /// <returns>An error response in the <see cref="Results.ValidationProblem"/> format.</returns>
+    private static IResult HandleValidationException(ValidationException validationException)
+    {
+        var errors = validationException.Errors
+            .GroupBy(e => e.PropertyName)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(e => e.ErrorMessage).ToArray()
+            );
+
+        return Results.ValidationProblem(errors);
     }
 }
