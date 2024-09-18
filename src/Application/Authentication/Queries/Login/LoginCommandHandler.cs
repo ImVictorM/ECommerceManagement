@@ -24,7 +24,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
     /// <summary>
     /// Service to generate authentication tokens.
     /// </summary>
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IJwtTokenService _jwtTokenGenerator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoginCommandHandler"/> class.
@@ -35,7 +35,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
     public LoginCommandHandler(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
-        IJwtTokenGenerator jwtTokenGenerator
+        IJwtTokenService jwtTokenGenerator
     )
     {
         _userRepository = userRepository;

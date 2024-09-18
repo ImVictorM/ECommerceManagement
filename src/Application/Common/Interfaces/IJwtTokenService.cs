@@ -5,7 +5,7 @@ namespace Application.Common.Interfaces;
 /// <summary>
 /// Service to generate JWT authentication tokens.
 /// </summary>
-public interface IJwtTokenGenerator
+public interface IJwtTokenService
 {
     /// <summary>
     /// Generates an authentication token for the given user.

@@ -27,7 +27,7 @@ public static class ServicesRegistration
     )
     {
         services.Configure<JwtSettings>(configuration?.GetSection(JwtSettings.SectionName)!);
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IUserRepository, UserRepository>();
 

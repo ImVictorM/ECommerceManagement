@@ -12,7 +12,7 @@ namespace Infrastructure.Authentication;
 /// <summary>
 /// Implementation of the token generator service.
 /// </summary>
-public class JwtTokenGenerator : IJwtTokenGenerator
+public class JwtTokenService : IJwtTokenService
 {
     /// <summary>
     /// Settings containing token information.
@@ -20,10 +20,10 @@ public class JwtTokenGenerator : IJwtTokenGenerator
     private readonly JwtSettings _jwtSettings;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JwtTokenGenerator"/> class.
+    /// Initializes a new instance of the <see cref="JwtTokenService"/> class.
     /// </summary>
     /// <param name="jwtOptions">The jwt settings options.</param>
-    public JwtTokenGenerator(IOptions<JwtSettings> jwtOptions)
+    public JwtTokenService(IOptions<JwtSettings> jwtOptions)
     {
         _jwtSettings = jwtOptions.Value;
     }

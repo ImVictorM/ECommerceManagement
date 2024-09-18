@@ -16,7 +16,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
     /// <summary>
     /// Token service to generate authentication tokens.
     /// </summary>
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IJwtTokenService _jwtTokenGenerator;
     /// <summary>
     /// User repository to interact and persist user data.
     /// </summary>
@@ -33,7 +33,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
     /// <param name="userRepository">User repository.</param>
     /// <param name="passwordHasher">Password hash service.</param>
     public RegisterCommandHandler(
-        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenService jwtTokenGenerator,
         IUserRepository userRepository,
         IPasswordHasher passwordHasher
     )
