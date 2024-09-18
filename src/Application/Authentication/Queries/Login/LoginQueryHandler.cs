@@ -8,10 +8,10 @@ using MediatR;
 namespace Application.Authentication.Queries.Login;
 
 /// <summary>
-/// Command handler for the command <see cref="LoginCommand"/>.
+/// Query handler for the <see cref="LoginQuery"/> query.
 /// Handles user authentication.
 /// </summary>
-public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationResult>
+public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
 {
     /// <summary>
     /// User repository to interact and persist user data.
@@ -27,12 +27,12 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
     private readonly IJwtTokenService _jwtTokenGenerator;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LoginCommandHandler"/> class.
+    /// Initializes a new instance of the <see cref="LoginQueryHandler"/> class.
     /// </summary>
     /// <param name="jwtTokenGenerator">Token service.</param>
     /// <param name="userRepository">User repository.</param>
     /// <param name="passwordHasher">Password hash service.</param>
-    public LoginCommandHandler(
+    public LoginQueryHandler(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
         IJwtTokenService jwtTokenGenerator
@@ -45,17 +45,17 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
     /// <summary>
     /// Handle user authentication.
     /// </summary>
-    /// <param name="command">The command that triggers the authentication process.</param>
+    /// <param name="query">The query that triggers the authentication process.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The user with authentication token.</returns>
-    public async Task<AuthenticationResult> Handle(LoginCommand command, CancellationToken cancellationToken)
+    public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
         await Task.CompletedTask;
         string defaultErrorMessage = "User email or password is incorrect.";
 
-        User user = _userRepository.GetUserByEmailAddress(command.Email) ?? throw new BadRequestException(defaultErrorMessage);
+        User user = _userRepository.GetUserByEmailAddress(query.Email) ?? throw new BadRequestException(defaultErrorMessage);
 
-        if (!_passwordHasher.Verify(command.Password, user.PasswordHash))
+        if (!_passwordHasher.Verify(query.Password, user.PasswordHash))
         {
             throw new BadRequestException(defaultErrorMessage);
         }

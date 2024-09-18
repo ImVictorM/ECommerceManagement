@@ -66,9 +66,9 @@ public sealed class AuthenticationEndpoints : CarterModule
     /// <returns>An authentication response containing the user token.</returns>
     private async Task<IResult> Login(LoginRequest request)
     {
-        var command = _mapper.Map<LoginCommand>(request);
+        var query = _mapper.Map<LoginQuery>(request);
 
-        AuthenticationResult result = await _sender.Send(command);
+        AuthenticationResult result = await _sender.Send(query);
 
         return Results.Ok(_mapper.Map<AuthenticationResponse>(result));
     }
