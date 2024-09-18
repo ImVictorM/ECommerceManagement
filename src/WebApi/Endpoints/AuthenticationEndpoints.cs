@@ -1,7 +1,9 @@
 using Application.Authentication.Commands.Register;
 using Application.Authentication.Common;
+using Application.Authentication.Queries.Login;
 using Carter;
 using Contracts.Authentication;
+using MapsterMapper;
 using MediatR;
 
 namespace WebApi.Endpoints;
@@ -17,15 +19,25 @@ public sealed class AuthenticationEndpoints : CarterModule
     private readonly ISender _sender;
 
     /// <summary>
+    /// Mapper service.
+    /// </summary>
+    private readonly IMapper _mapper;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="AuthenticationEndpoints"/> class.
     /// </summary>
     /// <param name="sender">Mediatr sender service.</param>
-    public AuthenticationEndpoints(ISender sender) : base("/auth")
+    /// <param name="mapper">Mapper service.</param>
+    public AuthenticationEndpoints(ISender sender, IMapper mapper) : base("/auth")
     {
         _sender = sender;
+        _mapper = mapper;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Add the routes related to authentication.
+    /// </summary>
+    /// <param name="app">The application instance.</param>
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost("/register", Register);
@@ -40,11 +52,11 @@ public sealed class AuthenticationEndpoints : CarterModule
     /// <returns>An authentication response containing the token.</returns>
     private async Task<IResult> Register(RegisterRequest request)
     {
-        var command = new RegisterCommand(request.Name, request.Email, request.Password);
+        var command = _mapper.Map<RegisterCommand>(request);
 
         AuthenticationResult result = await _sender.Send(command);
 
-        return Results.Created("", result);
+        return Results.Created("", _mapper.Map<AuthenticationResponse>(result));
     }
 
     /// <summary>
@@ -52,10 +64,13 @@ public sealed class AuthenticationEndpoints : CarterModule
     /// </summary>
     /// <param name="request">The request object.</param>
     /// <returns>An authentication response containing the user token.</returns>
-    private IResult Login(LoginRequest request)
+    private async Task<IResult> Login(LoginRequest request)
     {
-        // endpoint to authenticate a user with credentials
-        return Results.Ok(request);
+        var command = _mapper.Map<LoginCommand>(request);
+
+        AuthenticationResult result = await _sender.Send(command);
+
+        return Results.Ok(_mapper.Map<AuthenticationResponse>(result));
     }
 
     /// <summary>

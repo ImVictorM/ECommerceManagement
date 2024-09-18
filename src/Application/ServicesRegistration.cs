@@ -18,11 +18,9 @@ public static class ServicesRegistration
     /// </returns>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        var assembly = typeof(ServicesRegistration).Assembly;
-
         services
-          .AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly))
-          .AddValidatorsFromAssembly(assembly);
+          .AddMediatR(configuration => configuration.RegisterServicesFromAssembly(ApplicationAssemblyReference.Assembly))
+          .AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
 
         return services;
     }
