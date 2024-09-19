@@ -27,6 +27,10 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.UseExceptionHandler(ErrorEndpoints.BaseEndpoint);
 
 app.MapCarter();

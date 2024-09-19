@@ -23,7 +23,6 @@ public sealed class AuthenticationEndpoints : ICarterModule
 
         authenticationGroup.MapPost("/register", Register);
         authenticationGroup.MapPost("/login", Login);
-        authenticationGroup.MapPost("/self", AuthByToken);
     }
 
     /// <summary>
@@ -60,16 +59,5 @@ public sealed class AuthenticationEndpoints : ICarterModule
         AuthenticationResult result = await sender.Send(query);
 
         return Results.Ok(mapper.Map<AuthenticationResponse>(result));
-    }
-
-    /// <summary>
-    /// Route to authenticate an user using their authentication token.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <returns>An authentication response containing the user token.</returns>
-    private IResult AuthByToken(AuthByTokenRequest request)
-    {
-        // endpoint to authenticate a user with a token
-        return Results.Ok(request);
     }
 }

@@ -33,6 +33,18 @@ public static class ServicesRegistration
             }
         );
 
+        services.AddMappings();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Add mapping related services.
+    /// </summary>
+    /// <param name="services">The application services.</param>
+    /// <returns>The application services including the registration of mapping services.</returns>
+    public static IServiceCollection AddMappings(this IServiceCollection services)
+    {
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(ApplicationAssemblyReference.Assembly);
 

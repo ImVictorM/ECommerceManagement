@@ -46,24 +46,3 @@ POST {{host}}/auth/login
 	"token": "eyJhbGciOiJIUzI1N...adQssw5c"
 }
 ```
-
-### User details using token
-```js
-POST {{host}}/auth/self
-```
-#### Request format
-```json
-{
-	"token": "eyJhbGciOiJIUzI1N...adQssw5c",
-}
-````
-#### Response format
-200 Ok
-```json
-{
-	"id": 1,
-	"name": "Victor Figueiredo Mendes",
-	"email": "victor7@email.com",
-	"token": "eyJhbGciOiJIUzI1N...adQssw5c"
-}
-```
