@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Common\Errors\" />
-    <Folder Include="Orders\" />
   </ItemGroup>
 
 </Project>

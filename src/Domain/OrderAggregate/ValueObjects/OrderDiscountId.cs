@@ -1,0 +1,38 @@
+using Domain.Common.Models;
+
+namespace Domain.OrderAggregate.ValueObjects;
+
+/// <summary>
+/// Represents the identifier for the <see cref="Entities.OrderDiscount"/> entity.
+/// </summary>
+public sealed class OrderDiscountId : ValueObject
+{
+    /// <summary>
+    /// Gets the identifier value.
+    /// </summary>
+    public long Value { get; }
+
+    /// <summary>
+    /// Initiates a new instance of <see cref="OrderDiscountId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    private OrderDiscountId(long value)
+    {
+        Value = value;
+    }
+
+    /// <summary>
+    /// Creates a new instance of <see cref="OrderDiscountId"/> class with default identifier placeholder of 0.
+    /// </summary>
+    /// <returns>A new instance of <see cref="OrderDiscountId"/> class.</returns>
+    public static OrderDiscountId Create()
+    {
+        return new OrderDiscountId(0);
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Value;
+    }
+}
