@@ -2,7 +2,7 @@ using Application.Authentication.Common;
 using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
-using Domain.Users;
+using Domain.UserAggregate;
 using MediatR;
 
 namespace Application.Authentication.Queries.Login;
@@ -26,6 +26,8 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     /// </summary>
     private readonly IJwtTokenService _jwtTokenGenerator;
 
+    private readonly IRoleRepository _roleRepository;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="LoginQueryHandler"/> class.
     /// </summary>
@@ -35,13 +37,16 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     public LoginQueryHandler(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
-        IJwtTokenService jwtTokenGenerator
+        IJwtTokenService jwtTokenGenerator,
+        IRoleRepository roleRepository
     )
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _roleRepository = roleRepository;
     }
+
     /// <summary>
     /// Handle user authentication.
     /// </summary>
@@ -60,7 +65,9 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
             throw new BadRequestException(defaultErrorMessage);
         }
 
-        string token = _jwtTokenGenerator.GenerateToken(user);
+        var roles = await _roleRepository.GetUserRolesAsync(user.Id.Value);
+
+        string token = _jwtTokenGenerator.GenerateToken(user, roles);
 
         return new AuthenticationResult(user, token);
     }

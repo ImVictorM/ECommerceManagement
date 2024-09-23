@@ -1,4 +1,4 @@
-﻿using Domain.Common.Models;
+using Domain.Common.Models;
 
 namespace Domain.UserAggregate.ValueObjects;
 
@@ -12,6 +12,7 @@ public sealed class UserId : ValueObject
     /// </summary>
     public long Value { get; }
 
+    private UserId() { }
     /// <summary>
     /// Initializes a new instance of the <see cref="UserId"/> class with the specified identifier value.
     /// </summary>
@@ -28,6 +29,16 @@ public sealed class UserId : ValueObject
     public static UserId Create()
     {
         return new UserId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="UserId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="UserId"/> class with the specified value.</returns>
+    public static UserId Create(long value)
+    {
+        return new UserId(value);
     }
 
     /// <inheritdoc/>

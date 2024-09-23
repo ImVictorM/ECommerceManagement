@@ -1,4 +1,4 @@
-﻿namespace Domain.Common.Models;
+namespace Domain.Common.Models;
 
 /// <summary>
 /// Base class for domain aggregate roots.
@@ -14,5 +14,7 @@ public abstract class AggregateRoot<TId> : Entity<TId>
     /// Initializes a new instance of the <see cref="AggregateRoot{TId}"/> class with the specified unique identifier
     /// </summary>
     /// <param name="id">The unique identifier for this aggregate root.</param>
-    protected AggregateRoot(TId id) : base(id) {}
+    protected AggregateRoot(TId id) : base(id) { }
+
+    protected AggregateRoot() { }
 }

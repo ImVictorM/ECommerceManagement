@@ -12,6 +12,8 @@ public sealed class UserAddressId : ValueObject
     /// </summary>
     public long Value { get; }
 
+    private UserAddressId() { }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="UserAddressId"/> class with the specified identifier value.
     /// </summary>
@@ -28,6 +30,16 @@ public sealed class UserAddressId : ValueObject
     public static UserAddressId Create()
     {
         return new UserAddressId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="UserAddressId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="UserAddressId"/> class with the specified identifier.</returns>
+    public static UserAddressId Create(long value)
+    {
+        return new UserAddressId(value);
     }
 
     /// <inheritdoc/>

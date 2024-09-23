@@ -1,9 +1,6 @@
 using Domain.Common.Models;
-using Domain.OrderAggregate.ValueObjects;
-using Domain.ProductFeedbackAggregate.ValueObjects;
 using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
-using Domain.UserRoleAggregate.ValueObjects;
 
 namespace Domain.UserAggregate;
 
@@ -12,6 +9,9 @@ namespace Domain.UserAggregate;
 /// </summary>
 public sealed class User : AggregateRoot<UserId>
 {
+    private readonly List<UserRole> _roles = [];
+    private readonly List<UserAddress>? _addresses = [];
+
     /// <summary>
     /// Gets the user name.
     /// </summary>
@@ -35,19 +35,15 @@ public sealed class User : AggregateRoot<UserId>
     /// <summary>
     /// Gets the user roles.
     /// </summary>
-    public UserRoleId UserRoleId { get; private set; }
+    public IReadOnlyList<UserRole> Roles => _roles.AsReadOnly();
     /// <summary>
     /// Gets the user related addresses.
     /// </summary>
-    public UserAddress? UserAddress { get; private set; }
-    /// <summary>
-    /// Gets the user order ids.
-    /// </summary>
-    public IEnumerable<OrderId>? OrderIds { get; private set; }
-    /// <summary>
-    /// Gets the user feedback ids on products.
-    /// </summary>
-    public IEnumerable<ProductFeedbackId>? ProductFeedbackIds { get; private set; }
+    public IReadOnlyList<UserAddress>? Addresses => _addresses?.AsReadOnly();
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    private User() : base(UserId.Create()) { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 
     /// <summary>
@@ -61,15 +57,13 @@ public sealed class User : AggregateRoot<UserId>
         string name,
         string email,
         string? phone,
-        string passwordHash,
-        UserRoleId userRoleId
+        string passwordHash
     ) : base(UserId.Create())
     {
         Name = name;
         Email = email;
         Phone = phone;
         PasswordHash = passwordHash;
-        UserRoleId = userRoleId;
         IsActive = true;
     }
 
@@ -84,11 +78,10 @@ public sealed class User : AggregateRoot<UserId>
         string name,
         string email,
         string? phone,
-        string passwordHash,
-        UserRoleId userRoleId
+        string passwordHash
     )
     {
-        return new User(name, email, phone, passwordHash, userRoleId);
+        return new User(name, email, phone, passwordHash);
     }
 
     /// <summary>
@@ -100,10 +93,9 @@ public sealed class User : AggregateRoot<UserId>
     public static User Create(
         string name,
         string email,
-        string passwordHash,
-        UserRoleId userRoleId
+        string passwordHash
     )
     {
-        return new User(name, email, null, passwordHash, userRoleId);
+        return new User(name, email, null, passwordHash);
     }
 }

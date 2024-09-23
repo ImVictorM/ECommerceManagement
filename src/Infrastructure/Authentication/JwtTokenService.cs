@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Authentication;
-using Domain.Users;
+using Domain.RoleAggregate;
+using Domain.UserAggregate;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
@@ -28,7 +29,7 @@ public class JwtTokenService : IJwtTokenService
         _jwtSettings = jwtOptions.Value;
     }
     /// <inheritdoc/>
-    public string GenerateToken(User user)
+    public string GenerateToken(User user, IReadOnlyList<Role> roles)
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret)),
@@ -42,7 +43,7 @@ public class JwtTokenService : IJwtTokenService
              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         ];
 
-        foreach (var role in user.Roles)
+        foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role.Name));
         }

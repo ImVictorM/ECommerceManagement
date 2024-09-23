@@ -1,5 +1,5 @@
 using Domain.Common.Models;
-using Domain.Common.ValueObjects;
+using Domain.DiscountAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 
 namespace Domain.OrderAggregate.Entities;

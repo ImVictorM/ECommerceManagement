@@ -1,4 +1,4 @@
-﻿namespace Domain.Common.Models;
+namespace Domain.Common.Models;
 
 /// <summary>
 /// Base class for domain entities.
@@ -21,6 +21,8 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
     /// Gets the date when the entity was last updated.
     /// </summary>
     public DateTimeOffset? UpdatedAt { get; protected set; }
+
+    protected Entity() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Entity{TId}"/> class with the specified identifier.

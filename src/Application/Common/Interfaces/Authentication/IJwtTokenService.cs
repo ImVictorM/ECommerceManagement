@@ -1,4 +1,5 @@
-using Domain.Users;
+using Domain.RoleAggregate;
+using Domain.UserAggregate;
 
 namespace Application.Common.Interfaces.Authentication;
 
@@ -11,6 +12,7 @@ public interface IJwtTokenService
     /// Generates an authentication token for the given user.
     /// </summary>
     /// <param name="user">The user utilized for generating the token.</param>
+    /// <param name="roles">The user roles.</param>
     /// <returns>An authentication token.</returns>
-    string GenerateToken(User user);
+    string GenerateToken(User user, IReadOnlyList<Role> roles);
 }

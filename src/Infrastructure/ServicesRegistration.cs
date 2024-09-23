@@ -8,6 +8,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Infrastructure.Persistence.Repositories;
 
 namespace Infrastructure;
 
@@ -30,9 +32,14 @@ public static class ServicesRegistration
         IConfigurationManager configuration
     )
     {
+        services.AddDbContext<ECommerceDbContext>(options =>
+        {
+            options.UseNpgsql();
+        });
         services.AddAuth(configuration);
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
 
         return services;
     }

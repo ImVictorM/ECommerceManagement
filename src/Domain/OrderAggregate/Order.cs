@@ -1,5 +1,5 @@
+using Domain.AddressAggregate.ValueObjects;
 using Domain.Common.Models;
-using Domain.Common.ValueObjects;
 using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.ValueObjects;
@@ -35,7 +35,7 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Gets the order discounts.
     /// </summary>
-    public OrderDiscount? OrderDiscount { get; private set; }
+    public IEnumerable<OrderDiscount>? OrderDiscounts { get; private set; }
     /// <summary>
     /// Gets the order status.
     /// </summary>
@@ -51,11 +51,11 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <param name="userId">The order owner id.</param>
     /// <param name="addressId">The order delivery address.</param>
     /// <param name="shipmentId">The order shipment id.</param>
-    /// <param name="orderProduct">The order products.</param>
+    /// <param name="orderProducts">The order products.</param>
     /// <param name="orderStatus">The order status.</param>
     /// <param name="orderStatusHistory">The order status history.</param>
     /// <param name="total">The order total.</param>
-    /// <param name="orderDiscount">The order discounts.</param>
+    /// <param name="orderDiscounts">The order discounts.</param>
     private Order(
         UserId userId,
         AddressId addressId,
@@ -64,7 +64,7 @@ public sealed class Order : AggregateRoot<OrderId>
         OrderStatus orderStatus,
         OrderStatusHistory orderStatusHistory,
         float total,
-        OrderDiscount? orderDiscount
+        IEnumerable<OrderDiscount>? orderDiscounts
     ) : base(OrderId.Create())
     {
         UserId = userId;
@@ -74,7 +74,7 @@ public sealed class Order : AggregateRoot<OrderId>
         OrderStatus = orderStatus;
         OrderStatusHistory = orderStatusHistory;
         Total = total;
-        OrderDiscount = orderDiscount;
+        OrderDiscounts = orderDiscounts;
     }
 
     /// <summary>
@@ -83,11 +83,11 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <param name="userId">The order owner id.</param>
     /// <param name="addressId">The order delivery address.</param>
     /// <param name="shipmentId">The order shipment id.</param>
-    /// <param name="orderProduct">The order products.</param>
+    /// <param name="orderProducts">The order products.</param>
     /// <param name="orderStatus">The order status.</param>
     /// <param name="orderStatusHistory">The order status history.</param>
     /// <param name="total">The order total.</param>
-    /// <param name="orderDiscount">The order discounts.</param>
+    /// <param name="orderDiscounts">The order discounts.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static Order Create(
         UserId userId,
@@ -97,7 +97,7 @@ public sealed class Order : AggregateRoot<OrderId>
         OrderStatus orderStatus,
         OrderStatusHistory orderStatusHistory,
         float total,
-        OrderDiscount? orderDiscount
+        IEnumerable<OrderDiscount>? orderDiscounts
     )
     {
         return new Order(
@@ -108,7 +108,7 @@ public sealed class Order : AggregateRoot<OrderId>
             orderStatus,
             orderStatusHistory,
             total,
-            orderDiscount
+            orderDiscounts
         );
     }
 }

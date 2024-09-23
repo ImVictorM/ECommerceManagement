@@ -1,9 +1,9 @@
 using Domain.Common.Models;
 
-namespace Domain.Common.ValueObjects;
+namespace Domain.DiscountAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Domain.Common.Entities.Discount"/> entity.
+/// Represents the identifier for the <see cref="Discount"/> entity.
 /// </summary>
 public sealed class DiscountId : ValueObject
 {

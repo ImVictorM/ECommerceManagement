@@ -1,6 +1,7 @@
 using Domain.Common.Models;
+using Domain.UserAggregate.Entities;
 
-namespace Domain.UserRoleAggregate.ValueObjects;
+namespace Domain.UserAggregate.ValueObjects;
 
 /// <summary>
 /// Represents the identifier for the <see cref="UserRole"/> aggregate root.
@@ -12,6 +13,7 @@ public sealed class UserRoleId : ValueObject
     /// </summary>
     public long Value { get; }
 
+    private UserRoleId() { }
     /// <summary>
     /// Initializes a new instance of the <see cref="UserRoleId"/> class.
     /// </summary>
@@ -28,6 +30,16 @@ public sealed class UserRoleId : ValueObject
     public static UserRoleId Create()
     {
         return new UserRoleId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="UserRoleId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="UserRoleId"/> class with the specified identifier value.</returns>
+    public static UserRoleId Create(long value)
+    {
+        return new UserRoleId(value);
     }
 
     /// <inheritdoc/>

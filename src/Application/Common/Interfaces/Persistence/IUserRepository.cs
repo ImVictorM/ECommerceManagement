@@ -1,4 +1,4 @@
-using Domain.Users;
+using Domain.UserAggregate;
 
 namespace Application.Common.Interfaces.Persistence;
 

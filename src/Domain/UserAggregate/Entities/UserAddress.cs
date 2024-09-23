@@ -1,5 +1,5 @@
+using Domain.AddressAggregate.ValueObjects;
 using Domain.Common.Models;
-using Domain.Common.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UserAggregate.Entities;
@@ -10,26 +10,30 @@ namespace Domain.UserAggregate.Entities;
 public sealed class UserAddress : Entity<UserAddressId>
 {
     /// <summary>
-    /// Gets the addresses of the user.
+    /// Gets the user address id.
     /// </summary>
-    public IEnumerable<AddressId> AddressIds { get; private set; }
+    public AddressId AddressId { get; private set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UserAddress"/> class.
     /// </summary>
-    /// <param name="addressIds">The user addresses.</param>
-    private UserAddress(IEnumerable<AddressId> addressIds) : base(UserAddressId.Create())
+    /// <param name="addressId">The user address id.</param>
+    private UserAddress(AddressId addressId) : base(UserAddressId.Create())
     {
-        AddressIds = addressIds;
+        AddressId = addressId;
     }
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    private UserAddress() : base(UserAddressId.Create()) { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     /// <summary>
     /// Creates a new instance of the <see cref="UserAddress"/> class.
     /// </summary>
-    /// <param name="addressIds">The user addresses.</param>
+    /// <param name="addressId">The user address id.</param>
     /// <returns>A new instance of the <see cref="UserAddress"/> class.</returns>
-    public static UserAddress Create(IEnumerable<AddressId> addressIds)
+    public static UserAddress Create(AddressId addressId)
     {
-        return new UserAddress(addressIds);
+        return new UserAddress(addressId);
     }
 }

@@ -1,7 +1,7 @@
 using Domain.Common.Models;
-using Domain.Common.ValueObjects;
+using Domain.DiscountAggregate.ValueObjects;
 
-namespace Domain.Common.Entities;
+namespace Domain.DiscountAggregate;
 
 /// <summary>
 /// Represents a discount in percentage with

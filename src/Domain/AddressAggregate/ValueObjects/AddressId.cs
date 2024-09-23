@@ -1,9 +1,9 @@
 using Domain.Common.Models;
 
-namespace Domain.Common.ValueObjects;
+namespace Domain.AddressAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Domain.Common.Entities.Address"/> entity.
+/// Represents the identifier for the <see cref="Address"/> entity.
 /// </summary>
 public sealed class AddressId : ValueObject
 {
@@ -11,6 +11,8 @@ public sealed class AddressId : ValueObject
     /// Gets the identifier value.
     /// </summary>
     public long Value { get; }
+
+    private AddressId() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="AddressId"/> class.
@@ -28,6 +30,16 @@ public sealed class AddressId : ValueObject
     public static AddressId Create()
     {
         return new AddressId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="AddressId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="AddressId"/> class with the specified value.</returns>
+    public static AddressId Create(long value)
+    {
+        return new AddressId(value);
     }
 
     /// <inheritdoc/>

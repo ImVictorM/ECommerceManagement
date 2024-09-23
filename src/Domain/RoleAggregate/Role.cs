@@ -1,12 +1,12 @@
 using Domain.Common.Models;
-using Domain.UserRoleAggregate.ValueObjects;
+using Domain.RoleAggregate.ValueObjects;
 
-namespace Domain.UserRoleAggregate.Entities;
+namespace Domain.RoleAggregate;
 
 /// <summary>
 /// Represents a role.
 /// </summary>
-public sealed class Role : Entity<RoleId>
+public sealed class Role : AggregateRoot<RoleId>
 {
     /// <summary>
     /// Gets the role name.
@@ -21,6 +21,11 @@ public sealed class Role : Entity<RoleId>
     {
         Name = name;
     }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    private Role() : base(RoleId.Create()) { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Role"/> class.

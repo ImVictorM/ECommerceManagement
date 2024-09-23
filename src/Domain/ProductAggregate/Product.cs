@@ -41,7 +41,7 @@ public sealed class Product : AggregateRoot<ProductId>
     /// <summary>
     /// Gets the product discount that holds a list of discounts.
     /// </summary>
-    public ProductDiscount? ProductDiscount { get; private set; }
+    public IEnumerable<ProductDiscount>? ProductDiscounts { get; private set; }
 
     /// <summary>
     /// Gets the product feedback ids.
@@ -64,7 +64,7 @@ public sealed class Product : AggregateRoot<ProductId>
         Inventory inventory,
         IEnumerable<ProductImage> images,
         IEnumerable<ProductCategory> categories,
-        ProductDiscount? productDiscount,
+        IEnumerable<ProductDiscount>? productDiscounts,
         IEnumerable<ProductFeedbackId> productFeedbackIds
     ) : base(ProductId.Create())
     {
@@ -74,7 +74,7 @@ public sealed class Product : AggregateRoot<ProductId>
         Inventory = inventory;
         Images = images;
         Categories = categories;
-        ProductDiscount = productDiscount;
+        ProductDiscounts = productDiscounts;
         ProductFeedbackIds = productFeedbackIds;
         IsActive = true;
     }
@@ -95,7 +95,7 @@ public sealed class Product : AggregateRoot<ProductId>
         float price,
         Inventory inventory,
         IEnumerable<ProductImage> images,
-        ProductDiscount? productDiscount,
+        IEnumerable<ProductDiscount>? productDiscounts,
         IEnumerable<ProductCategory> categories,
         IEnumerable<ProductFeedbackId> productFeedbackIds
     )
@@ -107,7 +107,7 @@ public sealed class Product : AggregateRoot<ProductId>
             inventory,
             images,
             categories,
-            productDiscount,
+            productDiscounts,
             productFeedbackIds
         );
     }

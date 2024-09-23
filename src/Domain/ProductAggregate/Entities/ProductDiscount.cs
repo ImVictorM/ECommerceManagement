@@ -1,5 +1,5 @@
 using Domain.Common.Models;
-using Domain.Common.ValueObjects;
+using Domain.DiscountAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 
 namespace Domain.ProductAggregate.Entities;
@@ -10,26 +10,26 @@ namespace Domain.ProductAggregate.Entities;
 public sealed class ProductDiscount : Entity<ProductDiscountId>
 {
     /// <summary>
-    /// Gets the product discount ids.
+    /// Gets the product discount id.
     /// </summary>
-    public IEnumerable<DiscountId> DiscountIds { get; private set; }
+    public DiscountId DiscountId { get; private set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductDiscount"/> class.
     /// </summary>
-    /// <param name="discountIds">The product discount ids.</param>
-    private ProductDiscount(IEnumerable<DiscountId> discountIds) : base(ProductDiscountId.Create())
+    /// <param name="discountId">The product discount id.</param>
+    private ProductDiscount(DiscountId discountId) : base(ProductDiscountId.Create())
     {
-        DiscountIds = discountIds;
+        DiscountId = discountId;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="ProductDiscount"/> class.
     /// </summary>
-    /// <param name="discountIds">The product discount ids.</param>
+    /// <param name="discountId">The product discount id.</param>
     /// <returns>a new instance of the <see cref="ProductDiscount"/> class.</returns>
-    public static ProductDiscount Create(IEnumerable<DiscountId> discountIds)
+    public static ProductDiscount Create(DiscountId discountId)
     {
-        return new ProductDiscount(discountIds);
+        return new ProductDiscount(discountId);
     }
 }

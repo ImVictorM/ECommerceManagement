@@ -1,12 +1,13 @@
+using Domain.AddressAggregate.ValueObjects;
 using Domain.Common.Models;
-using Domain.Common.ValueObjects;
 
-namespace Domain.Common.Entities;
+
+namespace Domain.AddressAggregate;
 
 /// <summary>
 /// Represents an address.
 /// </summary>
-public sealed class Address : Entity<AddressId>
+public sealed class Address : AggregateRoot<AddressId>
 {
     /// <summary>
     /// Gets the address postal code.
@@ -28,6 +29,11 @@ public sealed class Address : Entity<AddressId>
     /// Gets the address city.
     /// </summary>
     public string City { get; private set; }
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    private Address() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Address"/> class.
@@ -78,3 +84,4 @@ public sealed class Address : Entity<AddressId>
         );
     }
 }
+
