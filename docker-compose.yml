@@ -8,16 +8,24 @@ services:
       dockerfile: src/WebApi/Dockerfile
     depends_on:
      - database
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-4WXUms893U6j4GE&Hvk3S*hqcqebFgo!vZi}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE:-ecommerce-management}
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+    env_file:
+      - .env
     ports:
      - 8000:8080
   database:
     image: "postgres:latest"
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-4WXUms893U6j4GE&Hvk3S*hqcqebFgo!vZi}
-      POSTGRES_DB: ecommerce-management
+      POSTGRES_DB: ${POSTGRES_DATABASE:-ecommerce-management}
     ports:
      - 8001:5432
     volumes:
      - ./.containers/database:/var/lib/postgresql/data
-

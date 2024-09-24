@@ -35,7 +35,7 @@ public static class ServicesRegistration
     {
         services.AddDbContext<ECommerceDbContext>(options =>
         {
-            options.UseNpgsql();
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             options.AddInterceptors(new AuditInterceptor());
         });
         services.AddAuth(configuration);
