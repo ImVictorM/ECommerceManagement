@@ -11,7 +11,12 @@ public sealed class OrderStatus : Entity<OrderStatusId>
     /// <summary>
     /// Gets the order status.
     /// </summary>
-    public string Status { get; private set; }
+    public string Status { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="OrderStatus"/> class.
+    /// </summary>
+    private OrderStatus() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderStatus"/> class.

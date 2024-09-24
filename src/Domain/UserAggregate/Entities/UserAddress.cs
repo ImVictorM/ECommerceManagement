@@ -12,7 +12,12 @@ public sealed class UserAddress : Entity<UserAddressId>
     /// <summary>
     /// Gets the user address id.
     /// </summary>
-    public AddressId AddressId { get; private set; }
+    public AddressId AddressId { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="UserAddress"/> class.
+    /// </summary>
+    private UserAddress() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UserAddress"/> class.
@@ -22,10 +27,6 @@ public sealed class UserAddress : Entity<UserAddressId>
     {
         AddressId = addressId;
     }
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    private UserAddress() : base(UserAddressId.Create()) { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     /// <summary>
     /// Creates a new instance of the <see cref="UserAddress"/> class.

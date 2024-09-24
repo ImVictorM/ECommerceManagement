@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Persistence.Repositories;
+using Infrastructure.Persistence.Interceptors;
 
 namespace Infrastructure;
 
@@ -35,6 +36,7 @@ public static class ServicesRegistration
         services.AddDbContext<ECommerceDbContext>(options =>
         {
             options.UseNpgsql();
+            options.AddInterceptors(new AuditInterceptor());
         });
         services.AddAuth(configuration);
         services.AddScoped<IPasswordHasher, PasswordHasher>();

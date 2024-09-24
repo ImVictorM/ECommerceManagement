@@ -13,6 +13,11 @@ public sealed class InstallmentId : ValueObject
     public long Value { get; }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="InstallmentId"/> class.
+    /// </summary>
+    private InstallmentId() { }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="InstallmentId"/> class with the specified identifier value.
     /// </summary>
     /// <param name="value">The identifier value.</param>
@@ -28,6 +33,16 @@ public sealed class InstallmentId : ValueObject
     public static InstallmentId Create()
     {
         return new InstallmentId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="InstallmentId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="InstallmentId"/> class with the specified identifier.</returns>
+    public static InstallmentId Create(long value)
+    {
+        return new InstallmentId(value);
     }
 
     /// <inheritdoc/>

@@ -16,11 +16,16 @@ public sealed class OrderProduct : Entity<OrderProductId>
     /// <summary>
     /// Gets the quantity of products ordered.
     /// </summary>
-    public int Quantity {  get; private set; }
+    public int Quantity { get; private set; }
     /// <summary>
     /// Gets the product id.
     /// </summary>
-    public ProductId ProductId { get; private set; }
+    public ProductId ProductId { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="OrderProduct"/> class.
+    /// </summary>
+    private OrderProduct() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderProduct"/> class.

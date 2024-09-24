@@ -11,7 +11,12 @@ public sealed class OrderStatusHistory : Entity<OrderStatusHistoryId>
     /// <summary>
     /// Gets the order status change history.
     /// </summary>
-    public IEnumerable<OrderStatusId> OrderStatuses { get; private set; }
+    public IEnumerable<OrderStatusId> OrderStatuses { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.
+    /// </summary>
+    private OrderStatusHistory() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.

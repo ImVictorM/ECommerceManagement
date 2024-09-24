@@ -19,31 +19,36 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Gets the order owner id.
     /// </summary>
-    public UserId UserId { get; private set; }
+    public UserId UserId { get; private set; } = null!;
     /// <summary>
     /// Gets the order address id.
     /// </summary>
-    public AddressId AddressId { get; private set; }
+    public AddressId AddressId { get; private set; } = null!;
     /// <summary>
     /// Gets the shipment id.
     /// </summary>
-    public ShipmentId ShipmentId { get; private set; }
+    public ShipmentId ShipmentId { get; private set; } = null!;
     /// <summary>
     /// Gets the order products.
     /// </summary>
-    public IEnumerable<OrderProduct> OrderProducts { get; private set; }
+    public IEnumerable<OrderProduct> OrderProducts { get; private set; } = null!;
     /// <summary>
     /// Gets the order discounts.
     /// </summary>
-    public IEnumerable<OrderDiscount>? OrderDiscounts { get; private set; }
+    public IEnumerable<OrderDiscount>? OrderDiscounts { get; private set; } = null!;
     /// <summary>
     /// Gets the order status.
     /// </summary>
-    public OrderStatus OrderStatus { get; private set; }
+    public OrderStatus OrderStatus { get; private set; } = null!;
     /// <summary>
     /// Gets the order status history.
     /// </summary>
-    public OrderStatusHistory OrderStatusHistory { get; private set; }
+    public OrderStatusHistory OrderStatusHistory { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="Order"/> class.
+    /// </summary>
+    private Order() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Order"/> class.

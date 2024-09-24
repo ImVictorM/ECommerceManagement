@@ -15,6 +15,11 @@ public sealed class ProductFeedbackId : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductFeedbackId"/> class.
     /// </summary>
+    private ProductFeedbackId() { }
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ProductFeedbackId"/> class.
+    /// </summary>
     /// <param name="value">The identifier value.</param>
     private ProductFeedbackId(long value)
     {
@@ -28,6 +33,16 @@ public sealed class ProductFeedbackId : ValueObject
     public static ProductFeedbackId Create()
     {
         return new ProductFeedbackId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="ProductFeedbackId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="ProductFeedbackId"/> class with the specified identifier.</returns>
+    public static ProductFeedbackId Create(long value)
+    {
+        return new ProductFeedbackId(value);
     }
 
     /// <inheritdoc/>

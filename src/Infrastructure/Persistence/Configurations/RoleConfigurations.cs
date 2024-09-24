@@ -5,18 +5,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations;
 
+/// <summary>
+/// Map the <see cref="Role"/> aggregate to entity framework.
+/// </summary>
 public sealed class RoleConfigurations : IEntityTypeConfiguration<Role>
 {
+    /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<Role> builder)
     {
-        ConfigureRole(builder);
+        ConfigureRoleTable(builder);
     }
 
-    private static void ConfigureRole(EntityTypeBuilder<Role> builder)
+    /// <summary>
+    /// Configure the role table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureRoleTable(EntityTypeBuilder<Role> builder)
     {
         builder.ToTable("roles");
 
-        builder.HasKey(role => role.Id).HasName(nameof(Role.Id).ToLowerInvariant());
+        builder.HasKey(role => role.Id);
 
         builder
             .Property(role => role.Id)

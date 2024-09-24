@@ -12,28 +12,28 @@ public sealed class Address : AggregateRoot<AddressId>
     /// <summary>
     /// Gets the address postal code.
     /// </summary>
-    public string PostalCode { get; private set; }
+    public string PostalCode { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the address street.
     /// </summary>
-    public string Street { get; private set; }
+    public string Street { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the address neighborhood.
     /// </summary>
-    public string Neighborhood { get; private set; }
+    public string Neighborhood { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the address state.
     /// </summary>
-    public string State { get; private set; }
+    public string State { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the address city.
     /// </summary>
-    public string City { get; private set; }
+    public string City { get; private set; } = string.Empty;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    /// <summary>
+    /// Initiates a new instance of the <see cref="Address"/> class.
+    /// </summary>
     private Address() { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Address"/> class.

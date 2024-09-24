@@ -13,11 +13,11 @@ public sealed class Product : AggregateRoot<ProductId>
     /// <summary>
     /// Gets the name of the product.
     /// </summary>
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the description of the product.
     /// </summary>
-    public string Description { get; private set; }
+    public string Description { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the price of the product.
     /// </summary>
@@ -29,15 +29,15 @@ public sealed class Product : AggregateRoot<ProductId>
     /// <summary>
     /// Gets the product inventory.
     /// </summary>
-    public Inventory Inventory { get; private set; }
+    public Inventory Inventory { get; private set; } = null!;
     /// <summary>
     /// Gets the product images.
     /// </summary>
-    public IEnumerable<ProductImage> Images { get; private set; }
+    public IEnumerable<ProductImage> Images { get; private set; } = null!;
     /// <summary>
     /// Gets the product categories.
     /// </summary>
-    public IEnumerable<ProductCategory> Categories { get; private set; }
+    public IEnumerable<ProductCategory> Categories { get; private set; } = null!;
     /// <summary>
     /// Gets the product discount that holds a list of discounts.
     /// </summary>
@@ -47,6 +47,11 @@ public sealed class Product : AggregateRoot<ProductId>
     /// Gets the product feedback ids.
     /// </summary>
     public IEnumerable<ProductFeedbackId>? ProductFeedbackIds { get; private set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Product"/> class.
+    /// </summary>
+    private Product() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.

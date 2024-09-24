@@ -11,7 +11,12 @@ public sealed class PaymentMethod : Entity<PaymentMethodId>
     /// <summary>
     /// Gets the payment method.
     /// </summary>
-    public string Method { get; private set; }
+    public string Method { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="PaymentMethod"/> class.
+    /// </summary>
+    private PaymentMethod() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentMethod"/> class.

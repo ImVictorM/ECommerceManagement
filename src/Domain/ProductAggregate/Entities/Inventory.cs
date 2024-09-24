@@ -16,6 +16,11 @@ public sealed class Inventory : Entity<InventoryId>
     /// <summary>
     /// Initializes a new instance of the <see cref="Inventory"/> class.
     /// </summary>
+    private Inventory() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Inventory"/> class.
+    /// </summary>
     /// <param name="quantityAvailable">The available quantity of the related product.</param>
     private Inventory(int quantityAvailable)
         : base(InventoryId.Create())

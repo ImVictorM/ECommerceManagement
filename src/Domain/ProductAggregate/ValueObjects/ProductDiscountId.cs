@@ -15,6 +15,11 @@ public sealed class ProductDiscountId : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductDiscountId"/> class.
     /// </summary>
+    private ProductDiscountId() { }
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ProductDiscountId"/> class.
+    /// </summary>
     /// <param name="value">The identifier value.</param>
     private ProductDiscountId(long value)
     {
@@ -29,6 +34,16 @@ public sealed class ProductDiscountId : ValueObject
     public static ProductDiscountId Create()
     {
         return new ProductDiscountId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="ProductDiscountId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="ProductDiscountId"/> class with the specified identifier.</returns>
+    public static ProductDiscountId Create(long value)
+    {
+        return new ProductDiscountId(value);
     }
 
     /// <inheritdoc/>

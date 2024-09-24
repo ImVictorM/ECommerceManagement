@@ -11,7 +11,12 @@ public sealed class ShipmentStatusHistory : Entity<ShipmentStatusHistoryId>
     /// <summary>
     /// Gets the shipment status change history.
     /// </summary>
-    public IEnumerable<ShipmentStatusId> ShipmentStatuses { get; private set; }
+    public IEnumerable<ShipmentStatusId> ShipmentStatuses { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.
+    /// </summary>
+    private ShipmentStatusHistory() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.

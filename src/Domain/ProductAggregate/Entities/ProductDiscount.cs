@@ -12,7 +12,12 @@ public sealed class ProductDiscount : Entity<ProductDiscountId>
     /// <summary>
     /// Gets the product discount id.
     /// </summary>
-    public DiscountId DiscountId { get; private set; }
+    public DiscountId DiscountId { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ProductDiscount"/> class.
+    /// </summary>
+    private ProductDiscount() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductDiscount"/> class.

@@ -12,7 +12,12 @@ public sealed class UserRole : Entity<UserRoleId>
     /// <summary>
     /// Gets the user role ids.
     /// </summary>
-    public RoleId RoleId { get; private set; }
+    public RoleId RoleId { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="UserRole"/> class.
+    /// </summary>
+    private UserRole() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UserRole"/> class.
@@ -24,11 +29,6 @@ public sealed class UserRole : Entity<UserRoleId>
     {
         RoleId = roleId;
     }
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    private UserRole() : base(UserRoleId.Create()) { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
 
     /// <summary>
     /// Creates a new instance of the <see cref="UserRole"/> class.

@@ -13,6 +13,11 @@ public sealed class PaymentStatusHistoryId : ValueObject
     public long Value { get; }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="PaymentStatusHistoryId"/> class.
+    /// </summary>
+    private PaymentStatusHistoryId() { }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="PaymentStatusHistoryId"/> class with the specified identifier value.
     /// </summary>
     /// <param name="value">The identifier value.</param>
@@ -28,6 +33,16 @@ public sealed class PaymentStatusHistoryId : ValueObject
     public static PaymentStatusHistoryId Create()
     {
         return new PaymentStatusHistoryId(0);
+    }
+
+    /// <summary>
+    ///  Creates a new instance of the <see cref="PaymentStatusHistoryId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="PaymentStatusHistoryId"/> class with the specified identifier.</returns>
+    public static PaymentStatusHistoryId Create(long value)
+    {
+        return new PaymentStatusHistoryId(value);
     }
 
     /// <inheritdoc/>

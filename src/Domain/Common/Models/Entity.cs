@@ -1,3 +1,5 @@
+using Domain.Common.Interfaces;
+
 namespace Domain.Common.Models;
 
 /// <summary>
@@ -6,22 +8,27 @@ namespace Domain.Common.Models;
 /// Two entities are equal if they have the same identity.
 /// </summary>
 /// <typeparam name="TId">The type of the entity's unique identifier.</typeparam>
-public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
+public abstract class Entity<TId> :
+    ITrackable,
+    IEquatable<Entity<TId>> where TId : notnull
 {
     /// <summary>
     /// Gets the entity's unique identifier.
     /// </summary>
-    public TId Id { get; protected set; }
+    public TId Id { get; protected set; } = default!;
     /// <summary>
     /// Gets the date when the entity was created.
     /// </summary>
-    public DateTimeOffset? CreatedAt { get; protected set; }
+    public DateTimeOffset CreatedAt { get; protected set; }
 
     /// <summary>
     /// Gets the date when the entity was last updated.
     /// </summary>
-    public DateTimeOffset? UpdatedAt { get; protected set; }
+    public DateTimeOffset UpdatedAt { get; protected set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Entity{TId}"/> class
+    /// </summary>
     protected Entity() { }
 
     /// <summary>

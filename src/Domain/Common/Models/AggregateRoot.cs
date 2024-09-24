@@ -16,5 +16,8 @@ public abstract class AggregateRoot<TId> : Entity<TId>
     /// <param name="id">The unique identifier for this aggregate root.</param>
     protected AggregateRoot(TId id) : base(id) { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AggregateRoot{TId}"/> class.
+    /// </summary>
     protected AggregateRoot() { }
 }

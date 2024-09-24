@@ -11,7 +11,12 @@ public sealed class ProductImage : Entity<ProductImageId>
     /// <summary>
     /// Gets the image url.
     /// </summary>
-    public Uri Url { get; private set; }
+    public Uri Url { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ProductImage"/> class.
+    /// </summary>
+    private ProductImage() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProductImage"/> class.

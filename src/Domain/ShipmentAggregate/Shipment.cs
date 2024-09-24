@@ -13,19 +13,24 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// <summary>
     /// Gets the accountable for the delivery proccess.
     /// </summary>
-    public string Accountable { get; private set; }
+    public string Accountable { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the order id this shipments is related.
     /// </summary>
-    public OrderId OrderId { get; private set; }
+    public OrderId OrderId { get; private set; } = null!;
     /// <summary>
     /// Get the shipment status.
     /// </summary>
-    public ShipmentStatus ShipmentStatus { get; private set; }
+    public ShipmentStatus ShipmentStatus { get; private set; } = null!;
     /// <summary>
     /// Gets the shipment status change history.
     /// </summary>
-    public ShipmentStatusHistory ShipmentStatusHistory { get; private set; }
+    public ShipmentStatusHistory ShipmentStatusHistory { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="Shipment"/> class.
+    /// </summary>
+    private Shipment() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Shipment"/> class.

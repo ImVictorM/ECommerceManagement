@@ -11,7 +11,12 @@ public sealed class ShipmentStatus : Entity<ShipmentStatusId>
     /// <summary>
     /// Gets the shipment status.
     /// </summary>
-    public string Status { get; private set; }
+    public string Status { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ShipmentStatus"/> class.
+    /// </summary>
+    private ShipmentStatus() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentStatus"/> class.

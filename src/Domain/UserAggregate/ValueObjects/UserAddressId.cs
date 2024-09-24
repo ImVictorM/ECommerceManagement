@@ -12,6 +12,9 @@ public sealed class UserAddressId : ValueObject
     /// </summary>
     public long Value { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserAddressId"/> class.
+    /// </summary>
     private UserAddressId() { }
 
     /// <summary>

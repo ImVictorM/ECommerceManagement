@@ -23,5 +23,10 @@ public interface IRoleRepository
     /// <returns></returns>
     Task<IReadOnlyList<Role>> AssignRoleToUserAsync(long userId, string[] roleNames);
 
+    /// <summary>
+    /// Get user roles.
+    /// </summary>
+    /// <param name="userId">The user id.</param>
+    /// <returns>The user roles.</returns>
     Task<IReadOnlyList<Role>> GetUserRolesAsync(long userId);
 }

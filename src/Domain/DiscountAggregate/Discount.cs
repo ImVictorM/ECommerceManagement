@@ -16,7 +16,7 @@ public sealed class Discount : Entity<DiscountId>
     /// <summary>
     /// Gets the discount description.
     /// </summary>
-    public string Description { get; private set; }
+    public string Description { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the discount starting date.
     /// </summary>
@@ -25,6 +25,11 @@ public sealed class Discount : Entity<DiscountId>
     /// Gets the discount ending date.
     /// </summary>
     public DateTimeOffset EndingDate { get; private set; }
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="Discount"/> class.
+    /// </summary>
+    private Discount() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Discount"/> class.

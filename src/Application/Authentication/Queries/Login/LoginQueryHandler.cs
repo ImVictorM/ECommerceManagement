@@ -25,7 +25,9 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     /// Service to generate authentication tokens.
     /// </summary>
     private readonly IJwtTokenService _jwtTokenGenerator;
-
+    /// <summary>
+    /// Service to handle user roles.
+    /// </summary>
     private readonly IRoleRepository _roleRepository;
 
     /// <summary>
@@ -33,6 +35,7 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     /// </summary>
     /// <param name="jwtTokenGenerator">Token service.</param>
     /// <param name="userRepository">User repository.</param>
+    /// <param name="roleRepository">Role repository.</param>
     /// <param name="passwordHasher">Password hash service.</param>
     public LoginQueryHandler(
         IUserRepository userRepository,

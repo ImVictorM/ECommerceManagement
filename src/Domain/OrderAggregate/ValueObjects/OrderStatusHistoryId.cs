@@ -15,6 +15,11 @@ public sealed class OrderStatusHistoryId : ValueObject
     /// <summary>
     /// Initiates a new instance of <see cref="OrderStatusHistoryId"/> class.
     /// </summary>
+    private OrderStatusHistoryId() { }
+
+    /// <summary>
+    /// Initiates a new instance of <see cref="OrderStatusHistoryId"/> class.
+    /// </summary>
     /// <param name="value">The identifier value.</param>
     private OrderStatusHistoryId(long value)
     {
@@ -28,6 +33,16 @@ public sealed class OrderStatusHistoryId : ValueObject
     public static OrderStatusHistoryId Create()
     {
         return new OrderStatusHistoryId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of <see cref="OrderStatusHistoryId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of <see cref="OrderStatusHistoryId"/> class with the specified identifier.</returns>
+    public static OrderStatusHistoryId Create(long value)
+    {
+        return new OrderStatusHistoryId(value);
     }
 
     /// <inheritdoc/>

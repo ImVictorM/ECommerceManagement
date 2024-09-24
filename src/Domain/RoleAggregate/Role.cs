@@ -11,7 +11,12 @@ public sealed class Role : AggregateRoot<RoleId>
     /// <summary>
     /// Gets the role name.
     /// </summary>
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Role"/> class.
+    /// </summary>
+    private Role() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Role"/> class.
@@ -21,11 +26,6 @@ public sealed class Role : AggregateRoot<RoleId>
     {
         Name = name;
     }
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    private Role() : base(RoleId.Create()) { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Role"/> class.

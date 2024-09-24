@@ -22,19 +22,24 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// <summary>
     /// Gets the order id of this payment.
     /// </summary>
-    public OrderId OrderId { get; private set; }
+    public OrderId OrderId { get; private set; } = null!;
     /// <summary>
     /// Gets the payment method.
     /// </summary>
-    public PaymentMethod PaymentMethod { get; private set; }
+    public PaymentMethod PaymentMethod { get; private set; } = null!;
     /// <summary>
     /// Gets the payment status.
     /// </summary>
-    public PaymentStatus PaymentStatus { get; private set; }
+    public PaymentStatus PaymentStatus { get; private set; } = null!;
     /// <summary>
     /// Gets the payment status change history.
     /// </summary>
-    public PaymentStatusHistory PaymentStatusHistory { get; private set; }
+    public PaymentStatusHistory PaymentStatusHistory { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="Payment"/> class.
+    /// </summary>
+    private Payment() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Payment"/> class.

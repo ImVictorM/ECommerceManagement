@@ -13,6 +13,11 @@ public sealed class InventoryId : ValueObject
     public long Value { get; }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="InventoryId"/> class.
+    /// </summary>
+    private InventoryId() { }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="InventoryId"/> class with the specified identifier value.
     /// </summary>
     /// <param name="value">The identifier value.</param>
@@ -28,6 +33,16 @@ public sealed class InventoryId : ValueObject
     public static InventoryId Create()
     {
         return new InventoryId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="InventoryId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="InventoryId"/> class with the specified identifier.</returns>
+    public static InventoryId Create(long value)
+    {
+        return new InventoryId(value);
     }
 
     /// <inheritdoc/>

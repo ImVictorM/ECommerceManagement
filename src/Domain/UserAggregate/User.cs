@@ -9,17 +9,23 @@ namespace Domain.UserAggregate;
 /// </summary>
 public sealed class User : AggregateRoot<UserId>
 {
+    /// <summary>
+    /// The user roles.
+    /// </summary>
     private readonly List<UserRole> _roles = [];
+    /// <summary>
+    /// The user addresses.
+    /// </summary>
     private readonly List<UserAddress>? _addresses = [];
 
     /// <summary>
     /// Gets the user name.
     /// </summary>
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the user email.
     /// </summary>
-    public string Email { get; private set; }
+    public string Email { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the user phone.
     /// </summary>
@@ -27,7 +33,7 @@ public sealed class User : AggregateRoot<UserId>
     /// <summary>
     /// Gets the user password hash.
     /// </summary>
-    public string PasswordHash { get; private set; }
+    public string PasswordHash { get; private set; } = string.Empty;
     /// <summary>
     /// Gets a boolean value indicating if the user is active in the system.
     /// </summary>
@@ -41,10 +47,10 @@ public sealed class User : AggregateRoot<UserId>
     /// </summary>
     public IReadOnlyList<UserAddress>? Addresses => _addresses?.AsReadOnly();
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    private User() : base(UserId.Create()) { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="User"/> class.
+    /// </summary>
+    private User() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class with default customer role and status of activated.

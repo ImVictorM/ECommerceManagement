@@ -21,11 +21,16 @@ public sealed class Installment : Entity<InstallmentId>
     /// <summary>
     /// Gets the installment order id.
     /// </summary>
-    public OrderId OrderId { get; private set; }
+    public OrderId OrderId { get; private set; } = null!;
     /// <summary>
     /// Gets the related payment ids.
     /// </summary>
     public IEnumerable<PaymentId>? PaymentIds { get; private set; }
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="Installment"/> class.
+    /// </summary>
+    private Installment() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Installment"/> class.

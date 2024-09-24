@@ -3,34 +3,42 @@ using Domain.AddressAggregate.ValueObjects;
 using Domain.RoleAggregate;
 using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate;
-using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations;
 
+/// <summary>
+/// Map the <see cref="User"/> aggregate to entity framework.
+/// </summary>
 public sealed class UserConfigurations : IEntityTypeConfiguration<User>
 {
+    /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        ConfigureUser(builder);
-        ConfigureUserAddress(builder);
-        ConfigureUserRoles(builder);
+        ConfigureUserTable(builder);
+        ConfigureUserAddressTable(builder);
+        ConfigureUserRolesTable(builder);
     }
 
-    private static void ConfigureUser(EntityTypeBuilder<User> builder)
+    /// <summary>
+    /// Configure the user table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureUserTable(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users");
 
-        builder.HasKey(user => user.Id).HasName(nameof(User.Id).ToLowerInvariant());
+        builder.HasKey(user => user.Id);
 
         builder
             .Property(user => user.Id)
             .HasConversion(
                 id => id.Value,
                 value => UserId.Create(value)
-            );
+            )
+            .IsRequired();
 
         builder
             .Property(user => user.Name)
@@ -51,10 +59,18 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
             .HasMaxLength(200)
             .IsRequired();
 
+        builder
+            .Property(user => user.IsActive)
+            .IsRequired();
+
         builder.HasIndex(user => user.Email).IsUnique();
     }
 
-    private static void ConfigureUserAddress(EntityTypeBuilder<User> builder)
+    /// <summary>
+    /// Configure the user address table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureUserAddressTable(EntityTypeBuilder<User> builder)
     {
         builder.Metadata
             .FindNavigation(nameof(User.Addresses))!
@@ -65,33 +81,45 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
             userAddressBuilder.ToTable("users_addresses");
 
             userAddressBuilder
-                .HasKey(userAddress => userAddress.Id)
-                .HasName(nameof(UserAddress.Id).ToLowerInvariant());
+                .HasKey(userAddress => userAddress.Id);
 
-            userAddressBuilder.WithOwner().HasForeignKey("id_user");
+            userAddressBuilder
+                .WithOwner()
+                .HasForeignKey("id_user");
+
+            userAddressBuilder
+                .Property("id_user")
+                .IsRequired();
 
             userAddressBuilder
                 .HasOne<Address>()
                 .WithMany()
-                .HasForeignKey(address => address.AddressId);
-
-            userAddressBuilder
-                .Property(userAddress => userAddress.AddressId)
-                .HasConversion(
-                    id => id.Value,
-                    value => AddressId.Create(value)
-                );
+                .HasForeignKey(ua => ua.AddressId)
+                .IsRequired();
 
             userAddressBuilder
                 .Property(userAddress => userAddress.Id)
                 .HasConversion(
                     id => id.Value,
                     value => UserAddressId.Create(value)
-                );
+                )
+                .IsRequired();
+
+            userAddressBuilder
+                .Property(userAddress => userAddress.AddressId)
+                .HasConversion(
+                    addressId => addressId.Value,
+                    value => AddressId.Create(value)
+                )
+                .IsRequired();
         });
     }
 
-    private static void ConfigureUserRoles(EntityTypeBuilder<User> builder)
+    /// <summary>
+    /// Configure the user role table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureUserRolesTable(EntityTypeBuilder<User> builder)
     {
         builder.Metadata
             .FindNavigation(nameof(User.Roles))!
@@ -101,31 +129,35 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
         {
             userRolesBuilder.ToTable("users_roles");
 
-            userRolesBuilder
-                .HasKey(userRole => userRole.Id)
-                .HasName(nameof(UserRole.Id).ToLowerInvariant());
+            userRolesBuilder.HasKey(userRole => userRole.Id);
 
             userRolesBuilder.WithOwner().HasForeignKey("id_user");
 
             userRolesBuilder
-                .HasOne<Role>()
-                .WithMany()
-                .HasForeignKey(role => role.RoleId);
-
+                .Property("id_user")
+                .IsRequired();
 
             userRolesBuilder
-                .Property(userRole => userRole.RoleId)
-                .HasConversion(
-                    id => id.Value,
-                    value => RoleId.Create(value)
-                );
+                .HasOne<Role>()
+                .WithMany()
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
 
             userRolesBuilder
                 .Property(userRole => userRole.Id)
                 .HasConversion(
                     id => id.Value,
                     value => UserRoleId.Create(value)
-                );
+                )
+                .IsRequired();
+
+            userRolesBuilder
+                .Property(userRole => userRole.RoleId)
+                .HasConversion(
+                    roleId => roleId.Value,
+                    value => RoleId.Create(value)
+                )
+                .IsRequired();
         });
     }
 }

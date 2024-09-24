@@ -11,7 +11,12 @@ public sealed class ProductCategory : Entity<ProductCategoryId>
     /// <summary>
     /// Gets the name of the product category.
     /// </summary>
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProductCategory"/> class.
+    /// </summary>
+    private ProductCategory() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProductCategory"/> class.

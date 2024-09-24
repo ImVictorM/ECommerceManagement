@@ -11,7 +11,12 @@ public sealed class PaymentStatus : Entity<PaymentStatusId>
     /// <summary>
     /// Gets the status of the payment.
     /// </summary>
-    public string Status { get; private set; }
+    public string Status { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="PaymentStatus"/> class.
+    /// </summary>
+    private PaymentStatus() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentStatus"/> class.

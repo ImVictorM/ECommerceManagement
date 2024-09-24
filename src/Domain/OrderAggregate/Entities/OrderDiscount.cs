@@ -12,7 +12,12 @@ public sealed class OrderDiscount : Entity<OrderDiscountId>
     /// <summary>
     /// Gets the discount ids.
     /// </summary>
-    public IEnumerable<DiscountId> DiscountIds { get; private set; }
+    public IEnumerable<DiscountId> DiscountIds { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="OrderDiscount"/> class.
+    /// </summary>
+    private OrderDiscount() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderDiscount"/> class.

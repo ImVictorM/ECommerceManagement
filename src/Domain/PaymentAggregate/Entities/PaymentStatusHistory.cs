@@ -11,7 +11,12 @@ public sealed class PaymentStatusHistory : Entity<PaymentStatusHistoryId>
     /// <summary>
     /// Gets the payment statuses.
     /// </summary>
-    public IEnumerable<PaymentStatusId> PaymentStatuses { get; private set; }
+    public IEnumerable<PaymentStatusId> PaymentStatuses { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="PaymentStatusHistory"/> class.
+    /// </summary>
+    private PaymentStatusHistory() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentStatusHistory"/> class.

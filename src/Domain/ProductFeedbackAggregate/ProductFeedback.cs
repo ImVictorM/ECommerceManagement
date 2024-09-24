@@ -14,11 +14,11 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>
     /// <summary>
     /// Gets the product feedback subject.
     /// </summary>
-    public string Subject { get; private set; }
+    public string Subject { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the product feedback content.
     /// </summary>
-    public string Content { get; private set; }
+    public string Content { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the product rating.
     /// </summary>
@@ -30,15 +30,20 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>
     /// <summary>
     /// Gets the id of the product the feedback references to.
     /// </summary>
-    public ProductId ProductId { get; private set; }
+    public ProductId ProductId { get; private set; } = null!;
     /// <summary>
     /// Gets the id of the user who created the feedback.
     /// </summary>
-    public UserId UserId { get; private set; }
+    public UserId UserId { get; private set; } = null!;
     /// <summary>
     /// Gets the id of the order the feedback references to,
     /// </summary>
-    public OrderId OrderId { get; private set; }
+    public OrderId OrderId { get; private set; } = null!;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ProductFeedback"/> class.
+    /// </summary>
+    private ProductFeedback() { }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductFeedback"/> class.

@@ -13,7 +13,11 @@ public sealed class UserRoleId : ValueObject
     /// </summary>
     public long Value { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserRoleId"/> class.
+    /// </summary>
     private UserRoleId() { }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="UserRoleId"/> class.
     /// </summary>

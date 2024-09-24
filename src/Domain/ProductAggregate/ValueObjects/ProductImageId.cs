@@ -13,6 +13,11 @@ public sealed class ProductImageId : ValueObject
     public long Value { get; }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="ProductImageId"/> class.
+    /// </summary>
+    private ProductImageId() { }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ProductImageId"/> class with the specified identifier value.
     /// </summary>
     /// <param name="value">The identifier value.</param>
@@ -28,6 +33,16 @@ public sealed class ProductImageId : ValueObject
     public static ProductImageId Create()
     {
         return new ProductImageId(0);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="ProductImageId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="ProductImageId"/> class with the specified identifier.</returns>
+    public static ProductImageId Create(long value)
+    {
+        return new ProductImageId(value);
     }
 
     /// <inheritdoc/>
