@@ -1,9 +1,9 @@
 using Domain.Common.Models;
 
-namespace Domain.PaymentAggregate.ValueObjects;
+namespace Domain.PaymentStatusAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Entities.PaymentStatus"/> entity.
+/// Represents the identifier for the <see cref="PaymentStatus"/> entity.
 /// </summary>
 public sealed class PaymentStatusId : ValueObject
 {

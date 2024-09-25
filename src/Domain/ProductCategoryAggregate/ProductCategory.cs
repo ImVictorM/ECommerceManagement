@@ -1,12 +1,12 @@
 using Domain.Common.Models;
-using Domain.ProductAggregate.ValueObjects;
+using Domain.ProductCategoryAggregate.ValueObjects;
 
-namespace Domain.ProductAggregate.Entities;
+namespace Domain.ProductCategoryAggregate;
 
 /// <summary>
 /// Represents a product category.
 /// </summary>
-public sealed class ProductCategory : Entity<ProductCategoryId>
+public sealed class ProductCategory : AggregateRoot<ProductCategoryId>
 {
     /// <summary>
     /// Gets the name of the product category.

@@ -1,10 +1,9 @@
-﻿using Domain.Common.Models;
-using Domain.ProductAggregate.Entities;
+using Domain.Common.Models;
 
-namespace Domain.ProductAggregate.ValueObjects;
+namespace Domain.ProductCategoryAggregate.ValueObjects;
 
 /// <summary>
-/// Represents an identifier for a <see cref="ProductCategory"/> entity.
+/// Represents an identifier for a <see cref="ProductCategory"/> aggregate.
 /// </summary>
 public sealed class ProductCategoryId : ValueObject
 {

@@ -1,9 +1,9 @@
 using Domain.Common.Models;
 
-namespace Domain.PaymentAggregate.ValueObjects;
+namespace Domain.PaymentMethodAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Entities.PaymentMethod"/> entity.
+/// Represents the identifier for the <see cref="PaymentMethod"/> entity.
 /// </summary>
 public sealed class PaymentMethodId : ValueObject
 {

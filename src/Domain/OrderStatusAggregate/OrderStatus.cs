@@ -1,12 +1,12 @@
 using Domain.Common.Models;
-using Domain.OrderAggregate.ValueObjects;
+using Domain.OrderStatusAggregate.ValueObjects;
 
-namespace Domain.OrderAggregate.Entities;
+namespace Domain.OrderStatusAggregate;
 
 /// <summary>
-/// Holds the status of an <see cref="Order"/>
+/// Represents an order status.
 /// </summary>
-public sealed class OrderStatus : Entity<OrderStatusId>
+public sealed class OrderStatus : AggregateRoot<OrderStatusId>
 {
     /// <summary>
     /// Gets the order status.

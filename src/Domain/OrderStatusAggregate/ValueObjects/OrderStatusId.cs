@@ -1,9 +1,9 @@
 using Domain.Common.Models;
 
-namespace Domain.OrderAggregate.ValueObjects;
+namespace Domain.OrderStatusAggregate.ValueObjects;
 
 /// <summary>
-/// References the identifier for the <see cref="Entities.OrderStatus"/> entity.
+/// References the identifier for the <see cref="OrderStatus"/> entity.
 /// </summary>
 public sealed class OrderStatusId : ValueObject
 {

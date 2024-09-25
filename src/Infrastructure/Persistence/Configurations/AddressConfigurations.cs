@@ -31,7 +31,8 @@ public sealed class AddressConfigurations : IEntityTypeConfiguration<Address>
             .HasConversion(
                 id => id.Value,
                 value => AddressId.Create(value)
-            );
+            )
+            .IsRequired();
 
         builder
             .Property(address => address.PostalCode)

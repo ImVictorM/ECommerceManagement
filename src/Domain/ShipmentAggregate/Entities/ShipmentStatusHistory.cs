@@ -1,5 +1,6 @@
 using Domain.Common.Models;
 using Domain.ShipmentAggregate.ValueObjects;
+using Domain.ShipmentStatusAggregate.ValueObjects;
 
 namespace Domain.ShipmentAggregate.Entities;
 
@@ -11,7 +12,7 @@ public sealed class ShipmentStatusHistory : Entity<ShipmentStatusHistoryId>
     /// <summary>
     /// Gets the shipment status change history.
     /// </summary>
-    public IEnumerable<ShipmentStatusId> ShipmentStatuses { get; private set; } = null!;
+    public ShipmentStatusId ShipmentStatusId { get; private set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.
@@ -21,19 +22,19 @@ public sealed class ShipmentStatusHistory : Entity<ShipmentStatusHistoryId>
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.
     /// </summary>
-    /// <param name="shipmentStatuses">The shipment statuses history.</param>
-    private ShipmentStatusHistory(IEnumerable<ShipmentStatusId> shipmentStatuses) : base(ShipmentStatusHistoryId.Create())
+    /// <param name="shipmentStatusId">The shipment statuses history.</param>
+    private ShipmentStatusHistory(ShipmentStatusId shipmentStatusId) : base(ShipmentStatusHistoryId.Create())
     {
-        ShipmentStatuses = shipmentStatuses;
+        ShipmentStatusId = shipmentStatusId;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="ShipmentStatusHistory"/> class.
     /// </summary>
-    /// <param name="shipmentStatuses">The shipment statuses history.</param>
+    /// <param name="shipmentStatusId">The shipment statuses history.</param>
     /// <returns>A new instance of the <see cref="ShipmentStatusHistory"/> class.</returns>
-    public static ShipmentStatusHistory Create(IEnumerable<ShipmentStatusId> shipmentStatuses)
+    public static ShipmentStatusHistory Create(ShipmentStatusId shipmentStatusId)
     {
-        return new ShipmentStatusHistory(shipmentStatuses);
+        return new ShipmentStatusHistory(shipmentStatusId);
     }
 }

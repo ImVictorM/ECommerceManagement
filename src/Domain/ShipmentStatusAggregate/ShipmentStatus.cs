@@ -1,12 +1,12 @@
 using Domain.Common.Models;
-using Domain.ShipmentAggregate.ValueObjects;
+using Domain.ShipmentStatusAggregate.ValueObjects;
 
-namespace Domain.ShipmentAggregate.Entities;
+namespace Domain.ShipmentStatusAggregate;
 
 /// <summary>
-/// Holds the current status of a <see cref="Shipment"/>.
+/// Represents the shipment status.
 /// </summary>
-public sealed class ShipmentStatus : Entity<ShipmentStatusId>
+public sealed class ShipmentStatus : AggregateRoot<ShipmentStatusId>
 {
     /// <summary>
     /// Gets the shipment status.

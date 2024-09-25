@@ -1,12 +1,12 @@
 using Domain.Common.Models;
-using Domain.PaymentAggregate.ValueObjects;
+using Domain.PaymentStatusAggregate.ValueObjects;
 
-namespace Domain.PaymentAggregate.Entities;
+namespace Domain.PaymentStatusAggregate;
 
 /// <summary>
-/// Represents the payment status of a <see cref="Payment"/>.
+/// Represents the payment.
 /// </summary>
-public sealed class PaymentStatus : Entity<PaymentStatusId>
+public sealed class PaymentStatus : AggregateRoot<PaymentStatusId>
 {
     /// <summary>
     /// Gets the status of the payment.

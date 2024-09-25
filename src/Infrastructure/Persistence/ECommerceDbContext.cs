@@ -1,5 +1,17 @@
 using Domain.AddressAggregate;
+using Domain.DiscountAggregate;
+using Domain.InstallmentAggregate;
+using Domain.OrderAggregate;
+using Domain.OrderStatusAggregate;
+using Domain.PaymentAggregate;
+using Domain.PaymentMethodAggregate;
+using Domain.PaymentStatusAggregate;
+using Domain.ProductAggregate;
+using Domain.ProductCategoryAggregate;
+using Domain.ProductFeedbackAggregate;
 using Domain.RoleAggregate;
+using Domain.ShipmentAggregate;
+using Domain.ShipmentStatusAggregate;
 using Domain.UserAggregate;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,11 +22,66 @@ namespace Infrastructure.Persistence;
 /// </summary>
 public class ECommerceDbContext : DbContext
 {
+    /// <summary>
+    /// Gets or sets the user aggregate context.
+    /// </summary>
     public DbSet<User> Users { get; set; }
-
+    /// <summary>
+    /// Gets or sets the address aggregate context.
+    /// </summary>
     public DbSet<Address> Addresses { get; set; }
-
+    /// <summary>
+    /// Gets or sets the role aggregate context.
+    /// </summary>
     public DbSet<Role> Roles { get; set; }
+    /// <summary>
+    /// Gets or sets the discount aggregate context.
+    /// </summary>
+    public DbSet<Discount> Discounts { get; set; }
+    /// <summary>
+    /// Gets or sets the installment aggregate context.
+    /// </summary>
+    public DbSet<Installment> Installments { get; set; }
+    /// <summary>
+    /// Gets or sets the order aggregate context.
+    /// </summary>
+    public DbSet<Order> Orders { get; set; }
+    /// <summary>
+    /// Gets or sets the order status aggregate context.
+    /// </summary>
+    public DbSet<OrderStatus> OrderStatuses { get; set; }
+    /// <summary>
+    /// Gets or sets the payment aggregate context.
+    /// </summary>
+    public DbSet<Payment> Payments { get; set; }
+    /// <summary>
+    /// Gets or sets the payment method aggregate context.
+    /// </summary>
+    public DbSet<PaymentMethod> PaymentsMethods { get; set; }
+    /// <summary>
+    /// Gets or sets the payment status aggregate context.
+    /// </summary>
+    public DbSet<PaymentStatus> PaymentStatuses { get; set; }
+    /// <summary>
+    /// Gets or sets the product aggregate context.
+    /// </summary>
+    public DbSet<Product> Products { get; set; }
+    /// <summary>
+    /// Gets or sets the product category aggregate context.
+    /// </summary>
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+    /// <summary>
+    /// Gets or sets the product feedback aggregate context.
+    /// </summary>
+    public DbSet<ProductFeedback> ProductFeedbacks { get; set; }
+    /// <summary>
+    /// Gets or sets the shipment aggregate context.
+    /// </summary>
+    public DbSet<Shipment> Shipments { get; set; }
+    /// <summary>
+    /// Gets or sets the shipment status aggregate context.
+    /// </summary>
+    public DbSet<ShipmentStatus> ShipmentStatuses { get; set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.

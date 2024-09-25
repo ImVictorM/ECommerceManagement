@@ -1,12 +1,12 @@
 using Domain.Common.Models;
-using Domain.PaymentAggregate.ValueObjects;
+using Domain.PaymentMethodAggregate.ValueObjects;
 
-namespace Domain.PaymentAggregate.Entities;
+namespace Domain.PaymentMethodAggregate;
 
 /// <summary>
-/// Represents the payment method of a payment.
+/// Represents the payment method.
 /// </summary>
-public sealed class PaymentMethod : Entity<PaymentMethodId>
+public sealed class PaymentMethod : AggregateRoot<PaymentMethodId>
 {
     /// <summary>
     /// Gets the payment method.

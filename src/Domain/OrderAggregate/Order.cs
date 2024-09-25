@@ -2,7 +2,7 @@ using Domain.AddressAggregate.ValueObjects;
 using Domain.Common.Models;
 using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.ShipmentAggregate.ValueObjects;
+using Domain.OrderStatusAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.OrderAggregate;
@@ -12,6 +12,19 @@ namespace Domain.OrderAggregate;
 /// </summary>
 public sealed class Order : AggregateRoot<OrderId>
 {
+    /// <summary>
+    /// The order products.
+    /// </summary>
+    private readonly List<OrderProduct> _orderProducts = [];
+    /// <summary>
+    /// The order discounts.
+    /// </summary>
+    private readonly List<OrderDiscount>? _orderDiscounts = [];
+    /// <summary>
+    /// The order status change histories.
+    /// </summary>
+    private readonly List<OrderStatusHistory> _orderStatusHistories = [];
+
     /// <summary>
     /// Gets the order total amount.
     /// </summary>
@@ -25,25 +38,21 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public AddressId AddressId { get; private set; } = null!;
     /// <summary>
-    /// Gets the shipment id.
+    /// Gets the order status id.
     /// </summary>
-    public ShipmentId ShipmentId { get; private set; } = null!;
+    public OrderStatusId OrderStatusId { get; private set; } = null!;
     /// <summary>
     /// Gets the order products.
     /// </summary>
-    public IEnumerable<OrderProduct> OrderProducts { get; private set; } = null!;
-    /// <summary>
-    /// Gets the order discounts.
-    /// </summary>
-    public IEnumerable<OrderDiscount>? OrderDiscounts { get; private set; } = null!;
-    /// <summary>
-    /// Gets the order status.
-    /// </summary>
-    public OrderStatus OrderStatus { get; private set; } = null!;
+    public IReadOnlyList<OrderProduct> OrderProducts => _orderProducts.AsReadOnly();
     /// <summary>
     /// Gets the order status history.
     /// </summary>
-    public OrderStatusHistory OrderStatusHistory { get; private set; } = null!;
+    public IReadOnlyList<OrderStatusHistory> OrderStatusHistories => _orderStatusHistories.AsReadOnly();
+    /// <summary>
+    /// Gets the order discounts.
+    /// </summary>
+    public IReadOnlyList<OrderDiscount>? OrderDiscounts => _orderDiscounts?.AsReadOnly();
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Order"/> class.
@@ -55,31 +64,19 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     /// <param name="userId">The order owner id.</param>
     /// <param name="addressId">The order delivery address.</param>
-    /// <param name="shipmentId">The order shipment id.</param>
-    /// <param name="orderProducts">The order products.</param>
-    /// <param name="orderStatus">The order status.</param>
-    /// <param name="orderStatusHistory">The order status history.</param>
+    /// <param name="orderStatusId">The order status.</param>
     /// <param name="total">The order total.</param>
-    /// <param name="orderDiscounts">The order discounts.</param>
     private Order(
         UserId userId,
         AddressId addressId,
-        ShipmentId shipmentId,
-        IEnumerable<OrderProduct> orderProducts,
-        OrderStatus orderStatus,
-        OrderStatusHistory orderStatusHistory,
-        float total,
-        IEnumerable<OrderDiscount>? orderDiscounts
+        OrderStatusId orderStatusId,
+        float total
     ) : base(OrderId.Create())
     {
         UserId = userId;
         AddressId = addressId;
-        ShipmentId = shipmentId;
-        OrderProducts = orderProducts;
-        OrderStatus = orderStatus;
-        OrderStatusHistory = orderStatusHistory;
+        OrderStatusId = orderStatusId;
         Total = total;
-        OrderDiscounts = orderDiscounts;
     }
 
     /// <summary>
@@ -87,33 +84,21 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     /// <param name="userId">The order owner id.</param>
     /// <param name="addressId">The order delivery address.</param>
-    /// <param name="shipmentId">The order shipment id.</param>
-    /// <param name="orderProducts">The order products.</param>
-    /// <param name="orderStatus">The order status.</param>
-    /// <param name="orderStatusHistory">The order status history.</param>
+    /// <param name="orderStatusId">The order status.</param>
     /// <param name="total">The order total.</param>
-    /// <param name="orderDiscounts">The order discounts.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static Order Create(
         UserId userId,
         AddressId addressId,
-        ShipmentId shipmentId,
-        IEnumerable<OrderProduct> orderProducts,
-        OrderStatus orderStatus,
-        OrderStatusHistory orderStatusHistory,
-        float total,
-        IEnumerable<OrderDiscount>? orderDiscounts
+        OrderStatusId orderStatusId,
+        float total
     )
     {
         return new Order(
             userId,
             addressId,
-            shipmentId,
-            orderProducts,
-            orderStatus,
-            orderStatusHistory,
-            total,
-            orderDiscounts
+            orderStatusId,
+            total
         );
     }
 }

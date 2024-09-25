@@ -2,6 +2,8 @@ using Domain.Common.Models;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.Entities;
 using Domain.ShipmentAggregate.ValueObjects;
+using Domain.ShipmentStatusAggregate;
+using Domain.ShipmentStatusAggregate.ValueObjects;
 
 namespace Domain.ShipmentAggregate;
 
@@ -10,6 +12,10 @@ namespace Domain.ShipmentAggregate;
 /// </summary>
 public sealed class Shipment : AggregateRoot<ShipmentId>
 {
+    /// <summary>
+    /// The shipment status change history.
+    /// </summary>
+    private readonly List<ShipmentStatusHistory> _shipmentStatusHistories = [];
     /// <summary>
     /// Gets the accountable for the delivery proccess.
     /// </summary>
@@ -21,11 +27,11 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// <summary>
     /// Get the shipment status.
     /// </summary>
-    public ShipmentStatus ShipmentStatus { get; private set; } = null!;
+    public ShipmentStatusId ShipmentStatusId { get; private set; } = null!;
     /// <summary>
     /// Gets the shipment status change history.
     /// </summary>
-    public ShipmentStatusHistory ShipmentStatusHistory { get; private set; } = null!;
+    public IReadOnlyList<ShipmentStatusHistory> ShipmentStatusHistories => _shipmentStatusHistories.AsReadOnly();
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Shipment"/> class.
@@ -37,19 +43,13 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     /// <param name="orderId">The order id this shipment is related.</param>
     /// <param name="accountable">The accountable of the shipment.</param>
-    /// <param name="shipmentStatus">The shipment status.</param>
-    /// <param name="shipmentStatusHistory">The shipment status change history.</param>
     private Shipment(
         OrderId orderId,
-        string accountable,
-        ShipmentStatus shipmentStatus,
-        ShipmentStatusHistory shipmentStatusHistory
+        string accountable
     ) : base(ShipmentId.Create())
     {
         OrderId = orderId;
         Accountable = accountable;
-        ShipmentStatus = shipmentStatus;
-        ShipmentStatusHistory = shipmentStatusHistory;
     }
 
     /// <summary>
@@ -57,21 +57,15 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     /// <param name="orderId">The order id this shipment is related.</param>
     /// <param name="accountable">The accountable of the shipment.</param>
-    /// <param name="shipmentStatus">The shipment status.</param>
-    /// <param name="shipmentStatusHistory">The shipment status change history.</param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>
     public static Shipment Create(
         OrderId orderId,
-        string accountable,
-        ShipmentStatus shipmentStatus,
-        ShipmentStatusHistory shipmentStatusHistory
+        string accountable
     )
     {
         return new Shipment(
             orderId,
-            accountable,
-            shipmentStatus,
-            shipmentStatusHistory
+            accountable
         );
     }
 }

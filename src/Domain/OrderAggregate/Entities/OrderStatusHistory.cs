@@ -1,5 +1,6 @@
 using Domain.Common.Models;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.OrderStatusAggregate.ValueObjects;
 
 namespace Domain.OrderAggregate.Entities;
 
@@ -9,9 +10,9 @@ namespace Domain.OrderAggregate.Entities;
 public sealed class OrderStatusHistory : Entity<OrderStatusHistoryId>
 {
     /// <summary>
-    /// Gets the order status change history.
+    /// Gets the order status id of the change.
     /// </summary>
-    public IEnumerable<OrderStatusId> OrderStatuses { get; private set; } = null!;
+    public OrderStatusId OrderStatusId { get; private set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.
@@ -21,19 +22,19 @@ public sealed class OrderStatusHistory : Entity<OrderStatusHistoryId>
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.
     /// </summary>
-    /// <param name="orderStatuses">The order statuses history.</param>
-    private OrderStatusHistory(IEnumerable<OrderStatusId> orderStatuses) : base(OrderStatusHistoryId.Create())
+    /// <param name="orderStatusId">The order statuses history.</param>
+    private OrderStatusHistory(OrderStatusId orderStatusId) : base(OrderStatusHistoryId.Create())
     {
-        OrderStatuses = orderStatuses;
+        OrderStatusId = orderStatusId;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="OrderStatusHistory"/> class.
     /// </summary>
-    /// <param name="orderStatuses">The order statuses history.</param>
+    /// <param name="orderStatusId">The order statuses history.</param>
     /// <returns>A new instance of the <see cref="OrderStatusHistory"/> class.</returns>
-    public static OrderStatusHistory Create(IEnumerable<OrderStatusId> orderStatuses)
+    public static OrderStatusHistory Create(OrderStatusId orderStatusId)
     {
-        return new OrderStatusHistory(orderStatuses);
+        return new OrderStatusHistory(orderStatusId);
     }
 }

@@ -31,7 +31,8 @@ public sealed class RoleConfigurations : IEntityTypeConfiguration<Role>
             .HasConversion(
                 roleId => roleId.Value,
                 value => RoleId.Create(value)
-            );
+            )
+            .IsRequired();
 
         builder
             .Property(role => role.Name)

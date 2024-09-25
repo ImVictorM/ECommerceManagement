@@ -12,7 +12,7 @@ public sealed class OrderDiscount : Entity<OrderDiscountId>
     /// <summary>
     /// Gets the discount ids.
     /// </summary>
-    public IEnumerable<DiscountId> DiscountIds { get; private set; } = null!;
+    public DiscountId DiscountId { get; private set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderDiscount"/> class.
@@ -22,19 +22,19 @@ public sealed class OrderDiscount : Entity<OrderDiscountId>
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderDiscount"/> class.
     /// </summary>
-    /// <param name="discountIds">The related discount ids.</param>
-    private OrderDiscount(IEnumerable<DiscountId> discountIds) : base(OrderDiscountId.Create())
+    /// <param name="discountId">The related discount ids.</param>
+    private OrderDiscount(DiscountId discountId) : base(OrderDiscountId.Create())
     {
-        DiscountIds = discountIds;
+        DiscountId = discountId;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="OrderDiscount"/> class.
     /// </summary>
-    /// <param name="discountIds">The related discount ids.</param>
+    /// <param name="discountId">The related discount ids.</param>
     /// <returns>A new instance of the <see cref="OrderDiscount"/> class.</returns>
-    public static OrderDiscount Create(IEnumerable<DiscountId> discountIds)
+    public static OrderDiscount Create(DiscountId discountId)
     {
-        return new OrderDiscount(discountIds);
+        return new OrderDiscount(discountId);
     }
 }

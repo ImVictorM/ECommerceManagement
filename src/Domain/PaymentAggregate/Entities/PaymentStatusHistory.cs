@@ -1,5 +1,6 @@
 using Domain.Common.Models;
 using Domain.PaymentAggregate.ValueObjects;
+using Domain.PaymentStatusAggregate.ValueObjects;
 
 namespace Domain.PaymentAggregate.Entities;
 
@@ -11,7 +12,7 @@ public sealed class PaymentStatusHistory : Entity<PaymentStatusHistoryId>
     /// <summary>
     /// Gets the payment statuses.
     /// </summary>
-    public IEnumerable<PaymentStatusId> PaymentStatuses { get; private set; } = null!;
+    public PaymentStatusId PaymentStatusId { get; private set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentStatusHistory"/> class.
@@ -21,20 +22,20 @@ public sealed class PaymentStatusHistory : Entity<PaymentStatusHistoryId>
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentStatusHistory"/> class.
     /// </summary>
-    /// <param name="paymentStatuses">The payment statuses.</param>
-    private PaymentStatusHistory(IEnumerable<PaymentStatusId> paymentStatuses)
+    /// <param name="paymentStatusId">The payment statuses.</param>
+    private PaymentStatusHistory(PaymentStatusId paymentStatusId)
         : base(PaymentStatusHistoryId.Create())
     {
-        PaymentStatuses = paymentStatuses;
+        PaymentStatusId = paymentStatusId;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="PaymentStatusHistory"/> class.
     /// </summary>
-    /// <param name="paymentStatuses">The payment statuses.</param>
+    /// <param name="paymentStatusId">The payment statuses.</param>
     /// <returns>A new instance of the <see cref="PaymentStatusHistory"/> class.</returns>
-    public static PaymentStatusHistory Create(IEnumerable<PaymentStatusId> paymentStatuses)
+    public static PaymentStatusHistory Create(PaymentStatusId paymentStatusId)
     {
-        return new PaymentStatusHistory(paymentStatuses);
+        return new PaymentStatusHistory(paymentStatusId);
     }
 }

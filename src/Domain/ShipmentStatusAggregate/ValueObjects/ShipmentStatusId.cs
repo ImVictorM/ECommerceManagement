@@ -1,9 +1,9 @@
 using Domain.Common.Models;
 
-namespace Domain.ShipmentAggregate.ValueObjects;
+namespace Domain.ShipmentStatusAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Entities.ShipmentStatus"/> entity.
+/// Represents the identifier for the <see cref="ShipmentStatus"/> aggregate.
 /// </summary>
 public sealed class ShipmentStatusId : ValueObject
 {
