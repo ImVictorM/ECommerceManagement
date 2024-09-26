@@ -2,7 +2,6 @@ using Domain.Common.Models;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.Entities;
 using Domain.ShipmentAggregate.ValueObjects;
-using Domain.ShipmentStatusAggregate;
 using Domain.ShipmentStatusAggregate.ValueObjects;
 
 namespace Domain.ShipmentAggregate;

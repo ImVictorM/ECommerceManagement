@@ -1,4 +1,5 @@
 using Domain.AddressAggregate;
+using Domain.Common.Interfaces;
 using Domain.DiscountAggregate;
 using Domain.InstallmentAggregate;
 using Domain.OrderAggregate;
@@ -13,7 +14,10 @@ using Domain.RoleAggregate;
 using Domain.ShipmentAggregate;
 using Domain.ShipmentStatusAggregate;
 using Domain.UserAggregate;
+using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Persistence;
 
@@ -22,6 +26,16 @@ namespace Infrastructure.Persistence;
 /// </summary>
 public class ECommerceDbContext : DbContext
 {
+    /// <summary>
+    /// The context interceptors.
+    /// </summary>
+    private readonly IEnumerable<IInterceptor> _interceptors;
+
+    /// <summary>
+    /// The settings for connection to the database.
+    /// </summary>
+    private readonly ECommerceDatabaseConnectionSettings _connectionSettings;
+
     /// <summary>
     /// Gets or sets the user aggregate context.
     /// </summary>
@@ -87,17 +101,42 @@ public class ECommerceDbContext : DbContext
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.
     /// </summary>
     /// <param name="options">The db context options.</param>
-    public ECommerceDbContext(DbContextOptions<ECommerceDbContext> options) : base(options) { }
+    /// <param name="auditInterceptor">The audit interceptor.</param>
+    /// <param name="connectionOptions">The options for the database connection.</param>
+    /// <param name="publishDomainEventInterceptor">The publish domain events interceptor.</param>
+    public ECommerceDbContext(
+        DbContextOptions<ECommerceDbContext> options,
+        AuditInterceptor auditInterceptor,
+        PublishDomainEventsInterceptor publishDomainEventInterceptor,
+        IOptions<ECommerceDatabaseConnectionSettings> connectionOptions
+    )
+        : base(options)
+    {
+        _interceptors = [auditInterceptor, publishDomainEventInterceptor];
+        _connectionSettings = connectionOptions.Value;
+    }
 
     /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ECommerceDbContext).Assembly);
+        modelBuilder
+            .Ignore<List<IDomainEvent>>()
+            .ApplyConfigurationsFromAssembly(typeof(ECommerceDbContext).Assembly);
 
         NormalizeColumnNames(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    /// <inheritdoc/>
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(_interceptors);
+
+        optionsBuilder.UseNpgsql(_connectionSettings.DefaultConnection);
+
+        base.OnConfiguring(optionsBuilder);
     }
 
     /// <summary>

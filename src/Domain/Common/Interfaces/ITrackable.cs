@@ -1,7 +1,7 @@
 namespace Domain.Common.Interfaces;
 
 /// <summary>
-/// Define properties to track an object.
+/// Contract to define properties to track an object.
 /// </summary>
 public interface ITrackable
 {

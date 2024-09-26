@@ -29,6 +29,8 @@ public sealed class AuthenticationEndpoints : ICarterModule
     /// Route to register a new user.
     /// </summary>
     /// <param name="request">The request object.</param>
+    /// <param name="mapper">The mapper used to map objects.</param>
+    /// <param name="sender">The sender used to send command/queries.</param>
     /// <returns>An authentication response containing the token.</returns>
     private async Task<IResult> Register(
         RegisterRequest request,
@@ -47,6 +49,8 @@ public sealed class AuthenticationEndpoints : ICarterModule
     /// Route to authenticate a registered user.
     /// </summary>
     /// <param name="request">The request object.</param>
+    /// <param name="mapper">The mapper used to map objects.</param>
+    /// <param name="sender">The sender used to send command/queries.</param>
     /// <returns>An authentication response containing the user token.</returns>
     private async Task<IResult> Login(
         LoginRequest request,

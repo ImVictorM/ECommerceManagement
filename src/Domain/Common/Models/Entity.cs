@@ -10,12 +10,21 @@ namespace Domain.Common.Models;
 /// <typeparam name="TId">The type of the entity's unique identifier.</typeparam>
 public abstract class Entity<TId> :
     ITrackable,
+    IHasDomainEvent,
     IEquatable<Entity<TId>> where TId : notnull
 {
+    /// <summary>
+    /// The list of events.
+    /// </summary>
+    private readonly List<IDomainEvent> _domainEvents = [];
     /// <summary>
     /// Gets the entity's unique identifier.
     /// </summary>
     public TId Id { get; protected set; } = default!;
+    /// <summary>
+    /// Gets the list of domain events.
+    /// </summary>
+    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     /// <summary>
     /// Gets the date when the entity was created.
     /// </summary>
@@ -78,5 +87,17 @@ public abstract class Entity<TId> :
     public override int GetHashCode()
     {
         return Id.GetHashCode();
+    }
+
+    /// <inheritdoc/>
+    public void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Add(domainEvent);
+    }
+
+    /// <inheritdoc/>
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
     }
 }
