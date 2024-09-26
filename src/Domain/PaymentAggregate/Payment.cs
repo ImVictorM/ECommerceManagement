@@ -54,7 +54,6 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// <param name="amount">The payment amount.</param>
     /// <param name="orderId">The order id.</param>
     /// <param name="paymentMethodId">The payment method.</param>
-    /// <param name="paymentStatusHistory">The payment status change history.</param>
     /// <param name="installmentId">The installment id (optional).</param>
     private Payment(
         float amount,
