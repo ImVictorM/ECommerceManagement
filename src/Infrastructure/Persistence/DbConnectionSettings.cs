@@ -18,7 +18,7 @@ public class DbConnectionSettings
     /// <summary>
     /// The connection port.
     /// </summary>
-    public int Port { get; init; }
+    public string Port { get; init; } = null!;
 
     /// <summary>
     /// The connection database name.
