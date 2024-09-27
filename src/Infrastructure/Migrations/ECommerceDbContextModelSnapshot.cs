@@ -1002,7 +1002,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.UserAggregate.User", b =>
                 {
-                    b.OwnsMany("Domain.UserAggregate.Entities.UserAddress", "Addresses", b1 =>
+                    b.OwnsMany("Domain.UserAggregate.Entities.UserAddress", "UserAddresses", b1 =>
                         {
                             b1.Property<long>("Id")
                                 .HasColumnType("bigint")
@@ -1042,7 +1042,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_user");
                         });
 
-                    b.OwnsMany("Domain.UserAggregate.Entities.UserRole", "Roles", b1 =>
+                    b.OwnsMany("Domain.UserAggregate.Entities.UserRole", "UserRoles", b1 =>
                         {
                             b1.Property<long>("Id")
                                 .HasColumnType("bigint")
@@ -1082,9 +1082,9 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_user");
                         });
 
-                    b.Navigation("Addresses");
+                    b.Navigation("UserAddresses");
 
-                    b.Navigation("Roles");
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
