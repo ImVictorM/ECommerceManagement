@@ -1,3 +1,5 @@
+using Domain.Common.Interfaces;
+
 namespace Domain.Common.Models;
 
 /// <summary>
@@ -20,4 +22,13 @@ public abstract class AggregateRoot<TId> : Entity<TId>
     /// Initializes a new instance of the <see cref="AggregateRoot{TId}"/> class.
     /// </summary>
     protected AggregateRoot() { }
+
+    /// <summary>
+    /// Adds a new domain event to the domain event list.
+    /// </summary>
+    /// <param name="domainEvent">The domain event to be added.</param>
+    protected new void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        base.AddDomainEvent(domainEvent);
+    }
 }

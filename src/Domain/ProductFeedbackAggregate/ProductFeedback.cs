@@ -1,3 +1,4 @@
+using Domain.Common.Interfaces;
 using Domain.Common.Models;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
@@ -9,7 +10,7 @@ namespace Domain.ProductFeedbackAggregate;
 /// <summary>
 /// Represents a product feedback.
 /// </summary>
-public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>
+public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, ISoftDeletable
 {
     /// <summary>
     /// Gets the product feedback subject.
@@ -98,5 +99,11 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>
             content,
             starRating
         );
+    }
+
+    /// <inheritdoc/>
+    public void MakeInactive()
+    {
+        IsActive = false;
     }
 }

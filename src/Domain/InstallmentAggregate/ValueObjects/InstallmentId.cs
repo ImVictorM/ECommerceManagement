@@ -26,7 +26,7 @@ public sealed class InstallmentId : ValueObject
         Value = value;
     }
 
-    // <summary>
+    /// <summary>
     /// Creates a new instance of the <see cref="InstallmentId"/> class with a default identifier.
     /// </summary>
     /// <returns>A new instance with the default placeholder value of 0.</returns>

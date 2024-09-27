@@ -1,4 +1,6 @@
+using Domain.Common.Interfaces;
 using Domain.Common.Models;
+using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
 
@@ -7,16 +9,16 @@ namespace Domain.UserAggregate;
 /// <summary>
 /// Represents an user.
 /// </summary>
-public sealed class User : AggregateRoot<UserId>
+public sealed class User : AggregateRoot<UserId>, ISoftDeletable
 {
     /// <summary>
     /// The user roles.
     /// </summary>
-    private readonly List<UserRole> _roles = [];
+    private readonly List<UserRole> _userRoles = [];
     /// <summary>
     /// The user addresses.
     /// </summary>
-    private readonly List<UserAddress>? _addresses = [];
+    private readonly List<UserAddress>? _userAddresses = [];
 
     /// <summary>
     /// Gets the user name.
@@ -41,11 +43,11 @@ public sealed class User : AggregateRoot<UserId>
     /// <summary>
     /// Gets the user roles.
     /// </summary>
-    public IReadOnlyList<UserRole> Roles => _roles.AsReadOnly();
+    public IReadOnlyList<UserRole> UserRoles => _userRoles.AsReadOnly();
     /// <summary>
     /// Gets the user related addresses.
     /// </summary>
-    public IReadOnlyList<UserAddress>? Addresses => _addresses?.AsReadOnly();
+    public IReadOnlyList<UserAddress>? UserAddresses => _userAddresses?.AsReadOnly();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -83,25 +85,27 @@ public sealed class User : AggregateRoot<UserId>
     public static User Create(
         string name,
         string email,
-        string? phone,
-        string passwordHash
+        string passwordHash,
+        string? phone = null
     )
     {
-        return new User(name, email, phone, passwordHash);
+        var user = new User(name, email, phone, passwordHash);
+
+        return user;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
+    /// Relate the user with a role.
     /// </summary>
-    /// <param name="name">The user name.</param>
-    /// <param name="email">The user email.</param>
-    /// <param name="passwordHash">The user password hashed.</param>
-    public static User Create(
-        string name,
-        string email,
-        string passwordHash
-    )
+    /// <param name="roleId">The role id to be related with the user.</param>
+    public void AddUserRole(RoleId roleId)
     {
-        return new User(name, email, null, passwordHash);
+        _userRoles.Add(UserRole.Create(roleId));
+    }
+
+    /// <inheritdoc/>
+    public void MakeInactive()
+    {
+        IsActive = false;
     }
 }

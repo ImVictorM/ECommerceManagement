@@ -1,3 +1,4 @@
+using Domain.Common.Interfaces;
 using Domain.Common.Models;
 using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.ValueObjects;
@@ -8,7 +9,7 @@ namespace Domain.ProductAggregate;
 /// <summary>
 /// Represents a product aggregate.
 /// </summary>
-public sealed class Product : AggregateRoot<ProductId>
+public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
 {
     /// <summary>
     /// The product images.
@@ -98,5 +99,11 @@ public sealed class Product : AggregateRoot<ProductId>
             price,
             inventory
         );
+    }
+
+    /// <inheritdoc/>
+    public void MakeInactive()
+    {
+        IsActive = false;
     }
 }

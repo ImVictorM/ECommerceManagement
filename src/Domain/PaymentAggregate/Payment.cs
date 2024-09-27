@@ -54,6 +54,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// <param name="amount">The payment amount.</param>
     /// <param name="orderId">The order id.</param>
     /// <param name="paymentMethodId">The payment method.</param>
+    /// <param name="paymentStatusId">The status of the payment.</param>
     /// <param name="installmentId">The installment id (optional).</param>
     private Payment(
         float amount,
@@ -70,6 +71,15 @@ public sealed class Payment : AggregateRoot<PaymentId>
         InstallmentId = installmentId;
     }
 
+    /// <summary>
+    /// Creates a new instance of the <see cref="Payment"/> class.
+    /// </summary>
+    /// <param name="amount">The payment amount.</param>
+    /// <param name="orderId">The order id.</param>
+    /// <param name="paymentMethodId">The payment method.</param>
+    /// <param name="paymentStatusId">The status of the payment.</param>
+    /// <param name="installmentId">The installment id (optional).</param>
+    /// <returns>A new instance of the <see cref="Payment"/> class.</returns>
     public static Payment Create(
         float amount,
         OrderId orderId,

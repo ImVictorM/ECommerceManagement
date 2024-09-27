@@ -73,10 +73,10 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     private static void ConfigureUserAddressTable(EntityTypeBuilder<User> builder)
     {
         builder.Metadata
-            .FindNavigation(nameof(User.Addresses))!
+            .FindNavigation(nameof(User.UserAddresses))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.OwnsMany(user => user.Addresses, userAddressBuilder =>
+        builder.OwnsMany(user => user.UserAddresses, userAddressBuilder =>
         {
             userAddressBuilder.ToTable("users_addresses");
 
@@ -122,10 +122,10 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     private static void ConfigureUserRolesTable(EntityTypeBuilder<User> builder)
     {
         builder.Metadata
-            .FindNavigation(nameof(User.Roles))!
+            .FindNavigation(nameof(User.UserRoles))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.OwnsMany(user => user.Roles, userRolesBuilder =>
+        builder.OwnsMany(user => user.UserRoles, userRolesBuilder =>
         {
             userRolesBuilder.ToTable("users_roles");
 

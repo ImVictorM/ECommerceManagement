@@ -1,4 +1,5 @@
 using Domain.Common.Models;
+using Domain.RoleAggregate.Enums;
 using Domain.RoleAggregate.ValueObjects;
 
 namespace Domain.RoleAggregate;
@@ -30,9 +31,25 @@ public sealed class Role : AggregateRoot<RoleId>
     /// <summary>
     /// Initializes a new instance of the <see cref="Role"/> class.
     /// </summary>
-    /// <param name="name">The name of the role.</param>
-    public static Role Create(string name)
+    /// <param name="roleType">The name of the role.</param>
+    public static Role Create(RoleTypes roleType)
     {
-        return new Role(name);
+        return new Role(ToName(roleType));
+    }
+
+    /// <summary>
+    /// Maps the role type to correspondent name.
+    /// </summary>
+    /// <param name="roleType">The role type.</param>
+    /// <returns>The correspondent role name.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">When the role type is invalid.</exception>
+    public static string ToName(RoleTypes roleType)
+    {
+        return roleType switch
+        {
+            RoleTypes.CUSTOMER => "customer",
+            RoleTypes.ADMIN => "admin",
+            _ => throw new ArgumentOutOfRangeException(nameof(roleType)),
+        };
     }
 }

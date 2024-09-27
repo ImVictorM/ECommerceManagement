@@ -50,7 +50,6 @@ public sealed class Installment : Entity<InstallmentId>
     /// <param name="orderId">The order id.</param>
     /// <param name="quantityPayments">The quantity of payments required.</param>
     /// <param name="amountPerPayment">The amount per payment required.</param>
-    /// <param name="paymentIds">The payments related list.</param>
     /// <returns>A new instance of the <see cref="Installment"/> class.</returns>
     public static Installment Create(
         OrderId orderId,
