@@ -31,7 +31,7 @@ public static class ServicesRegistration
         IConfigurationManager configuration
     )
     {
-        services.Configure<ECommerceDatabaseConnectionSettings>(configuration.GetSection(ECommerceDatabaseConnectionSettings.SectionName));
+        services.Configure<DbConnectionSettings>(configuration.GetSection(DbConnectionSettings.SectionName));
 
         services.AddDbContext<ECommerceDbContext>();
 
@@ -62,7 +62,7 @@ public static class ServicesRegistration
         configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
         services.AddSingleton(Options.Create(jwtSettings));
-        services.AddSingleton<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         services
             .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)

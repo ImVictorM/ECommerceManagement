@@ -7,6 +7,11 @@ using WebApi.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
+    .AddEnvironmentVariables();
+
 builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration)

@@ -34,7 +34,7 @@ public class ECommerceDbContext : DbContext
     /// <summary>
     /// The settings for connection to the database.
     /// </summary>
-    private readonly ECommerceDatabaseConnectionSettings _connectionSettings;
+    private readonly DbConnectionSettings _connectionSettings;
 
     /// <summary>
     /// Gets or sets the user aggregate context.
@@ -108,7 +108,7 @@ public class ECommerceDbContext : DbContext
         DbContextOptions<ECommerceDbContext> options,
         AuditInterceptor auditInterceptor,
         PublishDomainEventsInterceptor publishDomainEventInterceptor,
-        IOptions<ECommerceDatabaseConnectionSettings> connectionOptions
+        IOptions<DbConnectionSettings> connectionOptions
     )
         : base(options)
     {
@@ -134,7 +134,7 @@ public class ECommerceDbContext : DbContext
     {
         optionsBuilder.AddInterceptors(_interceptors);
 
-        optionsBuilder.UseNpgsql(_connectionSettings.DefaultConnection);
+        optionsBuilder.UseNpgsql($"Host={_connectionSettings.Host};Port={_connectionSettings.Port};Database={_connectionSettings.Database};Username={_connectionSettings.Username};Password={_connectionSettings.Password};Trust Server Certificate=true;");
 
         base.OnConfiguring(optionsBuilder);
     }
