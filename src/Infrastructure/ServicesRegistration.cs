@@ -2,14 +2,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Infrastructure.Authentication;
 using Infrastructure.Persistence;
-using Application.Common.Interfaces.Persistence;
 using Application.Common.Interfaces.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Interceptors;
+using Application.Common.Interfaces.Persistence;
 
 namespace Infrastructure;
 
@@ -39,8 +38,8 @@ public static class ServicesRegistration
         services.AddAuth(configuration);
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<PublishDomainEventsInterceptor>();

@@ -1,9 +1,11 @@
 using MediatR;
 using Application.Authentication.Common;
 using Application.Common.Errors;
-using Application.Common.Interfaces.Persistence;
 using Application.Common.Interfaces.Authentication;
 using Domain.UserAggregate;
+using Domain.RoleAggregate.Enums;
+using Application.Common.Interfaces.Persistence;
+using Domain.RoleAggregate;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -14,17 +16,13 @@ namespace Application.Authentication.Commands.Register;
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthenticationResult>
 {
     /// <summary>
+    /// Component to interact with the repositories and persist changes.
+    /// </summary>
+    private readonly IUnitOfWork _unitOfWork;
+    /// <summary>
     /// Token service to generate authentication tokens.
     /// </summary>
     private readonly IJwtTokenService _jwtTokenGenerator;
-    /// <summary>
-    /// User repository to interact and persist user data.
-    /// </summary>
-    private readonly IUserRepository _userRepository;
-    /// <summary>
-    /// Role repository to assign roles to users.
-    /// </summary>
-    private readonly IRoleRepository _roleRepository;
     /// <summary>
     /// Hash service to hash and verify passwords.
     /// </summary>
@@ -34,20 +32,17 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
     /// Initializes a new instance of the <see cref="RegisterCommandHandler"/> class.
     /// </summary>
     /// <param name="jwtTokenGenerator">Token service.</param>
-    /// <param name="userRepository">User repository.</param>
-    /// <param name="roleRepository">Role repository.</param>
     /// <param name="passwordHasher">Password hash service.</param>
+    /// <param name="unitOfWork">The unit of work.</param>
     public RegisterCommandHandler(
         IJwtTokenService jwtTokenGenerator,
-        IUserRepository userRepository,
-        IRoleRepository roleRepository,
-        IPasswordHasher passwordHasher
+        IPasswordHasher passwordHasher,
+        IUnitOfWork unitOfWork
     )
     {
         _jwtTokenGenerator = jwtTokenGenerator;
-        _userRepository = userRepository;
+        _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
-        _roleRepository = roleRepository;
     }
 
     /// <summary>
@@ -60,25 +55,33 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
     public async Task<AuthenticationResult> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
         // Checks if user already exists
-        if (_userRepository.GetUserByEmailAddress(command.Email) is not null)
+        if (await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == command.Email) is not null)
         {
             throw new BadRequestException("User already exists.");
         }
 
-        // Create user
-        User user = User.Create(
+        // Create user and assign role
+        var user = User.Create(
             command.Name,
             command.Email,
             _passwordHasher.Hash(command.Password)
         );
 
-        await _userRepository.AddAsync(user);
+        var customerRoleName = Role.ToName(RoleTypes.CUSTOMER);
 
-        // Assign role to the user
-        var roles = await _roleRepository.AssignRoleToUserAsync(user.Id.Value, "customer");
+        var customerRole = await _unitOfWork.RoleRepository
+            .FindOneOrDefaultAsync(role => role.Name == customerRoleName)
+            ?? throw new HttpException($"Couldn't find the role with name {customerRoleName}");
+
+        user.AddUserRole(customerRole.Id);
+
+        await _unitOfWork.UserRepository.AddAsync(user);
+
+        await _unitOfWork.SaveChangesAsync();
 
         // Generate the token
-        var token = _jwtTokenGenerator.GenerateToken(user, roles);
+        var token = await _jwtTokenGenerator.GenerateToken(user);
+
         return new AuthenticationResult(user, token);
     }
 }

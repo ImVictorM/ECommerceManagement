@@ -1,5 +1,5 @@
 using Application.Common.Interfaces.Authentication;
-using Domain.RoleAggregate;
+using Application.Common.Interfaces.Persistence;
 using Domain.UserAggregate;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -21,15 +21,23 @@ public class JwtTokenService : IJwtTokenService
     private readonly JwtSettings _jwtSettings;
 
     /// <summary>
+    /// Component to interact with the repositories.
+    /// </summary>
+    private readonly IUnitOfWork _unitOfWork;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="JwtTokenService"/> class.
     /// </summary>
     /// <param name="jwtOptions">The jwt settings options.</param>
-    public JwtTokenService(IOptions<JwtSettings> jwtOptions)
+    /// <param name="unitOfWork">The unit of work.</param>
+    public JwtTokenService(IOptions<JwtSettings> jwtOptions, IUnitOfWork unitOfWork)
     {
         _jwtSettings = jwtOptions.Value;
+        _unitOfWork = unitOfWork;
     }
+
     /// <inheritdoc/>
-    public string GenerateToken(User user, IReadOnlyList<Role> roles)
+    public async Task<string> GenerateToken(User user)
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret)),
@@ -43,10 +51,14 @@ public class JwtTokenService : IJwtTokenService
              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         ];
 
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role.Name));
-        }
+        var userRoleIds = user.UserRoles.Select(userRole => userRole.RoleId).ToList();
+
+        var userRoles = await _unitOfWork.RoleRepository.FindAllAsync(role => userRoleIds.Contains(role.Id));
+
+        claims.AddRange(
+            from role in userRoles
+            select new Claim(ClaimTypes.Role, role.Name)
+        );
 
         var securityToken = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,

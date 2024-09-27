@@ -14,10 +14,6 @@ namespace Application.Authentication.Queries.Login;
 public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
 {
     /// <summary>
-    /// User repository to interact and persist user data.
-    /// </summary>
-    private readonly IUserRepository _userRepository;
-    /// <summary>
     /// Service to hash and verify passwords.
     /// </summary>
     private readonly IPasswordHasher _passwordHasher;
@@ -26,28 +22,25 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     /// </summary>
     private readonly IJwtTokenService _jwtTokenGenerator;
     /// <summary>
-    /// Service to handle user roles.
+    /// Component to interact with the repositories and persist changes.
     /// </summary>
-    private readonly IRoleRepository _roleRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoginQueryHandler"/> class.
     /// </summary>
     /// <param name="jwtTokenGenerator">Token service.</param>
-    /// <param name="userRepository">User repository.</param>
-    /// <param name="roleRepository">Role repository.</param>
     /// <param name="passwordHasher">Password hash service.</param>
+    /// <param name="unitOfWork">The unity of work.</param>
     public LoginQueryHandler(
-        IUserRepository userRepository,
         IPasswordHasher passwordHasher,
         IJwtTokenService jwtTokenGenerator,
-        IRoleRepository roleRepository
+        IUnitOfWork unitOfWork
     )
     {
-        _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _jwtTokenGenerator = jwtTokenGenerator;
-        _roleRepository = roleRepository;
+        _unitOfWork = unitOfWork;
     }
 
     /// <summary>
@@ -58,19 +51,19 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     /// <returns>The user with authentication token.</returns>
     public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        string defaultErrorMessage = "User email or password is incorrect.";
+        var defaultUserNotFoundErrorMessage = "User email or password is incorrect.";
 
-        User user = _userRepository.GetUserByEmailAddress(query.Email) ?? throw new BadRequestException(defaultErrorMessage);
+        User user = await _unitOfWork.UserRepository
+            .FindOneOrDefaultAsync(user => user.Email == query.Email)
+            ?? throw new BadRequestException(defaultUserNotFoundErrorMessage);
 
         if (!_passwordHasher.Verify(query.Password, user.PasswordHash))
         {
-            throw new BadRequestException(defaultErrorMessage);
+            throw new BadRequestException(defaultUserNotFoundErrorMessage);
         }
 
-        var roles = await _roleRepository.GetUserRolesAsync(user.Id.Value);
 
-        string token = _jwtTokenGenerator.GenerateToken(user, roles);
+        var token = await _jwtTokenGenerator.GenerateToken(user);
 
         return new AuthenticationResult(user, token);
     }
