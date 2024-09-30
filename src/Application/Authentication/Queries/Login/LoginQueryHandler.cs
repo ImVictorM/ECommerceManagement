@@ -4,6 +4,7 @@ using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
 using Domain.UserAggregate;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Authentication.Queries.Login;
 
@@ -11,7 +12,7 @@ namespace Application.Authentication.Queries.Login;
 /// Query handler for the <see cref="LoginQuery"/> query.
 /// Handles user authentication.
 /// </summary>
-public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
+public partial class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
 {
     /// <summary>
     /// Service to hash and verify passwords.
@@ -32,15 +33,18 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     /// <param name="jwtTokenGenerator">Token service.</param>
     /// <param name="passwordHasher">Password hash service.</param>
     /// <param name="unitOfWork">The unity of work.</param>
+    /// <param name="logger">The query handler logger.</param>
     public LoginQueryHandler(
         IPasswordHasher passwordHasher,
         IJwtTokenService jwtTokenGenerator,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        ILogger<LoginQueryHandler> logger
     )
     {
         _passwordHasher = passwordHasher;
         _jwtTokenGenerator = jwtTokenGenerator;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     /// <summary>
@@ -51,19 +55,28 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
     /// <returns>The user with authentication token.</returns>
     public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
+        LogHandlingLoginQuery(query.Email);
+
         var defaultUserNotFoundErrorMessage = "User email or password is incorrect.";
 
-        User user = await _unitOfWork.UserRepository
-            .FindOneOrDefaultAsync(user => user.Email == query.Email)
-            ?? throw new BadRequestException(defaultUserNotFoundErrorMessage);
+        User? user = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == query.Email);
 
-        if (!_passwordHasher.Verify(query.Password, user.PasswordHash))
+        if (user == null)
         {
+            LogUserNotFound(query.Email);
             throw new BadRequestException(defaultUserNotFoundErrorMessage);
         }
 
+        if (!_passwordHasher.Verify(query.Password, user.PasswordHash))
+        {
+            LogInvalidPassword(query.Email);
+            throw new BadRequestException(defaultUserNotFoundErrorMessage);
+        }
+
+        LogSuccessfullyAuthenticatedUser(query.Email);
 
         var token = await _jwtTokenGenerator.GenerateToken(user);
+        LogTokenGenerated(user.Id.Value);
 
         return new AuthenticationResult(user, token);
     }
