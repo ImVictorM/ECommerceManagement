@@ -12,19 +12,19 @@ namespace Infrastructure.Persistence.Interceptors;
 public sealed class AuditInterceptor : SaveChangesInterceptor
 {
     /// <inheritdoc/>
-    public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
+    public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
         UpdateTimestamps(eventData.Context);
 
-        return base.SavedChanges(eventData, result);
+        return base.SavingChanges(eventData, result);
     }
 
     /// <inheritdoc/>
-    public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
         UpdateTimestamps(eventData.Context);
 
-        return base.SavedChangesAsync(eventData, result, cancellationToken);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
     /// <summary>
@@ -35,9 +35,9 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
     {
         if (context == null) return;
 
-        foreach(var entry in context.ChangeTracker.Entries())
+        foreach (var entry in context.ChangeTracker.Entries())
         {
-            var entityType = entry.GetType();
+            var entityType = entry.Entity.GetType();
 
             if (!typeof(ITrackable).IsAssignableFrom(entityType)) return;
 

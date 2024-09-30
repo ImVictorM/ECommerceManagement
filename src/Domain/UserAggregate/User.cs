@@ -66,7 +66,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
         string email,
         string? phone,
         string passwordHash
-    ) : base(UserId.Create())
+    )
     {
         Name = name;
         Email = email;
