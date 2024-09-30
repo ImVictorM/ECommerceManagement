@@ -43,14 +43,13 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
     /// <inheritdoc/>
     public async Task<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>>? filter = null)
     {
-        var query = _dbSet;
 
         if (filter != null)
         {
-            query = (DbSet<TEntity>)query.Where(filter);
+            return await _dbSet.Where(filter).ToListAsync();
         }
 
-        return await query.ToListAsync();
+        return await _dbSet.ToListAsync();
     }
 
     /// <inheritdoc/>

@@ -793,28 +793,14 @@ namespace Infrastructure.Migrations
                 table: "users_roles",
                 column: "id_user");
 
-            // password: admin123
-            migrationBuilder.InsertData(
-                table: "users",
-                columns: ["name", "email", "password_hash", "is_active", "created_at", "updated_at"],
-                values: [
-                    "admin",
-                    "admin@email.com",
-                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
-                    true,
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
-
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
             migrationBuilder.InsertData(
                 table: "roles",
-                columns: ["name", "created_at", "updated_at"],
+                columns: ["id", "name", "created_at", "updated_at"],
                 values: new object[,]
                 {
-                    { "customer", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "admin", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
+                    {1, "admin", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
+                    {2, "customer", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
                 }
             );
 
@@ -830,7 +816,7 @@ namespace Infrastructure.Migrations
                     { "refunded", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
                 }
             );
-     
+
             migrationBuilder.InsertData(
                 table: "payment_methods",
                 columns: ["method", "created_at", "updated_at"],
@@ -867,6 +853,32 @@ namespace Infrastructure.Migrations
                     { "delivered", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
                     { "canceled", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
                 }
+            );
+
+            // password: admin123
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
+                values: [
+                    1,
+                    "admin",
+                    "admin@email.com",
+                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
+                    true,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
+                ]
+            );
+
+            migrationBuilder.InsertData(
+                table: "users_roles",
+                columns: ["id_role", "id_user", "created_at", "updated_at"],
+                values: [
+                    1,
+                    1,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
+                ]
             );
 #pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
         }

@@ -44,17 +44,18 @@ public sealed class PasswordHasher : IPasswordHasher
     /// <inheritdoc/>
     public bool Verify(string inputPassword, string passwordHashToCompare)
     {
-        string[] inputPasswordHashParts = inputPassword.Split("-");
-        byte[] hash = Convert.FromHexString(inputPasswordHashParts[0]);
-        byte[] salt = Convert.FromHexString(inputPasswordHashParts[1]);
+        string[] toCompare = passwordHashToCompare.Split("-");
+        byte[] hashToCompare = Convert.FromHexString(toCompare[0]);
+        byte[] salt = Convert.FromHexString(toCompare[1]);
 
         byte[] inputPasswordHash = Rfc2898DeriveBytes.Pbkdf2(
             inputPassword,
-            salt, Iterations,
+            salt,
+            Iterations,
             _hashAlgorithmName,
             HashSize
         );
 
-        return CryptographicOperations.FixedTimeEquals(hash, inputPasswordHash);
+        return CryptographicOperations.FixedTimeEquals(hashToCompare, inputPasswordHash);
     }
 }

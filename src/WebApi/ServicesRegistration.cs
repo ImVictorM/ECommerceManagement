@@ -1,4 +1,3 @@
-using Application;
 using Carter;
 using Mapster;
 using MapsterMapper;
@@ -46,7 +45,7 @@ public static class ServicesRegistration
     public static IServiceCollection AddMappings(this IServiceCollection services)
     {
         var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(ApplicationAssemblyReference.Assembly);
+        config.Scan(typeof(ServicesRegistration).Assembly);
 
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
