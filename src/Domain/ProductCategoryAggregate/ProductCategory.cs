@@ -23,7 +23,6 @@ public sealed class ProductCategory : AggregateRoot<ProductCategoryId>
     /// </summary>
     /// <param name="name">The name of the product category.</param>
     private ProductCategory(string name)
-        : base(ProductCategoryId.Create())
     {
         Name = name;
     }

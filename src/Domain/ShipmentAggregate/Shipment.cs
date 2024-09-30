@@ -45,7 +45,7 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     private Shipment(
         OrderId orderId,
         string accountable
-    ) : base(ShipmentId.Create())
+    )
     {
         OrderId = orderId;
         Accountable = accountable;

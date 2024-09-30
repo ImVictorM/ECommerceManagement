@@ -10,7 +10,7 @@ public sealed class InstallmentId : ValueObject
     /// <summary>
     /// Gets the value of the identifier.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InstallmentId"/> class.
@@ -24,15 +24,6 @@ public sealed class InstallmentId : ValueObject
     private InstallmentId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="InstallmentId"/> class with a default identifier.
-    /// </summary>
-    /// <returns>A new instance with the default placeholder value of 0.</returns>
-    public static InstallmentId Create()
-    {
-        return new InstallmentId(0);
     }
 
     /// <summary>

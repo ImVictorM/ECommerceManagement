@@ -22,7 +22,7 @@ public sealed class ProductImage : Entity<ProductImageId>
     /// Initializes a new instance of the <see cref="ProductImage"/> class.
     /// </summary>
     /// <param name="url">The image url.</param>
-    private ProductImage(Uri url) : base(ProductImageId.Create())
+    private ProductImage(Uri url)
     {
         Url = url;
     }

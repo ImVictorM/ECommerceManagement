@@ -23,7 +23,7 @@ public sealed class OrderDiscount : Entity<OrderDiscountId>
     /// Initiates a new instance of the <see cref="OrderDiscount"/> class.
     /// </summary>
     /// <param name="discountId">The related discount ids.</param>
-    private OrderDiscount(DiscountId discountId) : base(OrderDiscountId.Create())
+    private OrderDiscount(DiscountId discountId)
     {
         DiscountId = discountId;
     }

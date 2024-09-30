@@ -62,7 +62,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
         PaymentMethodId paymentMethodId,
         PaymentStatusId paymentStatusId,
         InstallmentId? installmentId = null
-    ) : base(PaymentId.Create())
+    )
     {
         Amount = amount;
         OrderId = orderId;

@@ -10,7 +10,7 @@ public sealed class InventoryId : ValueObject
     /// <summary>
     /// Gets the value of the identifier.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InventoryId"/> class.
@@ -24,15 +24,6 @@ public sealed class InventoryId : ValueObject
     private InventoryId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="InventoryId"/> class with a default identifier.
-    /// </summary>
-    /// <returns>A new instance with the default placeholder value of 0.</returns>
-    public static InventoryId Create()
-    {
-        return new InventoryId(0);
     }
 
     /// <summary>

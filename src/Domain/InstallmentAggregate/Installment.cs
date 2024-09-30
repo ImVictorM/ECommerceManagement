@@ -37,7 +37,7 @@ public sealed class Installment : Entity<InstallmentId>
         OrderId orderId,
         int quantityPayments,
         float amountPerPayment
-    ) : base(InstallmentId.Create())
+    )
     {
         QuantityPayments = quantityPayments;
         AmountPerPayment = amountPerPayment;

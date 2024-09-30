@@ -22,7 +22,7 @@ public sealed class PaymentMethod : AggregateRoot<PaymentMethodId>
     /// Initiates a new instance of the <see cref="PaymentMethod"/> class.
     /// </summary>
     /// <param name="method">The payment method.</param>
-    private PaymentMethod(string method) : base(PaymentMethodId.Create())
+    private PaymentMethod(string method)
     {
         Method = method;
     }

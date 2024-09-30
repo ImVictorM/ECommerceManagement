@@ -69,7 +69,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
         string description,
         float price,
         Inventory inventory
-    ) : base(ProductId.Create())
+    )
     {
         Name = name;
         Description = description;

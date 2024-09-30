@@ -22,7 +22,7 @@ public sealed class PaymentStatus : AggregateRoot<PaymentStatusId>
     /// Initiates a new instance of the <see cref="PaymentStatus"/> class.
     /// </summary>
     /// <param name="status">The payment status.</param>
-    private PaymentStatus(string status) : base(PaymentStatusId.Create())
+    private PaymentStatus(string status)
     {
         Status = status;
     }

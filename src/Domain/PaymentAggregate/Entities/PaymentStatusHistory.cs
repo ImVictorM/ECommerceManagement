@@ -24,7 +24,6 @@ public sealed class PaymentStatusHistory : Entity<PaymentStatusHistoryId>
     /// </summary>
     /// <param name="paymentStatusId">The payment statuses.</param>
     private PaymentStatusHistory(PaymentStatusId paymentStatusId)
-        : base(PaymentStatusHistoryId.Create())
     {
         PaymentStatusId = paymentStatusId;
     }

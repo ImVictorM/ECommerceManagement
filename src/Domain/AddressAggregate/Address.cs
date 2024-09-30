@@ -49,7 +49,7 @@ public sealed class Address : AggregateRoot<AddressId>
         string neighborhood,
         string state,
         string city
-    ) : base(AddressId.Create())
+    )
     {
         PostalCode = postalCode;
         Street = street;

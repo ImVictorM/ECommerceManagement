@@ -23,7 +23,7 @@ public sealed class ShipmentStatusHistory : Entity<ShipmentStatusHistoryId>
     /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.
     /// </summary>
     /// <param name="shipmentStatusId">The shipment statuses history.</param>
-    private ShipmentStatusHistory(ShipmentStatusId shipmentStatusId) : base(ShipmentStatusHistoryId.Create())
+    private ShipmentStatusHistory(ShipmentStatusId shipmentStatusId)
     {
         ShipmentStatusId = shipmentStatusId;
     }

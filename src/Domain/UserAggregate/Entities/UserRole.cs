@@ -25,7 +25,7 @@ public sealed class UserRole : Entity<UserRoleId>
     /// <param name="roleId">The user role id.</param>
     private UserRole(
         RoleId roleId
-    ) : base(UserRoleId.Create())
+    )
     {
         RoleId = roleId;
     }

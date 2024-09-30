@@ -10,7 +10,7 @@ public sealed class OrderProductId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderProductId"/> class.
@@ -24,16 +24,6 @@ public sealed class OrderProductId : ValueObject
     private OrderProductId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="OrderProductId"/> class with default identifier
-    /// placeholder value of 0.
-    /// </summary>
-    /// <returns>A new instance of the <see cref="OrderProductId"/> class.</returns>
-    public static OrderProductId Create()
-    {
-        return new OrderProductId(0);
     }
 
     /// <summary>

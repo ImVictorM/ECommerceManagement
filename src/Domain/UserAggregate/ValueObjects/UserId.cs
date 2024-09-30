@@ -27,15 +27,6 @@ public sealed class UserId : ValueObject
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="UserId"/> class with a default identifier.
-    /// </summary>
-    /// <returns>A new instance with the default placeholder value of 0.</returns>
-    public static UserId Create()
-    {
-        return new UserId(0);
-    }
-
-    /// <summary>
     /// Creates a new instance of the <see cref="UserId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>

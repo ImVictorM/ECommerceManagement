@@ -43,7 +43,7 @@ public sealed class Discount : Entity<DiscountId>
         string description,
         DateTimeOffset startingDate,
         DateTimeOffset endingDate
-    ) : base(DiscountId.Create())
+    )
     {
         Percentage = percentage;
         Description = description;

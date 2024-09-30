@@ -62,7 +62,7 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, ISoftDel
         string subject,
         string content,
         int? starRating = null
-    ) : base(ProductFeedbackId.Create())
+    )
     {
         Subject = subject;
         Content = content;

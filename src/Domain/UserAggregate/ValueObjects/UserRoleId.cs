@@ -11,7 +11,7 @@ public sealed class UserRoleId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserRoleId"/> class.
@@ -25,15 +25,6 @@ public sealed class UserRoleId : ValueObject
     private UserRoleId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="UserRoleId"/> class with a default identifier.
-    /// </summary>
-    /// <returns>A new instance with the default placeholder value of 0.</returns>
-    public static UserRoleId Create()
-    {
-        return new UserRoleId(0);
     }
 
     /// <summary>

@@ -23,7 +23,7 @@ public sealed class Role : AggregateRoot<RoleId>
     /// Initializes a new instance of the <see cref="Role"/> class.
     /// </summary>
     /// <param name="name">The name of the role.</param>
-    private Role(string name) : base(RoleId.Create())
+    private Role(string name)
     {
         Name = name;
     }

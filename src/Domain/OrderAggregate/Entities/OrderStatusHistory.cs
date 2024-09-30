@@ -23,7 +23,7 @@ public sealed class OrderStatusHistory : Entity<OrderStatusHistoryId>
     /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.
     /// </summary>
     /// <param name="orderStatusId">The order statuses history.</param>
-    private OrderStatusHistory(OrderStatusId orderStatusId) : base(OrderStatusHistoryId.Create())
+    private OrderStatusHistory(OrderStatusId orderStatusId)
     {
         OrderStatusId = orderStatusId;
     }

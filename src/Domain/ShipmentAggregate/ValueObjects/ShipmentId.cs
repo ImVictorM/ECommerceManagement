@@ -10,7 +10,7 @@ public sealed class ShipmentId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentId"/> class.
@@ -24,15 +24,6 @@ public sealed class ShipmentId : ValueObject
     private ShipmentId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="ShipmentId"/> class with the default placeholder of 0.
-    /// </summary>
-    /// <returns>A new instance of the <see cref="ShipmentId"/> class.</returns>
-    public static ShipmentId Create()
-    {
-        return new ShipmentId(0);
     }
 
     /// <summary>

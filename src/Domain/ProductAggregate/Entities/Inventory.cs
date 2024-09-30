@@ -23,7 +23,6 @@ public sealed class Inventory : Entity<InventoryId>
     /// </summary>
     /// <param name="quantityAvailable">The available quantity of the related product.</param>
     private Inventory(int quantityAvailable)
-        : base(InventoryId.Create())
     {
         QuantityAvailable = quantityAvailable;
     }

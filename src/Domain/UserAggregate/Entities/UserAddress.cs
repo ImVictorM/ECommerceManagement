@@ -23,7 +23,7 @@ public sealed class UserAddress : Entity<UserAddressId>
     /// Initiates a new instance of the <see cref="UserAddress"/> class.
     /// </summary>
     /// <param name="addressId">The user address id.</param>
-    private UserAddress(AddressId addressId) : base(UserAddressId.Create())
+    private UserAddress(AddressId addressId)
     {
         AddressId = addressId;
     }

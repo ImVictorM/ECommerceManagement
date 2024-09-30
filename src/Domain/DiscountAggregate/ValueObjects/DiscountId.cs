@@ -10,7 +10,7 @@ public sealed class DiscountId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DiscountId"/> class.
@@ -24,15 +24,6 @@ public sealed class DiscountId : ValueObject
     private DiscountId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="DiscountId"/> class.
-    /// </summary>
-    /// <returns>A new instance of the <see cref="DiscountId"/> class.</returns>
-    public static DiscountId Create()
-    {
-        return new DiscountId(0);
     }
 
     /// <summary>

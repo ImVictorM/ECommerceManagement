@@ -71,7 +71,7 @@ public sealed class Order : AggregateRoot<OrderId>
         AddressId addressId,
         OrderStatusId orderStatusId,
         float total
-    ) : base(OrderId.Create())
+    )
     {
         UserId = userId;
         AddressId = addressId;

@@ -37,7 +37,7 @@ public sealed class OrderProduct : Entity<OrderProductId>
         ProductId productId,
         float priceOnOrder,
         int quantity
-    ) : base(OrderProductId.Create())
+    )
     {
         ProductId = productId;
         PriceOnOrder = priceOnOrder;

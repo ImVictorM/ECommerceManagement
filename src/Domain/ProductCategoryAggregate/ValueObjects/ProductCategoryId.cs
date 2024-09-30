@@ -10,7 +10,7 @@ public sealed class ProductCategoryId : ValueObject
     /// <summary>
     /// Gets the value of the identifier.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProductCategoryId"/> class.
@@ -24,15 +24,6 @@ public sealed class ProductCategoryId : ValueObject
     private ProductCategoryId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="ProductCategoryId"/> class with a default identifier.
-    /// </summary>
-    /// <returns>A new instance with the default placeholder value of 0.</returns>
-    public static ProductCategoryId Create()
-    {
-        return new ProductCategoryId(0);
     }
 
     /// <summary>

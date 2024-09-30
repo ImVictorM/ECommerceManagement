@@ -10,7 +10,7 @@ public sealed class AddressId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="AddressId"/> class.
@@ -24,15 +24,6 @@ public sealed class AddressId : ValueObject
     private AddressId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="AddressId"/> class.
-    /// </summary>
-    /// <returns>A new instance of the <see cref="AddressId"/> class.</returns>
-    public static AddressId Create()
-    {
-        return new AddressId(0);
     }
 
     /// <summary>

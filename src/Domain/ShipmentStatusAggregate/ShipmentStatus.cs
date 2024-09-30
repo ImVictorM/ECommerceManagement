@@ -22,7 +22,7 @@ public sealed class ShipmentStatus : AggregateRoot<ShipmentStatusId>
     /// Initiates a new instance of the <see cref="ShipmentStatus"/> class.
     /// </summary>
     /// <param name="status">The shipment status.</param>
-    private ShipmentStatus(string status) : base(ShipmentStatusId.Create())
+    private ShipmentStatus(string status)
     {
         Status = status;
     }

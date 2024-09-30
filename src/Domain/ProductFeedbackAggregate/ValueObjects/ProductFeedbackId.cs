@@ -10,7 +10,7 @@ public sealed class ProductFeedbackId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; }
+    public long Value { get; private set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductFeedbackId"/> class.
@@ -24,15 +24,6 @@ public sealed class ProductFeedbackId : ValueObject
     private ProductFeedbackId(long value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="ProductFeedbackId"/> class with id placeholder of 0.
-    /// </summary>
-    /// <returns>A new instance of the <see cref="ProductFeedbackId"/> class.</returns>
-    public static ProductFeedbackId Create()
-    {
-        return new ProductFeedbackId(0);
     }
 
     /// <summary>
