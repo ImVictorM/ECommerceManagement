@@ -7,6 +7,7 @@ using Domain.RoleAggregate.Enums;
 using Application.Common.Interfaces.Persistence;
 using Domain.RoleAggregate;
 using Microsoft.Extensions.Logging;
+using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -60,16 +61,20 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
     {
         LogHandlingRegisterCommand(command.Email);
 
-        if (await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == command.Email) is not null)
+        var inputEmail = Email.Create(command.Email);
+
+        if (await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail) is not null)
         {
             LogUserAlreadyExists(command.Email);
             throw new BadRequestException("User already exists.");
         }
 
+        var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);
+
         var user = User.Create(
             command.Name,
-            command.Email,
-            _passwordHasher.Hash(command.Password)
+            inputEmail,
+            PasswordHash.Create(passwordHash, passwordSalt)
         );
 
         var customerRoleName = Role.ToName(RoleTypes.CUSTOMER);
@@ -90,7 +95,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogUserSavedSuccessfully(user.Email, user.Id.Value);
+        LogUserSavedSuccessfully(user.Email.Value, user.Id.Value);
 
         var token = await _jwtTokenGenerator.GenerateToken(user);
 

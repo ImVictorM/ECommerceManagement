@@ -27,7 +27,7 @@ public sealed class PasswordHasher : IPasswordHasher
     private static readonly HashAlgorithmName _hashAlgorithmName = HashAlgorithmName.SHA256;
 
     /// <inheritdoc/>
-    public string Hash(string password)
+    public (string Hash, string Salt) Hash(string password)
     {
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
         byte[] hash = Rfc2898DeriveBytes.Pbkdf2(
@@ -38,19 +38,18 @@ public sealed class PasswordHasher : IPasswordHasher
             HashSize
         );
 
-        return $"{Convert.ToHexString(hash)}-{Convert.ToHexString(salt)}";
+        return (Convert.ToHexString(hash), Convert.ToHexString(salt));
     }
 
     /// <inheritdoc/>
-    public bool Verify(string inputPassword, string passwordHashToCompare)
+    public bool Verify(string inputPassword, string hash, string salt)
     {
-        string[] toCompare = passwordHashToCompare.Split("-");
-        byte[] hashToCompare = Convert.FromHexString(toCompare[0]);
-        byte[] salt = Convert.FromHexString(toCompare[1]);
+        byte[] hashToCompare = Convert.FromHexString(hash);
+        byte[] saltBytes = Convert.FromHexString(salt);
 
         byte[] inputPasswordHash = Rfc2898DeriveBytes.Pbkdf2(
             inputPassword,
-            salt,
+            saltBytes,
             Iterations,
             _hashAlgorithmName,
             HashSize

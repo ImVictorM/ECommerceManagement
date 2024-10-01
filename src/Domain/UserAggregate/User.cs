@@ -27,7 +27,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <summary>
     /// Gets the user email.
     /// </summary>
-    public string Email { get; private set; } = string.Empty;
+    public Email Email { get; private set; } = null!;
     /// <summary>
     /// Gets the user phone.
     /// </summary>
@@ -35,7 +35,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <summary>
     /// Gets the user password hash.
     /// </summary>
-    public string PasswordHash { get; private set; } = string.Empty;
+    public PasswordHash PasswordHash { get; private set; } = null!;
     /// <summary>
     /// Gets a boolean value indicating if the user is active in the system.
     /// </summary>
@@ -63,9 +63,9 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="passwordHash">The user password hashed.</param>
     private User(
         string name,
-        string email,
-        string? phone,
-        string passwordHash
+        Email email,
+        PasswordHash passwordHash,
+        string? phone
     )
     {
         Name = name;
@@ -84,12 +84,12 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="passwordHash">The user password hashed.</param>
     public static User Create(
         string name,
-        string email,
-        string passwordHash,
+        Email email,
+        PasswordHash passwordHash,
         string? phone = null
     )
     {
-        var user = new User(name, email, phone, passwordHash);
+        var user = new User(name, email, passwordHash, phone);
 
         return user;
     }

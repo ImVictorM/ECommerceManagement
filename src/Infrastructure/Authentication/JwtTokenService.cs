@@ -47,7 +47,7 @@ public class JwtTokenService : IJwtTokenService
         List<Claim> claims = [
              new Claim(JwtRegisteredClaimNames.Sub, user.Id.Value.ToString(CultureInfo.InvariantCulture)),
              new Claim(JwtRegisteredClaimNames.Name, user.Name),
-             new Claim(JwtRegisteredClaimNames.Email, user.Email),
+             new Claim(JwtRegisteredClaimNames.Email, user.Email.Value),
              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         ];
 

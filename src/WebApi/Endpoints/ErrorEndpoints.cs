@@ -1,5 +1,6 @@
 using Application.Common.Errors;
 using Carter;
+using Domain.Common.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 
@@ -35,7 +36,7 @@ public sealed class ErrorEndpoints : ICarterModule
     {
         Exception? exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
-        var genericException = Results.Problem(
+        var genericProblem = Results.Problem(
             statusCode: StatusCodes.Status500InternalServerError,
             title: "An unexpected error ocurred."
         );
@@ -43,18 +44,22 @@ public sealed class ErrorEndpoints : ICarterModule
         if (exception is null)
         {
             // Handle unexpected errors
-            return genericException;
+            return genericProblem;
         }
 
         // Handle custom errors
         return exception switch
         {
+            DomainValidationException domainValidationException => Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: domainValidationException.Message
+            ),
             HttpException httpException => Results.Problem(
                 statusCode: (int)httpException.StatusCode,
                 title: httpException.Message
             ),
             ValidationException validationException => HandleValidationException(validationException),
-            _ => genericException,
+            _ => genericProblem,
         };
     }
 

@@ -1,3 +1,4 @@
+using Domain.UserAggregate.ValueObjects;
 using FluentValidation;
 
 namespace Application.Authentication.Commands.Register;
@@ -12,8 +13,17 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     /// </summary>
     public RegisterCommandValidator()
     {
-        RuleFor(x => x.Name).NotEmpty();
-        RuleFor(x => x.Password).NotEmpty();
-        RuleFor(x => x.Email).NotEmpty();
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MinimumLength(3);
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
+            .Matches(@"[0-9]").WithMessage("Password must contain at least one digit.");
+
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .Must(Email.IsValidEmail);
     }
 }

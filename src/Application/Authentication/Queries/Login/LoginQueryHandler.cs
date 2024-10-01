@@ -3,6 +3,7 @@ using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
 using Domain.UserAggregate;
+using Domain.UserAggregate.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -55,11 +56,12 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
     /// <returns>The user with authentication token.</returns>
     public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
-        LogHandlingLoginQuery(query.Email);
-
         var defaultUserNotFoundErrorMessage = "User email or password is incorrect.";
+        var inputEmail = Email.Create(query.Email);
 
-        User? user = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == query.Email);
+        LogHandlingLoginQuery(inputEmail.Value);
+
+        User? user = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
 
         if (user == null)
         {
@@ -67,7 +69,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
             throw new BadRequestException(defaultUserNotFoundErrorMessage);
         }
 
-        if (!_passwordHasher.Verify(query.Password, user.PasswordHash))
+        if (!_passwordHasher.Verify(query.Password, user.PasswordHash.GetPasswordHash(), user.PasswordHash.GetPasswordSalt()))
         {
             LogInvalidPassword(query.Email);
             throw new BadRequestException(defaultUserNotFoundErrorMessage);

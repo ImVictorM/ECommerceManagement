@@ -117,6 +117,12 @@ dotnet_diagnostic.SYSLIB1054.severity = warning
 # CA1018: Mark attributes with AttributeUsageAttribute
 dotnet_diagnostic.CA1018.severity = warning
 
+# CA1024
+dotnet_diagnostic.CA1024.severity = suggestion
+
+# CA1031
+dotnet_diagnostic.CA1031.severity = suggestion
+
 # CA1040
 dotnet_diagnostic.CA1040.severity = none
 

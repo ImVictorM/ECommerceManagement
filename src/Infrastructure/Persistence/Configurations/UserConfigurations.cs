@@ -47,6 +47,10 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
 
         builder
             .Property(user => user.Email)
+            .HasConversion(
+                email => email.Value,
+                value => Email.Create(value)
+            )
             .HasMaxLength(120)
             .IsRequired();
 
@@ -56,6 +60,10 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
 
         builder
             .Property(user => user.PasswordHash)
+            .HasConversion(
+                hash => hash.Value,
+                value => PasswordHash.Create(value)
+            )
             .HasMaxLength(200)
             .IsRequired();
 
