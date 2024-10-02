@@ -14,4 +14,10 @@ public interface IHasDomainEvent
     /// Clear the list of domain events.
     /// </summary>
     void ClearDomainEvents();
+
+    /// <summary>
+    /// Adds a new domain event to the domain event list.
+    /// </summary>
+    /// <param name="domainEvent">The domain event to be added.</param>
+    void AddDomainEvent(IDomainEvent domainEvent);
 }

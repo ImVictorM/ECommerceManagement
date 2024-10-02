@@ -89,11 +89,8 @@ public abstract class Entity<TId> :
         return Id.GetHashCode();
     }
 
-    /// <summary>
-    /// Adds a new domain event to the domain event list.
-    /// </summary>
-    /// <param name="domainEvent">The domain event to be added.</param>
-    protected void AddDomainEvent(IDomainEvent domainEvent)
+    /// <inheritdoc/>
+    public void AddDomainEvent(IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
     }
