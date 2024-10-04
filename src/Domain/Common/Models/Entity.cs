@@ -52,7 +52,7 @@ public abstract class Entity<TId> :
     /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
-        return obj is Entity<TId> entity && Id.Equals(entity.Id);
+        return obj is Entity<TId> entity && GetType() == entity.GetType() && Id.Equals(entity.Id);
     }
 
     /// <inheritdoc/>
