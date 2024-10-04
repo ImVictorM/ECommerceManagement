@@ -43,8 +43,8 @@ public class EntityTests
     [MemberData(nameof(Ids))]
     public void Entity_WhenComparedWithSameId_ShouldReturnTrue(object id)
     {
-        var entity1 = EntityUtils.CreateUserEntity(id);
-        var entity2 = EntityUtils.CreateUserEntity(id);
+        var entity1 = EntityUtils.UserEntity.Create(id);
+        var entity2 = EntityUtils.UserEntity.Create(id);
 
         entity1.Equals(entity2).Should().BeTrue();
         (entity1 == entity2).Should().BeTrue();
@@ -59,8 +59,8 @@ public class EntityTests
     [MemberData(nameof(IdsDifferentPairs))]
     public void Entity_WhenComparedWithDifferentId_ShouldReturnFalse(object id1, object id2)
     {
-        var entity1 = EntityUtils.CreateUserEntity(id1);
-        var entity2 = EntityUtils.CreateUserEntity(id2);
+        var entity1 = EntityUtils.UserEntity.Create(id1);
+        var entity2 = EntityUtils.UserEntity.Create(id2);
 
         entity1.Equals(entity2).Should().BeFalse();
         (entity1 == entity2).Should().BeFalse();
@@ -74,8 +74,8 @@ public class EntityTests
     [MemberData(nameof(Ids))]
     public void Entity_WhenComparedWithDifferentTypeAndSameId_ShouldReturnFalse(object id)
     {
-        var userEntity = EntityUtils.CreateUserEntity(id);
-        var productEntity = EntityUtils.CreateProductEntity(userEntity);
+        var userEntity = EntityUtils.UserEntity.Create(id);
+        var productEntity = EntityUtils.ProductEntity.Create(id);
 
         userEntity.Equals(productEntity).Should().BeFalse();
     }
@@ -88,8 +88,8 @@ public class EntityTests
     [MemberData(nameof(Ids))]
     public void Entity_WhenComparedHashCodeWithSameId_ShouldReturnTrue(object id)
     {
-        var entity1 = EntityUtils.CreateUserEntity(id);
-        var entity2 = EntityUtils.CreateUserEntity(id);
+        var entity1 = EntityUtils.UserEntity.Create(id);
+        var entity2 = EntityUtils.UserEntity.Create(id);
 
         entity1.GetHashCode().Should().Be(entity2.GetHashCode());
     }
@@ -103,8 +103,8 @@ public class EntityTests
     [MemberData(nameof(IdsDifferentPairs))]
     public void Entity_WhenComparedHashCodeWithDifferentId_ShouldReturnFalse(object id1, object id2)
     {
-        var entity1 = EntityUtils.CreateUserEntity(id1);
-        var entity2 = EntityUtils.CreateUserEntity(id2);
+        var entity1 = EntityUtils.UserEntity.Create(id1);
+        var entity2 = EntityUtils.UserEntity.Create(id2);
 
         entity1.GetHashCode().Should().NotBe(entity2.GetHashCode());
     }
@@ -115,10 +115,10 @@ public class EntityTests
     [Fact]
     public void Entity_AddingDomainEvent_IncreasesCount()
     {
-        var userEntity = EntityUtils.CreateUserEntity(1);
+        var userEntity = EntityUtils.UserEntity.Create(1);
 
-        userEntity.AddDomainEvent(EntityUtils.CreateDummyDomainEvent());
-        userEntity.AddDomainEvent(EntityUtils.CreateDummyDomainEvent());
+        userEntity.AddDomainEvent(EntityUtils.DummyDomainEvent.Create());
+        userEntity.AddDomainEvent(EntityUtils.DummyDomainEvent.Create());
 
         userEntity.DomainEvents.Count.Should().Be(2);
     }
@@ -129,10 +129,11 @@ public class EntityTests
     [Fact]
     public void Entity_ClearingDomainEvents_ShouldResetCount()
     {
-        var userEntity = EntityUtils.CreateUserEntity(1);
+        var initialDomainEventsCount = 10;
 
-        userEntity.AddDomainEvent(EntityUtils.CreateDummyDomainEvent());
-        userEntity.AddDomainEvent(EntityUtils.CreateDummyDomainEvent());
+        var userEntity = EntityUtils.UserEntity.Create(1, initialDomainEventsCount);
+
+        userEntity.DomainEvents.Count.Should().Be(initialDomainEventsCount);
 
         userEntity.ClearDomainEvents();
 

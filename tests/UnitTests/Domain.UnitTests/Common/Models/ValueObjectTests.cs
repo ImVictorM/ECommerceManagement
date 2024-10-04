@@ -16,8 +16,8 @@ public class ValueObjectTests
     [InlineData("New York", "NY")]
     public void ValueObject_WhenComparedWithSameProperties_ShouldReturnTrue(string city, string state)
     {
-        var obj1 = ValueObjectUtils.CreateAddressValueObject(city, state);
-        var obj2 = ValueObjectUtils.CreateAddressValueObject(city, state);
+        var obj1 = ValueObjectUtils.AddressValueObject.Create(city, state);
+        var obj2 = ValueObjectUtils.AddressValueObject.Create(city, state);
 
         obj1.Equals(obj2).Should().BeTrue();
         (obj1 == obj2).Should().BeTrue();
@@ -29,8 +29,8 @@ public class ValueObjectTests
     [Fact]
     public void ValueObject_WhenComparedWithDifferentProperties_ShouldReturnFalse()
     {
-        var obj1 = ValueObjectUtils.CreateAddressValueObject("Limeira", "São Paulo");
-        var obj2 = ValueObjectUtils.CreateAddressValueObject("New York", "NY");
+        var obj1 = ValueObjectUtils.AddressValueObject.Create("Limeira", "São Paulo");
+        var obj2 = ValueObjectUtils.AddressValueObject.Create("New York", "NY");
 
         obj1.Equals(obj2).Should().BeFalse();
         (obj1 == obj2).Should().BeFalse();
@@ -46,8 +46,8 @@ public class ValueObjectTests
     [InlineData("New York", "NY")]
     public void ValueObject_WhenComparedHashCodeOfEqualValueObjects_ShouldReturnTrue(string city, string state)
     {
-        var obj1 = ValueObjectUtils.CreateAddressValueObject(city, state);
-        var obj2 = ValueObjectUtils.CreateAddressValueObject(city, state);
+        var obj1 = ValueObjectUtils.AddressValueObject.Create(city, state);
+        var obj2 = ValueObjectUtils.AddressValueObject.Create(city, state);
 
         obj1.GetHashCode().Should().Be(obj2.GetHashCode());
     }
@@ -58,8 +58,8 @@ public class ValueObjectTests
     [Fact]
     public void ValueObject_WhenComparedHashCodeOfDifferentValueObjects_ShouldReturnFalse()
     {
-        var obj1 = ValueObjectUtils.CreateAddressValueObject("Limeira", "São Paulo");
-        var obj2 = ValueObjectUtils.CreateAddressValueObject("New York", "NY");
+        var obj1 = ValueObjectUtils.AddressValueObject.Create("Limeira", "São Paulo");
+        var obj2 = ValueObjectUtils.AddressValueObject.Create("New York", "NY");
 
         obj1.GetHashCode().Should().NotBe(obj2.GetHashCode());
     }
@@ -72,8 +72,8 @@ public class ValueObjectTests
     {
         var value = "email@email.com";
 
-        var email = ValueObjectUtils.CreateEmailValueObject(value);
-        var password = ValueObjectUtils.CreatePasswordValueObject(value);
+        var email = ValueObjectUtils.EmailValueObject.Create(value);
+        var password = ValueObjectUtils.PasswordValueObject.Create(value);
 
         email.Equals(password).Should().BeFalse();
         (email == password).Should().BeFalse();

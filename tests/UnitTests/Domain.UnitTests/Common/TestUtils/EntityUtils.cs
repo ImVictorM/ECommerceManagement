@@ -8,52 +8,89 @@ namespace Domain.UnitTests.Common.TestUtils;
 /// </summary>
 public static class EntityUtils
 {
-    private class UserEntity<TEntityId> : Entity<TEntityId> where TEntityId : notnull
+    /// <summary>
+    /// Represents a user entity that receives a generic id.
+    /// </summary>
+    public class UserEntity<TId> : Entity<TId> where TId : notnull
     {
-        public UserEntity(TEntityId id) : base(id)
+        /// <summary>
+        /// Initiates a new instance of the <see cref="UserEntity{TId}"/> class.
+        /// </summary>
+        /// <param name="id">The entity unique identifier.</param>
+        public UserEntity(TId id) : base(id)
         {
 
         }
     }
 
-    private class ProductEntity<TEntityId> : Entity<TEntityId> where TEntityId : notnull
+    /// <summary>
+    /// Represents a product entity that receives a generic id.
+    /// </summary>
+    public class ProductEntity<TId> : Entity<TId> where TId : notnull
     {
-        public ProductEntity(TEntityId id) : base(id)
+        /// <summary>
+        /// Initiates a new instance of the <see cref="ProductEntity{TId}"/> class.
+        /// </summary>
+        /// <param name="id">The entity unique identifier.</param>
+        public ProductEntity(TId id) : base(id)
         {
 
         }
     }
 
-    private class DummyDomainEvent : IDomainEvent { }
-
     /// <summary>
-    /// Creates a new user of type <see cref="UserEntity{TEntityId}"/> with the specified identifier.
+    /// Create instances of the generic UserEntity.
     /// </summary>
-    /// <typeparam name="TId">The identifier type.</typeparam>
-    /// <param name="id">The identifier value.</param>
-    /// <returns>A new user of type <see cref="UserEntity{TEntityId}"/> with the specified identifier.</returns>
-    public static Entity<TId> CreateUserEntity<TId>(TId id) where TId : notnull
+    public static class UserEntity
     {
-        return new UserEntity<TId>(id);
+        /// <summary>
+        /// Creates a new instance of the <see cref="UserEntity{TId}"/> class.
+        /// </summary>
+        /// <param name="id">The entity unique identifier.</param>
+        /// <param name="dummyDomainEventsCount">Quantity of dummy domain events to be added. Default is 0.</param>
+        /// <returns>A new instance of the <see cref="UserEntity{TId}"/> class.</returns>
+        public static UserEntity<T> Create<T>(T id, int dummyDomainEventsCount = 0) where T : notnull
+        {
+            var user = new UserEntity<T>(id);
+
+            for (var current = 0; current < dummyDomainEventsCount; current++)
+            {
+                user.AddDomainEvent(DummyDomainEvent.Create());
+            }
+
+            return user;
+        }
     }
 
     /// <summary>
-    /// Creates a new product of type <see cref="ProductEntity{TEntityId}"/> with the specified identifier.
+    /// Create instances of the generic ProductEntity.
     /// </summary>
-    /// <typeparam name="TId">The identifier type.</typeparam>
-    /// <param name="id">The identifier value.</param>
-    /// <returns>A new product of type <see cref="ProductEntity{TEntityId}"/> with the specified identifier.</returns>
-    public static Entity<TId> CreateProductEntity<TId>(TId id) where TId: notnull
+    public static class ProductEntity
     {
-        return new ProductEntity<TId>(id);
+        /// <summary>
+        /// Creates a new instance of the <see cref="ProductEntity{TId}"/> class.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity ID.</typeparam>
+        /// <param name="id">The entity unique identifier.</param>
+        /// <returns>A new instance of the <see cref="ProductEntity{TId}"/> class.</returns>
+        public static ProductEntity<T> Create<T>(T id) where T : notnull
+        {
+            return new ProductEntity<T>(id);
+        }
     }
 
     /// <summary>
-    /// Creates a dummy domain event with the type <see cref="DummyDomainEvent"/>.
+    /// Represents a dummy domain event.
     /// </summary>
-    /// <returns>A dummy domain event with the type <see cref="DummyDomainEvent"/>.</returns>
-    public static IDomainEvent CreateDummyDomainEvent()
+    public class DummyDomainEvent : IDomainEvent
     {
-        return new DummyDomainEvent();
+        /// <summary>
+        /// Creates a dummy domain event with the type <see cref="DummyDomainEvent"/>.
+        /// </summary>
+        /// <returns>A dummy domain event with the type <see cref="DummyDomainEvent"/>.</returns>
+        public static DummyDomainEvent Create()
+        {
+            return new DummyDomainEvent();
+        }
     }
 }
