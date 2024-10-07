@@ -1,5 +1,6 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
+using Domain.Common.ValueObjects;
 using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
@@ -81,15 +82,22 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="phone">The user phone (optional).</param>
-    /// <param name="passwordHash">The user password hashed.</param>
+    /// <param name="passwordHash">The user password hash.</param>
+    /// <param name="passwordSalt">The user password salt.</param>
     public static User Create(
         string name,
         Email email,
-        PasswordHash passwordHash,
+        string passwordHash,
+        string passwordSalt,
         string? phone = null
     )
     {
-        var user = new User(name, email, passwordHash, phone);
+        var user = new User(
+            name,
+            email,
+            PasswordHash.Create(passwordHash, passwordSalt),
+            phone
+        );
 
         return user;
     }

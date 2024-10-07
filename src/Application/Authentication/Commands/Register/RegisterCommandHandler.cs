@@ -8,6 +8,7 @@ using Application.Common.Interfaces.Persistence;
 using Domain.RoleAggregate;
 using Microsoft.Extensions.Logging;
 using Domain.UserAggregate.ValueObjects;
+using Domain.Common.ValueObjects;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -74,7 +75,8 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
         var user = User.Create(
             command.Name,
             inputEmail,
-            PasswordHash.Create(passwordHash, passwordSalt)
+            passwordHash,
+            passwordSalt
         );
 
         var customerRoleName = Role.ToName(RoleTypes.CUSTOMER);

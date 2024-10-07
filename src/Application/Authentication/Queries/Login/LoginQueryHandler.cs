@@ -2,8 +2,8 @@ using Application.Authentication.Common;
 using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
+using Domain.Common.ValueObjects;
 using Domain.UserAggregate;
-using Domain.UserAggregate.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

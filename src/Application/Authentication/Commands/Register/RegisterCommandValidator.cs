@@ -1,4 +1,4 @@
-using Domain.UserAggregate.ValueObjects;
+using Domain.Common.ValueObjects;
 using FluentValidation;
 
 namespace Application.Authentication.Commands.Register;

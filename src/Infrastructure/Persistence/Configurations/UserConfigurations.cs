@@ -1,5 +1,6 @@
 using Domain.AddressAggregate;
 using Domain.AddressAggregate.ValueObjects;
+using Domain.Common.ValueObjects;
 using Domain.RoleAggregate;
 using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate;

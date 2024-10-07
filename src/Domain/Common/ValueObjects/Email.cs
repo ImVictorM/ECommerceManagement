@@ -2,7 +2,7 @@ using System.Net.Mail;
 using Domain.Common.Errors;
 using Domain.Common.Models;
 
-namespace Domain.UserAggregate.ValueObjects;
+namespace Domain.Common.ValueObjects;
 
 /// <summary>
 /// Represents an email.
