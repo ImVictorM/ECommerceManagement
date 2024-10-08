@@ -12,5 +12,5 @@ public interface IJwtTokenService
     /// </summary>
     /// <param name="user">The user utilized for generating the token.</param>
     /// <returns>An authentication token.</returns>
-    Task<string> GenerateToken(User user);
+    Task<string> GenerateTokenAsync(User user);
 }

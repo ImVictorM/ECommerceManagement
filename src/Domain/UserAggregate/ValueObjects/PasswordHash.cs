@@ -26,7 +26,7 @@ public sealed class PasswordHash : ValueObject
         private set
         {
             var parts = value.Split("-");
-            if (parts.Length != 2) throw new DomainValidationException("Invalid hash and salt format.");
+            if (parts.Length != 2) throw new DomainValidationException("Invalid hash and salt format");
 
             _hash = parts[0];
             _salt = parts[1];
@@ -53,9 +53,17 @@ public sealed class PasswordHash : ValueObject
     /// <exception cref="DomainValidationException">An exception thrown when the password hash or salt has not a valid format.</exception>
     public static PasswordHash Create(string hash, string salt)
     {
-        if (IsHex(hash) && IsHex(salt)) return new PasswordHash(hash, salt);
+        if (
+            !string.IsNullOrEmpty(hash) &&
+            !string.IsNullOrEmpty(salt) &&
+            IsHex(hash) &&
+            IsHex(salt)
+        )
+        {
+            return new PasswordHash(hash, salt);
+        }
 
-        throw new DomainValidationException("The hash or salt is not in a valid hexadecimal format.");
+        throw new DomainValidationException("The hash or salt is not in a valid hexadecimal format");
     }
 
     /// <summary>

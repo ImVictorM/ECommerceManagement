@@ -55,13 +55,12 @@ public partial class RegisterCommandHandler
     /// Log an information saying that the user was successfully persisted in the database.
     /// </summary>
     /// <param name="email">The user email.</param>
-    /// <param name="userId">The user generated identifier.</param>
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Information,
-        Message = "User with email {Email} was saved successfully. Generated identifier: {UserId}. Initiating token generation"
+        Message = "User with email {Email} was saved successfully. Initiating token generation"
     )]
-    public partial void LogUserSavedSuccessfully(string email, long userId);
+    public partial void LogUserSavedSuccessfully(string email);
 
     /// <summary>
     /// Log an information saying that a token was generated successfully for the recent created user.

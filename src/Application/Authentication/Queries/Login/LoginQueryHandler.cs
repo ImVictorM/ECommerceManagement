@@ -77,7 +77,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
 
         LogSuccessfullyAuthenticatedUser(query.Email);
 
-        var token = await _jwtTokenGenerator.GenerateToken(user);
+        var token = await _jwtTokenGenerator.GenerateTokenAsync(user);
         LogTokenGenerated(user.Id.Value);
 
         return new AuthenticationResult(user, token);

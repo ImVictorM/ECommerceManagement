@@ -37,7 +37,7 @@ public class JwtTokenService : IJwtTokenService
     }
 
     /// <inheritdoc/>
-    public async Task<string> GenerateToken(User user)
+    public async Task<string> GenerateTokenAsync(User user)
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret)),

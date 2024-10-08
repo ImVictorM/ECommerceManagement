@@ -7,7 +7,6 @@ using Domain.RoleAggregate.Enums;
 using Application.Common.Interfaces.Persistence;
 using Domain.RoleAggregate;
 using Microsoft.Extensions.Logging;
-using Domain.UserAggregate.ValueObjects;
 using Domain.Common.ValueObjects;
 
 namespace Application.Authentication.Commands.Register;
@@ -70,17 +69,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
             throw new BadRequestException("User already exists.");
         }
 
-        var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);
-
-        var user = User.Create(
-            command.Name,
-            inputEmail,
-            passwordHash,
-            passwordSalt
-        );
-
         var customerRoleName = Role.ToName(RoleTypes.CUSTOMER);
-
         var customerRole = await _unitOfWork.RoleRepository.FindOneOrDefaultAsync(role => role.Name == customerRoleName);
 
         if (customerRole == null)
@@ -89,7 +78,15 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
             throw new HttpException($"Couldn't find the role with name {customerRoleName}");
         }
 
-        user.AddUserRole(customerRole.Id);
+        var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);
+
+        var user = User.Create(
+            command.Name,
+            inputEmail,
+            passwordHash,
+            passwordSalt,
+            customerRole.Id
+        );
 
         LogUserCreatedWithCustomerRole();
 
@@ -97,9 +94,9 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogUserSavedSuccessfully(user.Email.Value, user.Id.Value);
+        LogUserSavedSuccessfully(user.Email.Value);
 
-        var token = await _jwtTokenGenerator.GenerateToken(user);
+        var token = await _jwtTokenGenerator.GenerateTokenAsync(user);
 
         LogTokenGeneratedSuccessfully();
 
