@@ -1,4 +1,4 @@
-using Domain.UnitTests.Common.TestUtils;
+using Domain.UnitTests.Common.Models.TestUtils;
 using FluentAssertions;
 
 namespace Domain.UnitTests.Common.Models;

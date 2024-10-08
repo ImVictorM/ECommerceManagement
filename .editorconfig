@@ -123,6 +123,9 @@ dotnet_diagnostic.CA1024.severity = suggestion
 # CA1031
 dotnet_diagnostic.CA1031.severity = suggestion
 
+# CA1034
+dotnet_diagnostic.CA1034.severity = suggestion
+
 # CA1040
 dotnet_diagnostic.CA1040.severity = none
 

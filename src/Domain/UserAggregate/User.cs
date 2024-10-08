@@ -19,7 +19,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <summary>
     /// The user addresses.
     /// </summary>
-    private readonly List<UserAddress>? _userAddresses = [];
+    private readonly List<UserAddress> _userAddresses = [];
 
     /// <summary>
     /// Gets the user name.
@@ -48,7 +48,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <summary>
     /// Gets the user related addresses.
     /// </summary>
-    public IReadOnlyList<UserAddress>? UserAddresses => _userAddresses?.AsReadOnly();
+    public IReadOnlyList<UserAddress> UserAddresses => _userAddresses.AsReadOnly();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -60,12 +60,14 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// </summary>
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
-    /// <param name="phone">The user phone (optional).</param>
+    /// <param name="roleId">The user associated role id.</param>
     /// <param name="passwordHash">The user password hashed.</param>
+    /// <param name="phone">The user phone (optional).</param>
     private User(
         string name,
         Email email,
         PasswordHash passwordHash,
+        RoleId roleId,
         string? phone
     )
     {
@@ -74,6 +76,8 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
         Phone = phone;
         PasswordHash = passwordHash;
         IsActive = true;
+
+        AddUserRole(roleId);
     }
 
     /// <summary>
@@ -82,6 +86,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="phone">The user phone (optional).</param>
+    /// <param name="roleId">The user associated role id.</param>
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="passwordSalt">The user password salt.</param>
     public static User Create(
@@ -89,13 +94,17 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
         Email email,
         string passwordHash,
         string passwordSalt,
+        RoleId roleId,
         string? phone = null
     )
     {
+        var ph = PasswordHash.Create(passwordHash, passwordSalt);
+
         var user = new User(
             name,
             email,
-            PasswordHash.Create(passwordHash, passwordSalt),
+            ph,
+            roleId,
             phone
         );
 
@@ -108,6 +117,11 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="roleId">The role id to be related with the user.</param>
     public void AddUserRole(RoleId roleId)
     {
+        if (UserRoles.Any(ur => ur.RoleId == roleId))
+        {
+            return;
+        }
+
         _userRoles.Add(UserRole.Create(roleId));
     }
 

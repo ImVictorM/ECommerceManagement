@@ -1,7 +1,7 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
 
-namespace Domain.UnitTests.Common.TestUtils;
+namespace Domain.UnitTests.Common.Models.TestUtils;
 
 /// <summary>
 /// Entity utilities.

@@ -1,6 +1,6 @@
 using Domain.Common.Models;
 
-namespace Domain.UnitTests.Common.TestUtils;
+namespace Domain.UnitTests.Common.Models.TestUtils;
 
 /// <summary>
 /// AggregateRoot utilities.
@@ -10,7 +10,7 @@ public static class AggregateRootUtils
     /// <summary>
     /// Create instances of the generic AggregateRoot.
     /// </summary>
-    public class UserAggregateRoot <TId> : AggregateRoot<TId> where TId: notnull
+    public class UserAggregateRoot<TId> : AggregateRoot<TId> where TId : notnull
     {
         /// <summary>
         /// Initiates a new instance of the <see cref="UserAggregateRoot{TId}"/> class.
