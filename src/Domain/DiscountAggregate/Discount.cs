@@ -1,3 +1,4 @@
+using Domain.Common.Errors;
 using Domain.Common.Models;
 using Domain.DiscountAggregate.ValueObjects;
 
@@ -49,6 +50,8 @@ public sealed class Discount : Entity<DiscountId>
         Description = description;
         StartingDate = startingDate;
         EndingDate = endingDate;
+
+        Validate();
     }
 
     /// <summary>
@@ -66,6 +69,25 @@ public sealed class Discount : Entity<DiscountId>
         DateTimeOffset endingDate
     )
     {
+        // TODO: add a way to discover if the discount is still valid
         return new Discount(percentage, description, startingDate, endingDate);
+    }
+
+    /// <summary>
+    /// Validate the address fields.
+    /// </summary>
+    /// <exception cref="DomainValidationException">Exception thrown case any field is invalid.</exception>
+    private void Validate()
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        if (StartingDate < now.AddDays(1))
+        {
+            throw new DomainValidationException("The starting date for the discount must be at least one day in the future");
+        }
+        else if (EndingDate < StartingDate.AddHours(1))
+        {
+            throw new DomainValidationException("The ending date and time must be at least one hour after the starting date");
+        }
     }
 }
