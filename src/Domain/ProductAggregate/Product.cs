@@ -1,5 +1,6 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
+using Domain.DiscountAggregate.ValueObjects;
 using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.ProductCategoryAggregate.ValueObjects;
@@ -18,7 +19,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// The product discounts.
     /// </summary>
-    private readonly List<ProductDiscount>? _productDiscounts = [];
+    private readonly List<ProductDiscount> _productDiscounts = [];
     /// <summary>
     /// Gets the name of the product.
     /// </summary>
@@ -30,7 +31,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// Gets the price of the product.
     /// </summary>
-    public float Price { get; private set; }
+    public decimal Price { get; private set; }
     /// <summary>
     /// A boolean value indicating if the product is active.
     /// </summary>
@@ -50,7 +51,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// Gets the product discount that holds a list of discounts.
     /// </summary>
-    public IReadOnlyList<ProductDiscount>? ProductDiscounts => _productDiscounts?.AsReadOnly();
+    public IReadOnlyList<ProductDiscount> ProductDiscounts => _productDiscounts.AsReadOnly();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
@@ -64,41 +65,67 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="inventory">The product inventory.</param>
+    /// <param name="productCategoryId">The category related to this product.</param>
+    /// <param name="productImages">The product images.</param>
     private Product(
         string name,
         string description,
-        float price,
-        Inventory inventory
+        decimal price,
+        Inventory inventory,
+        ProductCategoryId productCategoryId,
+        List<ProductImage> productImages
     )
     {
         Name = name;
         Description = description;
         Price = price;
         Inventory = inventory;
+        ProductCategoryId = productCategoryId;
+
+        _productImages.AddRange(productImages);
+
         IsActive = true;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
+    /// <param name="categoryId">The category related to this product.</param>
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
-    /// <param name="inventory">The product inventory.</param>
+    /// <param name="quantityAvailable">The quantity of this product in inventory.</param>
+    /// <param name="productImageUrls">The product images.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product Create(
+        ProductCategoryId categoryId,
         string name,
         string description,
-        float price,
-        Inventory inventory
+        decimal price,
+        int quantityAvailable,
+        IEnumerable<Uri> productImageUrls
     )
     {
+        var inventory = Inventory.Create(quantityAvailable);
+        var productImages = productImageUrls.Select(ProductImage.Create).ToList();
+
         return new Product(
             name,
             description,
             price,
-            inventory
+            inventory,
+            categoryId,
+            productImages
         );
+    }
+
+    /// <summary>
+    /// Adds a new discount to the product by id.
+    /// </summary>
+    /// <param name="discountId">The discount id.</param>
+    public void AddDiscount(DiscountId discountId)
+    {
+        _productDiscounts.Add(ProductDiscount.Create(discountId));
     }
 
     /// <inheritdoc/>
