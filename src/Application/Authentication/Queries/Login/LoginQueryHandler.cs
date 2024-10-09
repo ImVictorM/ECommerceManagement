@@ -62,14 +62,14 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
         LogHandlingLoginQuery(inputEmail.Value);
 
         User? user = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
-
+        // TODO: do not allow inactive users to login
         if (user == null)
         {
             LogUserNotFound(query.Email);
             throw new BadRequestException(defaultUserNotFoundErrorMessage);
         }
 
-        if (!_passwordHasher.Verify(query.Password, user.PasswordHash.GetPasswordHash(), user.PasswordHash.GetPasswordSalt()))
+        if (!_passwordHasher.Verify(query.Password, user.PasswordHash.GetHashPart(), user.PasswordHash.GetSaltPart()))
         {
             LogInvalidPassword(query.Email);
             throw new BadRequestException(defaultUserNotFoundErrorMessage);

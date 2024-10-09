@@ -11,26 +11,18 @@ public sealed class PasswordHash : ValueObject
     /// <summary>
     /// The password hash.
     /// </summary>
-    private string _hash;
+    private readonly string _hash;
     /// <summary>
     /// The password salt.
     /// </summary>
-    private string _salt;
+    private readonly string _salt;
 
     /// <summary>
     /// Gets the password hash value following the template {hash}-{salt}.
     /// </summary>
     public string Value
     {
-        get => $"{_hash}-${_salt}";
-        private set
-        {
-            var parts = value.Split("-");
-            if (parts.Length != 2) throw new DomainValidationException("Invalid hash and salt format");
-
-            _hash = parts[0];
-            _salt = parts[1];
-        }
+        get => $"{_hash}-{_salt}";
     }
 
     /// <summary>
@@ -84,7 +76,7 @@ public sealed class PasswordHash : ValueObject
     /// Gets the password hash.
     /// </summary>
     /// <returns>The password hash.</returns>
-    public string GetPasswordHash()
+    public string GetHashPart()
     {
         return _hash;
     }
@@ -93,7 +85,7 @@ public sealed class PasswordHash : ValueObject
     /// Gets the password salt.
     /// </summary>
     /// <returns>The password salt.</returns>
-    public string GetPasswordSalt()
+    public string GetSaltPart()
     {
         return _salt;
     }
