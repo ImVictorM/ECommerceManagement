@@ -9,7 +9,7 @@ namespace Domain.Common.Models;
 /// </summary>
 /// <typeparam name="TId">The type of the entity's unique identifier.</typeparam>
 public abstract class Entity<TId> :
-    ITrackable,
+    IAuditable,
     IHasDomainEvent,
     IEquatable<Entity<TId>> where TId : notnull
 {

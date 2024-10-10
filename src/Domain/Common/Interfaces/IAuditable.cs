@@ -3,7 +3,7 @@ namespace Domain.Common.Interfaces;
 /// <summary>
 /// Contract to define properties to track an object.
 /// </summary>
-public interface ITrackable
+public interface IAuditable
 {
     /// <summary>
     /// Gets the date when the object was created.

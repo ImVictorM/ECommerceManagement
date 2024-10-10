@@ -7,7 +7,7 @@ namespace Infrastructure.Persistence.Interceptors;
 
 /// <summary>
 /// Responsible for auditing changes for updating the timestamps on entities
-/// that implement the <see cref="ITrackable"/> interface.
+/// that implement the <see cref="IAuditable"/> interface.
 /// </summary>
 public sealed class AuditInterceptor : SaveChangesInterceptor
 {
@@ -28,7 +28,7 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
     }
 
     /// <summary>
-    /// Updates the timestamps of entities that implement the <see cref="ITrackable"/> interface.
+    /// Updates the timestamps of entities that implement the <see cref="IAuditable"/> interface.
     /// </summary>
     /// <param name="context">The DbContext instance where changes are being tracked.</param>
     private static void UpdateTimestamps(DbContext? context)
@@ -39,7 +39,7 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
         {
             var entityType = entry.Entity.GetType();
 
-            if (!typeof(ITrackable).IsAssignableFrom(entityType)) return;
+            if (!typeof(IAuditable).IsAssignableFrom(entityType)) return;
 
             UpdateEntryTimestampsByState(entry);
         }
