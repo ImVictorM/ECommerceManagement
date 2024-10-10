@@ -12,7 +12,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// Indicate the properties used for equality comparison.
     /// </summary>
     /// <returns>An enumerable of the properties used to define equality.</returns>
-    protected abstract IEnumerable<object> GetEqualityComponents();
+    protected abstract IEnumerable<object?> GetEqualityComponents();
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)

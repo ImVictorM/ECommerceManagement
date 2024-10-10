@@ -1,5 +1,3 @@
-using Domain.AddressAggregate;
-using Domain.AddressAggregate.ValueObjects;
 using Domain.Common.ValueObjects;
 using Domain.RoleAggregate;
 using Domain.RoleAggregate.ValueObjects;
@@ -81,30 +79,12 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureUserAddressTable(EntityTypeBuilder<User> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(User.UserAddresses))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(user => user.UserAddresses, userAddressBuilder =>
         {
-            userAddressBuilder.ToTable("users_addresses");
+            userAddressBuilder.ToTable("user_addresses");
 
             userAddressBuilder
                 .HasKey(userAddress => userAddress.Id);
-
-            userAddressBuilder
-                .WithOwner()
-                .HasForeignKey("id_user");
-
-            userAddressBuilder
-                .Property("id_user")
-                .IsRequired();
-
-            userAddressBuilder
-                .HasOne<Address>()
-                .WithMany()
-                .HasForeignKey(ua => ua.AddressId)
-                .IsRequired();
 
             userAddressBuilder
                 .Property(userAddress => userAddress.Id)
@@ -115,12 +95,35 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
                 .IsRequired();
 
             userAddressBuilder
-                .Property(userAddress => userAddress.AddressId)
-                .HasConversion(
-                    addressId => addressId.Value,
-                    value => AddressId.Create(value)
-                )
+                .WithOwner()
+                .HasForeignKey("id_user");
+
+            userAddressBuilder
+                .Property("id_user")
                 .IsRequired();
+
+            userAddressBuilder.OwnsOne(o => o.Address, addressBuilder =>
+            {
+                addressBuilder
+                    .Property(a => a.PostalCode)
+                    .HasMaxLength(10)
+                    .IsRequired();
+                addressBuilder
+                    .Property(a => a.Street)
+                    .HasMaxLength(120)
+                    .IsRequired();
+                addressBuilder
+                    .Property(a => a.Neighborhood)
+                    .HasMaxLength(120);
+                addressBuilder
+                    .Property(a => a.State)
+                    .HasMaxLength(120)
+                    .IsRequired();
+                addressBuilder
+                    .Property(a => a.City)
+                    .HasMaxLength(120)
+                    .IsRequired();
+            });
         });
     }
 

@@ -1,34 +1,32 @@
-using Domain.AddressAggregate.ValueObjects;
 using Domain.Common.Models;
 
-
-namespace Domain.AddressAggregate;
+namespace Domain.Common.ValueObjects;
 
 /// <summary>
 /// Represents an address.
 /// </summary>
-public sealed class Address : AggregateRoot<AddressId>
+public sealed class Address : ValueObject
 {
     /// <summary>
     /// Gets the address postal code.
     /// </summary>
-    public string PostalCode { get; private set; } = string.Empty;
+    public string PostalCode { get; } = string.Empty;
     /// <summary>
     /// Gets the address street.
     /// </summary>
-    public string Street { get; private set; } = string.Empty;
+    public string Street { get; } = string.Empty;
     /// <summary>
     /// Gets the address neighborhood.
     /// </summary>
-    public string Neighborhood { get; private set; } = string.Empty;
+    public string? Neighborhood { get; }
     /// <summary>
     /// Gets the address state.
     /// </summary>
-    public string State { get; private set; } = string.Empty;
+    public string State { get; } = string.Empty;
     /// <summary>
     /// Gets the address city.
     /// </summary>
-    public string City { get; private set; } = string.Empty;
+    public string City { get; } = string.Empty;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Address"/> class.
@@ -46,9 +44,9 @@ public sealed class Address : AggregateRoot<AddressId>
     private Address(
         string postalCode,
         string street,
-        string neighborhood,
         string state,
-        string city
+        string city,
+        string? neighborhood = null
     )
     {
         PostalCode = postalCode;
@@ -70,18 +68,28 @@ public sealed class Address : AggregateRoot<AddressId>
     public static Address Create(
         string postalCode,
         string street,
-        string neighborhood,
         string state,
-        string city
+        string city,
+        string? neighborhood = null
     )
     {
         return new Address(
             postalCode,
             street,
-            neighborhood,
             state,
-            city
+            city,
+            neighborhood
         );
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return PostalCode;
+        yield return Street;
+        yield return State;
+        yield return City;
+        yield return Neighborhood;
     }
 }
 

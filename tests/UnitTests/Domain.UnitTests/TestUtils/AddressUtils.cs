@@ -1,4 +1,4 @@
-using Domain.AddressAggregate;
+using Domain.Common.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils;

@@ -1,3 +1,4 @@
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,25 +12,6 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "addresses",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    street = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    neighborhood = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    state = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    city = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_addresses", x => x.id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "discounts",
                 columns: table => new
@@ -165,7 +147,7 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    price = table.Column<float>(type: "real", nullable: false),
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     id_product_category = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -190,7 +172,11 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     total = table.Column<float>(type: "real", nullable: false),
                     id_user = table.Column<long>(type: "bigint", nullable: false),
-                    id_address = table.Column<long>(type: "bigint", nullable: false),
+                    postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    street = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    neighborhood = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
+                    state = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    city = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     id_order_status = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -198,12 +184,6 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_orders", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_orders_addresses_id_address",
-                        column: x => x.id_address,
-                        principalTable: "addresses",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_orders_order_statuses_id_order_status",
                         column: x => x.id_order_status,
@@ -219,27 +199,25 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "users_addresses",
+                name: "user_addresses",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_address = table.Column<long>(type: "bigint", nullable: false),
+                    postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    street = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    neighborhood = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
+                    state = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    city = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     id_user = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users_addresses", x => x.id);
+                    table.PrimaryKey("PK_user_addresses", x => x.id);
                     table.ForeignKey(
-                        name: "FK_users_addresses_addresses_id_address",
-                        column: x => x.id_address,
-                        principalTable: "addresses",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_users_addresses_users_id_user",
+                        name: "FK_user_addresses_users_id_user",
                         column: x => x.id_user,
                         principalTable: "users",
                         principalColumn: "id",
@@ -644,11 +622,6 @@ namespace Infrastructure.Migrations
                 column: "id_order_status");
 
             migrationBuilder.CreateIndex(
-                name: "IX_orders_id_address",
-                table: "orders",
-                column: "id_address");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_orders_id_order_status",
                 table: "orders",
                 column: "id_order_status");
@@ -767,20 +740,15 @@ namespace Infrastructure.Migrations
                 column: "id_shipment_status");
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_addresses_id_user",
+                table: "user_addresses",
+                column: "id_user");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_users_email",
                 table: "users",
                 column: "email",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_users_addresses_id_address",
-                table: "users_addresses",
-                column: "id_address");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_users_addresses_id_user",
-                table: "users_addresses",
-                column: "id_user");
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_roles_id_role",
@@ -791,95 +759,6 @@ namespace Infrastructure.Migrations
                 name: "IX_users_roles_id_user",
                 table: "users_roles",
                 column: "id_user");
-
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-            migrationBuilder.InsertData(
-                table: "roles",
-                columns: ["id", "name", "created_at", "updated_at"],
-                values: new object[,]
-                {
-                    {1, "admin", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    {2, "customer", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
-                }
-            );
-
-
-            migrationBuilder.InsertData(
-                table: "payment_statuses",
-                columns: ["status", "created_at", "updated_at"],
-                values: new object[,]
-                {
-                    { "pending", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "completed", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "failed", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "refunded", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
-                }
-            );
-
-            migrationBuilder.InsertData(
-                table: "payment_methods",
-                columns: ["method", "created_at", "updated_at"],
-                values: new object[,]
-                {
-                    { "credit_card", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "pix", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "bank_transfer", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "cash", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
-                }
-            );
-
-            migrationBuilder.InsertData(
-                table: "shipment_statuses",
-                columns: ["status", "created_at", "updated_at"],
-                values: new object[,]
-                {
-                    { "pending", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "shipped", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "in_route", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "delivered", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "canceled", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
-                }
-            );
-
-            migrationBuilder.InsertData(
-                table: "order_statuses",
-                columns: ["status", "created_at", "updated_at"],
-                values: new object[,]
-                {
-                    { "pending", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "paid", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "shipped", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "delivered", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow },
-                    { "canceled", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow }
-                }
-            );
-
-            // password: admin123
-            migrationBuilder.InsertData(
-                table: "users",
-                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
-                values: [
-                    1,
-                    "admin",
-                    "admin@email.com",
-                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
-                    true,
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
-
-            migrationBuilder.InsertData(
-                table: "users_roles",
-                columns: ["id_role", "id_user", "created_at", "updated_at"],
-                values: [
-                    1,
-                    1,
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
-#pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
         }
 
         /// <inheritdoc />
@@ -913,7 +792,7 @@ namespace Infrastructure.Migrations
                 name: "shipment_status_histories");
 
             migrationBuilder.DropTable(
-                name: "users_addresses");
+                name: "user_addresses");
 
             migrationBuilder.DropTable(
                 name: "users_roles");
@@ -950,9 +829,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "orders");
-
-            migrationBuilder.DropTable(
-                name: "addresses");
 
             migrationBuilder.DropTable(
                 name: "order_statuses");

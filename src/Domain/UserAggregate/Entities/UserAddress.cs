@@ -1,5 +1,5 @@
-using Domain.AddressAggregate.ValueObjects;
 using Domain.Common.Models;
+using Domain.Common.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UserAggregate.Entities;
@@ -10,9 +10,9 @@ namespace Domain.UserAggregate.Entities;
 public sealed class UserAddress : Entity<UserAddressId>
 {
     /// <summary>
-    /// Gets the user address id.
+    /// Gets the user address.
     /// </summary>
-    public AddressId AddressId { get; private set; } = null!;
+    public Address Address { get; private set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UserAddress"/> class.
@@ -22,19 +22,19 @@ public sealed class UserAddress : Entity<UserAddressId>
     /// <summary>
     /// Initiates a new instance of the <see cref="UserAddress"/> class.
     /// </summary>
-    /// <param name="addressId">The user address id.</param>
-    private UserAddress(AddressId addressId)
+    /// <param name="address">The user address.</param>
+    private UserAddress(Address address)
     {
-        AddressId = addressId;
+        Address = address;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="UserAddress"/> class.
     /// </summary>
-    /// <param name="addressId">The user address id.</param>
+    /// <param name="address">The user address.</param>
     /// <returns>A new instance of the <see cref="UserAddress"/> class.</returns>
-    public static UserAddress Create(AddressId addressId)
+    public static UserAddress Create(Address address)
     {
-        return new UserAddress(addressId);
+        return new UserAddress(address);
     }
 }

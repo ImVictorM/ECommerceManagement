@@ -59,7 +59,7 @@ public sealed class Email : ValueObject
     }
 
     /// <inheritdoc/>
-    protected override IEnumerable<object> GetEqualityComponents()
+    protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Value;
     }

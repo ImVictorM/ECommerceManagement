@@ -22,58 +22,6 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.AddressAggregate.Address", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("city");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Neighborhood")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("neighborhood");
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("postal_code");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("state");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("street");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("addresses", (string)null);
-                });
-
             modelBuilder.Entity("Domain.DiscountAggregate.Discount", b =>
                 {
                     b.Property<long>("Id")
@@ -160,10 +108,6 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("AddressId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_address");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -185,8 +129,6 @@ namespace Infrastructure.Migrations
                         .HasColumnName("id_user");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
 
                     b.HasIndex("OrderStatusId");
 
@@ -359,8 +301,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(120)")
                         .HasColumnName("name");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real")
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
                         .HasColumnName("price");
 
                     b.Property<long>("ProductCategoryId")
@@ -625,12 +567,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
-                    b.HasOne("Domain.AddressAggregate.Address", null)
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.OrderStatusAggregate.OrderStatus", null)
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
@@ -642,6 +578,51 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("Domain.Common.ValueObjects.Address", "Address", b1 =>
+                        {
+                            b1.Property<long>("OrderId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("bigint")
+                                .HasColumnName("id")
+                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("city");
+
+                            b1.Property<string>("Neighborhood")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("neighborhood");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("postal_code");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("state");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("street");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
 
                     b.OwnsMany("Domain.OrderAggregate.Entities.OrderDiscount", "OrderDiscounts", b1 =>
                         {
@@ -779,6 +760,9 @@ namespace Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("id_order");
                         });
+
+                    b.Navigation("Address")
+                        .IsRequired();
 
                     b.Navigation("OrderDiscounts");
 
@@ -1080,10 +1064,6 @@ namespace Infrastructure.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
 
-                            b1.Property<long>("AddressId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_address");
-
                             b1.Property<DateTimeOffset>("CreatedAt")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
@@ -1098,20 +1078,60 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("Id");
 
-                            b1.HasIndex("AddressId");
-
                             b1.HasIndex("id_user");
 
-                            b1.ToTable("users_addresses", (string)null);
-
-                            b1.HasOne("Domain.AddressAggregate.Address", null)
-                                .WithMany()
-                                .HasForeignKey("AddressId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
+                            b1.ToTable("user_addresses", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("id_user");
+
+                            b1.OwnsOne("Domain.Common.ValueObjects.Address", "Address", b2 =>
+                                {
+                                    b2.Property<long>("UserAddressId")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("id")
+                                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+                                    b2.Property<string>("City")
+                                        .IsRequired()
+                                        .HasMaxLength(120)
+                                        .HasColumnType("character varying(120)")
+                                        .HasColumnName("city");
+
+                                    b2.Property<string>("Neighborhood")
+                                        .HasMaxLength(120)
+                                        .HasColumnType("character varying(120)")
+                                        .HasColumnName("neighborhood");
+
+                                    b2.Property<string>("PostalCode")
+                                        .IsRequired()
+                                        .HasMaxLength(10)
+                                        .HasColumnType("character varying(10)")
+                                        .HasColumnName("postal_code");
+
+                                    b2.Property<string>("State")
+                                        .IsRequired()
+                                        .HasMaxLength(120)
+                                        .HasColumnType("character varying(120)")
+                                        .HasColumnName("state");
+
+                                    b2.Property<string>("Street")
+                                        .IsRequired()
+                                        .HasMaxLength(120)
+                                        .HasColumnType("character varying(120)")
+                                        .HasColumnName("street");
+
+                                    b2.HasKey("UserAddressId");
+
+                                    b2.ToTable("user_addresses");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("UserAddressId");
+                                });
+
+                            b1.Navigation("Address")
+                                .IsRequired();
                         });
 
                     b.OwnsMany("Domain.UserAggregate.Entities.UserRole", "UserRoles", b1 =>

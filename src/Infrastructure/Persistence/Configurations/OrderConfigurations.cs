@@ -1,5 +1,3 @@
-using Domain.AddressAggregate;
-using Domain.AddressAggregate.ValueObjects;
 using Domain.DiscountAggregate;
 using Domain.DiscountAggregate.ValueObjects;
 using Domain.OrderAggregate;
@@ -198,20 +196,6 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .IsRequired();
 
         builder
-            .HasOne<Address>()
-            .WithMany()
-            .HasForeignKey(order => order.AddressId)
-            .IsRequired();
-
-        builder
-            .Property(order => order.AddressId)
-            .HasConversion(
-                id => id.Value,
-                value => AddressId.Create(value)
-            )
-            .IsRequired();
-
-        builder
             .HasOne<OrderStatus>()
             .WithMany()
             .HasForeignKey(order => order.OrderStatusId)
@@ -228,5 +212,28 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
         builder
             .Property(order => order.Total)
             .IsRequired();
+
+        builder.OwnsOne(order => order.Address, addressBuilder =>
+        {
+            addressBuilder
+                .Property(a => a.PostalCode)
+                .HasMaxLength(10)
+                .IsRequired();
+            addressBuilder
+                .Property(a => a.Street)
+                .HasMaxLength(120)
+                .IsRequired();
+            addressBuilder
+                .Property(a => a.Neighborhood)
+                .HasMaxLength(120);
+            addressBuilder
+                .Property(a => a.State)
+                .HasMaxLength(120)
+                .IsRequired();
+            addressBuilder
+                .Property(a => a.City)
+                .HasMaxLength(120)
+                .IsRequired();
+        });
     }
 }

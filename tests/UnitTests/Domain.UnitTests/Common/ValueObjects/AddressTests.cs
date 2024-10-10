@@ -1,9 +1,9 @@
-using Domain.AddressAggregate;
+using Domain.Common.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
 
-namespace Domain.UnitTests.AddressAggregate;
+namespace Domain.UnitTests.Common.ValueObjects;
 
 /// <summary>
 /// Tests for the <see cref="Address"/> aggregate root.
@@ -16,7 +16,7 @@ public class AddressTests
     /// <returns>A list of valid addresses</returns>
     public static IEnumerable<object[]> ValidAddresses()
     {
- 
+
         yield return new object[] {
             "66845",
             TestConstants.Address.Street,
