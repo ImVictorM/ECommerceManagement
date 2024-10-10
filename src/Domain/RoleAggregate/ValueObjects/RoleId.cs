@@ -10,7 +10,7 @@ public sealed class RoleId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; private set; }
+    public long Value { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RoleId"/> class.

@@ -10,7 +10,7 @@ public sealed class UserAddressId : ValueObject
     /// <summary>
     /// Gets the value of the identifier.
     /// </summary>
-    public long Value { get; private set; }
+    public long Value { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserAddressId"/> class.

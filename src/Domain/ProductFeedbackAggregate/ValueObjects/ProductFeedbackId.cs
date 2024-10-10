@@ -10,7 +10,7 @@ public sealed class ProductFeedbackId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; private set; }
+    public long Value { get; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductFeedbackId"/> class.

@@ -10,7 +10,7 @@ public sealed class OrderDiscountId : ValueObject
     /// <summary>
     /// Gets the identifier value.
     /// </summary>
-    public long Value { get; private set; }
+    public long Value { get; }
 
     /// <summary>
     /// Initiates a new instance of <see cref="OrderDiscountId"/> class.
