@@ -1,4 +1,5 @@
 using Domain.UserAggregate;
+using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -29,7 +30,7 @@ public static class UserUtils
             EmailUtils.CreateEmail(email: email),
             passwordHash ?? Constants.TestConstants.User.PasswordHash,
             passwordSalt ?? Constants.TestConstants.User.PasswordSalt,
-            RoleUtils.CreateRoleId(),
+            Role.Customer,
             phone ?? Constants.TestConstants.User.Phone
         );
     }

@@ -1,15 +1,14 @@
 using Domain.Common.ValueObjects;
-using Domain.RoleAggregate;
-using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate;
+using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Configurations;
+namespace Infrastructure.Persistence.Configurations.UserAggregate;
 
 /// <summary>
-/// Map the <see cref="User"/> aggregate to entity framework.
+/// Configure the tables related directly with the <see cref="User"/> aggregate.
 /// </summary>
 public sealed class UserConfigurations : IEntityTypeConfiguration<User>
 {
@@ -17,12 +16,12 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         ConfigureUserTable(builder);
-        ConfigureUserAddressTable(builder);
-        ConfigureUserRolesTable(builder);
+        ConfigureOwnedUserAddressTable(builder);
+        ConfigureOwnedUserRolesTable(builder);
     }
 
     /// <summary>
-    /// Configure the user table.
+    /// Configure the users table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureUserTable(EntityTypeBuilder<User> builder)
@@ -74,11 +73,15 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     }
 
     /// <summary>
-    /// Configure the user address table.
+    /// Configure the user_addresses table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureUserAddressTable(EntityTypeBuilder<User> builder)
+    private static void ConfigureOwnedUserAddressTable(EntityTypeBuilder<User> builder)
     {
+        builder.Metadata
+            .FindNavigation(nameof(User.UserAddresses))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         builder.OwnsMany(user => user.UserAddresses, userAddressBuilder =>
         {
             userAddressBuilder.ToTable("user_addresses");
@@ -128,10 +131,10 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     }
 
     /// <summary>
-    /// Configure the user role table.
+    /// Configure the users_roles table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureUserRolesTable(EntityTypeBuilder<User> builder)
+    private static void ConfigureOwnedUserRolesTable(EntityTypeBuilder<User> builder)
     {
         builder.Metadata
             .FindNavigation(nameof(User.UserRoles))!
@@ -143,18 +146,6 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
 
             userRolesBuilder.HasKey(userRole => userRole.Id);
 
-            userRolesBuilder.WithOwner().HasForeignKey("id_user");
-
-            userRolesBuilder
-                .Property("id_user")
-                .IsRequired();
-
-            userRolesBuilder
-                .HasOne<Role>()
-                .WithMany()
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
-
             userRolesBuilder
                 .Property(userRole => userRole.Id)
                 .HasConversion(
@@ -164,11 +155,15 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
                 .IsRequired();
 
             userRolesBuilder
-                .Property(userRole => userRole.RoleId)
-                .HasConversion(
-                    roleId => roleId.Value,
-                    value => RoleId.Create(value)
-                )
+                .HasOne(ur => ur.Role)
+                .WithOne()
+                .HasForeignKey<UserRole>("id_role")
+                .IsRequired();
+
+            userRolesBuilder.WithOwner().HasForeignKey("id_user");
+
+            userRolesBuilder
+                .Property("id_user")
                 .IsRequired();
         });
     }

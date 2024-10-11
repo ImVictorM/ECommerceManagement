@@ -1,5 +1,4 @@
 using Domain.Common.Models;
-using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UserAggregate.Entities;
@@ -10,9 +9,9 @@ namespace Domain.UserAggregate.Entities;
 public sealed class UserRole : Entity<UserRoleId>
 {
     /// <summary>
-    /// Gets the user role ids.
+    /// Gets the user role.
     /// </summary>
-    public RoleId RoleId { get; private set; } = null!;
+    public Role Role { get; private set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UserRole"/> class.
@@ -22,21 +21,21 @@ public sealed class UserRole : Entity<UserRoleId>
     /// <summary>
     /// Initiates a new instance of the <see cref="UserRole"/> class.
     /// </summary>
-    /// <param name="roleId">The user role id.</param>
+    /// <param name="role">The user role.</param>
     private UserRole(
-        RoleId roleId
+        Role role
     )
     {
-        RoleId = roleId;
+        Role = role;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="UserRole"/> class.
     /// </summary>
-    /// <param name="roleId">The user roles.</param>
+    /// <param name="role">The user role.</param>
     /// <returns>A new instance of the <see cref="UserRole"/> class.</returns>
-    public static UserRole Create(RoleId roleId)
+    public static UserRole Create(Role role)
     {
-        return new UserRole(roleId);
+        return new UserRole(role);
     }
 }

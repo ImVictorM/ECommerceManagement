@@ -1,5 +1,3 @@
-using Domain.RoleAggregate.ValueObjects;
-using Domain.RoleAggregate;
 using Domain.UserAggregate.ValueObjects;
 using Domain.UserAggregate;
 
@@ -14,10 +12,6 @@ public interface IUnitOfWork : IDisposable
     /// The user repository.
     /// </summary>
     public IRepository<User, UserId> UserRepository { get; }
-    /// <summary>
-    /// The role repository.
-    /// </summary>
-    public IRepository<Role, RoleId> RoleRepository { get; }
     /// <summary>
     /// Save all the operations done within the repositories.
     /// </summary>

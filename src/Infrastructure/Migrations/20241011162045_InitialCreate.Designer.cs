@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20241010162518_InitialCreate")]
+    [Migration("20241011162045_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -411,34 +411,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("product_feedbacks", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.RoleAggregate.Role", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("roles", (string)null);
-                });
-
             modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>
                 {
                     b.Property<long>("Id")
@@ -557,6 +529,26 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.UserAggregate.ValueObjects.Role", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.HasKey("id");
+
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.InstallmentAggregate.Installment", b =>
@@ -1150,13 +1142,13 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
 
-                            b1.Property<long>("RoleId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_role");
-
                             b1.Property<DateTimeOffset>("UpdatedAt")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("updated_at");
+
+                            b1.Property<long>("id_role")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id_role");
 
                             b1.Property<long>("id_user")
                                 .HasColumnType("bigint")
@@ -1164,20 +1156,23 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("Id");
 
-                            b1.HasIndex("RoleId");
+                            b1.HasIndex("id_role")
+                                .IsUnique();
 
                             b1.HasIndex("id_user");
 
                             b1.ToTable("users_roles", (string)null);
 
-                            b1.HasOne("Domain.RoleAggregate.Role", null)
-                                .WithMany()
-                                .HasForeignKey("RoleId")
+                            b1.HasOne("Domain.UserAggregate.ValueObjects.Role", "Role")
+                                .WithOne()
+                                .HasForeignKey("Domain.UserAggregate.User.UserRoles#Domain.UserAggregate.Entities.UserRole", "id_role")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("id_user");
+
+                            b1.Navigation("Role");
                         });
 
                     b.Navigation("UserAddresses");

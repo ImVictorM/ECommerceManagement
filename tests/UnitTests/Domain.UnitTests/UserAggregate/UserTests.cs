@@ -89,40 +89,6 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests if it is possible to associate a user with a role id.
-    /// </summary>
-    [Fact]
-    public void User_WhenAssociatingRoleIdWithUser_IncreasesTheUserRolesCount()
-    {
-        var roleIdToAdd = 10;
-        var user = UserUtils.CreateUser();
-
-        user.AddUserRole(RoleUtils.CreateRoleId(roleIdToAdd));
-
-        user.UserRoles.Count.Should().Be(2);
-
-        user.UserRoles.Select(ur => ur.RoleId.Value).Should().Contain(roleIdToAdd);
-    }
-
-    /// <summary>
-    /// Test if adding the same role id ignores it.
-    /// </summary>
-    [Fact]
-    public void User_WhenAddingDuplicateRoleId_IgnoresIt()
-    {
-        var roleIdToAdd = 7;
-        var user = UserUtils.CreateUser();
-
-        user.AddUserRole(RoleUtils.CreateRoleId(roleIdToAdd));
-
-        user.UserRoles.Count.Should().Be(2);
-
-        user.AddUserRole(RoleUtils.CreateRoleId(roleIdToAdd));
-
-        user.UserRoles.Count.Should().Be(2);
-    }
-
-    /// <summary>
     /// Test if it is possible to make the user inactive.
     /// </summary>
     [Fact]

@@ -3,11 +3,10 @@ using Application.Authentication.Common;
 using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Domain.UserAggregate;
-using Domain.RoleAggregate.Enums;
 using Application.Common.Interfaces.Persistence;
-using Domain.RoleAggregate;
 using Microsoft.Extensions.Logging;
 using Domain.Common.ValueObjects;
+using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -69,14 +68,6 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
             throw new BadRequestException("User already exists.");
         }
 
-        var customerRoleName = Role.ToName(RoleTypes.CUSTOMER);
-        var customerRole = await _unitOfWork.RoleRepository.FindOneOrDefaultAsync(role => role.Name == customerRoleName);
-
-        if (customerRole == null)
-        {
-            LogFailedToFetchCustomerRole();
-            throw new HttpException($"Couldn't find the role with name {customerRoleName}");
-        }
 
         var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);
 
@@ -85,7 +76,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
             inputEmail,
             passwordHash,
             passwordSalt,
-            customerRole.Id
+            Role.Customer
         );
 
         LogUserCreatedWithCustomerRole();
@@ -96,7 +87,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
 
         LogUserSavedSuccessfully(user.Email.Value);
 
-        var token = await _jwtTokenGenerator.GenerateTokenAsync(user);
+        var token = _jwtTokenGenerator.GenerateToken(user);
 
         LogTokenGeneratedSuccessfully();
 

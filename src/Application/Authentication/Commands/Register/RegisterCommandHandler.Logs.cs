@@ -32,16 +32,6 @@ public partial class RegisterCommandHandler
     public partial void LogUserAlreadyExists(string email);
 
     /// <summary>
-    /// Log an error when trying to fetch the customer role to associate with the user being registered.
-    /// </summary>
-    [LoggerMessage(
-        EventId = 3,
-        Level = LogLevel.Error,
-        Message = "There was an error when trying to fetch the customer role to associate with the user being registered"
-    )]
-    public partial void LogFailedToFetchCustomerRole();
-
-    /// <summary>
     /// Log an information saying that the user was instantiate successfully and associated with the customer role.
     /// </summary>
     [LoggerMessage(

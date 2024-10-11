@@ -1,7 +1,6 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
 using Domain.Common.ValueObjects;
-using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
 
@@ -60,14 +59,14 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// </summary>
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
-    /// <param name="roleId">The user associated role id.</param>
+    /// <param name="role">The user associated role.</param>
     /// <param name="passwordHash">The user password hashed.</param>
     /// <param name="phone">The user phone (optional).</param>
     private User(
         string name,
         Email email,
         PasswordHash passwordHash,
-        RoleId roleId,
+        Role role,
         string? phone
     )
     {
@@ -77,7 +76,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
         PasswordHash = passwordHash;
         IsActive = true;
 
-        AddUserRole(roleId);
+        AddUserRole(role);
     }
 
     /// <summary>
@@ -86,7 +85,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="phone">The user phone (optional).</param>
-    /// <param name="roleId">The user associated role id.</param>
+    /// <param name="role">The user associated role.</param>
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="passwordSalt">The user password salt.</param>
     public static User Create(
@@ -94,7 +93,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
         Email email,
         string passwordHash,
         string passwordSalt,
-        RoleId roleId,
+        Role role,
         string? phone = null
     )
     {
@@ -104,7 +103,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
             name,
             email,
             ph,
-            roleId,
+            role,
             phone
         );
 
@@ -114,15 +113,15 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <summary>
     /// Relate the user with a role.
     /// </summary>
-    /// <param name="roleId">The role id to be related with the user.</param>
-    public void AddUserRole(RoleId roleId)
+    /// <param name="role">The role to be related with the user.</param>
+    public void AddUserRole(Role role)
     {
-        if (UserRoles.Any(ur => ur.RoleId == roleId))
+        if (UserRoles.Any(ur => ur.Role == role))
         {
             return;
         }
 
-        _userRoles.Add(UserRole.Create(roleId));
+        _userRoles.Add(UserRole.Create(role));
     }
 
     /// <inheritdoc/>

@@ -1,6 +1,4 @@
 using Application.Common.Interfaces.Persistence;
-using Domain.RoleAggregate;
-using Domain.RoleAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
@@ -18,24 +16,19 @@ public sealed class UnitOfWork : IUnitOfWork
 
     /// <inheritdoc/>
     public IRepository<User, UserId> UserRepository { get; }
-    /// <inheritdoc/>
-    public IRepository<Role, RoleId> RoleRepository { get; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UnitOfWork"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
     /// <param name="userRepository">The user repository.</param>
-    /// <param name="roleRepository">The role repository.</param>
     public UnitOfWork(
         ECommerceDbContext context,
-        IRepository<User, UserId> userRepository,
-        IRepository<Role, RoleId> roleRepository
+        IRepository<User, UserId> userRepository
     )
     {
         _context = context;
         UserRepository = userRepository;
-        RoleRepository = roleRepository;
     }
 
     /// <inheritdoc/>

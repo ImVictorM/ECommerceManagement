@@ -4,9 +4,6 @@ using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Authentication.Commands.TestUtils;
-using Domain.RoleAggregate;
-using Domain.RoleAggregate.Enums;
-using Domain.RoleAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
@@ -27,7 +24,6 @@ public class RegisterCommandHandlerTests
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
-    private readonly Mock<IRepository<Role, RoleId>> _mockRoleRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="RegisterCommandHandlerTests"/> class.
@@ -38,10 +34,8 @@ public class RegisterCommandHandlerTests
         _mockPasswordHasher = new Mock<IPasswordHasher>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockUserRepository = new Mock<IRepository<User, UserId>>();
-        _mockRoleRepository = new Mock<IRepository<Role, RoleId>>();
 
         _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
-        _mockUnitOfWork.Setup(u => u.RoleRepository).Returns(_mockRoleRepository.Object);
 
         _handler = new RegisterCommandHandler(
             _mockJwtTokenService.Object,
@@ -66,13 +60,9 @@ public class RegisterCommandHandlerTests
             .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
             .ReturnsAsync((User?)null);
 
-        _mockRoleRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Role, bool>>>()))
-            .ReturnsAsync(RoleUtils.CreateRole(RoleTypes.CUSTOMER));
-
         _mockJwtTokenService
-            .Setup(r => r.GenerateTokenAsync(It.IsAny<User>()))
-            .ReturnsAsync(expectedToken);
+            .Setup(r => r.GenerateToken(It.IsAny<User>()))
+            .Returns(expectedToken);
 
         _mockPasswordHasher
             .Setup(r => r.Hash(It.IsAny<string>()))
@@ -88,7 +78,7 @@ public class RegisterCommandHandlerTests
         result.Token.Should().Be(expectedToken);
 
         _mockPasswordHasher.Verify(m => m.Hash(registerCommand.Password), Times.Once);
-        _mockJwtTokenService.Verify(m => m.GenerateTokenAsync(result.User), Times.Once);
+        _mockJwtTokenService.Verify(m => m.GenerateToken(result.User), Times.Once);
         _mockUserRepository.Verify(m => m.AddAsync(result.User), Times.Once);
         _mockUnitOfWork.Verify(m => m.SaveChangesAsync(), Times.Once);
     }
@@ -112,29 +102,6 @@ public class RegisterCommandHandlerTests
            .Should()
            .ThrowAsync<BadRequestException>()
            .WithMessage("User already exists.");
-    }
-
-    /// <summary>
-    /// Tests if it throws an error when the role being queried does not exist.
-    /// </summary>
-    /// <returns>An asynchronous operation.</returns>
-    [Fact]
-    public async Task HandleRegisterCommand_WhenTheCustomerRoleDoesNotExist_ThrowsAnError()
-    {
-        _mockUserRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
-            .ReturnsAsync((User?)null);
-
-        _mockRoleRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Role, bool>>>()))
-            .ReturnsAsync((Role?)null);
-
-        var registerCommand = RegisterCommandUtils.CreateCommand();
-
-        await FluentActions.Invoking(() => _handler.Handle(registerCommand, default))
-            .Should()
-            .ThrowAsync<HttpException>()
-            .WithMessage("Couldn't find the role with name *");
     }
 
     /// <summary>

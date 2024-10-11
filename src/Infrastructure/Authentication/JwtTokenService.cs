@@ -21,11 +21,6 @@ public class JwtTokenService : IJwtTokenService
     private readonly JwtSettings _jwtSettings;
 
     /// <summary>
-    /// Component to interact with the repositories.
-    /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="JwtTokenService"/> class.
     /// </summary>
     /// <param name="jwtOptions">The jwt settings options.</param>
@@ -33,11 +28,10 @@ public class JwtTokenService : IJwtTokenService
     public JwtTokenService(IOptions<JwtSettings> jwtOptions, IUnitOfWork unitOfWork)
     {
         _jwtSettings = jwtOptions.Value;
-        _unitOfWork = unitOfWork;
     }
 
     /// <inheritdoc/>
-    public async Task<string> GenerateTokenAsync(User user)
+    public string GenerateToken(User user)
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret)),
@@ -51,13 +45,10 @@ public class JwtTokenService : IJwtTokenService
              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         ];
 
-        var userRoleIds = user.UserRoles.Select(userRole => userRole.RoleId).ToList();
-
-        var userRoles = await _unitOfWork.RoleRepository.FindAllAsync(role => userRoleIds.Contains(role.Id));
 
         claims.AddRange(
-            from role in userRoles
-            select new Claim(ClaimTypes.Role, role.Name)
+            from userRole in user.UserRoles
+            select new Claim(ClaimTypes.Role, userRole.Role.Name)
         );
 
         var securityToken = new JwtSecurityToken(

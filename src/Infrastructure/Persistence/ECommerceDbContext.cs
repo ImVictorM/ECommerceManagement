@@ -10,7 +10,6 @@ using Domain.PaymentStatusAggregate;
 using Domain.ProductAggregate;
 using Domain.ProductCategoryAggregate;
 using Domain.ProductFeedbackAggregate;
-using Domain.RoleAggregate;
 using Domain.ShipmentAggregate;
 using Domain.ShipmentStatusAggregate;
 using Domain.UserAggregate;
@@ -47,10 +46,6 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the user aggregate context.
     /// </summary>
     public DbSet<User> Users { get; set; }
-    /// <summary>
-    /// Gets or sets the role aggregate context.
-    /// </summary>
-    public DbSet<Role> Roles { get; set; }
     /// <summary>
     /// Gets or sets the discount aggregate context.
     /// </summary>
