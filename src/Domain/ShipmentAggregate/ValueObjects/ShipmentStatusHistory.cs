@@ -29,6 +29,8 @@ public sealed class ShipmentStatusHistory : ValueObject
     private ShipmentStatusHistory(ShipmentStatus shipmentStatus)
     {
         ShipmentStatus = shipmentStatus;
+
+        CreatedAt = DateTimeOffset.UtcNow;
     }
 
     /// <summary>

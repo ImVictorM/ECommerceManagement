@@ -2,7 +2,6 @@ using Domain.Common.Models;
 using Domain.Common.ValueObjects;
 using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.OrderStatusAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.OrderAggregate;
@@ -38,9 +37,9 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public Address Address { get; private set; } = null!;
     /// <summary>
-    /// Gets the order status id.
+    /// Gets the order status.
     /// </summary>
-    public OrderStatusId OrderStatusId { get; private set; } = null!;
+    public OrderStatus OrderStatus { get; private set; } = null!;
     /// <summary>
     /// Gets the order products.
     /// </summary>
@@ -64,18 +63,18 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     /// <param name="userId">The order owner id.</param>
     /// <param name="address">The order delivery address.</param>
-    /// <param name="orderStatusId">The order status.</param>
+    /// <param name="orderStatus">The order status.</param>
     /// <param name="total">The order total.</param>
     private Order(
         UserId userId,
         Address address,
-        OrderStatusId orderStatusId,
+        OrderStatus orderStatus,
         float total
     )
     {
         UserId = userId;
         Address = address;
-        OrderStatusId = orderStatusId;
+        OrderStatus = orderStatus;
         Total = total;
     }
 
@@ -84,20 +83,20 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     /// <param name="userId">The order owner id.</param>
     /// <param name="address">The order delivery address.</param>
-    /// <param name="orderStatusId">The order status.</param>
+    /// <param name="orderStatus">The order status.</param>
     /// <param name="total">The order total.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static Order Create(
         UserId userId,
         Address address,
-        OrderStatusId orderStatusId,
+        OrderStatus orderStatus,
         float total
     )
     {
         return new Order(
             userId,
             address,
-            orderStatusId,
+            orderStatus,
             total
         );
     }

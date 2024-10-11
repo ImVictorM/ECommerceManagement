@@ -29,5 +29,9 @@ public sealed class ShipmentStatusHistoryConfigurations : IEntityTypeConfigurati
             .WithMany(s => s.ShipmentStatusHistories)
             .HasForeignKey("id_shipment")
             .IsRequired();
+
+        builder
+            .Property(ssh => ssh.CreatedAt)
+            .IsRequired();
     }
 }

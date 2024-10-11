@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20241011194958_InitialCreate")]
+    [Migration("20241011205337_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -75,10 +75,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<long>("OrderStatusId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_order_status");
-
                     b.Property<float>("Total")
                         .HasColumnType("real")
                         .HasColumnName("total");
@@ -91,41 +87,67 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_user");
 
+                    b.Property<long>("id_order_status")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_order_status");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderStatusId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("id_order_status");
 
                     b.ToTable("orders", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.OrderStatusAggregate.OrderStatus", b =>
+            modelBuilder.Entity("Domain.OrderAggregate.ValueObjects.OrderStatus", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.HasKey("id");
+
+                    b.ToTable("order_statuses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.OrderAggregate.ValueObjects.OrderStatusHistory", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("status");
+                    b.Property<long>("id_order")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_order");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                    b.Property<long>("id_order_status")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_order_status");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.ToTable("order_statuses", (string)null);
+                    b.HasIndex("id_order");
+
+                    b.HasIndex("id_order_status");
+
+                    b.ToTable("order_status_histories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
@@ -432,6 +454,10 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
                     b.Property<long>("id_shipment")
                         .HasColumnType("bigint")
                         .HasColumnName("id_shipment");
@@ -532,15 +558,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
-                    b.HasOne("Domain.OrderStatusAggregate.OrderStatus", null)
-                        .WithMany()
-                        .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.UserAggregate.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.OrderAggregate.ValueObjects.OrderStatus", "OrderStatus")
+                        .WithMany()
+                        .HasForeignKey("id_order_status")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -708,49 +734,6 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_order");
                         });
 
-                    b.OwnsMany("Domain.OrderAggregate.Entities.OrderStatusHistory", "OrderStatusHistories", b1 =>
-                        {
-                            b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
-
-                            b1.Property<DateTimeOffset>("CreatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("created_at");
-
-                            b1.Property<long>("OrderStatusId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_order_status");
-
-                            b1.Property<DateTimeOffset>("UpdatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("updated_at");
-
-                            b1.Property<long>("id_order")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_order");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("OrderStatusId");
-
-                            b1.HasIndex("id_order");
-
-                            b1.ToTable("order_status_histories", (string)null);
-
-                            b1.HasOne("Domain.OrderStatusAggregate.OrderStatus", null)
-                                .WithMany()
-                                .HasForeignKey("OrderStatusId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
-
-                            b1.WithOwner()
-                                .HasForeignKey("id_order");
-                        });
-
                     b.Navigation("Address")
                         .IsRequired();
 
@@ -758,7 +741,24 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("OrderProducts");
 
-                    b.Navigation("OrderStatusHistories");
+                    b.Navigation("OrderStatus");
+                });
+
+            modelBuilder.Entity("Domain.OrderAggregate.ValueObjects.OrderStatusHistory", b =>
+                {
+                    b.HasOne("Domain.OrderAggregate.Order", null)
+                        .WithMany("OrderStatusHistories")
+                        .HasForeignKey("id_order")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.OrderAggregate.ValueObjects.OrderStatus", "OrderStatus")
+                        .WithMany()
+                        .HasForeignKey("id_order_status")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderStatus");
                 });
 
             modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
@@ -1174,6 +1174,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("UserAddresses");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
+                {
+                    b.Navigation("OrderStatusHistories");
                 });
 
             modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>

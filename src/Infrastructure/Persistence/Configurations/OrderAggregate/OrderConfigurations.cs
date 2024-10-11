@@ -1,8 +1,6 @@
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.OrderStatusAggregate;
-using Domain.OrderStatusAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate;
@@ -23,8 +21,7 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     {
         ConfigureOrderTable(builder);
         ConfigureOwnedOrderDiscountTable(builder);
-        ConfigureOrderStatusHistoryTable(builder);
-        ConfigureOrderProductTable(builder);
+        ConfigureOwnedOrderProductTable(builder);
     }
 
     /// <summary>
@@ -60,17 +57,9 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .IsRequired();
 
         builder
-            .HasOne<OrderStatus>()
+            .HasOne(o => o.OrderStatus)
             .WithMany()
-            .HasForeignKey(order => order.OrderStatusId)
-            .IsRequired();
-
-        builder
-            .Property(order => order.OrderStatusId)
-            .HasConversion(
-                id => id.Value,
-                value => OrderStatusId.Create(value)
-            )
+            .HasForeignKey("id_order_status")
             .IsRequired();
 
         builder
@@ -114,7 +103,7 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     /// Configures the order product table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOrderProductTable(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOwnedOrderProductTable(EntityTypeBuilder<Order> builder)
     {
         builder.OwnsMany(order => order.OrderProducts, orderProductsBuilder =>
         {
@@ -157,49 +146,5 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
                 .Property(OrderProduct => OrderProduct.Quantity)
                 .IsRequired();
         });
-    }
-
-    /// <summary>
-    /// Configures the order status history change table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOrderStatusHistoryTable(EntityTypeBuilder<Order> builder)
-    {
-        builder.OwnsMany(
-            order => order.OrderStatusHistories,
-            orderStatusHistoryBuilder =>
-            {
-                orderStatusHistoryBuilder.ToTable("order_status_histories");
-
-                orderStatusHistoryBuilder.HasKey(orderStatusHistory => orderStatusHistory.Id);
-
-                orderStatusHistoryBuilder
-                    .Property(orderStatusHistory => orderStatusHistory.Id)
-                    .HasConversion(
-                        id => id.Value,
-                        value => OrderStatusHistoryId.Create(value)
-                    )
-                    .IsRequired();
-
-                orderStatusHistoryBuilder.WithOwner().HasForeignKey("id_order");
-
-                orderStatusHistoryBuilder
-                    .Property("id_order")
-                    .IsRequired();
-
-                orderStatusHistoryBuilder
-                    .HasOne<OrderStatus>()
-                    .WithMany()
-                    .HasForeignKey(orderStatusHistory => orderStatusHistory.OrderStatusId)
-                    .IsRequired();
-
-                orderStatusHistoryBuilder
-                    .Property(orderStatusHistory => orderStatusHistory.OrderStatusId)
-                    .HasConversion(
-                        id => id.Value,
-                        value => OrderStatusId.Create(value)
-                    )
-                    .IsRequired();
-            });
     }
 }

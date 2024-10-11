@@ -2,7 +2,6 @@ using Domain.Common.Interfaces;
 using Domain.Common.Models;
 using Domain.InstallmentAggregate;
 using Domain.OrderAggregate;
-using Domain.OrderStatusAggregate;
 using Domain.PaymentAggregate;
 using Domain.PaymentMethodAggregate;
 using Domain.PaymentStatusAggregate;
@@ -52,10 +51,6 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the order aggregate context.
     /// </summary>
     public DbSet<Order> Orders { get; set; }
-    /// <summary>
-    /// Gets or sets the order status aggregate context.
-    /// </summary>
-    public DbSet<OrderStatus> OrderStatuses { get; set; }
     /// <summary>
     /// Gets or sets the payment aggregate context.
     /// </summary>
