@@ -22,46 +22,6 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.DiscountAggregate.Discount", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)")
-                        .HasColumnName("description");
-
-                    b.Property<DateTimeOffset>("EndingDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ending_date");
-
-                    b.Property<int>("Percentage")
-                        .HasColumnType("integer")
-                        .HasColumnName("percentage");
-
-                    b.Property<DateTimeOffset>("StartingDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("starting_date");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("discounts", (string)null);
-                });
-
             modelBuilder.Entity("Domain.InstallmentAggregate.Installment", b =>
                 {
                     b.Property<long>("Id")
@@ -629,10 +589,6 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
 
-                            b1.Property<long>("DiscountId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_discount");
-
                             b1.Property<DateTimeOffset>("UpdatedAt")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("updated_at");
@@ -643,20 +599,49 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("Id");
 
-                            b1.HasIndex("DiscountId");
-
                             b1.HasIndex("id_order");
 
-                            b1.ToTable("orders_discounts", (string)null);
-
-                            b1.HasOne("Domain.DiscountAggregate.Discount", null)
-                                .WithMany()
-                                .HasForeignKey("DiscountId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
+                            b1.ToTable("order_discounts", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("id_order");
+
+                            b1.OwnsOne("Domain.Common.ValueObjects.Discount", "Discount", b2 =>
+                                {
+                                    b2.Property<long>("OrderDiscountId")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("id")
+                                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+                                    b2.Property<string>("Description")
+                                        .IsRequired()
+                                        .HasMaxLength(250)
+                                        .HasColumnType("character varying(250)")
+                                        .HasColumnName("description");
+
+                                    b2.Property<DateTimeOffset>("EndingDate")
+                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnName("ending_date");
+
+                                    b2.Property<int>("Percentage")
+                                        .HasColumnType("integer")
+                                        .HasColumnName("percentage");
+
+                                    b2.Property<DateTimeOffset>("StartingDate")
+                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnName("starting_date");
+
+                                    b2.HasKey("OrderDiscountId");
+
+                                    b2.ToTable("order_discounts");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("OrderDiscountId");
+                                });
+
+                            b1.Navigation("Discount")
+                                .IsRequired();
                         });
 
                     b.OwnsMany("Domain.OrderAggregate.Entities.OrderProduct", "OrderProducts", b1 =>
@@ -890,10 +875,6 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
 
-                            b1.Property<long>("DiscountId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_discount");
-
                             b1.Property<DateTimeOffset>("UpdatedAt")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("updated_at");
@@ -904,20 +885,49 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("Id");
 
-                            b1.HasIndex("DiscountId");
-
                             b1.HasIndex("id_product");
 
-                            b1.ToTable("products_discounts", (string)null);
-
-                            b1.HasOne("Domain.DiscountAggregate.Discount", null)
-                                .WithMany()
-                                .HasForeignKey("DiscountId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
+                            b1.ToTable("product_discounts", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("id_product");
+
+                            b1.OwnsOne("Domain.Common.ValueObjects.Discount", "Discount", b2 =>
+                                {
+                                    b2.Property<long>("ProductDiscountId")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("id")
+                                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+                                    b2.Property<string>("Description")
+                                        .IsRequired()
+                                        .HasMaxLength(250)
+                                        .HasColumnType("character varying(250)")
+                                        .HasColumnName("description");
+
+                                    b2.Property<DateTimeOffset>("EndingDate")
+                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnName("ending_date");
+
+                                    b2.Property<int>("Percentage")
+                                        .HasColumnType("integer")
+                                        .HasColumnName("percentage");
+
+                                    b2.Property<DateTimeOffset>("StartingDate")
+                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnName("starting_date");
+
+                                    b2.HasKey("ProductDiscountId");
+
+                                    b2.ToTable("product_discounts");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ProductDiscountId");
+                                });
+
+                            b1.Navigation("Discount")
+                                .IsRequired();
                         });
 
                     b.OwnsMany("Domain.ProductAggregate.Entities.ProductImage", "ProductImages", b1 =>

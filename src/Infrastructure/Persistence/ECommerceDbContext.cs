@@ -1,6 +1,5 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
-using Domain.DiscountAggregate;
 using Domain.InstallmentAggregate;
 using Domain.OrderAggregate;
 using Domain.OrderStatusAggregate;
@@ -46,10 +45,6 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the user aggregate context.
     /// </summary>
     public DbSet<User> Users { get; set; }
-    /// <summary>
-    /// Gets or sets the discount aggregate context.
-    /// </summary>
-    public DbSet<Discount> Discounts { get; set; }
     /// <summary>
     /// Gets or sets the installment aggregate context.
     /// </summary>

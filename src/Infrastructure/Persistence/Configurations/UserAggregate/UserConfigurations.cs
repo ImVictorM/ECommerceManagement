@@ -2,6 +2,7 @@ using Domain.Common.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
+using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -105,28 +106,7 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
                 .Property("id_user")
                 .IsRequired();
 
-            userAddressBuilder.OwnsOne(o => o.Address, addressBuilder =>
-            {
-                addressBuilder
-                    .Property(a => a.PostalCode)
-                    .HasMaxLength(10)
-                    .IsRequired();
-                addressBuilder
-                    .Property(a => a.Street)
-                    .HasMaxLength(120)
-                    .IsRequired();
-                addressBuilder
-                    .Property(a => a.Neighborhood)
-                    .HasMaxLength(120);
-                addressBuilder
-                    .Property(a => a.State)
-                    .HasMaxLength(120)
-                    .IsRequired();
-                addressBuilder
-                    .Property(a => a.City)
-                    .HasMaxLength(120)
-                    .IsRequired();
-            });
+            userAddressBuilder.OwnsOne(o => o.Address, AddressNavigationBuilderConfigurations.Configure);
         });
     }
 

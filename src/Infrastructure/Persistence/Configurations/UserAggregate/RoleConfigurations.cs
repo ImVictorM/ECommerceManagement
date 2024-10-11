@@ -7,7 +7,7 @@ namespace Infrastructure.Persistence.Configurations.UserAggregate;
 /// <summary>
 /// Configures the <see cref="Role"/> value object to its table.
 /// </summary>
-public sealed class RoleTableConfigurations : IEntityTypeConfiguration<Role>
+public sealed class RoleConfigurations : IEntityTypeConfiguration<Role>
 {
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<Role> builder)

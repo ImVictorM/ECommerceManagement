@@ -1,5 +1,4 @@
-using Domain.DiscountAggregate;
-using Domain.DiscountAggregate.ValueObjects;
+using Domain.Common.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
@@ -9,10 +8,11 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Configurations;
+namespace Infrastructure.Persistence.Configurations.OrderAggregate;
 
 /// <summary>
 /// Map the <see cref="Order"/> aggregate to entity framework.
@@ -23,9 +23,92 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         ConfigureOrderTable(builder);
+        ConfigureOwnedOrderDiscountTable(builder);
         ConfigureOrderStatusHistoryTable(builder);
-        ConfigureOrderDiscountTable(builder);
         ConfigureOrderProductTable(builder);
+    }
+
+    /// <summary>
+    /// Configures the orders table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureOrderTable(EntityTypeBuilder<Order> builder)
+    {
+        builder.ToTable("orders");
+
+        builder.HasKey(order => order.Id);
+
+        builder
+            .Property(order => order.Id)
+            .HasConversion(
+                id => id.Value,
+                value => OrderId.Create(value)
+            )
+            .IsRequired();
+
+        builder
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(order => order.UserId)
+            .IsRequired();
+
+        builder
+            .Property(order => order.UserId)
+            .HasConversion(
+                id => id.Value,
+                value => UserId.Create(value)
+            )
+            .IsRequired();
+
+        builder
+            .HasOne<OrderStatus>()
+            .WithMany()
+            .HasForeignKey(order => order.OrderStatusId)
+            .IsRequired();
+
+        builder
+            .Property(order => order.OrderStatusId)
+            .HasConversion(
+                id => id.Value,
+                value => OrderStatusId.Create(value)
+            )
+            .IsRequired();
+
+        builder
+            .Property(order => order.Total)
+            .IsRequired();
+
+        builder.OwnsOne(order => order.Address, AddressNavigationBuilderConfigurations.Configure);
+    }
+
+    /// <summary>
+    /// Configures the order discount table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureOwnedOrderDiscountTable(EntityTypeBuilder<Order> builder)
+    {
+        builder.OwnsMany(
+            order => order.OrderDiscounts,
+            orderDiscountBuilder =>
+            {
+                orderDiscountBuilder.ToTable("order_discounts");
+
+                orderDiscountBuilder.HasKey(orderDiscount => orderDiscount.Id);
+                orderDiscountBuilder
+                    .Property(orderDiscount => orderDiscount.Id)
+                    .HasConversion(
+                        id => id.Value,
+                        value => OrderDiscountId.Create(value)
+                    )
+                    .IsRequired();
+
+                orderDiscountBuilder.WithOwner().HasForeignKey("id_order");
+                orderDiscountBuilder
+                    .Property("id_order")
+                    .IsRequired();
+
+                orderDiscountBuilder.OwnsOne(od => od.Discount, DiscountNavigationBuilderConfigurations.Configure);
+            });
     }
 
     /// <summary>
@@ -78,48 +161,6 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     }
 
     /// <summary>
-    /// Configures the order discount table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOrderDiscountTable(EntityTypeBuilder<Order> builder)
-    {
-        builder.OwnsMany(
-            order => order.OrderDiscounts,
-            orderDiscountBuilder =>
-            {
-                orderDiscountBuilder.ToTable("orders_discounts");
-
-                orderDiscountBuilder.HasKey(orderDiscount => orderDiscount.Id);
-                orderDiscountBuilder
-                    .Property(orderDiscount => orderDiscount.Id)
-                    .HasConversion(
-                        id => id.Value,
-                        value => OrderDiscountId.Create(value)
-                    )
-                    .IsRequired();
-
-                orderDiscountBuilder.WithOwner().HasForeignKey("id_order");
-                orderDiscountBuilder
-                    .Property("id_order")
-                    .IsRequired();
-
-                orderDiscountBuilder
-                    .HasOne<Discount>()
-                    .WithMany()
-                    .HasForeignKey(orderDiscount => orderDiscount.DiscountId)
-                    .IsRequired();
-
-                orderDiscountBuilder
-                    .Property(orderDiscount => orderDiscount.DiscountId)
-                    .HasConversion(
-                        id => id.Value,
-                        value => DiscountId.Create(value)
-                    )
-                    .IsRequired();
-            });
-    }
-
-    /// <summary>
     /// Configures the order status history change table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
@@ -161,79 +202,5 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
                     )
                     .IsRequired();
             });
-    }
-
-    /// <summary>
-    /// Configures the order table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOrderTable(EntityTypeBuilder<Order> builder)
-    {
-        builder.ToTable("orders");
-
-        builder.HasKey(order => order.Id);
-
-        builder
-            .Property(order => order.Id)
-            .HasConversion(
-                id => id.Value,
-                value => OrderId.Create(value)
-            )
-            .IsRequired();
-
-        builder
-            .HasOne<User>()
-            .WithMany()
-            .HasForeignKey(order => order.UserId)
-            .IsRequired();
-
-        builder
-            .Property(order => order.UserId)
-            .HasConversion(
-                id => id.Value,
-                value => UserId.Create(value)
-            )
-            .IsRequired();
-
-        builder
-            .HasOne<OrderStatus>()
-            .WithMany()
-            .HasForeignKey(order => order.OrderStatusId)
-            .IsRequired();
-
-        builder
-            .Property(order => order.OrderStatusId)
-            .HasConversion(
-                id => id.Value,
-                value => OrderStatusId.Create(value)
-            )
-            .IsRequired();
-
-        builder
-            .Property(order => order.Total)
-            .IsRequired();
-
-        builder.OwnsOne(order => order.Address, addressBuilder =>
-        {
-            addressBuilder
-                .Property(a => a.PostalCode)
-                .HasMaxLength(10)
-                .IsRequired();
-            addressBuilder
-                .Property(a => a.Street)
-                .HasMaxLength(120)
-                .IsRequired();
-            addressBuilder
-                .Property(a => a.Neighborhood)
-                .HasMaxLength(120);
-            addressBuilder
-                .Property(a => a.State)
-                .HasMaxLength(120)
-                .IsRequired();
-            addressBuilder
-                .Property(a => a.City)
-                .HasMaxLength(120)
-                .IsRequired();
-        });
     }
 }

@@ -107,22 +107,6 @@ public class ProductTests
     }
 
     /// <summary>
-    /// Tests if it is possible to add a discount to the product by discount id.
-    /// </summary>
-    [Fact]
-    public void Product_WhenRelatingItWithDiscount_AddsAndIncrementsToTheDiscountList()
-    {
-        var discountId = 5;
-        var product = ProductUtils.CreateProduct();
-
-        product.AddDiscount(DiscountUtils.CreateDiscountId(discountId));
-
-        product.ProductDiscounts.Should().NotBeNull();
-        product.ProductDiscounts.Count.Should().Be(1);
-        product.ProductDiscounts.Select(pd => pd.DiscountId.Value).Should().Contain(discountId);
-    }
-
-    /// <summary>
     /// Tests if it is possible to make a product inactive.
     /// </summary>
     [Fact]

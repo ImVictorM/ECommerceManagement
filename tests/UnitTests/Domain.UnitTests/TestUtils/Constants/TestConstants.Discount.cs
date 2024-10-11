@@ -3,14 +3,10 @@ namespace Domain.UnitTests.TestUtils.Constants;
 public static partial class TestConstants
 {
     /// <summary>
-    /// Declare constants related to the <see cref="Domain.DiscountAggregate.Discount"/> aggregate root for testing purposes.
+    /// Declare constants related to the <see cref="Domain.Common.ValueObjects.Discount"/> aggregate root for testing purposes.
     /// </summary>
     public static class Discount
     {
-        /// <summary>
-        /// The constant discount id.
-        /// </summary>
-        public const long Id = 4;
         /// <summary>
         /// The discount percentage constant.
         /// </summary>

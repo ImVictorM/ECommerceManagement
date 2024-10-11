@@ -1,5 +1,5 @@
 using Domain.Common.Models;
-using Domain.DiscountAggregate.ValueObjects;
+using Domain.Common.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 
 namespace Domain.OrderAggregate.Entities;
@@ -10,9 +10,9 @@ namespace Domain.OrderAggregate.Entities;
 public sealed class OrderDiscount : Entity<OrderDiscountId>
 {
     /// <summary>
-    /// Gets the discount ids.
+    /// Gets the discount.
     /// </summary>
-    public DiscountId DiscountId { get; private set; } = null!;
+    public Discount Discount { get; private set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderDiscount"/> class.
@@ -22,19 +22,19 @@ public sealed class OrderDiscount : Entity<OrderDiscountId>
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderDiscount"/> class.
     /// </summary>
-    /// <param name="discountId">The related discount ids.</param>
-    private OrderDiscount(DiscountId discountId)
+    /// <param name="discount">The related discount.</param>
+    private OrderDiscount(Discount discount)
     {
-        DiscountId = discountId;
+        Discount = discount;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="OrderDiscount"/> class.
     /// </summary>
-    /// <param name="discountId">The related discount ids.</param>
+    /// <param name="discount">The related discount ids.</param>
     /// <returns>A new instance of the <see cref="OrderDiscount"/> class.</returns>
-    public static OrderDiscount Create(DiscountId discountId)
+    public static OrderDiscount Create(Discount discount)
     {
-        return new OrderDiscount(discountId);
+        return new OrderDiscount(discount);
     }
 }

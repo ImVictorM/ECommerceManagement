@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,24 +12,6 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "discounts",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    percentage = table.Column<int>(type: "integer", nullable: false),
-                    description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ending_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_discounts", x => x.id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "order_statuses",
                 columns: table => new
@@ -273,6 +255,31 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "product_discounts",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    percentage = table.Column<int>(type: "integer", nullable: false),
+                    description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ending_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    id_product = table.Column<long>(type: "bigint", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_product_discounts", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_product_discounts_products_id_product",
+                        column: x => x.id_product,
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "product_images",
                 columns: table => new
                 {
@@ -288,34 +295,6 @@ namespace Infrastructure.Migrations
                     table.PrimaryKey("PK_product_images", x => x.id);
                     table.ForeignKey(
                         name: "FK_product_images_products_id_product",
-                        column: x => x.id_product,
-                        principalTable: "products",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "products_discounts",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_discount = table.Column<long>(type: "bigint", nullable: false),
-                    id_product = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_products_discounts", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_products_discounts_discounts_id_discount",
-                        column: x => x.id_discount,
-                        principalTable: "discounts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_products_discounts_products_id_product",
                         column: x => x.id_product,
                         principalTable: "products",
                         principalColumn: "id",
@@ -346,6 +325,31 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "order_discounts",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    percentage = table.Column<int>(type: "integer", nullable: false),
+                    description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ending_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    id_order = table.Column<long>(type: "bigint", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_order_discounts", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_order_discounts_orders_id_order",
+                        column: x => x.id_order,
+                        principalTable: "orders",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "order_status_histories",
                 columns: table => new
                 {
@@ -367,34 +371,6 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_order_status_histories_orders_id_order",
-                        column: x => x.id_order,
-                        principalTable: "orders",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "orders_discounts",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_discount = table.Column<long>(type: "bigint", nullable: false),
-                    id_order = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_orders_discounts", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_orders_discounts_discounts_id_discount",
-                        column: x => x.id_discount,
-                        principalTable: "discounts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_orders_discounts_orders_id_order",
                         column: x => x.id_order,
                         principalTable: "orders",
                         principalColumn: "id",
@@ -610,6 +586,11 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_order_discounts_id_order",
+                table: "order_discounts",
+                column: "id_order");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_order_status_histories_id_order",
                 table: "order_status_histories",
                 column: "id_order");
@@ -628,16 +609,6 @@ namespace Infrastructure.Migrations
                 name: "IX_orders_id_user",
                 table: "orders",
                 column: "id_user");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_orders_discounts_id_discount",
-                table: "orders_discounts",
-                column: "id_discount");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_orders_discounts_id_order",
-                table: "orders_discounts",
-                column: "id_order");
 
             migrationBuilder.CreateIndex(
                 name: "IX_orders_products_id_order",
@@ -681,6 +652,11 @@ namespace Infrastructure.Migrations
                 column: "id_payment_status");
 
             migrationBuilder.CreateIndex(
+                name: "IX_product_discounts_id_product",
+                table: "product_discounts",
+                column: "id_product");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_product_feedbacks_id_order",
                 table: "product_feedbacks",
                 column: "id_order",
@@ -705,16 +681,6 @@ namespace Infrastructure.Migrations
                 name: "IX_products_id_product_category",
                 table: "products",
                 column: "id_product_category");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_products_discounts_id_discount",
-                table: "products_discounts",
-                column: "id_discount");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_products_discounts_id_product",
-                table: "products_discounts",
-                column: "id_product");
 
             migrationBuilder.CreateIndex(
                 name: "IX_shipment_status_histories_id_shipment",
@@ -767,10 +733,10 @@ namespace Infrastructure.Migrations
                 name: "inventories");
 
             migrationBuilder.DropTable(
-                name: "order_status_histories");
+                name: "order_discounts");
 
             migrationBuilder.DropTable(
-                name: "orders_discounts");
+                name: "order_status_histories");
 
             migrationBuilder.DropTable(
                 name: "orders_products");
@@ -779,13 +745,13 @@ namespace Infrastructure.Migrations
                 name: "payment_status_histories");
 
             migrationBuilder.DropTable(
+                name: "product_discounts");
+
+            migrationBuilder.DropTable(
                 name: "product_feedbacks");
 
             migrationBuilder.DropTable(
                 name: "product_images");
-
-            migrationBuilder.DropTable(
-                name: "products_discounts");
 
             migrationBuilder.DropTable(
                 name: "shipment_status_histories");
@@ -798,9 +764,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "payments");
-
-            migrationBuilder.DropTable(
-                name: "discounts");
 
             migrationBuilder.DropTable(
                 name: "products");

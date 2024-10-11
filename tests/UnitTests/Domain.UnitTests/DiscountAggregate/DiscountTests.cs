@@ -1,5 +1,5 @@
 using Domain.Common.Errors;
-using Domain.DiscountAggregate;
+using Domain.Common.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 

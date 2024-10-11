@@ -1,6 +1,6 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
-using Domain.DiscountAggregate.ValueObjects;
+using Domain.Common.ValueObjects;
 using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.ProductCategoryAggregate.ValueObjects;
@@ -122,10 +122,10 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// Adds a new discount to the product by id.
     /// </summary>
-    /// <param name="discountId">The discount id.</param>
-    public void AddDiscount(DiscountId discountId)
+    /// <param name="discount">The discount.</param>
+    public void AddDiscount(Discount discount)
     {
-        _productDiscounts.Add(ProductDiscount.Create(discountId));
+        _productDiscounts.Add(ProductDiscount.Create(discount));
     }
 
     /// <inheritdoc/>

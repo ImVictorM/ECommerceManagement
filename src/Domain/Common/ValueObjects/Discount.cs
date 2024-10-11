@@ -1,31 +1,30 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
-using Domain.DiscountAggregate.ValueObjects;
 
-namespace Domain.DiscountAggregate;
+namespace Domain.Common.ValueObjects;
 
 /// <summary>
 /// Represents a discount in percentage with
 /// starting and ending date.
 /// </summary>
-public sealed class Discount : Entity<DiscountId>
+public sealed class Discount : ValueObject
 {
     /// <summary>
     /// Gets the discount percentage.
     /// </summary>
-    public int Percentage { get; private set; }
+    public int Percentage { get; }
     /// <summary>
     /// Gets the discount description.
     /// </summary>
-    public string Description { get; private set; } = string.Empty;
+    public string Description { get; } = string.Empty;
     /// <summary>
     /// Gets the discount starting date.
     /// </summary>
-    public DateTimeOffset StartingDate { get; private set; }
+    public DateTimeOffset StartingDate { get; }
     /// <summary>
     /// Gets the discount ending date.
     /// </summary>
-    public DateTimeOffset EndingDate { get; private set; }
+    public DateTimeOffset EndingDate { get; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Discount"/> class.
@@ -89,5 +88,14 @@ public sealed class Discount : Entity<DiscountId>
         {
             throw new DomainValidationException("The ending date and time must be at least one hour after the starting date");
         }
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Percentage;
+        yield return Description;
+        yield return StartingDate;
+        yield return EndingDate;
     }
 }

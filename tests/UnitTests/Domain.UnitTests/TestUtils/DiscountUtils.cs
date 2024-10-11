@@ -1,5 +1,4 @@
-using Domain.DiscountAggregate;
-using Domain.DiscountAggregate.ValueObjects;
+using Domain.Common.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils;
@@ -30,15 +29,5 @@ public static class DiscountUtils
             startingDate ?? TestConstants.Discount.StartingDate,
             endingDate ?? TestConstants.Discount.EndingDate
         );
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="DiscountId"/> class.
-    /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <returns>A new instance of the <see cref="DiscountId"/> class.</returns>
-    public static DiscountId CreateDiscountId(long? id = null)
-    {
-        return DiscountId.Create(id ?? TestConstants.Discount.Id);
     }
 }
