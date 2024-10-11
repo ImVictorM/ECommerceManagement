@@ -1,7 +1,5 @@
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
-using Domain.ProductCategoryAggregate;
-using Domain.ProductCategoryAggregate.ValueObjects;
 using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -41,17 +39,9 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
             .IsRequired();
 
         builder
-            .HasOne<ProductCategory>()
+            .HasOne(p => p.ProductCategory)
             .WithMany()
-            .HasForeignKey(product => product.ProductCategoryId)
-            .IsRequired();
-
-        builder
-            .Property(product => product.ProductCategoryId)
-            .HasConversion(
-                id => id.Value,
-                value => ProductCategoryId.Create(value)
-            )
+            .HasForeignKey("id_category")
             .IsRequired();
 
         builder

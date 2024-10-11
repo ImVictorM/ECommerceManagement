@@ -1,3 +1,4 @@
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
@@ -17,6 +18,7 @@ public class ProductTests
             TestConstants.Product.Description,
             TestConstants.Product.Price,
             TestConstants.Product.QuantityAvailable,
+            TestConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(1),
         };
 
@@ -25,6 +27,7 @@ public class ProductTests
             TestConstants.Product.Description,
             TestConstants.Product.Price,
             TestConstants.Product.QuantityAvailable,
+            TestConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(2),
         };
 
@@ -33,6 +36,7 @@ public class ProductTests
             "Some description for the product",
             TestConstants.Product.Price,
             TestConstants.Product.QuantityAvailable,
+            TestConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(3),
         };
 
@@ -41,6 +45,7 @@ public class ProductTests
             TestConstants.Product.Description,
             100m,
             TestConstants.Product.QuantityAvailable,
+            TestConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(4),
         };
 
@@ -49,6 +54,7 @@ public class ProductTests
             TestConstants.Product.Description,
             TestConstants.Product.Price,
             57,
+            TestConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(5),
         };
 
@@ -57,6 +63,7 @@ public class ProductTests
             TestConstants.Product.Description,
             TestConstants.Product.Price,
             TestConstants.Product.QuantityAvailable,
+            ProductCategory.Automotive,
             ProductUtils.CreateProductImagesUrl(6),
         };
     }
@@ -68,6 +75,7 @@ public class ProductTests
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available.</param>
+    /// <param name="category">The product category.</param>
     /// <param name="productImageUrls">The product image urls.</param>
     [Theory]
     [MemberData(nameof(ValidProductParameters))]
@@ -76,17 +84,18 @@ public class ProductTests
         string description,
         decimal price,
         int quantityAvailable,
+        ProductCategory category,
         IEnumerable<Uri> productImageUrls
     )
     {
         var act = () =>
         {
             var product = ProductUtils.CreateProduct(
-                ProductCategoryUtils.CreateProductCategoryId(),
                 name,
                 description,
                 price,
                 quantityAvailable,
+                category,
                 productImageUrls
             );
 
@@ -95,6 +104,7 @@ public class ProductTests
             product.Description.Should().Be(description);
             product.Price.Should().Be(price);
             product.Inventory.QuantityAvailable.Should().Be(quantityAvailable);
+            product.ProductCategory.Should().Be(category);
 
             for (var i = 0; i < product.ProductImages.Count; i += 1)
             {

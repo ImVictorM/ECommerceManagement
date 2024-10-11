@@ -7,7 +7,6 @@ using Domain.PaymentAggregate;
 using Domain.PaymentMethodAggregate;
 using Domain.PaymentStatusAggregate;
 using Domain.ProductAggregate;
-using Domain.ProductCategoryAggregate;
 using Domain.ProductFeedbackAggregate;
 using Domain.ShipmentAggregate;
 using Domain.ShipmentStatusAggregate;
@@ -73,10 +72,6 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the product aggregate context.
     /// </summary>
     public DbSet<Product> Products { get; set; }
-    /// <summary>
-    /// Gets or sets the product category aggregate context.
-    /// </summary>
-    public DbSet<ProductCategory> ProductCategories { get; set; }
     /// <summary>
     /// Gets or sets the product feedback aggregate context.
     /// </summary>

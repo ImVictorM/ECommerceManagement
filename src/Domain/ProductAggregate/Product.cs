@@ -3,7 +3,6 @@ using Domain.Common.Models;
 using Domain.Common.ValueObjects;
 using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.ValueObjects;
-using Domain.ProductCategoryAggregate.ValueObjects;
 
 namespace Domain.ProductAggregate;
 
@@ -41,9 +40,9 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// </summary>
     public Inventory Inventory { get; private set; } = null!;
     /// <summary>
-    /// Gets the product categories.
+    /// Gets the product category.
     /// </summary>
-    public ProductCategoryId ProductCategoryId { get; private set; } = null!;
+    public ProductCategory ProductCategory { get; private set; } = null!;
     /// <summary>
     /// Gets the product images.
     /// </summary>
@@ -65,14 +64,14 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="inventory">The product inventory.</param>
-    /// <param name="productCategoryId">The category related to this product.</param>
+    /// <param name="productCategory">The category related to this product.</param>
     /// <param name="productImages">The product images.</param>
     private Product(
         string name,
         string description,
         decimal price,
         Inventory inventory,
-        ProductCategoryId productCategoryId,
+        ProductCategory productCategory,
         List<ProductImage> productImages
     )
     {
@@ -80,7 +79,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
         Description = description;
         Price = price;
         Inventory = inventory;
-        ProductCategoryId = productCategoryId;
+        ProductCategory = productCategory;
 
         _productImages.AddRange(productImages);
 
@@ -90,7 +89,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
-    /// <param name="categoryId">The category related to this product.</param>
+    /// <param name="category">The category related to this product.</param>
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
@@ -98,11 +97,11 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <param name="productImageUrls">The product images.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product Create(
-        ProductCategoryId categoryId,
         string name,
         string description,
         decimal price,
         int quantityAvailable,
+        ProductCategory category,
         IEnumerable<Uri> productImageUrls
     )
     {
@@ -114,7 +113,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
             description,
             price,
             inventory,
-            categoryId,
+            category,
             productImages
         );
     }

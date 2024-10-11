@@ -265,33 +265,29 @@ namespace Infrastructure.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("price");
 
-                    b.Property<long>("ProductCategoryId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_product_category");
-
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<long>("id_category")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_category");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductCategoryId");
+                    b.HasIndex("id_category");
 
                     b.ToTable("products", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ProductCategoryAggregate.ProductCategory", b =>
+            modelBuilder.Entity("Domain.ProductAggregate.ValueObjects.ProductCategory", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -299,11 +295,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(60)")
                         .HasColumnName("name");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("product_categories", (string)null);
                 });
@@ -820,9 +812,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>
                 {
-                    b.HasOne("Domain.ProductCategoryAggregate.ProductCategory", null)
+                    b.HasOne("Domain.ProductAggregate.ValueObjects.ProductCategory", "ProductCategory")
                         .WithMany()
-                        .HasForeignKey("ProductCategoryId")
+                        .HasForeignKey("id_category")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -968,6 +960,8 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Inventory")
                         .IsRequired();
+
+                    b.Navigation("ProductCategory");
 
                     b.Navigation("ProductDiscounts");
 

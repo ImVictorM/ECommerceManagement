@@ -1,3 +1,4 @@
+using Domain.Common.Errors;
 using Domain.Common.Models;
 
 namespace Domain.UserAggregate.ValueObjects;
@@ -15,15 +16,6 @@ public sealed class Role : ValueObject
     /// Represents the administrator role.
     /// </summary>
     public static readonly Role Admin = new(nameof(Admin).ToLowerInvariant());
-
-    /// <summary>
-    /// Gets all the roles in a list format.
-    /// </summary>
-    /// <returns>All the roles.</returns>
-    public static IEnumerable<Role> ToList()
-    {
-        return [Customer, Admin];
-    }
 
     /// <summary>
     /// Gets the role name.
@@ -50,7 +42,28 @@ public sealed class Role : ValueObject
     /// <param name="name">The name of the role.</param>
     public static Role Create(string name)
     {
+        if (GetRoleByName(name) == null) throw new DomainValidationException($"The {name} role does not exist");
+
         return new Role(name);
+    }
+
+    /// <summary>
+    /// Gets a role by name, or null if not found.
+    /// </summary>
+    /// <param name="name">The role name.</param>
+    /// <returns>The role or null.</returns>
+    private static Role? GetRoleByName(string name)
+    {
+        return List().FirstOrDefault(r => r.Name == name);
+    }
+
+    /// <summary>
+    /// Gets all the roles in a list format.
+    /// </summary>
+    /// <returns>All the roles.</returns>
+    public static IEnumerable<Role> List()
+    {
+        return [Customer, Admin];
     }
 
     /// <inheritdoc/>

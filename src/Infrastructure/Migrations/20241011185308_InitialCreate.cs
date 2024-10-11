@@ -63,9 +63,7 @@ namespace Infrastructure.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -129,7 +127,7 @@ namespace Infrastructure.Migrations
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
-                    id_product_category = table.Column<long>(type: "bigint", nullable: false),
+                    id_category = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -137,8 +135,8 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_products", x => x.id);
                     table.ForeignKey(
-                        name: "FK_products_product_categories_id_product_category",
-                        column: x => x.id_product_category,
+                        name: "FK_products_product_categories_id_category",
+                        column: x => x.id_category,
                         principalTable: "product_categories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -678,9 +676,9 @@ namespace Infrastructure.Migrations
                 column: "id_product");
 
             migrationBuilder.CreateIndex(
-                name: "IX_products_id_product_category",
+                name: "IX_products_id_category",
                 table: "products",
-                column: "id_product_category");
+                column: "id_category");
 
             migrationBuilder.CreateIndex(
                 name: "IX_shipment_status_histories_id_shipment",

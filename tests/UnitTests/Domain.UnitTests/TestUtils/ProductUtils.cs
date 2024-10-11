@@ -1,5 +1,5 @@
 using Domain.ProductAggregate;
-using Domain.ProductCategoryAggregate.ValueObjects;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils;
@@ -12,28 +12,28 @@ public static class ProductUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
-    /// <param name="productCategoryId">The product category id.</param>
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available in inventory.</param>
+    /// <param name="productCategory">The product category.</param>
     /// <param name="productImagesUrl">The product image urls.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product CreateProduct(
-        ProductCategoryId? productCategoryId = null,
         string? name = null,
         string? description = null,
         decimal? price = null,
         int? quantityAvailable = null,
+        ProductCategory? productCategory = null,
         IEnumerable<Uri>? productImagesUrl = null
     )
     {
         return Product.Create(
-            productCategoryId ?? ProductCategoryUtils.CreateProductCategoryId(),
             name ?? TestConstants.Product.Name,
             description ?? TestConstants.Product.Description,
             price ?? TestConstants.Product.Price,
             quantityAvailable ?? TestConstants.Product.QuantityAvailable,
+            productCategory ?? TestConstants.Product.Category,
             productImagesUrl ?? CreateProductImagesUrl()
         );
     }

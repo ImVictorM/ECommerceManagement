@@ -1,3 +1,5 @@
+using Domain.ProductAggregate.ValueObjects;
+
 namespace Domain.UnitTests.TestUtils.Constants;
 
 public static partial class TestConstants
@@ -23,6 +25,11 @@ public static partial class TestConstants
         /// The product quantity available in inventory constant.
         /// </summary>
         public const int QuantityAvailable = 10;
+
+        /// <summary>
+        /// The product category constant.
+        /// </summary>
+        public static readonly ProductCategory Category = ProductCategory.BooksStationery;
 
         /// <summary>
         /// The product image constant.
