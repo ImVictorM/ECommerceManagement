@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -711,6 +711,94 @@ namespace Infrastructure.Migrations
                 name: "IX_users_roles_id_user",
                 table: "users_roles",
                 column: "id_user");
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+            migrationBuilder.InsertData(
+                table: "roles",
+                columns: ["id", "name"],
+                values: new object[,]
+                {
+                    {1, "admin"},
+                    {2, "customer"}
+                }
+            );
+
+            migrationBuilder.InsertData(
+                table: "payment_statuses",
+                columns: ["name"],
+                values: new object[,]
+                {
+                    { "pending" },
+                    { "completed" },
+                    { "failed" },
+                    { "refunded" }
+                }
+            );
+
+            migrationBuilder.InsertData(
+                table: "payment_methods",
+                columns: ["name"],
+                values: new object[,]
+                {
+                    { "credit_card" },
+                    { "pix" },
+                    { "bank_transfer" },
+                    { "cash" }
+                }
+            );
+
+            migrationBuilder.InsertData(
+                table: "shipment_statuses",
+                columns: ["name"],
+                values: new object[,]
+                {
+                    { "pending" },
+                    { "shipped" },
+                    { "in_route" },
+                    { "delivered" },
+                    { "canceled" }
+                }
+            );
+
+            migrationBuilder.InsertData(
+                table: "order_statuses",
+                columns: ["name"],
+                values: new object[,]
+                {
+                    { "pending" },
+                    { "paid" },
+                    { "shipped" },
+                    { "delivered" },
+                    { "canceled" }
+                }
+            );
+
+            // password: admin123
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
+                values: [
+                    1,
+                    "admin",
+                    "admin@email.com",
+                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
+                    true,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
+                ]
+            );
+
+            migrationBuilder.InsertData(
+                table: "users_roles",
+                columns: ["id_role", "id_user", "created_at", "updated_at"],
+                values: [
+                    1,
+                    1,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
+                ]
+            );
+#pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
         }
 
         /// <inheritdoc />
