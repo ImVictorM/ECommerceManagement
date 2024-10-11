@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20241011205337_InitialCreate")]
+    [Migration("20241011214314_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -175,17 +175,17 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_order");
 
-                    b.Property<long>("PaymentMethodId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_payment_method");
-
-                    b.Property<long>("PaymentStatusId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_payment_status");
-
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<long>("id_payment_method")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_payment_method");
+
+                    b.Property<long>("id_payment_status")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_payment_status");
 
                     b.HasKey("Id");
 
@@ -194,67 +194,81 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.HasIndex("PaymentMethodId");
+                    b.HasIndex("id_payment_method");
 
-                    b.HasIndex("PaymentStatusId");
+                    b.HasIndex("id_payment_status");
 
                     b.ToTable("payments", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.PaymentMethodAggregate.PaymentMethod", b =>
+            modelBuilder.Entity("Domain.PaymentAggregate.ValueObjects.PaymentMethod", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Method")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)")
-                        .HasColumnName("method");
+                        .HasColumnName("name");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("payment_methods", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.PaymentStatusAggregate.PaymentStatus", b =>
+            modelBuilder.Entity("Domain.PaymentAggregate.ValueObjects.PaymentStatus", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.HasKey("id");
+
+                    b.ToTable("payment_statuses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.PaymentAggregate.ValueObjects.PaymentStatusHistory", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("status");
+                    b.Property<long>("id_payment")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_payment");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                    b.Property<long>("id_payment_status")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_payment_status");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.ToTable("payment_statuses", (string)null);
+                    b.HasIndex("id_payment");
+
+                    b.HasIndex("id_payment_status");
+
+                    b.ToTable("payment_status_histories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>
@@ -773,62 +787,38 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.PaymentMethodAggregate.PaymentMethod", null)
+                    b.HasOne("Domain.PaymentAggregate.ValueObjects.PaymentMethod", "PaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PaymentMethodId")
+                        .HasForeignKey("id_payment_method")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.PaymentStatusAggregate.PaymentStatus", null)
+                    b.HasOne("Domain.PaymentAggregate.ValueObjects.PaymentStatus", "PaymentStatus")
                         .WithMany()
-                        .HasForeignKey("PaymentStatusId")
+                        .HasForeignKey("id_payment_status")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Domain.PaymentAggregate.Entities.PaymentStatusHistory", "PaymentStatusHistories", b1 =>
-                        {
-                            b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
+                    b.Navigation("PaymentMethod");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
+                    b.Navigation("PaymentStatus");
+                });
 
-                            b1.Property<DateTimeOffset>("CreatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("created_at");
+            modelBuilder.Entity("Domain.PaymentAggregate.ValueObjects.PaymentStatusHistory", b =>
+                {
+                    b.HasOne("Domain.PaymentAggregate.Payment", null)
+                        .WithMany("PaymentStatusHistories")
+                        .HasForeignKey("id_payment")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<long>("PaymentStatusId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_payment_status");
+                    b.HasOne("Domain.PaymentAggregate.ValueObjects.PaymentStatus", "PaymentStatus")
+                        .WithMany()
+                        .HasForeignKey("id_payment_status")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<DateTimeOffset>("UpdatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("updated_at");
-
-                            b1.Property<long>("id_payment")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_payment");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("PaymentStatusId");
-
-                            b1.HasIndex("id_payment");
-
-                            b1.ToTable("payment_status_histories", (string)null);
-
-                            b1.HasOne("Domain.PaymentStatusAggregate.PaymentStatus", null)
-                                .WithMany()
-                                .HasForeignKey("PaymentStatusId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
-
-                            b1.WithOwner()
-                                .HasForeignKey("id_payment");
-                        });
-
-                    b.Navigation("PaymentStatusHistories");
+                    b.Navigation("PaymentStatus");
                 });
 
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>
@@ -1179,6 +1169,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
                     b.Navigation("OrderStatusHistories");
+                });
+
+            modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
+                {
+                    b.Navigation("PaymentStatusHistories");
                 });
 
             modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>
