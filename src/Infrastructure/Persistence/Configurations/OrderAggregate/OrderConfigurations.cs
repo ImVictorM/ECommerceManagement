@@ -1,4 +1,3 @@
-using Domain.Common.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
@@ -15,7 +14,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Persistence.Configurations.OrderAggregate;
 
 /// <summary>
-/// Map the <see cref="Order"/> aggregate to entity framework.
+/// Configure the tables related directly with the <see cref="Order"/> aggregate.
 /// </summary>
 public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
 {

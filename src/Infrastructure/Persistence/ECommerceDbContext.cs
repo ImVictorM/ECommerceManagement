@@ -9,7 +9,7 @@ using Domain.PaymentStatusAggregate;
 using Domain.ProductAggregate;
 using Domain.ProductFeedbackAggregate;
 using Domain.ShipmentAggregate;
-using Domain.ShipmentStatusAggregate;
+using Domain.ShipmentAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;

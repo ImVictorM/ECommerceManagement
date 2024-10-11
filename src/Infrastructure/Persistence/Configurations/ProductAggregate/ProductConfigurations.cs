@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Persistence.Configurations.ProductAggregate;
 
 /// <summary>
-/// Map the <see cref="Product"/> aggregate to entity framework.
+/// Configure the tables related directly with the <see cref="Product"/> aggregate.
 /// </summary>
 public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
 {

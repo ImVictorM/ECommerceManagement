@@ -1,12 +1,11 @@
-using Domain.ShipmentStatusAggregate;
-using Domain.ShipmentStatusAggregate.ValueObjects;
+using Domain.ShipmentAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Configurations;
+namespace Infrastructure.Persistence.Configurations.ShipmentAggregate;
 
 /// <summary>
-/// Map the <see cref="ShipmentStatus"/> aggregate to entity framework.
+/// Configures the <see cref="ShipmentStatus"/> value object to its table.
 /// </summary>
 public sealed class ShipmentStatusConfigurations : IEntityTypeConfiguration<ShipmentStatus>
 {
@@ -17,25 +16,18 @@ public sealed class ShipmentStatusConfigurations : IEntityTypeConfiguration<Ship
     }
 
     /// <summary>
-    /// Configure the shipment status table.
+    /// Configure the shipment_statuses table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureShipmentStatusTable(EntityTypeBuilder<ShipmentStatus> builder)
     {
         builder.ToTable("shipment_statuses");
 
-        builder.HasKey(shipmentStatus => shipmentStatus.Id);
+        builder.Property<long>("id");
+        builder.HasKey("id");
 
         builder
-            .Property(shipmentStatus => shipmentStatus.Id)
-            .HasConversion(
-                id => id.Value,
-                value => ShipmentStatusId.Create(value)
-            )
-            .IsRequired();
-
-        builder
-            .Property(shipmentStatus => shipmentStatus.Status)
+            .Property(shipmentStatus => shipmentStatus.Name)
             .HasMaxLength(120)
             .IsRequired();
     }

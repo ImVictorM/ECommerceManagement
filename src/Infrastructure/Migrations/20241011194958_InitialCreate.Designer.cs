@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20241011185308_InitialCreate")]
+    [Migration("20241011194958_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -385,50 +385,68 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_order");
 
-                    b.Property<long>("ShipmentStatusId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_shipment_status");
-
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<long>("id_shipment_status")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_shipment_status");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.HasIndex("ShipmentStatusId");
+                    b.HasIndex("id_shipment_status");
 
                     b.ToTable("shipments", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ShipmentStatusAggregate.ShipmentStatus", b =>
+            modelBuilder.Entity("Domain.ShipmentAggregate.ValueObjects.ShipmentStatus", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Status")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)")
-                        .HasColumnName("status");
+                        .HasColumnName("name");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("shipment_statuses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.ShipmentAggregate.ValueObjects.ShipmentStatusHistory", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
+
+                    b.Property<long>("id_shipment")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_shipment");
+
+                    b.Property<long>("id_shipment_status")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_shipment_status");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("id_shipment");
+
+                    b.HasIndex("id_shipment_status");
+
+                    b.ToTable("shipment_status_histories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.UserAggregate.User", b =>
@@ -1000,56 +1018,30 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.ShipmentStatusAggregate.ShipmentStatus", null)
+                    b.HasOne("Domain.ShipmentAggregate.ValueObjects.ShipmentStatus", "ShipmentStatus")
                         .WithMany()
-                        .HasForeignKey("ShipmentStatusId")
+                        .HasForeignKey("id_shipment_status")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Domain.ShipmentAggregate.Entities.ShipmentStatusHistory", "ShipmentStatusHistories", b1 =>
-                        {
-                            b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
+                    b.Navigation("ShipmentStatus");
+                });
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
+            modelBuilder.Entity("Domain.ShipmentAggregate.ValueObjects.ShipmentStatusHistory", b =>
+                {
+                    b.HasOne("Domain.ShipmentAggregate.Shipment", null)
+                        .WithMany("ShipmentStatusHistories")
+                        .HasForeignKey("id_shipment")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<DateTimeOffset>("CreatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("created_at");
+                    b.HasOne("Domain.ShipmentAggregate.ValueObjects.ShipmentStatus", "ShipmentStatus")
+                        .WithMany()
+                        .HasForeignKey("id_shipment_status")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<long>("ShipmentStatusId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_shipment_status");
-
-                            b1.Property<DateTimeOffset>("UpdatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("updated_at");
-
-                            b1.Property<long>("id_shipment")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_shipment");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("ShipmentStatusId");
-
-                            b1.HasIndex("id_shipment");
-
-                            b1.ToTable("shipment_status_histories", (string)null);
-
-                            b1.HasOne("Domain.ShipmentStatusAggregate.ShipmentStatus", null)
-                                .WithMany()
-                                .HasForeignKey("ShipmentStatusId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
-
-                            b1.WithOwner()
-                                .HasForeignKey("id_shipment");
-                        });
-
-                    b.Navigation("ShipmentStatusHistories");
+                    b.Navigation("ShipmentStatus");
                 });
 
             modelBuilder.Entity("Domain.UserAggregate.User", b =>
@@ -1182,6 +1174,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("UserAddresses");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>
+                {
+                    b.Navigation("ShipmentStatusHistories");
                 });
 #pragma warning restore 612, 618
         }
