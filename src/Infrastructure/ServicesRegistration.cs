@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Infrastructure.Persistence.Interceptors;
 using Application.Common.Interfaces.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
@@ -31,9 +32,15 @@ public static class ServicesRegistration
         IConfigurationManager configuration
     )
     {
-        services.Configure<DbConnectionSettings>(configuration.GetSection(DbConnectionSettings.SectionName));
+        var dbConnectionSettings = new DbConnectionSettings();
+        configuration.Bind(DbConnectionSettings.SectionName, dbConnectionSettings);
 
-        services.AddDbContext<ECommerceDbContext>();
+        services.AddSingleton(Options.Create(dbConnectionSettings));
+
+        services.AddDbContext<ECommerceDbContext>(options =>
+        {
+            options.UseNpgsql($"Host={dbConnectionSettings.Host};Port={dbConnectionSettings.Port};Database={dbConnectionSettings.Database};Username={dbConnectionSettings.Username};Password={dbConnectionSettings.Password};Trust Server Certificate=true;");
+        });
 
         services.AddAuth(configuration);
 

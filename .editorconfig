@@ -88,6 +88,7 @@ csharp_style_expression_bodied_local_functions = false:silent
 
 # S3925: "ISerializable" should be implemented correctly
 dotnet_diagnostic.S3925.severity = none
+dotnet_diagnostic.S1118.severity = suggestion
 
 [*.{xml,config,*proj,nuspec,props,resx,targets,yml,tasks}]
 indent_size = 2

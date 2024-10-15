@@ -13,7 +13,6 @@ using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Persistence;
 
@@ -32,11 +31,6 @@ public class ECommerceDbContext : DbContext
     /// The context interceptors.
     /// </summary>
     private readonly IEnumerable<IInterceptor> _interceptors;
-
-    /// <summary>
-    /// The settings for connection to the database.
-    /// </summary>
-    private readonly DbConnectionSettings _connectionSettings;
 
     /// <summary>
     /// Gets or sets the user aggregate context.
@@ -84,24 +78,20 @@ public class ECommerceDbContext : DbContext
     /// </summary>
     /// <param name="options">The db context options.</param>
     /// <param name="auditInterceptor">The audit interceptor.</param>
-    /// <param name="connectionOptions">The options for the database connection.</param>
     /// <param name="publishDomainEventInterceptor">The publish domain events interceptor.</param>
     public ECommerceDbContext(
         DbContextOptions<ECommerceDbContext> options,
         AuditInterceptor auditInterceptor,
-        PublishDomainEventsInterceptor publishDomainEventInterceptor,
-        IOptions<DbConnectionSettings> connectionOptions
+        PublishDomainEventsInterceptor publishDomainEventInterceptor
     )
         : base(options)
     {
         _interceptors = [auditInterceptor, publishDomainEventInterceptor];
-        _connectionSettings = connectionOptions.Value;
     }
 
     /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
         modelBuilder
             .Ignore<List<IDomainEvent>>()
             .ApplyConfigurationsFromAssembly(typeof(ECommerceDbContext).Assembly);
@@ -117,8 +107,6 @@ public class ECommerceDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.AddInterceptors(_interceptors);
-
-        optionsBuilder.UseNpgsql($"Host={_connectionSettings.Host};Port={_connectionSettings.Port};Database={_connectionSettings.Database};Username={_connectionSettings.Username};Password={_connectionSettings.Password};Trust Server Certificate=true;");
 
         base.OnConfiguring(optionsBuilder);
     }

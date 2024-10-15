@@ -41,3 +41,8 @@ app.UseExceptionHandler(ErrorEndpoints.BaseEndpoint);
 app.MapCarter();
 
 app.Run();
+
+/// <summary>
+/// Defines the program as a partial class.
+/// </summary>
+public partial class Program;
