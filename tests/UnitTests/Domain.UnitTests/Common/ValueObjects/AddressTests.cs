@@ -19,37 +19,37 @@ public class AddressTests
 
         yield return new object[] {
             "66845",
-            TestConstants.Address.Street,
-            TestConstants.Address.Neighborhood,
-            TestConstants.Address.State,
-            TestConstants.Address.City
+            DomainConstants.Address.Street,
+            DomainConstants.Address.Neighborhood,
+            DomainConstants.Address.State,
+            DomainConstants.Address.City
         };
         yield return new object[] {
-            TestConstants.Address.PostalCode,
+            DomainConstants.Address.PostalCode,
             "401 Mill",
-            TestConstants.Address.Neighborhood,
-            TestConstants.Address.State,
-            TestConstants.Address.City
+            DomainConstants.Address.Neighborhood,
+            DomainConstants.Address.State,
+            DomainConstants.Address.City
         };
         yield return new object[] {
-            TestConstants.Address.PostalCode,
-            TestConstants.Address.Street,
+            DomainConstants.Address.PostalCode,
+            DomainConstants.Address.Street,
             "Borderlands",
-            TestConstants.Address.State,
-            TestConstants.Address.City
+            DomainConstants.Address.State,
+            DomainConstants.Address.City
         };
         yield return new object[] {
-            TestConstants.Address.PostalCode,
-            TestConstants.Address.Street,
-            TestConstants.Address.Neighborhood,
+            DomainConstants.Address.PostalCode,
+            DomainConstants.Address.Street,
+            DomainConstants.Address.Neighborhood,
             "Kansas",
-            TestConstants.Address.City
+            DomainConstants.Address.City
         };
         yield return new object[] {
-            TestConstants.Address.PostalCode,
-            TestConstants.Address.Street,
-            TestConstants.Address.Neighborhood,
-            TestConstants.Address.State,
+            DomainConstants.Address.PostalCode,
+            DomainConstants.Address.Street,
+            DomainConstants.Address.Neighborhood,
+            DomainConstants.Address.State,
             "Cottonwood Falls"
         };
     }

@@ -26,11 +26,11 @@ public static class AddressUtils
     )
     {
         return Address.Create(
-            postalCode ?? TestConstants.Address.PostalCode,
-            street ?? TestConstants.Address.Street,
-            neighborhood ?? TestConstants.Address.Neighborhood,
-            state ?? TestConstants.Address.State,
-            city ?? TestConstants.Address.City
+            postalCode ?? DomainConstants.Address.PostalCode,
+            street ?? DomainConstants.Address.Street,
+            neighborhood ?? DomainConstants.Address.Neighborhood,
+            state ?? DomainConstants.Address.State,
+            city ?? DomainConstants.Address.City
         );
     }
 }

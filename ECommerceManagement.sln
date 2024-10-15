@@ -32,13 +32,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A9939777
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{D5BA6565-9342-4503-9656-3C80DB59163F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "tests\UnitTests\Application.UnitTests\Application.UnitTests.csproj", "{B0E78177-D1DB-407D-8C8B-974F50F6B52F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.UnitTests", "tests\UnitTests\Application.UnitTests\Application.UnitTests.csproj", "{B0E78177-D1DB-407D-8C8B-974F50F6B52F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.UnitTests", "tests\UnitTests\Domain.UnitTests\Domain.UnitTests.csproj", "{62F3F0F7-CE65-4B84-89BD-C76775E76292}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.UnitTests", "tests\UnitTests\Domain.UnitTests\Domain.UnitTests.csproj", "{62F3F0F7-CE65-4B84-89BD-C76775E76292}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.UnitTests", "tests\UnitTests\WebApi.UnitTests\WebApi.UnitTests.csproj", "{093EABE7-DF9E-447D-AF2F-A927F6AAF8A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.UnitTests", "tests\UnitTests\WebApi.UnitTests\WebApi.UnitTests.csproj", "{093EABE7-DF9E-447D-AF2F-A927F6AAF8A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.UnitTests", "tests\UnitTests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj", "{8BBAB133-607C-4927-BC42-AFA44B99E022}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.UnitTests", "tests\UnitTests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj", "{8BBAB133-607C-4927-BC42-AFA44B99E022}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "E2ETests", "E2ETests", "{5E95B9D4-42D8-48A6-9396-D23D80F4205F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,7 @@ Global
 		{62F3F0F7-CE65-4B84-89BD-C76775E76292} = {D5BA6565-9342-4503-9656-3C80DB59163F}
 		{093EABE7-DF9E-447D-AF2F-A927F6AAF8A0} = {D5BA6565-9342-4503-9656-3C80DB59163F}
 		{8BBAB133-607C-4927-BC42-AFA44B99E022} = {D5BA6565-9342-4503-9656-3C80DB59163F}
+		{5E95B9D4-42D8-48A6-9396-D23D80F4205F} = {A9939777-A0D2-493C-9651-993F0E5D2C06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {247F3707-F3F4-4438-A4C5-E4F2A6482562}

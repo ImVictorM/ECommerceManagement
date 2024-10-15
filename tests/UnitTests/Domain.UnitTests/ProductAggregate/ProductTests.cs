@@ -11,58 +11,62 @@ namespace Domain.UnitTests.ProductAggregate;
 public class ProductTests
 {
 
+    /// <summary>
+    /// List of valid product parameters.
+    /// </summary>
+    /// <returns>List of valid product parameters.</returns>
     public static IEnumerable<object[]> ValidProductParameters()
     {
         yield return new object[] {
-            TestConstants.Product.Name,
-            TestConstants.Product.Description,
-            TestConstants.Product.Price,
-            TestConstants.Product.QuantityAvailable,
-            TestConstants.Product.Category,
+            DomainConstants.Product.Name,
+            DomainConstants.Product.Description,
+            DomainConstants.Product.Price,
+            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(1),
         };
 
         yield return new object[] {
             "Computer",
-            TestConstants.Product.Description,
-            TestConstants.Product.Price,
-            TestConstants.Product.QuantityAvailable,
-            TestConstants.Product.Category,
+            DomainConstants.Product.Description,
+            DomainConstants.Product.Price,
+            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(2),
         };
 
         yield return new object[] {
-            TestConstants.Product.Name,
+            DomainConstants.Product.Name,
             "Some description for the product",
-            TestConstants.Product.Price,
-            TestConstants.Product.QuantityAvailable,
-            TestConstants.Product.Category,
+            DomainConstants.Product.Price,
+            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(3),
         };
 
         yield return new object[] {
-            TestConstants.Product.Name,
-            TestConstants.Product.Description,
+            DomainConstants.Product.Name,
+            DomainConstants.Product.Description,
             100m,
-            TestConstants.Product.QuantityAvailable,
-            TestConstants.Product.Category,
+            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(4),
         };
 
         yield return new object[] {
-            TestConstants.Product.Name,
-            TestConstants.Product.Description,
-            TestConstants.Product.Price,
+            DomainConstants.Product.Name,
+            DomainConstants.Product.Description,
+            DomainConstants.Product.Price,
             57,
-            TestConstants.Product.Category,
+            DomainConstants.Product.Category,
             ProductUtils.CreateProductImagesUrl(5),
         };
 
         yield return new object[] {
-            TestConstants.Product.Name,
-            TestConstants.Product.Description,
-            TestConstants.Product.Price,
-            TestConstants.Product.QuantityAvailable,
+            DomainConstants.Product.Name,
+            DomainConstants.Product.Description,
+            DomainConstants.Product.Price,
+            DomainConstants.Product.QuantityAvailable,
             ProductCategory.Automotive,
             ProductUtils.CreateProductImagesUrl(6),
         };
@@ -109,7 +113,7 @@ public class ProductTests
             for (var i = 0; i < product.ProductImages.Count; i += 1)
             {
                 var image = product.ProductImages[i];
-                image.Url.Should().Be($"{TestConstants.Product.ProductImage}-{i}");
+                image.Url.Should().Be($"{DomainConstants.Product.ProductImage}-{i}");
             }
         };
 

@@ -68,7 +68,6 @@ public sealed class Discount : ValueObject
         DateTimeOffset endingDate
     )
     {
-        // TODO: add a way to discover if the discount is still valid
         return new Discount(percentage, description, startingDate, endingDate);
     }
 

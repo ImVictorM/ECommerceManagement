@@ -22,9 +22,9 @@ public static class RegisterCommandUtils
     )
     {
         return new RegisterCommand(
-            name ?? TestConstants.User.Name,
-            email ?? TestConstants.Email.Value,
-            password ?? TestConstants.User.Password
+            name ?? DomainConstants.User.Name,
+            email ?? DomainConstants.Email.Value,
+            password ?? DomainConstants.User.Password
         );
     }
 }

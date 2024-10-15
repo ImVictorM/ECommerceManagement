@@ -66,7 +66,7 @@ public class RegisterCommandHandlerTests
 
         _mockPasswordHasher
             .Setup(r => r.Hash(It.IsAny<string>()))
-            .Returns((TestConstants.User.PasswordHash, TestConstants.User.PasswordSalt));
+            .Returns((DomainConstants.User.PasswordHash, DomainConstants.User.PasswordSalt));
 
         var result = await _handler.Handle(registerCommand, default);
 

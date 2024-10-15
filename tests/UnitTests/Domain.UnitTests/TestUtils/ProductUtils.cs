@@ -29,11 +29,11 @@ public static class ProductUtils
     )
     {
         return Product.Create(
-            name ?? TestConstants.Product.Name,
-            description ?? TestConstants.Product.Description,
-            price ?? TestConstants.Product.Price,
-            quantityAvailable ?? TestConstants.Product.QuantityAvailable,
-            productCategory ?? TestConstants.Product.Category,
+            name ?? DomainConstants.Product.Name,
+            description ?? DomainConstants.Product.Description,
+            price ?? DomainConstants.Product.Price,
+            quantityAvailable ?? DomainConstants.Product.QuantityAvailable,
+            productCategory ?? DomainConstants.Product.Category,
             productImagesUrl ?? CreateProductImagesUrl()
         );
     }
@@ -47,6 +47,6 @@ public static class ProductUtils
     {
         return Enumerable
             .Range(0, imageCount)
-            .Select(TestConstants.Product.ProductImageFromIndex);
+            .Select(DomainConstants.Product.ProductImageFromIndex);
     }
 }

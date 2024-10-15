@@ -56,14 +56,14 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
     /// <returns>The user with authentication token.</returns>
     public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
-        var defaultUserNotFoundErrorMessage = "User email or password is incorrect.";
+        var defaultUserNotFoundErrorMessage = "User email or password is incorrect";
         var inputEmail = Email.Create(query.Email);
 
         LogHandlingLoginQuery(inputEmail.Value);
 
         User? user = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
-        // TODO: do not allow inactive users to login
-        if (user == null)
+
+        if (user == null || !user.IsActive)
         {
             LogUserNotFound(query.Email);
             throw new BadRequestException(defaultUserNotFoundErrorMessage);
@@ -78,7 +78,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
         LogSuccessfullyAuthenticatedUser(query.Email);
 
         var token = _jwtTokenGenerator.GenerateToken(user);
-        LogTokenGenerated(user.Id.Value);
+        LogTokenGenerated();
 
         return new AuthenticationResult(user, token);
     }

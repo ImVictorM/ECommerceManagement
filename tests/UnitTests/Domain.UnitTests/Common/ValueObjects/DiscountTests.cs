@@ -3,10 +3,10 @@ using Domain.Common.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 
-namespace Domain.UnitTests.DiscountAggregate;
+namespace Domain.UnitTests.Common.ValueObjects;
 
 /// <summary>
-/// Tests for the <see cref="Discount"/> aggregate root.
+/// Tests for the <see cref="Discount"/> value object.
 /// </summary>
 public class DiscountTests
 {

@@ -14,6 +14,6 @@ public static class EmailUtils
     /// <returns>A new instance of the <see cref="Email"/> class.</returns>
     public static Email CreateEmail(string? email = null)
     {
-        return Email.Create(email ?? Constants.TestConstants.Email.Value);
+        return Email.Create(email ?? Constants.DomainConstants.Email.Value);
     }
 }

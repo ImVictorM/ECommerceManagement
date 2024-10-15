@@ -24,10 +24,10 @@ public static class DiscountUtils
     )
     {
         return Discount.Create(
-            percentage ?? TestConstants.Discount.Percentage,
-            description ?? TestConstants.Discount.Description,
-            startingDate ?? TestConstants.Discount.StartingDate,
-            endingDate ?? TestConstants.Discount.EndingDate
+            percentage ?? DomainConstants.Discount.Percentage,
+            description ?? DomainConstants.Discount.Description,
+            startingDate ?? DomainConstants.Discount.StartingDate,
+            endingDate ?? DomainConstants.Discount.EndingDate
         );
     }
 }

@@ -1,6 +1,7 @@
 using Domain.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
+using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 
 namespace Domain.UnitTests.UserAggregate;
@@ -17,11 +18,12 @@ public class UserTests
     public static IEnumerable<object[]> ValidUserParameters()
     {
         yield return new object[] {
-            TestConstants.User.Name,
-            TestConstants.User.PasswordHash,
-            TestConstants.User.PasswordSalt,
-            TestConstants.User.Phone,
-            TestConstants.Email.Value
+            DomainConstants.User.Name,
+            DomainConstants.User.PasswordHash,
+            DomainConstants.User.PasswordSalt,
+            DomainConstants.User.Phone,
+            DomainConstants.Email.Value,
+            Role.Customer
         };
     }
     /// <summary>
@@ -30,8 +32,8 @@ public class UserTests
     /// <returns>A list of hash and salt invalid pairs.</returns>
     public static IEnumerable<object[]> HashSaltInvalidPairs()
     {
-        yield return new object[] { "invalid_hash", TestConstants.User.PasswordSalt };
-        yield return new object[] { TestConstants.User.PasswordHash, "invalid_salt" };
+        yield return new object[] { "invalid_hash", DomainConstants.User.PasswordSalt };
+        yield return new object[] { DomainConstants.User.PasswordHash, "invalid_salt" };
         yield return new object[] { "invalid_hash", "invalid_salt" };
         yield return new object[] { "", "" };
     }
@@ -44,6 +46,7 @@ public class UserTests
     /// <param name="passwordSalt">The user password salt.</param>
     /// <param name="phone">The user phone.</param>
     /// <param name="email">The user email.</param>
+    /// <param name="role">The user role.</param>
     [Theory]
     [MemberData(nameof(ValidUserParameters))]
     public void User_WhenUserCredentialsAreValid_CreatesNewActiveInstance(
@@ -51,7 +54,8 @@ public class UserTests
         string passwordHash,
         string passwordSalt,
         string phone,
-        string email
+        string email,
+        Role role
     )
     {
         var user = UserUtils.CreateUser(
@@ -71,6 +75,7 @@ public class UserTests
         user.Email.Value.Should().Be(email);
         user.IsActive.Should().BeTrue();
         user.UserRoles.Count.Should().Be(1);
+        user.UserRoles.Select(ur => ur.Role).Should().Contain(role);
         user.UserAddresses.Count.Should().Be(0);
     }
 
@@ -99,5 +104,19 @@ public class UserTests
         user.MakeInactive();
 
         user.IsActive.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// Tests if it is possible to add roles to a current user.
+    /// </summary>
+    [Fact]
+    public void User_WhenAddingRole_AddAndIncrementsTheUserRolesCount()
+    {
+        var user = UserUtils.CreateUser();
+
+        user.AddUserRole(Role.Admin);
+
+        user.UserRoles.Count.Should().Be(2);
+        user.UserRoles.Select(ur => ur.Role).Should().Contain(Role.Admin);
     }
 }

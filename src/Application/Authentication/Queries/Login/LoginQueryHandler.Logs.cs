@@ -57,11 +57,10 @@ public partial class LoginQueryHandler
     /// <summary>
     /// Log an information saying that the token was successfully generated for the user.
     /// </summary>
-    /// <param name="userId">The user id the token was generated.</param>
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Information,
-        Message = "JWT token generated for user with identifier {UserId}"
+        Message = "JWT token generated successfully"
     )]
-    public partial void LogTokenGenerated(long userId);
+    public partial void LogTokenGenerated();
 }

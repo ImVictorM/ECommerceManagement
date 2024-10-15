@@ -16,22 +16,24 @@ public static class UserUtils
     /// <param name="passwordSalt">The password salt.</param>
     /// <param name="phone">The user phone.</param>
     /// <param name="email">The user email.</param>
+    /// <param name="role">The user role</param>.
     /// <returns>A new instance of the <see cref="User"/> class.</returns>
     public static User CreateUser(
         string? name = null,
         string? passwordHash = null,
         string? passwordSalt = null,
         string? phone = null,
-        string? email = null
+        string? email = null,
+        Role? role = null
     )
     {
         return User.Create(
-            name ?? Constants.TestConstants.User.Name,
+            name ?? Constants.DomainConstants.User.Name,
             EmailUtils.CreateEmail(email: email),
-            passwordHash ?? Constants.TestConstants.User.PasswordHash,
-            passwordSalt ?? Constants.TestConstants.User.PasswordSalt,
-            Role.Customer,
-            phone ?? Constants.TestConstants.User.Phone
+            passwordHash ?? Constants.DomainConstants.User.PasswordHash,
+            passwordSalt ?? Constants.DomainConstants.User.PasswordSalt,
+            role ?? Role.Customer,
+            phone ?? Constants.DomainConstants.User.Phone
         );
     }
 }
