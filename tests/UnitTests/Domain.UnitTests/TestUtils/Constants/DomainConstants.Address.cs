@@ -1,6 +1,6 @@
 namespace Domain.UnitTests.TestUtils.Constants;
 
-public static partial class TestConstants
+public static partial class DomainConstants
 {
     /// <summary>
     /// Declare constants related to the <see cref="Domain.Common.ValueObjects.Address"/> aggregate root for testing purposes.

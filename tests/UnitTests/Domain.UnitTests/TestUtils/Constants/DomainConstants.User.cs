@@ -1,6 +1,6 @@
 namespace Domain.UnitTests.TestUtils.Constants;
 
-public static partial class TestConstants
+public static partial class DomainConstants
 {
     /// <summary>
     /// Define the <see cref="Domain.UserAggregate.User"/> test constants.

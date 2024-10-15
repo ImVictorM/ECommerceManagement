@@ -2,7 +2,7 @@ using Domain.ProductAggregate.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils.Constants;
 
-public static partial class TestConstants
+public static partial class DomainConstants
 {
     /// <summary>
     /// Product constants for testing purposes.
