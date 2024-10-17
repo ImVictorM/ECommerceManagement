@@ -1,4 +1,4 @@
-using Domain.ProductAggregate.ValueObjects;
+using Domain.ProductAggregate.Entities;
 
 namespace Domain.UnitTests.TestUtils.Constants;
 

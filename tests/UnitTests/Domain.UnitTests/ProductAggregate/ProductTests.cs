@@ -1,4 +1,4 @@
-using Domain.ProductAggregate.ValueObjects;
+using Domain.ProductAggregate.Entities;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;

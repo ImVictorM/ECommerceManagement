@@ -1,7 +1,7 @@
 using Domain.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
-using Domain.UserAggregate.ValueObjects;
+using Domain.UserAggregate.Entities;
 using FluentAssertions;
 
 namespace Domain.UnitTests.UserAggregate;

@@ -1,5 +1,8 @@
+using System.Net.Http.Json;
+using Contracts.Authentication;
 using FluentAssertions;
 using IntegrationTests.Common;
+using IntegrationTests.TestUtils.Seeds;
 
 namespace IntegrationTests.Authentication;
 
@@ -17,8 +20,12 @@ public class LoginTests : BaseIntegrationTest
     }
 
     [Fact]
-    public void Login_WhenCredentialsAreValid_AuthenticateTheUserCorrectly()
+    public async Task Login_WhenCredentialsAreValid_AuthenticateTheUserCorrectly()
     {
-        1.ToString().Should().Be("1");
+        var loginRequest = new LoginRequest(UserSeed.User1.Email.Value, UserSeed.UserPassword);
+
+        var response = await HttpClient.PostAsJsonAsync("/auth/login", loginRequest);
+
+        response.Should().BeSuccessful();
     }
 }

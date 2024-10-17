@@ -1,4 +1,5 @@
 using Infrastructure.Persistence;
+using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -39,7 +40,26 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             {
                 options.UseNpgsql(_dbContainer.GetConnectionString());
             });
+
+            var sp = services.BuildServiceProvider();
+            using var scope = sp.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
+
+            SeedDatabase(dbContext);
         });
+    }
+
+    /// <summary>
+    /// Seeds the database with initial data.
+    /// </summary>
+    /// <param name="dbContext">The db context.</param>
+    private static void SeedDatabase(ECommerceDbContext dbContext)
+    {
+        dbContext.Database.EnsureCreated();
+
+        dbContext.Users.AddRange(UserSeed.List());
+
+        dbContext.SaveChanges();
     }
 
     /// <inheritdoc/>
