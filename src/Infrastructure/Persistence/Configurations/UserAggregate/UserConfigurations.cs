@@ -37,6 +37,7 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
                 id => id.Value,
                 value => UserId.Create(value)
             )
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder
@@ -96,6 +97,7 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
                     id => id.Value,
                     value => UserAddressId.Create(value)
                 )
+                .ValueGeneratedOnAdd()
                 .IsRequired();
 
             userAddressBuilder
@@ -132,12 +134,14 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
                     id => id.Value,
                     value => UserRoleId.Create(value)
                 )
+                .ValueGeneratedOnAdd()
                 .IsRequired();
 
+
             userRolesBuilder
-                .HasOne(ur => ur.Role)
-                .WithOne()
-                .HasForeignKey<UserRole>("id_role")
+                .HasOne<Role>()
+                .WithMany()
+                .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
 
             userRolesBuilder.WithOwner().HasForeignKey("id_user");

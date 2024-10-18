@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20241011215111_InitialCreate")]
+    [Migration("20241018155237_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -28,11 +28,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.InstallmentAggregate.Installment", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<float>("AmountPerPayment")
                         .HasColumnType("real")
@@ -65,11 +62,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -153,11 +147,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<float>("Amount")
                         .HasColumnType("real")
@@ -274,11 +265,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -342,11 +330,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.ProductFeedbackAggregate.ProductFeedback", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -402,11 +387,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Accountable")
                         .IsRequired()
@@ -489,6 +471,50 @@ namespace Infrastructure.Migrations
                     b.ToTable("shipment_status_histories", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.UserAggregate.Entities.Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "customer",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "admin",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
             modelBuilder.Entity("Domain.UserAggregate.User", b =>
                 {
                     b.Property<long>("Id")
@@ -541,26 +567,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.UserAggregate.ValueObjects.Role", b =>
-                {
-                    b.Property<long>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
-
-                    b.HasKey("id");
-
-                    b.ToTable("roles", (string)null);
-                });
-
             modelBuilder.Entity("Domain.InstallmentAggregate.Installment", b =>
                 {
                     b.HasOne("Domain.OrderAggregate.Order", null)
@@ -587,10 +593,8 @@ namespace Infrastructure.Migrations
                     b.OwnsOne("Domain.Common.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<long>("OrderId")
-                                .ValueGeneratedOnAdd()
                                 .HasColumnType("bigint")
-                                .HasColumnName("id")
-                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+                                .HasColumnName("id");
 
                             b1.Property<string>("City")
                                 .IsRequired()
@@ -632,11 +636,8 @@ namespace Infrastructure.Migrations
                     b.OwnsMany("Domain.OrderAggregate.Entities.OrderDiscount", "OrderDiscounts", b1 =>
                         {
                             b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
                                 .HasColumnType("bigint")
                                 .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
 
                             b1.Property<DateTimeOffset>("CreatedAt")
                                 .HasColumnType("timestamp with time zone")
@@ -662,10 +663,8 @@ namespace Infrastructure.Migrations
                             b1.OwnsOne("Domain.Common.ValueObjects.Discount", "Discount", b2 =>
                                 {
                                     b2.Property<long>("OrderDiscountId")
-                                        .ValueGeneratedOnAdd()
                                         .HasColumnType("bigint")
-                                        .HasColumnName("id")
-                                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+                                        .HasColumnName("id");
 
                                     b2.Property<string>("Description")
                                         .IsRequired()
@@ -700,11 +699,8 @@ namespace Infrastructure.Migrations
                     b.OwnsMany("Domain.OrderAggregate.Entities.OrderProduct", "OrderProducts", b1 =>
                         {
                             b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
                                 .HasColumnType("bigint")
                                 .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
 
                             b1.Property<DateTimeOffset>("CreatedAt")
                                 .HasColumnType("timestamp with time zone")
@@ -832,11 +828,8 @@ namespace Infrastructure.Migrations
                     b.OwnsOne("Domain.ProductAggregate.Entities.Inventory", "Inventory", b1 =>
                         {
                             b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
                                 .HasColumnType("bigint")
                                 .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
 
                             b1.Property<DateTimeOffset>("CreatedAt")
                                 .HasColumnType("timestamp with time zone")
@@ -868,11 +861,8 @@ namespace Infrastructure.Migrations
                     b.OwnsMany("Domain.ProductAggregate.Entities.ProductDiscount", "ProductDiscounts", b1 =>
                         {
                             b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
                                 .HasColumnType("bigint")
                                 .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
 
                             b1.Property<DateTimeOffset>("CreatedAt")
                                 .HasColumnType("timestamp with time zone")
@@ -898,10 +888,8 @@ namespace Infrastructure.Migrations
                             b1.OwnsOne("Domain.Common.ValueObjects.Discount", "Discount", b2 =>
                                 {
                                     b2.Property<long>("ProductDiscountId")
-                                        .ValueGeneratedOnAdd()
                                         .HasColumnType("bigint")
-                                        .HasColumnName("id")
-                                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+                                        .HasColumnName("id");
 
                                     b2.Property<string>("Description")
                                         .IsRequired()
@@ -936,11 +924,8 @@ namespace Infrastructure.Migrations
                     b.OwnsMany("Domain.ProductAggregate.Entities.ProductImage", "ProductImages", b1 =>
                         {
                             b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
                                 .HasColumnType("bigint")
                                 .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
 
                             b1.Property<DateTimeOffset>("CreatedAt")
                                 .HasColumnType("timestamp with time zone")
@@ -1069,10 +1054,8 @@ namespace Infrastructure.Migrations
                             b1.OwnsOne("Domain.Common.ValueObjects.Address", "Address", b2 =>
                                 {
                                     b2.Property<long>("UserAddressId")
-                                        .ValueGeneratedOnAdd()
                                         .HasColumnType("bigint")
-                                        .HasColumnName("id")
-                                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+                                        .HasColumnName("id");
 
                                     b2.Property<string>("City")
                                         .IsRequired()
@@ -1128,13 +1111,13 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
 
+                            b1.Property<long>("RoleId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id_role");
+
                             b1.Property<DateTimeOffset>("UpdatedAt")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("updated_at");
-
-                            b1.Property<long>("id_role")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_role");
 
                             b1.Property<long>("id_user")
                                 .HasColumnType("bigint")
@@ -1142,23 +1125,20 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("Id");
 
-                            b1.HasIndex("id_role")
-                                .IsUnique();
+                            b1.HasIndex("RoleId");
 
                             b1.HasIndex("id_user");
 
                             b1.ToTable("users_roles", (string)null);
 
-                            b1.HasOne("Domain.UserAggregate.ValueObjects.Role", "Role")
-                                .WithOne()
-                                .HasForeignKey("Domain.UserAggregate.User.UserRoles#Domain.UserAggregate.Entities.UserRole", "id_role")
+                            b1.HasOne("Domain.UserAggregate.Entities.Role", null)
+                                .WithMany()
+                                .HasForeignKey("RoleId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("id_user");
-
-                            b1.Navigation("Role");
                         });
 
                     b.Navigation("UserAddresses");

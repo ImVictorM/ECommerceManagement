@@ -39,6 +39,8 @@ public static class ServicesRegistration
 
         services.AddDbContext<ECommerceDbContext>(options =>
         {
+            /// TODO: handle this correctly
+            options.EnableSensitiveDataLogging();
             options.UseNpgsql($"Host={dbConnectionSettings.Host};Port={dbConnectionSettings.Port};Database={dbConnectionSettings.Database};Username={dbConnectionSettings.Username};Password={dbConnectionSettings.Password};Trust Server Certificate=true;");
         });
 

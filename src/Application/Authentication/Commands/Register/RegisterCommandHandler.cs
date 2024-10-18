@@ -6,7 +6,6 @@ using Domain.UserAggregate;
 using Application.Common.Interfaces.Persistence;
 using Microsoft.Extensions.Logging;
 using Domain.Common.ValueObjects;
-using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -68,15 +67,13 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
             throw new BadRequestException("User already exists.");
         }
 
-
         var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);
 
-        var user = User.Create(
+        var user = User.CreateCustomer(
             command.Name,
             inputEmail,
             passwordHash,
-            passwordSalt,
-            Role.Customer
+            passwordSalt
         );
 
         LogUserCreatedWithCustomerRole();

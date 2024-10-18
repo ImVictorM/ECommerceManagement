@@ -1,5 +1,5 @@
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Entities;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils;

@@ -55,18 +55,18 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     private User() { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class with default customer role and status of activated.
+    /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
-    /// <param name="role">The user associated role.</param>
+    /// <param name="roleId">The user associated role id.</param>
     /// <param name="passwordHash">The user password hashed.</param>
     /// <param name="phone">The user phone (optional).</param>
     private User(
         string name,
         Email email,
         PasswordHash passwordHash,
-        Role role,
+        RoleId roleId,
         string? phone
     )
     {
@@ -74,9 +74,10 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
         Email = email;
         Phone = phone;
         PasswordHash = passwordHash;
+
         IsActive = true;
 
-        AddUserRole(role);
+        AddRole(roleId);
     }
 
     /// <summary>
@@ -88,12 +89,12 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="role">The user associated role.</param>
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="passwordSalt">The user password salt.</param>
-    public static User Create(
+    private static User Create(
         string name,
         Email email,
         string passwordHash,
         string passwordSalt,
-        Role role,
+        RoleId role,
         string? phone = null
     )
     {
@@ -111,17 +112,48 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     }
 
     /// <summary>
+    /// Creates a new customer user.
+    /// </summary>
+    /// <param name="name">The customer name.</param>
+    /// <param name="email">The customer email.</param>
+    /// <param name="passwordHash">The customer password hash.</param>
+    /// <param name="passwordSalt">The customer password salt.</param>
+    /// <param name="phone">The customer phone.</param>
+    /// <returns>A new active customer.</returns>
+    public static User CreateCustomer(
+        string name,
+        Email email,
+        string passwordHash,
+        string passwordSalt,
+        string? phone = null
+    )
+    {
+        return Create(name, email, passwordHash, passwordSalt, Role.Customer.Id, phone);
+    }
+
+    /// <summary>
     /// Relate the user with a role.
     /// </summary>
-    /// <param name="role">The role to be related with the user.</param>
-    public void AddUserRole(Role role)
+    /// <param name="roleId">The role id to be related with the user.</param>
+    public void AddRole(RoleId roleId)
     {
-        if (UserRoles.Any(ur => ur.Role == role))
+        if (UserRoles.Any(ur => ur.RoleId == roleId))
         {
             return;
         }
 
-        _userRoles.Add(UserRole.Create(role));
+        _userRoles.Add(UserRole.Create(roleId));
+    }
+
+    /// <summary>
+    /// List the name of the user roles.
+    /// </summary>
+    /// <returns>A list of names containing the user roles.</returns>
+    public IEnumerable<string> GetRoleNames()
+    {
+        var userRoleIds = UserRoles.Select(ur => ur.RoleId).ToList();
+
+        return Role.List(role => userRoleIds.Contains(role.Id)).Select(role => role.Name);
     }
 
     /// <inheritdoc/>

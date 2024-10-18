@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace Infrastructure.Migrations
 {
@@ -68,9 +70,10 @@ namespace Infrastructure.Migrations
                 name: "roles",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,8 +116,7 @@ namespace Infrastructure.Migrations
                 name: "products",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
@@ -138,8 +140,7 @@ namespace Infrastructure.Migrations
                 name: "orders",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     total = table.Column<float>(type: "real", nullable: false),
                     id_user = table.Column<long>(type: "bigint", nullable: false),
                     postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
@@ -226,8 +227,7 @@ namespace Infrastructure.Migrations
                 name: "inventories",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     quantity_available = table.Column<int>(type: "integer", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -248,8 +248,7 @@ namespace Infrastructure.Migrations
                 name: "product_discounts",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     percentage = table.Column<int>(type: "integer", nullable: false),
                     description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -273,8 +272,7 @@ namespace Infrastructure.Migrations
                 name: "product_images",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     url = table.Column<string>(type: "text", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -295,8 +293,7 @@ namespace Infrastructure.Migrations
                 name: "installments",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     quantity_payments = table.Column<int>(type: "integer", nullable: false),
                     amount_per_payment = table.Column<float>(type: "real", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
@@ -318,8 +315,7 @@ namespace Infrastructure.Migrations
                 name: "order_discounts",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     percentage = table.Column<int>(type: "integer", nullable: false),
                     description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -370,8 +366,7 @@ namespace Infrastructure.Migrations
                 name: "orders_products",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     price_on_order = table.Column<float>(type: "real", nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
@@ -400,8 +395,7 @@ namespace Infrastructure.Migrations
                 name: "product_feedbacks",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     subject = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     content = table.Column<string>(type: "text", nullable: false),
                     star_rating = table.Column<int>(type: "integer", nullable: true),
@@ -439,8 +433,7 @@ namespace Infrastructure.Migrations
                 name: "shipments",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     accountable = table.Column<string>(type: "text", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
                     id_shipment_status = table.Column<long>(type: "bigint", nullable: false),
@@ -468,8 +461,7 @@ namespace Infrastructure.Migrations
                 name: "payments",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<long>(type: "bigint", nullable: false),
                     amount = table.Column<float>(type: "real", nullable: false),
                     id_installment = table.Column<long>(type: "bigint", nullable: true),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
@@ -558,6 +550,15 @@ namespace Infrastructure.Migrations
                         principalTable: "payments",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "roles",
+                columns: new[] { "id", "created_at", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "customer", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -670,6 +671,12 @@ namespace Infrastructure.Migrations
                 column: "id_category");
 
             migrationBuilder.CreateIndex(
+                name: "IX_roles_name",
+                table: "roles",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_shipment_status_histories_id_shipment",
                 table: "shipment_status_histories",
                 column: "id_shipment");
@@ -704,101 +711,12 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_users_roles_id_role",
                 table: "users_roles",
-                column: "id_role",
-                unique: true);
+                column: "id_role");
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_roles_id_user",
                 table: "users_roles",
                 column: "id_user");
-
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-            migrationBuilder.InsertData(
-                table: "roles",
-                columns: ["id", "name"],
-                values: new object[,]
-                {
-                    {1, "admin"},
-                    {2, "customer"}
-                }
-            );
-
-            migrationBuilder.InsertData(
-                table: "payment_statuses",
-                columns: ["name"],
-                values: new object[,]
-                {
-                    { "pending" },
-                    { "completed" },
-                    { "failed" },
-                    { "refunded" }
-                }
-            );
-
-            migrationBuilder.InsertData(
-                table: "payment_methods",
-                columns: ["name"],
-                values: new object[,]
-                {
-                    { "credit_card" },
-                    { "pix" },
-                    { "bank_transfer" },
-                    { "cash" }
-                }
-            );
-
-            migrationBuilder.InsertData(
-                table: "shipment_statuses",
-                columns: ["name"],
-                values: new object[,]
-                {
-                    { "pending" },
-                    { "shipped" },
-                    { "in_route" },
-                    { "delivered" },
-                    { "canceled" }
-                }
-            );
-
-            migrationBuilder.InsertData(
-                table: "order_statuses",
-                columns: ["name"],
-                values: new object[,]
-                {
-                    { "pending" },
-                    { "paid" },
-                    { "shipped" },
-                    { "delivered" },
-                    { "canceled" }
-                }
-            );
-
-            // password: admin123
-            migrationBuilder.InsertData(
-                table: "users",
-                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
-                values: [
-                    1,
-                    "admin",
-                    "admin@email.com",
-                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
-                    true,
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
-
-            migrationBuilder.InsertData(
-                table: "users_roles",
-                columns: ["id_role", "id_user", "created_at", "updated_at"],
-                values: [
-                    1,
-                    1,
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
-#pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
         }
 
         /// <inheritdoc />

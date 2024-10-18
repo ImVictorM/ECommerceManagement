@@ -1,21 +1,23 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
+using Domain.UserAggregate.ValueObjects;
 
-namespace Domain.UserAggregate.ValueObjects;
+namespace Domain.UserAggregate.Entities;
 
 /// <summary>
 /// Represents a role.
 /// </summary>
-public sealed class Role : ValueObject
+public sealed class Role : Entity<RoleId>
 {
-    /// <summary>
-    /// Represents the customer role.
-    /// </summary>
-    public static readonly Role Customer = new(nameof(Customer).ToLowerInvariant());
     /// <summary>
     /// Represents the administrator role.
     /// </summary>
-    public static readonly Role Admin = new(nameof(Admin).ToLowerInvariant());
+    public static readonly Role Admin = new(RoleId.Create(1), nameof(Admin).ToLowerInvariant());
+
+    /// <summary>
+    /// Represents the customer role.
+    /// </summary>
+    public static readonly Role Customer = new(RoleId.Create(2), nameof(Customer).ToLowerInvariant());
 
     /// <summary>
     /// Gets the role name.
@@ -31,8 +33,10 @@ public sealed class Role : ValueObject
     /// Initializes a new instance of the <see cref="Role"/> class.
     /// </summary>
     /// <param name="name">The name of the role.</param>
-    private Role(string name)
+    /// <param name="id">The role identifier.</param>
+    private Role(RoleId id, string name) : base(id)
     {
+
         Name = name;
     }
 
@@ -42,9 +46,7 @@ public sealed class Role : ValueObject
     /// <param name="name">The name of the role.</param>
     public static Role Create(string name)
     {
-        if (GetRoleByName(name) == null) throw new DomainValidationException($"The {name} role does not exist");
-
-        return new Role(name);
+        return GetRoleByName(name) ?? throw new DomainValidationException($"The {name} role does not exist");
     }
 
     /// <summary>
@@ -52,7 +54,7 @@ public sealed class Role : ValueObject
     /// </summary>
     /// <param name="name">The role name.</param>
     /// <returns>The role or null.</returns>
-    private static Role? GetRoleByName(string name)
+    public static Role? GetRoleByName(string name)
     {
         return List().FirstOrDefault(r => r.Name == name);
     }
@@ -66,9 +68,13 @@ public sealed class Role : ValueObject
         return [Customer, Admin];
     }
 
-    /// <inheritdoc/>
-    protected override IEnumerable<object?> GetEqualityComponents()
+    /// <summary>
+    /// Gets the roles applying a filter condition.
+    /// </summary>
+    /// <param name="filter">The filter condition.</param>
+    /// <returns>A list with roles that matches the filter condition.</returns>
+    public static IEnumerable<Role> List(Func<Role, bool> filter)
     {
-        yield return Name;
+        return List().Where(filter);
     }
 }
