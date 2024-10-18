@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Persistence.Configurations.UserAggregate;
 
 /// <summary>
-/// Configures the <see cref="Role"/> value object to its table.
+/// Configures the <see cref="Role"/> entity to its table.
 /// </summary>
 public sealed class RoleConfigurations : IEntityTypeConfiguration<Role>
 {

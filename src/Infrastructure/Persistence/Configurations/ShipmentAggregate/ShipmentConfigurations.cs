@@ -36,6 +36,7 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
                 id => id.Value,
                 value => ShipmentId.Create(value)
             )
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder
@@ -77,7 +78,7 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
         {
             shipmentStatusHistoryBuilder.ToTable("shipment_status_histories");
 
-            shipmentStatusHistoryBuilder.Property<long>("id");
+            shipmentStatusHistoryBuilder.Property<long>("id").ValueGeneratedOnAdd();
             shipmentStatusHistoryBuilder.HasKey("id");
 
             shipmentStatusHistoryBuilder.WithOwner().HasForeignKey("id_shipment");

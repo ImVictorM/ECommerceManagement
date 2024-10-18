@@ -19,6 +19,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// The product discounts.
     /// </summary>
     private readonly List<ProductDiscount> _productDiscounts = [];
+
     /// <summary>
     /// Gets the name of the product.
     /// </summary>
@@ -40,9 +41,9 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// </summary>
     public Inventory Inventory { get; private set; } = null!;
     /// <summary>
-    /// Gets the product category.
+    /// Gets the product category identifier.
     /// </summary>
-    public ProductCategory ProductCategory { get; private set; } = null!;
+    public ProductCategoryId ProductCategoryId { get; private set; } = null!;
     /// <summary>
     /// Gets the product images.
     /// </summary>
@@ -64,14 +65,14 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="inventory">The product inventory.</param>
-    /// <param name="productCategory">The category related to this product.</param>
+    /// <param name="productCategoryId">The category related to this product.</param>
     /// <param name="productImages">The product images.</param>
     private Product(
         string name,
         string description,
         decimal price,
         Inventory inventory,
-        ProductCategory productCategory,
+        ProductCategoryId productCategoryId,
         List<ProductImage> productImages
     )
     {
@@ -79,7 +80,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
         Description = description;
         Price = price;
         Inventory = inventory;
-        ProductCategory = productCategory;
+        ProductCategoryId = productCategoryId;
 
         _productImages.AddRange(productImages);
 
@@ -89,7 +90,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
-    /// <param name="category">The category related to this product.</param>
+    /// <param name="categoryId">The category related to this product.</param>
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
@@ -101,7 +102,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
         string description,
         decimal price,
         int quantityAvailable,
-        ProductCategory category,
+        ProductCategoryId categoryId,
         IEnumerable<Uri> productImageUrls
     )
     {
@@ -113,7 +114,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
             description,
             price,
             inventory,
-            category,
+            categoryId,
             productImages
         );
     }

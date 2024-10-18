@@ -38,6 +38,7 @@ public sealed class ProductFeedbackConfigurations : IEntityTypeConfiguration<Pro
                 id => id.Value,
                 value => ProductFeedbackId.Create(value)
             )
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder

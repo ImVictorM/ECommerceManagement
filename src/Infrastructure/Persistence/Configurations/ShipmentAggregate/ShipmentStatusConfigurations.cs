@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Persistence.Configurations.ShipmentAggregate;
 
 /// <summary>
-/// Configures the <see cref="ShipmentStatus"/> value object to its table.
+/// Configures the <see cref="ShipmentStatus"/> entity to its table.
 /// </summary>
 public sealed class ShipmentStatusConfigurations : IEntityTypeConfiguration<ShipmentStatus>
 {
@@ -32,6 +32,7 @@ public sealed class ShipmentStatusConfigurations : IEntityTypeConfiguration<Ship
                 id => id.Value,
                 value => ShipmentStatusId.Create(value)
             )
+            .ValueGeneratedNever()
             .IsRequired();
 
         builder

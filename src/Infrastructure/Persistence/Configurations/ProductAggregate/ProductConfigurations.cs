@@ -1,4 +1,5 @@
 using Domain.ProductAggregate;
+using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.ValueObjects;
 using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
@@ -36,12 +37,21 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
                 id => id.Value,
                 value => ProductId.Create(value)
             )
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder
-            .HasOne(p => p.ProductCategory)
+            .HasOne<ProductCategory>()
             .WithMany()
-            .HasForeignKey("id_category")
+            .HasForeignKey(p => p.ProductCategoryId)
+            .IsRequired();
+
+        builder
+            .Property(product => product.ProductCategoryId)
+            .HasConversion(
+                id => id.Value,
+                value => ProductCategoryId.Create(value)
+            )
             .IsRequired();
 
         builder
@@ -82,6 +92,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
                         id => id.Value,
                         value => InventoryId.Create(value)
                     )
+                    .ValueGeneratedOnAdd()
                     .IsRequired();
 
                 inventoryBuilder.WithOwner().HasForeignKey("id_product");
@@ -102,6 +113,10 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     /// <param name="builder">Then entity type builder.</param>
     private static void ConfigureOwnedProductDiscountTable(EntityTypeBuilder<Product> builder)
     {
+        builder.Metadata
+            .FindNavigation(nameof(Product.ProductDiscounts))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         builder.OwnsMany(
             product => product.ProductDiscounts,
             productDiscountBuilder =>
@@ -116,6 +131,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
                         id => id.Value,
                         value => ProductDiscountId.Create(value)
                     )
+                    .ValueGeneratedOnAdd()
                     .IsRequired();
 
                 productDiscountBuilder.WithOwner().HasForeignKey("id_product");
@@ -134,6 +150,10 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedProductImageTable(EntityTypeBuilder<Product> builder)
     {
+        builder.Metadata
+            .FindNavigation(nameof(Product.ProductImages))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         builder.OwnsMany(
             product => product.ProductImages,
             productImageBuilder =>
@@ -148,6 +168,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
                         id => id.Value,
                         value => ProductImageId.Create(value)
                     )
+                    .ValueGeneratedOnAdd()
                     .IsRequired();
 
                 productImageBuilder.WithOwner().HasForeignKey("id_product");

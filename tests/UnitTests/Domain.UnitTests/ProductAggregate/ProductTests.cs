@@ -1,5 +1,4 @@
 using Domain.ProductAggregate.Entities;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
@@ -109,7 +108,7 @@ public class ProductTests
             product.Description.Should().Be(description);
             product.Price.Should().Be(price);
             product.Inventory.QuantityAvailable.Should().Be(quantityAvailable);
-            product.ProductCategory.Should().Be(category);
+            product.ProductCategoryId.Should().Be(category);
 
             for (var i = 0; i < product.ProductImages.Count; i += 1)
             {
