@@ -8,9 +8,9 @@ namespace Domain.ShipmentAggregate.ValueObjects;
 public sealed class ShipmentStatusHistory : ValueObject
 {
     /// <summary>
-    /// Gets the shipment status.
+    /// Gets the shipment status id.
     /// </summary>
-    public ShipmentStatus ShipmentStatus { get; } = null!;
+    public ShipmentStatusId ShipmentStatusId { get; } = null!;
 
     /// <summary>
     /// Gets the date the shipment status was created.
@@ -25,10 +25,10 @@ public sealed class ShipmentStatusHistory : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.
     /// </summary>
-    /// <param name="shipmentStatus">The shipment status.</param>
-    private ShipmentStatusHistory(ShipmentStatus shipmentStatus)
+    /// <param name="shipmentStatusId">The shipment status id.</param>
+    private ShipmentStatusHistory(ShipmentStatusId shipmentStatusId)
     {
-        ShipmentStatus = shipmentStatus;
+        ShipmentStatusId = shipmentStatusId;
 
         CreatedAt = DateTimeOffset.UtcNow;
     }
@@ -36,17 +36,17 @@ public sealed class ShipmentStatusHistory : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="ShipmentStatusHistory"/> class.
     /// </summary>
-    /// <param name="shipmentStatus">The shipment status.</param>
+    /// <param name="shipmentStatusId">The shipment status id.</param>
     /// <returns>A new instance of the <see cref="ShipmentStatusHistory"/> class.</returns>
-    public static ShipmentStatusHistory Create(ShipmentStatus shipmentStatus)
+    public static ShipmentStatusHistory Create(ShipmentStatusId shipmentStatusId)
     {
-        return new ShipmentStatusHistory(shipmentStatus);
+        return new ShipmentStatusHistory(shipmentStatusId);
     }
 
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return ShipmentStatus;
+        yield return ShipmentStatusId;
         yield return CreatedAt;
     }
 }

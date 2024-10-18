@@ -1,3 +1,4 @@
+using Domain.ShipmentAggregate.Entities;
 using Domain.ShipmentAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,12 +24,23 @@ public sealed class ShipmentStatusConfigurations : IEntityTypeConfiguration<Ship
     {
         builder.ToTable("shipment_statuses");
 
-        builder.Property<long>("id");
-        builder.HasKey("id");
+        builder.HasKey(ss => ss.Id);
+
+        builder
+            .Property(ss => ss.Id)
+            .HasConversion(
+                id => id.Value,
+                value => ShipmentStatusId.Create(value)
+            )
+            .IsRequired();
 
         builder
             .Property(shipmentStatus => shipmentStatus.Name)
             .HasMaxLength(120)
             .IsRequired();
+
+        builder.HasIndex(ss => ss.Name).IsUnique();
+
+        builder.HasData(ShipmentStatus.List());
     }
 }

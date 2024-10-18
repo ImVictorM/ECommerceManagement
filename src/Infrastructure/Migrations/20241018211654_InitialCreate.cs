@@ -84,9 +84,10 @@ namespace Infrastructure.Migrations
                 name: "shipment_statuses",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -557,8 +558,20 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "customer", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2865), new TimeSpan(0, 0, 0, 0, 0)), "admin", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2868), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2876), new TimeSpan(0, 0, 0, 0, 0)), "customer", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2876), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "shipment_statuses",
+                columns: new[] { "id", "created_at", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(6433), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(6738), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7065), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7065), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7067), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7067), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7069), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7070), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 5L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7071), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7072), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -685,6 +698,12 @@ namespace Infrastructure.Migrations
                 name: "IX_shipment_status_histories_id_shipment_status",
                 table: "shipment_status_histories",
                 column: "id_shipment_status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_shipment_statuses_name",
+                table: "shipment_statuses",
+                column: "name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_shipments_id_order",

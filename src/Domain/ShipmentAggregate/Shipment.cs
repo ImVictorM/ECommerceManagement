@@ -22,9 +22,9 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     public OrderId OrderId { get; private set; } = null!;
     /// <summary>
-    /// Get the shipment status.
+    /// Get the shipment status identifier.
     /// </summary>
-    public ShipmentStatus ShipmentStatus { get; private set; } = null!;
+    public ShipmentStatusId ShipmentStatusId { get; private set; } = null!;
     /// <summary>
     /// Gets the shipment status change history.
     /// </summary>

@@ -7,7 +7,7 @@ using Domain.PaymentAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductFeedbackAggregate;
 using Domain.ShipmentAggregate;
-using Domain.ShipmentAggregate.ValueObjects;
+using Domain.ShipmentAggregate.Entities;
 using Domain.UserAggregate;
 using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;

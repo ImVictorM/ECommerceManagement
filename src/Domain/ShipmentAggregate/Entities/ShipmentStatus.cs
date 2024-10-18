@@ -1,33 +1,34 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
+using Domain.ShipmentAggregate.ValueObjects;
 
-namespace Domain.ShipmentAggregate.ValueObjects;
+namespace Domain.ShipmentAggregate.Entities;
 
 /// <summary>
 /// Represents the shipment status.
 /// </summary>
-public sealed class ShipmentStatus : ValueObject
+public sealed class ShipmentStatus : Entity<ShipmentStatusId>
 {
     /// <summary>
     /// Represents the pending status.
     /// </summary>
-    public static readonly ShipmentStatus Pending = new(nameof(Pending).ToLowerInvariant());
+    public static readonly ShipmentStatus Pending = new(ShipmentStatusId.Create(1), nameof(Pending).ToLowerInvariant());
     /// <summary>
     /// Represents the shipped status.
     /// </summary>
-    public static readonly ShipmentStatus Shipped = new(nameof(Shipped).ToLowerInvariant());
+    public static readonly ShipmentStatus Shipped = new(ShipmentStatusId.Create(2), nameof(Shipped).ToLowerInvariant());
     /// <summary>
     /// Represents the in route status.
     /// </summary>
-    public static readonly ShipmentStatus InRoute = new("in_route");
+    public static readonly ShipmentStatus InRoute = new(ShipmentStatusId.Create(3), "in_route");
     /// <summary>
     /// Represents the delivered status.
     /// </summary>
-    public static readonly ShipmentStatus Delivered = new(nameof(Delivered).ToLowerInvariant());
+    public static readonly ShipmentStatus Delivered = new(ShipmentStatusId.Create(4), nameof(Delivered).ToLowerInvariant());
     /// <summary>
     /// Represents the canceled status.
     /// </summary>
-    public static readonly ShipmentStatus Canceled = new(nameof(Canceled).ToLowerInvariant());
+    public static readonly ShipmentStatus Canceled = new(ShipmentStatusId.Create(5), nameof(Canceled).ToLowerInvariant());
 
     /// <summary>
     /// Gets the shipment status.
@@ -42,10 +43,14 @@ public sealed class ShipmentStatus : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentStatus"/> class.
     /// </summary>
+    /// <param name="id">The shipment status identifier.</param>
     /// <param name="name">The shipment status name.</param>
-    private ShipmentStatus(string name)
+    private ShipmentStatus(ShipmentStatusId id, string name) : base(id)
     {
         Name = name;
+
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
@@ -55,9 +60,7 @@ public sealed class ShipmentStatus : ValueObject
     /// <returns>A new instance of the <see cref="ShipmentStatus"/> class.</returns>
     public static ShipmentStatus Create(string name)
     {
-        if (GetShipmentStatusByName(name) == null) throw new DomainValidationException($"The {name} shipment status does not exist");
-
-        return new ShipmentStatus(name);
+        return GetShipmentStatusByName(name) ?? throw new DomainValidationException($"The {name} shipment status does not exist");
     }
 
     /// <summary>
@@ -83,11 +86,5 @@ public sealed class ShipmentStatus : ValueObject
     private static ShipmentStatus? GetShipmentStatusByName(string name)
     {
         return List().FirstOrDefault(status => status.Name == name);
-    }
-
-    /// <inheritdoc/>
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Name;
     }
 }

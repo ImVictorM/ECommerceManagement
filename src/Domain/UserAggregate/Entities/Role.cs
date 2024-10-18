@@ -38,6 +38,9 @@ public sealed class Role : Entity<RoleId>
     {
 
         Name = name;
+
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
