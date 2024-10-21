@@ -23,7 +23,7 @@ public sealed class ProductFeedbackConfigurations : IEntityTypeConfiguration<Pro
     }
 
     /// <summary>
-    /// Configure the product feedback table.
+    /// Configure the product_feedbacks table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureProductFeedbackTable(EntityTypeBuilder<ProductFeedback> builder)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Persistence.Configurations.PaymentAggregate;
 
 /// <summary>
-/// Configures the <see cref="PaymentStatus"/> value object to its table.
+/// Configures the <see cref="PaymentStatus"/> entity to its table.
 /// </summary>
 public sealed class PaymentStatusConfigurations : IEntityTypeConfiguration<PaymentStatus>
 {

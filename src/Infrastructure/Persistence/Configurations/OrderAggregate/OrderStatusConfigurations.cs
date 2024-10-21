@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Persistence.Configurations.OrderAggregate;
 
 /// <summary>
-/// Configures the <see cref="OrderStatus"/> value object to its table.
+/// Configures the <see cref="OrderStatus"/> entity to its table.
 /// </summary>
 public sealed class OrderStatusConfigurations : IEntityTypeConfiguration<OrderStatus>
 {

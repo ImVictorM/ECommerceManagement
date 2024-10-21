@@ -34,6 +34,7 @@ public sealed class InstallmentConfigurations : IEntityTypeConfiguration<Install
                 id => id.Value,
                 value => InstallmentId.Create(value)
             )
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder

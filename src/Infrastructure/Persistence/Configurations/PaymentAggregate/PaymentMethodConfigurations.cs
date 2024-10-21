@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Persistence.Configurations.PaymentAggregate;
 
 /// <summary>
-/// Configures the <see cref="PaymentMethod"/> value object to its table.
+/// Configures the <see cref="PaymentMethod"/> entity to its table.
 /// </summary>
 public sealed class PaymentMethodConfigurations : IEntityTypeConfiguration<PaymentMethod>
 {

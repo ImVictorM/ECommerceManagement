@@ -145,7 +145,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     }
 
     /// <summary>
-    /// Configures the product image table.
+    /// Configures the product_images table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedProductImageTable(EntityTypeBuilder<Product> builder)

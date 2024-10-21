@@ -1,14 +1,14 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
+
 using Domain.InstallmentAggregate;
 using Domain.OrderAggregate;
 using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductFeedbackAggregate;
 using Domain.ShipmentAggregate;
-using Domain.ShipmentAggregate.Entities;
 using Domain.UserAggregate;
+
 using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -49,14 +49,6 @@ public class ECommerceDbContext : DbContext
     /// </summary>
     public DbSet<Payment> Payments { get; set; }
     /// <summary>
-    /// Gets or sets the payment method aggregate context.
-    /// </summary>
-    public DbSet<PaymentMethod> PaymentsMethods { get; set; }
-    /// <summary>
-    /// Gets or sets the payment status aggregate context.
-    /// </summary>
-    public DbSet<PaymentStatus> PaymentStatuses { get; set; }
-    /// <summary>
     /// Gets or sets the product aggregate context.
     /// </summary>
     public DbSet<Product> Products { get; set; }
@@ -68,10 +60,6 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the shipment aggregate context.
     /// </summary>
     public DbSet<Shipment> Shipments { get; set; }
-    /// <summary>
-    /// Gets or sets the shipment status aggregate context.
-    /// </summary>
-    public DbSet<ShipmentStatus> ShipmentStatuses { get; set; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.
