@@ -13,7 +13,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// <summary>
     /// The payment status change history.
     /// </summary>
-    private readonly List<PaymentStatusHistory> _paymentStatusHistory = [];
+    private readonly List<PaymentStatusHistory> _paymentStatusHistories = [];
 
     /// <summary>
     /// Gets the payment amount.
@@ -30,15 +30,15 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// <summary>
     /// Gets the payment method.
     /// </summary>
-    public PaymentMethod PaymentMethod { get; private set; } = null!;
+    public PaymentMethodId PaymentMethodId { get; private set; } = null!;
     /// <summary>
     /// Gets the payment status.
     /// </summary>
-    public PaymentStatus PaymentStatus { get; private set; } = null!;
+    public PaymentStatusId PaymentStatusId { get; private set; } = null!;
     /// <summary>
     /// Gets the payment status change history.
     /// </summary>
-    public IReadOnlyList<PaymentStatusHistory> PaymentStatusHistories => _paymentStatusHistory.AsReadOnly();
+    public IReadOnlyList<PaymentStatusHistory> PaymentStatusHistories => _paymentStatusHistories.AsReadOnly();
 
     /// <summary>
     /// Initiates a new instance of the <see cref="Payment"/> class.
@@ -50,21 +50,21 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// </summary>
     /// <param name="amount">The payment amount.</param>
     /// <param name="orderId">The order id.</param>
-    /// <param name="paymentMethod">The payment method.</param>
-    /// <param name="paymentStatus">The payment status.</param>
+    /// <param name="paymentMethodId">The payment method id.</param>
+    /// <param name="paymentStatusId">The payment status id.</param>
     /// <param name="installmentId">The installment id (optional).</param>
     private Payment(
         float amount,
         OrderId orderId,
-        PaymentMethod paymentMethod,
-        PaymentStatus paymentStatus,
+        PaymentMethodId paymentMethodId,
+        PaymentStatusId paymentStatusId,
         InstallmentId? installmentId = null
     )
     {
         Amount = amount;
         OrderId = orderId;
-        PaymentMethod = paymentMethod;
-        PaymentStatus = paymentStatus;
+        PaymentMethodId = paymentMethodId;
+        PaymentStatusId = paymentStatusId;
         InstallmentId = installmentId;
     }
 
@@ -73,23 +73,23 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// </summary>
     /// <param name="amount">The payment amount.</param>
     /// <param name="orderId">The order id.</param>
-    /// <param name="paymentMethod">The payment method.</param>
-    /// <param name="paymentStatus">The payment status.</param>
+    /// <param name="paymentMethodId">The payment method id.</param>
+    /// <param name="paymentStatusId">The payment status id.</param>
     /// <param name="installmentId">The installment id (optional).</param>
     /// <returns>A new instance of the <see cref="Payment"/> class.</returns>
     public static Payment Create(
         float amount,
         OrderId orderId,
-        PaymentMethod paymentMethod,
-        PaymentStatus paymentStatus,
+        PaymentMethodId paymentMethodId,
+        PaymentStatusId paymentStatusId,
         InstallmentId? installmentId = null
     )
     {
         return new Payment(
             amount,
             orderId,
-            paymentMethod,
-            paymentStatus,
+            paymentMethodId,
+            paymentStatusId,
             installmentId
         );
     }

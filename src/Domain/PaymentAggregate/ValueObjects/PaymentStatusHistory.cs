@@ -8,9 +8,9 @@ namespace Domain.PaymentAggregate.ValueObjects;
 public sealed class PaymentStatusHistory : ValueObject
 {
     /// <summary>
-    /// Gets the payment status.
+    /// Gets the payment status id.
     /// </summary>
-    public PaymentStatus PaymentStatus { get; } = null!;
+    public PaymentStatusId PaymentStatusId { get; } = null!;
 
     /// <summary>
     /// Gets the date the payment status was created;
@@ -25,10 +25,10 @@ public sealed class PaymentStatusHistory : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentStatusHistory"/> class.
     /// </summary>
-    /// <param name="paymentStatus">The payment status.</param>
-    private PaymentStatusHistory(PaymentStatus paymentStatus)
+    /// <param name="paymentStatusId">The payment status.</param>
+    private PaymentStatusHistory(PaymentStatusId paymentStatusId)
     {
-        PaymentStatus = paymentStatus;
+        PaymentStatusId = paymentStatusId;
 
         CreatedAt = DateTimeOffset.UtcNow;
     }
@@ -36,17 +36,17 @@ public sealed class PaymentStatusHistory : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="PaymentStatusHistory"/> class.
     /// </summary>
-    /// <param name="paymentStatus">The payment status.</param>
+    /// <param name="paymentStatusId">The payment status id.</param>
     /// <returns>A new instance of the <see cref="PaymentStatusHistory"/> class.</returns>
-    public static PaymentStatusHistory Create(PaymentStatus paymentStatus)
+    public static PaymentStatusHistory Create(PaymentStatusId paymentStatusId)
     {
-        return new PaymentStatusHistory(paymentStatus);
+        return new PaymentStatusHistory(paymentStatusId);
     }
 
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return PaymentStatus;
+        yield return PaymentStatusId;
         yield return CreatedAt;
     }
 }

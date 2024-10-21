@@ -1,29 +1,30 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
+using Domain.PaymentAggregate.ValueObjects;
 
-namespace Domain.PaymentAggregate.ValueObjects;
+namespace Domain.PaymentAggregate.Entities;
 
 /// <summary>
-/// Represents the payment method.
+/// Represents a payment method.
 /// </summary>
-public sealed class PaymentMethod : ValueObject
+public sealed class PaymentMethod : Entity<PaymentMethodId>
 {
     /// <summary>
     /// Represents a credit card payment method.
     /// </summary>
-    public static readonly PaymentMethod CreditCard = new("credit_card");
+    public static readonly PaymentMethod CreditCard = new(PaymentMethodId.Create(1), "credit_card");
     /// <summary>
     /// Represents a PIX payment method.
     /// </summary>
-    public static readonly PaymentMethod Pix = new(nameof(Pix).ToLowerInvariant());
+    public static readonly PaymentMethod Pix = new(PaymentMethodId.Create(2), nameof(Pix).ToLowerInvariant());
     /// <summary>
     /// Represents a bank transfer payment method.
     /// </summary>
-    public static readonly PaymentMethod BankTransfer = new("bank_transfer");
+    public static readonly PaymentMethod BankTransfer = new(PaymentMethodId.Create(3), "bank_transfer");
     /// <summary>
     /// Represents a cash payment method.
     /// </summary>
-    public static readonly PaymentMethod Cash = new(nameof(Cash).ToLowerInvariant());
+    public static readonly PaymentMethod Cash = new(PaymentMethodId.Create(4), nameof(Cash).ToLowerInvariant());
 
     /// <summary>
     /// Gets the payment method name.
@@ -38,10 +39,14 @@ public sealed class PaymentMethod : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentMethod"/> class.
     /// </summary>
+    /// <param name="id">The payment method identifier.</param>
     /// <param name="name">The payment method name.</param>
-    private PaymentMethod(string name)
+    private PaymentMethod(PaymentMethodId id, string name) : base(id)
     {
         Name = name;
+
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
@@ -51,9 +56,7 @@ public sealed class PaymentMethod : ValueObject
     /// <returns>A new instance of the <see cref="PaymentMethod"/> class.</returns>
     public static PaymentMethod Create(string name)
     {
-        if (GetPaymentMethodByName(name) == null) throw new DomainValidationException($"The {name} payment method does not exist");
-
-        return new PaymentMethod(name);
+        return GetPaymentMethodByName(name) ?? throw new DomainValidationException($"The {name} payment method does not exist");
     }
 
     /// <summary>
@@ -79,11 +82,5 @@ public sealed class PaymentMethod : ValueObject
             BankTransfer,
             Cash
         ];
-    }
-
-    /// <inheritdoc/>
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Name;
     }
 }

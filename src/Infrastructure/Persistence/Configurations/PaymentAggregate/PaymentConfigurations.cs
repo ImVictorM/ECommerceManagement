@@ -3,6 +3,7 @@ using Domain.InstallmentAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.PaymentAggregate;
+using Domain.PaymentAggregate.Entities;
 using Domain.PaymentAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,6 +19,7 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
         ConfigurePaymentTable(builder);
+        ConfigureOwnedPaymentStatusHistoryTable(builder);
     }
 
     /// <summary>
@@ -36,6 +38,7 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
                 id => id.Value,
                 value => PaymentId.Create(value)
             )
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder
@@ -65,19 +68,83 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
             .IsRequired();
 
         builder
-            .HasOne(p => p.PaymentStatus)
+            .HasOne<PaymentStatus>()
             .WithMany()
-            .HasForeignKey("id_payment_status")
+            .HasForeignKey(p => p.PaymentStatusId)
             .IsRequired();
 
         builder
-            .HasOne(p => p.PaymentMethod)
+            .Property(p => p.PaymentStatusId)
+            .HasConversion(
+                id => id.Value,
+                value => PaymentStatusId.Create(value)
+            )
+            .IsRequired();
+
+        builder
+            .HasOne<PaymentMethod>()
             .WithMany()
-            .HasForeignKey("id_payment_method")
+            .HasForeignKey(p => p.PaymentMethodId)
+            .IsRequired();
+
+        builder
+            .Property(p => p.PaymentMethodId)
+            .HasConversion(
+                id => id.Value,
+                value => PaymentMethodId.Create(value)
+            )
             .IsRequired();
 
         builder
             .Property(payment => payment.Amount)
             .IsRequired();
+    }
+
+    /// <summary>
+    /// Configures the payment_status_histories table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureOwnedPaymentStatusHistoryTable(EntityTypeBuilder<Payment> builder)
+    {
+        builder.Metadata
+            .FindNavigation(nameof(Payment.PaymentStatusHistories))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.OwnsMany(p => p.PaymentStatusHistories, paymentStatusHistoryBuilder =>
+        {
+            paymentStatusHistoryBuilder.ToTable("payment_status_histories");
+
+            paymentStatusHistoryBuilder
+                .Property<long>("id")
+                .ValueGeneratedOnAdd();
+
+            paymentStatusHistoryBuilder.HasKey("id");
+
+            paymentStatusHistoryBuilder
+                .WithOwner()
+                .HasForeignKey("id_payment");
+
+            paymentStatusHistoryBuilder
+                .Property("id_payment")
+                .IsRequired();
+
+            paymentStatusHistoryBuilder
+                .HasOne<PaymentStatus>()
+                .WithMany()
+                .HasForeignKey(psh => psh.PaymentStatusId)
+                .IsRequired();
+
+            paymentStatusHistoryBuilder
+                .Property(psh => psh.PaymentStatusId)
+                .HasConversion(
+                    id => id.Value,
+                    value => PaymentStatusId.Create(value)
+                )
+                .IsRequired();
+
+            paymentStatusHistoryBuilder
+                .Property(psh => psh.CreatedAt)
+                .IsRequired();
+        });
     }
 }

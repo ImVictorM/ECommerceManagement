@@ -1,29 +1,30 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
+using Domain.PaymentAggregate.ValueObjects;
 
-namespace Domain.PaymentAggregate.ValueObjects;
+namespace Domain.PaymentAggregate.Entities;
 
 /// <summary>
 /// Represents the payment.
 /// </summary>
-public sealed class PaymentStatus : ValueObject
+public sealed class PaymentStatus : Entity<PaymentStatusId>
 {
     /// <summary>
     /// Represents a pending status.
     /// </summary>
-    public static readonly PaymentStatus Pending = new(nameof(Pending).ToLowerInvariant());
+    public static readonly PaymentStatus Pending = new(PaymentStatusId.Create(1), nameof(Pending).ToLowerInvariant());
     /// <summary>
     /// Represents a completed status.
     /// </summary>
-    public static readonly PaymentStatus Completed = new(nameof(Completed).ToLowerInvariant());
+    public static readonly PaymentStatus Completed = new(PaymentStatusId.Create(2), nameof(Completed).ToLowerInvariant());
     /// <summary>
     /// Represents a failed status.
     /// </summary>
-    public static readonly PaymentStatus Failed = new(nameof(Failed).ToLowerInvariant());
+    public static readonly PaymentStatus Failed = new(PaymentStatusId.Create(3), nameof(Failed).ToLowerInvariant());
     /// <summary>
     /// Represents a refunded status.
     /// </summary>
-    public static readonly PaymentStatus Refunded = new(nameof(Refunded).ToLowerInvariant());
+    public static readonly PaymentStatus Refunded = new(PaymentStatusId.Create(4), nameof(Refunded).ToLowerInvariant());
 
     /// <summary>
     /// Gets the status name.
@@ -38,10 +39,14 @@ public sealed class PaymentStatus : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentStatus"/> class.
     /// </summary>
+    /// <param name="id">The status identifier.</param>
     /// <param name="name">The status name.</param>
-    private PaymentStatus(string name)
+    private PaymentStatus(PaymentStatusId id, string name) : base(id)
     {
         Name = name;
+
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
@@ -51,9 +56,7 @@ public sealed class PaymentStatus : ValueObject
     /// <returns>A new instance of the <see cref="PaymentStatus"/> class.</returns>
     public static PaymentStatus Create(string name)
     {
-        if (GetPaymentStatusByName(name) == null) throw new DomainValidationException($"The {name} payment status does not exist");
-
-        return new PaymentStatus(name);
+        return GetPaymentStatusByName(name) ?? throw new DomainValidationException($"The {name} payment status does not exist");
     }
 
     /// <summary>
@@ -79,11 +82,5 @@ public sealed class PaymentStatus : ValueObject
             Failed,
             Refunded
         ];
-    }
-
-    /// <inheritdoc/>
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Name;
     }
 }
