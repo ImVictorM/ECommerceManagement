@@ -1,33 +1,34 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
+using Domain.OrderAggregate.ValueObjects;
 
-namespace Domain.OrderAggregate.ValueObjects;
+namespace Domain.OrderAggregate.Entities;
 
 /// <summary>
 /// Represents an order status.
 /// </summary>
-public sealed class OrderStatus : ValueObject
+public sealed class OrderStatus : Entity<OrderStatusId>
 {
     /// <summary>
     /// Represents a pending status.
     /// </summary>
-    public static readonly OrderStatus Pending = new(nameof(Pending).ToLowerInvariant());
+    public static readonly OrderStatus Pending = new(OrderStatusId.Create(1), nameof(Pending).ToLowerInvariant());
     /// <summary>
     /// Represents a paid status.
     /// </summary>
-    public static readonly OrderStatus Paid = new(nameof(Paid).ToLowerInvariant());
+    public static readonly OrderStatus Paid = new(OrderStatusId.Create(2), nameof(Paid).ToLowerInvariant());
     /// <summary>
     /// Represents a shipped status.
     /// </summary>
-    public static readonly OrderStatus Shipped = new(nameof(Shipped).ToLowerInvariant());
+    public static readonly OrderStatus Shipped = new(OrderStatusId.Create(3), nameof(Shipped).ToLowerInvariant());
     /// <summary>
     /// Represents a delivered status.
     /// </summary>
-    public static readonly OrderStatus Delivered = new(nameof(Delivered).ToLowerInvariant());
+    public static readonly OrderStatus Delivered = new(OrderStatusId.Create(4), nameof(Delivered).ToLowerInvariant());
     /// <summary>
     /// Represents a canceled status.
     /// </summary>
-    public static readonly OrderStatus Canceled = new(nameof(Canceled).ToLowerInvariant());
+    public static readonly OrderStatus Canceled = new(OrderStatusId.Create(5), nameof(Canceled).ToLowerInvariant());
 
     /// <summary>
     /// Gets the order status name.
@@ -42,10 +43,14 @@ public sealed class OrderStatus : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderStatus"/> class.
     /// </summary>
+    /// <param name="id">The order status identifier.</param>
     /// <param name="name">The order status name.</param>
-    private OrderStatus(string name)
+    private OrderStatus(OrderStatusId id, string name) : base(id)
     {
         Name = name;
+
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
@@ -55,9 +60,7 @@ public sealed class OrderStatus : ValueObject
     /// <returns>A new instance of the <see cref="OrderStatus"/> class.</returns>
     public static OrderStatus Create(string name)
     {
-        if (GetOrderStatusByName(name) == null) throw new DomainValidationException($"The {name} order status does not exist");
-
-        return new OrderStatus(name);
+        return GetOrderStatusByName(name) ?? throw new DomainValidationException($"The {name} order status does not exist");
     }
 
     /// <summary>
@@ -84,11 +87,5 @@ public sealed class OrderStatus : ValueObject
     private static OrderStatus? GetOrderStatusByName(string name)
     {
         return List().FirstOrDefault(orderStatus => orderStatus.Name == name);
-    }
-
-    /// <inheritdoc/>
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Name;
     }
 }

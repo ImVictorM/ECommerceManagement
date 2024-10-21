@@ -37,9 +37,9 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public Address Address { get; private set; } = null!;
     /// <summary>
-    /// Gets the order status.
+    /// Gets the order status identifier.
     /// </summary>
-    public OrderStatus OrderStatus { get; private set; } = null!;
+    public OrderStatusId OrderStatusId { get; private set; } = null!;
     /// <summary>
     /// Gets the order products.
     /// </summary>
@@ -63,18 +63,18 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     /// <param name="userId">The order owner id.</param>
     /// <param name="address">The order delivery address.</param>
-    /// <param name="orderStatus">The order status.</param>
+    /// <param name="orderStatusId">The order status id.</param>
     /// <param name="total">The order total.</param>
     private Order(
         UserId userId,
         Address address,
-        OrderStatus orderStatus,
+        OrderStatusId orderStatusId,
         float total
     )
     {
         UserId = userId;
         Address = address;
-        OrderStatus = orderStatus;
+        OrderStatusId = orderStatusId;
         Total = total;
     }
 
@@ -83,20 +83,22 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     /// <param name="userId">The order owner id.</param>
     /// <param name="address">The order delivery address.</param>
-    /// <param name="orderStatus">The order status.</param>
+    /// <param name="orderStatusId">The order status id.</param>
     /// <param name="total">The order total.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static Order Create(
         UserId userId,
         Address address,
-        OrderStatus orderStatus,
+        OrderStatusId orderStatusId,
         float total
     )
     {
+        // TODO: check if the order status  is paid or pending for new orders.
+
         return new Order(
             userId,
             address,
-            orderStatus,
+            orderStatusId,
             total
         );
     }

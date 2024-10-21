@@ -22,6 +22,7 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
         ConfigureOrderTable(builder);
         ConfigureOwnedOrderDiscountTable(builder);
         ConfigureOwnedOrderProductTable(builder);
+        ConfigureOwnedOrderStatusHistoryTable(builder);
     }
 
     /// <summary>
@@ -40,6 +41,7 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
                 id => id.Value,
                 value => OrderId.Create(value)
             )
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder
@@ -57,9 +59,17 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .IsRequired();
 
         builder
-            .HasOne(o => o.OrderStatus)
+            .HasOne<OrderStatus>()
             .WithMany()
-            .HasForeignKey("id_order_status")
+            .HasForeignKey(o => o.OrderStatusId)
+            .IsRequired();
+
+        builder
+            .Property(o => o.OrderStatusId)
+            .HasConversion(
+                id => id.Value,
+                value => OrderStatusId.Create(value)
+            )
             .IsRequired();
 
         builder
@@ -69,12 +79,18 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
         builder.OwnsOne(order => order.Address, AddressNavigationBuilderConfigurations.Configure);
     }
 
+    
+
     /// <summary>
-    /// Configures the order discount table.
+    /// Configures the orders_discount table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedOrderDiscountTable(EntityTypeBuilder<Order> builder)
     {
+        builder.Metadata
+            .FindNavigation(nameof(Order.OrderDiscounts))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         builder.OwnsMany(
             order => order.OrderDiscounts,
             orderDiscountBuilder =>
@@ -82,15 +98,20 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
                 orderDiscountBuilder.ToTable("order_discounts");
 
                 orderDiscountBuilder.HasKey(orderDiscount => orderDiscount.Id);
+
                 orderDiscountBuilder
                     .Property(orderDiscount => orderDiscount.Id)
                     .HasConversion(
                         id => id.Value,
                         value => OrderDiscountId.Create(value)
                     )
+                    .ValueGeneratedOnAdd()
                     .IsRequired();
 
-                orderDiscountBuilder.WithOwner().HasForeignKey("id_order");
+                orderDiscountBuilder
+                    .WithOwner()
+                    .HasForeignKey("id_order");
+
                 orderDiscountBuilder
                     .Property("id_order")
                     .IsRequired();
@@ -100,11 +121,15 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     }
 
     /// <summary>
-    /// Configures the order product table.
+    /// Configures the orders_product table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedOrderProductTable(EntityTypeBuilder<Order> builder)
     {
+        builder.Metadata
+            .FindNavigation(nameof(Order.OrderProducts))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         builder.OwnsMany(order => order.OrderProducts, orderProductsBuilder =>
         {
             orderProductsBuilder.ToTable("orders_products");
@@ -117,9 +142,13 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
                     id => id.Value,
                     value => OrderProductId.Create(value)
                 )
+                .ValueGeneratedOnAdd()
                 .IsRequired();
 
-            orderProductsBuilder.WithOwner().HasForeignKey("id_order");
+            orderProductsBuilder
+                .WithOwner()
+                .HasForeignKey("id_order");
+
             orderProductsBuilder
                 .Property("id_order")
                 .IsRequired();
@@ -144,6 +173,46 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
 
             orderProductsBuilder
                 .Property(OrderProduct => OrderProduct.Quantity)
+                .IsRequired();
+        });
+    }
+
+    /// <summary>
+    /// Configures the order_status_histories table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureOwnedOrderStatusHistoryTable(EntityTypeBuilder<Order> builder)
+    {
+        builder.Metadata
+            .FindNavigation(nameof(Order.OrderStatusHistories))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.OwnsMany(o => o.OrderStatusHistories, orderStatusHistoryBuilder =>
+        {
+            orderStatusHistoryBuilder.ToTable("order_status_histories");
+
+            orderStatusHistoryBuilder
+                .Property<long>("id")
+                .ValueGeneratedOnAdd();
+
+            orderStatusHistoryBuilder.HasKey("id");
+
+            orderStatusHistoryBuilder
+                .WithOwner()
+                .HasForeignKey("id_order");
+
+            orderStatusHistoryBuilder
+                .Property("id_order")
+                .IsRequired();
+
+            orderStatusHistoryBuilder
+                .HasOne<OrderStatus>()
+                .WithMany()
+                .HasForeignKey(osh => osh.OrderStatusId)
+                .IsRequired();
+
+            orderStatusHistoryBuilder
+                .Property(osh => osh.CreatedAt)
                 .IsRequired();
         });
     }

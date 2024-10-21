@@ -8,9 +8,9 @@ namespace Domain.OrderAggregate.ValueObjects;
 public sealed class OrderStatusHistory : ValueObject
 {
     /// <summary>
-    /// Gets the order status of the change.
+    /// Gets the order status id of the change.
     /// </summary>
-    public OrderStatus OrderStatus { get; } = null!;
+    public OrderStatusId OrderStatusId { get; } = null!;
 
     /// <summary>
     /// Gets the date the order status was created.
@@ -25,10 +25,10 @@ public sealed class OrderStatusHistory : ValueObject
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.
     /// </summary>
-    /// <param name="orderStatus">The order status.</param>
-    private OrderStatusHistory(OrderStatus orderStatus)
+    /// <param name="orderStatusId">The order status.</param>
+    private OrderStatusHistory(OrderStatusId orderStatusId)
     {
-        OrderStatus = orderStatus;
+        OrderStatusId = orderStatusId;
 
         CreatedAt = DateTimeOffset.UtcNow;
     }
@@ -36,17 +36,17 @@ public sealed class OrderStatusHistory : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="OrderStatusHistory"/> class.
     /// </summary>
-    /// <param name="orderStatus">The order status.</param>
+    /// <param name="orderStatusId">The order status.</param>
     /// <returns>A new instance of the <see cref="OrderStatusHistory"/> class.</returns>
-    public static OrderStatusHistory Create(OrderStatus orderStatus)
+    public static OrderStatusHistory Create(OrderStatusId orderStatusId)
     {
-        return new OrderStatusHistory(orderStatus);
+        return new OrderStatusHistory(orderStatusId);
     }
 
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return OrderStatus;
+        yield return OrderStatusId;
         yield return CreatedAt;
     }
 }

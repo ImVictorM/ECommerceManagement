@@ -1,3 +1,4 @@
+using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -14,12 +15,24 @@ public sealed class OrderStatusConfigurations : IEntityTypeConfiguration<OrderSt
     {
         builder.ToTable("order_statuses");
 
-        builder.Property<long>("id");
-        builder.HasKey("id");
+        builder.HasKey(os => os.Id);
+
+        builder
+            .Property(os => os.Id)
+            .HasConversion(
+                id => id.Value,
+                value => OrderStatusId.Create(value)
+            )
+            .ValueGeneratedNever()
+            .IsRequired();
 
         builder
             .Property(orderStatus => orderStatus.Name)
             .HasMaxLength(120)
             .IsRequired();
+
+        builder.HasIndex(os => os.Name).IsUnique();
+
+        builder.HasData(OrderStatus.List());
     }
 }
