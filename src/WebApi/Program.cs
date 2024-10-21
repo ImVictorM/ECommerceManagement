@@ -14,7 +14,7 @@ builder.Configuration
 
 builder.Services
     .AddApplication()
-    .AddInfrastructure(builder.Configuration)
+    .AddInfrastructure(builder.Configuration, builder.Environment)
     .AddPresentation();
 
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -43,6 +43,6 @@ app.MapCarter();
 app.Run();
 
 /// <summary>
-/// Defines the program as a partial class.
+/// Defines the program as a partial class for testing purposes.
 /// </summary>
 public partial class Program;

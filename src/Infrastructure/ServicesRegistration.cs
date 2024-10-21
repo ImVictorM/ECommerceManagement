@@ -10,6 +10,7 @@ using System.Text;
 using Infrastructure.Persistence.Interceptors;
 using Application.Common.Interfaces.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace Infrastructure;
 
@@ -23,13 +24,15 @@ public static class ServicesRegistration
     /// </summary>
     /// <param name="services">The app services.</param>
     /// <param name="configuration">The app configurations.</param>
+    /// <param name="environment">The host environment.</param>
     /// <returns>
     /// The app services including the registration of the infrastructure layer
     /// required services.
     /// </returns>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfigurationManager configuration
+        IConfigurationManager configuration,
+        IHostEnvironment environment
     )
     {
         var dbConnectionSettings = new DbConnectionSettings();
@@ -39,8 +42,11 @@ public static class ServicesRegistration
 
         services.AddDbContext<ECommerceDbContext>(options =>
         {
-            /// TODO: handle this correctly
-            options.EnableSensitiveDataLogging();
+            if (!environment.IsProduction())
+            {
+                options.EnableSensitiveDataLogging();
+            }
+
             options.UseNpgsql($"Host={dbConnectionSettings.Host};Port={dbConnectionSettings.Port};Database={dbConnectionSettings.Database};Username={dbConnectionSettings.Username};Password={dbConnectionSettings.Password};Trust Server Certificate=true;");
         });
 

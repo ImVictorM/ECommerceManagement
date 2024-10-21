@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -18,9 +18,10 @@ namespace Infrastructure.Migrations
                 name: "order_statuses",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,9 +32,10 @@ namespace Infrastructure.Migrations
                 name: "payment_methods",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,9 +46,10 @@ namespace Infrastructure.Migrations
                 name: "payment_statuses",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,9 +60,10 @@ namespace Infrastructure.Migrations
                 name: "product_categories",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,12 +121,13 @@ namespace Infrastructure.Migrations
                 name: "products",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
-                    id_category = table.Column<long>(type: "bigint", nullable: false),
+                    id_product_category = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -130,8 +135,8 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_products", x => x.id);
                     table.ForeignKey(
-                        name: "FK_products_product_categories_id_category",
-                        column: x => x.id_category,
+                        name: "FK_products_product_categories_id_product_category",
+                        column: x => x.id_product_category,
                         principalTable: "product_categories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -141,7 +146,8 @@ namespace Infrastructure.Migrations
                 name: "orders",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     total = table.Column<float>(type: "real", nullable: false),
                     id_user = table.Column<long>(type: "bigint", nullable: false),
                     postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
@@ -228,7 +234,8 @@ namespace Infrastructure.Migrations
                 name: "inventories",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     quantity_available = table.Column<int>(type: "integer", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -249,7 +256,8 @@ namespace Infrastructure.Migrations
                 name: "product_discounts",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     percentage = table.Column<int>(type: "integer", nullable: false),
                     description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -273,7 +281,8 @@ namespace Infrastructure.Migrations
                 name: "product_images",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     url = table.Column<string>(type: "text", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -294,7 +303,8 @@ namespace Infrastructure.Migrations
                 name: "installments",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     quantity_payments = table.Column<int>(type: "integer", nullable: false),
                     amount_per_payment = table.Column<float>(type: "real", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
@@ -316,7 +326,8 @@ namespace Infrastructure.Migrations
                 name: "order_discounts",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     percentage = table.Column<int>(type: "integer", nullable: false),
                     description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -367,7 +378,8 @@ namespace Infrastructure.Migrations
                 name: "orders_products",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     price_on_order = table.Column<float>(type: "real", nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
@@ -396,7 +408,8 @@ namespace Infrastructure.Migrations
                 name: "product_feedbacks",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     subject = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     content = table.Column<string>(type: "text", nullable: false),
                     star_rating = table.Column<int>(type: "integer", nullable: true),
@@ -434,7 +447,8 @@ namespace Infrastructure.Migrations
                 name: "shipments",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     accountable = table.Column<string>(type: "text", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
                     id_shipment_status = table.Column<long>(type: "bigint", nullable: false),
@@ -462,7 +476,8 @@ namespace Infrastructure.Migrations
                 name: "payments",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     amount = table.Column<float>(type: "real", nullable: false),
                     id_installment = table.Column<long>(type: "bigint", nullable: true),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
@@ -554,12 +569,72 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "order_statuses",
+                columns: new[] { "id", "created_at", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4010), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4387), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4656), new TimeSpan(0, 0, 0, 0, 0)), "paid", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4656), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4658), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4658), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4660), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4661), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 5L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4662), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4662), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "payment_methods",
+                columns: new[] { "id", "created_at", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7968), new TimeSpan(0, 0, 0, 0, 0)), "credit_card", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7971), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0)), "pix", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7992), new TimeSpan(0, 0, 0, 0, 0)), "bank_transfer", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7993), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7995), new TimeSpan(0, 0, 0, 0, 0)), "cash", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7995), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "payment_statuses",
+                columns: new[] { "id", "created_at", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4767), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4775), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4782), new TimeSpan(0, 0, 0, 0, 0)), "completed", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4783), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4784), new TimeSpan(0, 0, 0, 0, 0)), "failed", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4785), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4786), new TimeSpan(0, 0, 0, 0, 0)), "refunded", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4786), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "product_categories",
+                columns: new[] { "id", "created_at", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6282), new TimeSpan(0, 0, 0, 0, 0)), "electronics", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6285), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6293), new TimeSpan(0, 0, 0, 0, 0)), "homeappliances", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6293), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6295), new TimeSpan(0, 0, 0, 0, 0)), "fashion", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6295), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6297), new TimeSpan(0, 0, 0, 0, 0)), "footwear", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6297), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 5L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6298), new TimeSpan(0, 0, 0, 0, 0)), "beauty", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6299), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 6L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6300), new TimeSpan(0, 0, 0, 0, 0)), "health_wellness", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6300), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 7L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6302), new TimeSpan(0, 0, 0, 0, 0)), "groceries", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6302), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 8L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6304), new TimeSpan(0, 0, 0, 0, 0)), "furniture", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6304), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 9L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6306), new TimeSpan(0, 0, 0, 0, 0)), "toys_games", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6306), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 10L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6307), new TimeSpan(0, 0, 0, 0, 0)), "books_stationery", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6307), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 11L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6308), new TimeSpan(0, 0, 0, 0, 0)), "sports_outdoor", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6309), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 12L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6310), new TimeSpan(0, 0, 0, 0, 0)), "automotive", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6310), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 13L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6311), new TimeSpan(0, 0, 0, 0, 0)), "pet_supplies", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6311), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 14L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6312), new TimeSpan(0, 0, 0, 0, 0)), "jewelry_watches", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6313), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 15L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6314), new TimeSpan(0, 0, 0, 0, 0)), "office_supplies", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6314), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 16L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6315), new TimeSpan(0, 0, 0, 0, 0)), "home_improvement", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6315), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 17L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6377), new TimeSpan(0, 0, 0, 0, 0)), "baby_products", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6378), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 18L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6379), new TimeSpan(0, 0, 0, 0, 0)), "travel_luggage", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6379), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 19L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6380), new TimeSpan(0, 0, 0, 0, 0)), "music_instruments", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6380), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2865), new TimeSpan(0, 0, 0, 0, 0)), "admin", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2868), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2876), new TimeSpan(0, 0, 0, 0, 0)), "customer", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 852, DateTimeKind.Unspecified).AddTicks(2876), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8247), new TimeSpan(0, 0, 0, 0, 0)), "admin", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8250), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8258), new TimeSpan(0, 0, 0, 0, 0)), "customer", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8258), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.InsertData(
@@ -567,12 +642,38 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(6433), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(6738), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7065), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7065), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7067), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7067), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 4L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7069), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7070), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 5L, new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7071), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 10, 18, 21, 16, 53, 848, DateTimeKind.Unspecified).AddTicks(7072), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8601), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8604), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8611), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8611), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8613), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8613), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8616), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 5L, new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8652), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8653), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
+
+            // password: admin123
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
+                values: [
+                    1,
+                    "admin",
+                    "admin@email.com",
+                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
+                    true,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
+                ]
+            );
+
+            migrationBuilder.InsertData(
+                table: "users_roles",
+                columns: ["id_role", "id_user", "created_at", "updated_at"],
+                values: [
+                    1,
+                    1,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
+                ]
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_installments_id_order",
@@ -602,6 +703,12 @@ namespace Infrastructure.Migrations
                 column: "id_order_status");
 
             migrationBuilder.CreateIndex(
+                name: "IX_order_statuses_name",
+                table: "order_statuses",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_orders_id_order_status",
                 table: "orders",
                 column: "id_order_status");
@@ -622,6 +729,12 @@ namespace Infrastructure.Migrations
                 column: "id_product");
 
             migrationBuilder.CreateIndex(
+                name: "IX_payment_methods_name",
+                table: "payment_methods",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_payment_status_histories_id_payment",
                 table: "payment_status_histories",
                 column: "id_payment");
@@ -630,6 +743,12 @@ namespace Infrastructure.Migrations
                 name: "IX_payment_status_histories_id_payment_status",
                 table: "payment_status_histories",
                 column: "id_payment_status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_payment_statuses_name",
+                table: "payment_statuses",
+                column: "name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_payments_id_installment",
@@ -651,6 +770,12 @@ namespace Infrastructure.Migrations
                 name: "IX_payments_id_payment_status",
                 table: "payments",
                 column: "id_payment_status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_product_categories_name",
+                table: "product_categories",
+                column: "name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_product_discounts_id_product",
@@ -679,9 +804,9 @@ namespace Infrastructure.Migrations
                 column: "id_product");
 
             migrationBuilder.CreateIndex(
-                name: "IX_products_id_category",
+                name: "IX_products_id_product_category",
                 table: "products",
-                column: "id_category");
+                column: "id_product_category");
 
             migrationBuilder.CreateIndex(
                 name: "IX_roles_name",
