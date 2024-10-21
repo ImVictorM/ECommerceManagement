@@ -1,5 +1,5 @@
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Entities;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils;
@@ -16,7 +16,7 @@ public static class ProductUtils
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available in inventory.</param>
-    /// <param name="productCategory">The product category.</param>
+    /// <param name="productCategoryId">The product category id.</param>
     /// <param name="productImagesUrl">The product image urls.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product CreateProduct(
@@ -24,7 +24,7 @@ public static class ProductUtils
         string? description = null,
         decimal? price = null,
         int? quantityAvailable = null,
-        ProductCategory? productCategory = null,
+        ProductCategoryId? productCategoryId = null,
         IEnumerable<Uri>? productImagesUrl = null
     )
     {
@@ -33,7 +33,7 @@ public static class ProductUtils
             description ?? DomainConstants.Product.Description,
             price ?? DomainConstants.Product.Price,
             quantityAvailable ?? DomainConstants.Product.QuantityAvailable,
-            productCategory ?? DomainConstants.Product.Category,
+            productCategoryId ?? DomainConstants.Product.Category.Id,
             productImagesUrl ?? CreateProductImagesUrl()
         );
     }

@@ -86,15 +86,15 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="phone">The user phone (optional).</param>
-    /// <param name="role">The user associated role.</param>
+    /// <param name="roleId">The user initial role id to be associated.</param>
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="passwordSalt">The user password salt.</param>
-    private static User Create(
+    public static User Create(
         string name,
         Email email,
         string passwordHash,
         string passwordSalt,
-        RoleId role,
+        RoleId? roleId = null,
         string? phone = null
     )
     {
@@ -104,31 +104,11 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
             name,
             email,
             ph,
-            role,
+            roleId ?? Role.Customer.Id,
             phone
         );
 
         return user;
-    }
-
-    /// <summary>
-    /// Creates a new customer user.
-    /// </summary>
-    /// <param name="name">The customer name.</param>
-    /// <param name="email">The customer email.</param>
-    /// <param name="passwordHash">The customer password hash.</param>
-    /// <param name="passwordSalt">The customer password salt.</param>
-    /// <param name="phone">The customer phone.</param>
-    /// <returns>A new active customer.</returns>
-    public static User CreateCustomer(
-        string name,
-        Email email,
-        string passwordHash,
-        string passwordSalt,
-        string? phone = null
-    )
-    {
-        return Create(name, email, passwordHash, passwordSalt, Role.Customer.Id, phone);
     }
 
     /// <summary>

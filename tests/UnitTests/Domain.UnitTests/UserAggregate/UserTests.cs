@@ -22,8 +22,39 @@ public class UserTests
             DomainConstants.User.PasswordHash,
             DomainConstants.User.PasswordSalt,
             DomainConstants.User.Phone,
-            DomainConstants.Email.Value,
-            Role.Customer
+            DomainConstants.Email.Value
+        };
+
+        yield return new object[] {
+            "Djhon djhones",
+            DomainConstants.User.PasswordHash,
+            DomainConstants.User.PasswordSalt,
+            DomainConstants.User.Phone,
+            DomainConstants.Email.Value
+        };
+
+        yield return new object[] {
+            DomainConstants.User.Name,
+            "1847564AEFE",
+            DomainConstants.User.PasswordSalt,
+            DomainConstants.User.Phone,
+            DomainConstants.Email.Value
+        };
+
+        yield return new object[] {
+            DomainConstants.User.Name,
+            DomainConstants.User.PasswordHash,
+            "ABCDEF123456",
+            DomainConstants.User.Phone,
+            DomainConstants.Email.Value
+        };
+
+        yield return new object[] {
+            DomainConstants.User.Name,
+            DomainConstants.User.PasswordHash,
+            DomainConstants.User.PasswordSalt,
+            "19987093231",
+            DomainConstants.Email.Value
         };
     }
     /// <summary>
@@ -46,16 +77,14 @@ public class UserTests
     /// <param name="passwordSalt">The user password salt.</param>
     /// <param name="phone">The user phone.</param>
     /// <param name="email">The user email.</param>
-    /// <param name="role">The user role.</param>
     [Theory]
     [MemberData(nameof(ValidUserParameters))]
-    public void User_WhenUserCredentialsAreValid_CreatesNewActiveInstance(
+    public void User_WhenUserCredentialsAreValid_CreatesNewActiveCustomer(
         string name,
         string passwordHash,
         string passwordSalt,
-        string phone,
-        string email,
-        Role role
+        string? phone,
+        string email
     )
     {
         var user = UserUtils.CreateUser(
@@ -75,7 +104,7 @@ public class UserTests
         user.Email.Value.Should().Be(email);
         user.IsActive.Should().BeTrue();
         user.UserRoles.Count.Should().Be(1);
-        user.UserRoles.Select(ur => ur.Role).Should().Contain(role);
+        user.UserRoles[0].RoleId.Should().Be(Role.Customer.Id);
         user.UserAddresses.Count.Should().Be(0);
     }
 
@@ -107,6 +136,18 @@ public class UserTests
     }
 
     /// <summary>
+    /// It is possible to create a user with a specific role.
+    /// </summary>
+    [Fact]
+    public void User_WhenCreatingWithSpecificRole_AssociateItCorrectly()
+    {
+        var user = UserUtils.CreateUser(roleId: Role.Admin.Id);
+
+        user.UserRoles.Count.Should().Be(1);
+        user.UserRoles[0].RoleId.Should().Be(Role.Admin.Id);
+    }
+
+    /// <summary>
     /// Tests if it is possible to add roles to a current user.
     /// </summary>
     [Fact]
@@ -114,9 +155,43 @@ public class UserTests
     {
         var user = UserUtils.CreateUser();
 
-        user.AddUserRole(Role.Admin);
+        user.AddRole(Role.Admin.Id);
 
         user.UserRoles.Count.Should().Be(2);
-        user.UserRoles.Select(ur => ur.Role).Should().Contain(Role.Admin);
+
+        user.UserRoles.Select(ur => ur.RoleId).Should().Contain(Role.Admin.Id);
+    }
+
+    /// <summary>
+    /// Tests if adding repeated roles ignores it.
+    /// </summary>
+    [Fact]
+    public void User_WhenAddingRepeatedRole_IgnoresIt()
+    {
+        var user = UserUtils.CreateUser();
+
+        user.AddRole(Role.Customer.Id);
+
+        user.UserRoles.Count.Should().Be(1);
+    }
+
+    /// <summary>
+    /// Tests if it is possible to get the user role names.
+    /// </summary>
+    [Fact]
+    public void User_WhenGettingUserRoleNames_RetunsItCorrectly()
+    {
+        var expectedRoleNames = new string[] { "admin", "customer" };
+
+        var user = UserUtils.CreateUser();
+
+        user.AddRole(Role.Admin.Id);
+
+        var roleNames = user.GetRoleNames();
+
+        foreach (var roleName in roleNames)
+        {
+            expectedRoleNames.Should().Contain(roleName);
+        }
     }
 }

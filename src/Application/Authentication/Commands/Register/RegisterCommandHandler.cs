@@ -69,7 +69,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
 
         var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);
 
-        var user = User.CreateCustomer(
+        var user = User.Create(
             command.Name,
             inputEmail,
             passwordHash,

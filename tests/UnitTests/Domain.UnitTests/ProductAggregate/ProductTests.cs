@@ -1,4 +1,5 @@
 using Domain.ProductAggregate.Entities;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
@@ -22,7 +23,7 @@ public class ProductTests
             DomainConstants.Product.Description,
             DomainConstants.Product.Price,
             DomainConstants.Product.QuantityAvailable,
-            DomainConstants.Product.Category,
+            DomainConstants.Product.Category.Id,
             ProductUtils.CreateProductImagesUrl(1),
         };
 
@@ -31,7 +32,7 @@ public class ProductTests
             DomainConstants.Product.Description,
             DomainConstants.Product.Price,
             DomainConstants.Product.QuantityAvailable,
-            DomainConstants.Product.Category,
+            DomainConstants.Product.Category.Id,
             ProductUtils.CreateProductImagesUrl(2),
         };
 
@@ -40,7 +41,7 @@ public class ProductTests
             "Some description for the product",
             DomainConstants.Product.Price,
             DomainConstants.Product.QuantityAvailable,
-            DomainConstants.Product.Category,
+            DomainConstants.Product.Category.Id,
             ProductUtils.CreateProductImagesUrl(3),
         };
 
@@ -49,7 +50,7 @@ public class ProductTests
             DomainConstants.Product.Description,
             100m,
             DomainConstants.Product.QuantityAvailable,
-            DomainConstants.Product.Category,
+            DomainConstants.Product.Category.Id,
             ProductUtils.CreateProductImagesUrl(4),
         };
 
@@ -58,7 +59,7 @@ public class ProductTests
             DomainConstants.Product.Description,
             DomainConstants.Product.Price,
             57,
-            DomainConstants.Product.Category,
+            DomainConstants.Product.Category.Id,
             ProductUtils.CreateProductImagesUrl(5),
         };
 
@@ -67,7 +68,7 @@ public class ProductTests
             DomainConstants.Product.Description,
             DomainConstants.Product.Price,
             DomainConstants.Product.QuantityAvailable,
-            ProductCategory.Automotive,
+            ProductCategory.Automotive.Id,
             ProductUtils.CreateProductImagesUrl(6),
         };
     }
@@ -79,7 +80,7 @@ public class ProductTests
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available.</param>
-    /// <param name="category">The product category.</param>
+    /// <param name="categoryId">The product category.</param>
     /// <param name="productImageUrls">The product image urls.</param>
     [Theory]
     [MemberData(nameof(ValidProductParameters))]
@@ -88,7 +89,7 @@ public class ProductTests
         string description,
         decimal price,
         int quantityAvailable,
-        ProductCategory category,
+        ProductCategoryId categoryId,
         IEnumerable<Uri> productImageUrls
     )
     {
@@ -99,7 +100,7 @@ public class ProductTests
                 description,
                 price,
                 quantityAvailable,
-                category,
+                categoryId,
                 productImageUrls
             );
 
@@ -108,7 +109,7 @@ public class ProductTests
             product.Description.Should().Be(description);
             product.Price.Should().Be(price);
             product.Inventory.QuantityAvailable.Should().Be(quantityAvailable);
-            product.ProductCategoryId.Should().Be(category);
+            product.ProductCategoryId.Should().Be(categoryId);
 
             for (var i = 0; i < product.ProductImages.Count; i += 1)
             {
