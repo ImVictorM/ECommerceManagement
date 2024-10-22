@@ -56,7 +56,8 @@ public sealed class ErrorEndpoints : ICarterModule
             ),
             HttpException httpException => Results.Problem(
                 statusCode: (int)httpException.StatusCode,
-                title: httpException.Message
+                title: httpException.Title,
+                detail: httpException.Message
             ),
             ValidationException validationException => HandleValidationException(validationException),
             _ => genericProblem,
@@ -66,7 +67,7 @@ public sealed class ErrorEndpoints : ICarterModule
     /// <summary>
     /// Generates an validation error response.
     /// </summary>
-    /// <param name="validationException"></param>
+    /// <param name="validationException">The validation exception.</param>
     /// <returns>An error response in the <see cref="Results.ValidationProblem"/> format.</returns>
     private static IResult HandleValidationException(ValidationException validationException)
     {

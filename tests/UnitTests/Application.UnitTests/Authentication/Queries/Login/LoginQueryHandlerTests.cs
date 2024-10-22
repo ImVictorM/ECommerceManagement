@@ -22,7 +22,7 @@ public class LoginQueryHandlerTests
     /// <summary>
     /// The default message used when authentication errors occurr.
     /// </summary>
-    public const string LoginDefaultErrorMessage = "User email or password is incorrect";
+    public const string LoginDefaultErrorMessage = "User email or password is incorrect.";
 
     private readonly LoginQueryHandler _handler;
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;

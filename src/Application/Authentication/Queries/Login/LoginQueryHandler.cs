@@ -56,23 +56,23 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
     /// <returns>The user with authentication token.</returns>
     public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
-        var defaultUserNotFoundErrorMessage = "User email or password is incorrect";
         var inputEmail = Email.Create(query.Email);
 
         LogHandlingLoginQuery(inputEmail.Value);
 
         User? user = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
 
-        if (user == null || !user.IsActive)
+        if (
+            user == null ||
+            !user.IsActive ||
+            !_passwordHasher.Verify(query.Password, user.PasswordHash.GetHashPart(), user.PasswordHash.GetSaltPart())
+        )
         {
-            LogUserNotFound(query.Email);
-            throw new BadRequestException(defaultUserNotFoundErrorMessage);
-        }
-
-        if (!_passwordHasher.Verify(query.Password, user.PasswordHash.GetHashPart(), user.PasswordHash.GetSaltPart()))
-        {
-            LogInvalidPassword(query.Email);
-            throw new BadRequestException(defaultUserNotFoundErrorMessage);
+            LogAuthenticationFailed();
+            throw new BadRequestException(
+                message: "User email or password is incorrect.",
+                title: "Authentication Failed."
+            );
         }
 
         LogSuccessfullyAuthenticatedUser(query.Email);

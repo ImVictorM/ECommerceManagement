@@ -23,30 +23,18 @@ public partial class LoginQueryHandler
     /// <summary>
     /// Log a warning when the user trying to login is not found using their email.
     /// </summary>
-    /// <param name="email">The email of the user trying to login.</param>
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Warning,
-        Message = "Login failed: User with email {Email} not found"
+        Message = "Authentication failed: Incorrect credentials supplied or user may be inactive"
     )]
-    public partial void LogUserNotFound(string email);
+    public partial void LogAuthenticationFailed();
 
-
-    /// <summary>
-    /// Log a warning when the user trying to login passed wrong password credentials.
-    /// </summary>
-    /// <param name="email">The email of the user trying to login.</param>
-    [LoggerMessage(
-        EventId = 3,
-        Level = LogLevel.Warning,
-        Message = "Login failed: Incorrect password for email {Email}"
-    )]
-    public partial void LogInvalidPassword(string email);
 
     /// <summary>
     /// Log an information when the user email and password was correct.
     /// </summary>
-    /// <param name="email"></param>
+    /// <param name="email">The user email.</param>
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Information,

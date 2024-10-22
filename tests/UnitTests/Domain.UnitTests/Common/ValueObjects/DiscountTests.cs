@@ -19,13 +19,13 @@ public class DiscountTests
         var now = DateTimeOffset.UtcNow;
 
         yield return new object[] {
-             now.AddDays(1).AddHours(1),
-             now.AddDays(1).AddHours(2)
+             now.AddDays(1).AddHours(10),
+             now.AddDays(1).AddHours(20)
         };
         yield return new object[] {
 
             now.AddDays(2),
-            now.AddDays(2).AddHours(2)
+            now.AddDays(2).AddHours(10)
         };
     }
 
