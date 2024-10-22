@@ -42,7 +42,9 @@ public sealed class AuthenticationEndpoints : ICarterModule
 
         AuthenticationResult result = await sender.Send(command);
 
-        return Results.Created("", mapper.Map<AuthenticationResponse>(result));
+        var mappedResult = mapper.Map<AuthenticationResponse>(result);
+
+        return Results.Created($"/users/{mappedResult.Id}", mappedResult);
     }
 
     /// <summary>
