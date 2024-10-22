@@ -63,8 +63,12 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
 
         if (await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail) is not null)
         {
-            LogUserAlreadyExists(command.Email);
-            throw new BadRequestException("User already exists.");
+            LogUserAlreadyExists();
+
+            throw new ConflictRequestException(
+                message: "User already exists.",
+                title: "There was an error when trying to create a new user."
+            );
         }
 
         var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);

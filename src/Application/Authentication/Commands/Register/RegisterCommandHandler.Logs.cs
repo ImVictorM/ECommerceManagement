@@ -23,13 +23,12 @@ public partial class RegisterCommandHandler
     /// <summary>
     /// Log a warning when trying to register a user that already exists.
     /// </summary>
-    /// <param name="email">The email that generated the conflict.</param>
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Warning,
-        Message = "There was an error when trying to create a new user with email {Email}. The email already exists."
+        Message = "There was an error when trying to create a new user. The user already exists."
     )]
-    public partial void LogUserAlreadyExists(string email);
+    public partial void LogUserAlreadyExists();
 
     /// <summary>
     /// Log an information saying that the user was instantiate successfully and associated with the customer role.

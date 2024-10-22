@@ -15,7 +15,7 @@ public sealed class BadRequestException : HttpException
     /// <summary>
     /// Bad request exception title.
     /// </summary>
-    private const string BadRequestTitle = "Bad Request";
+    private const string BadRequestTitle = "Bad Request.";
 
     /// <summary>
     /// Bad request exception status code.
@@ -37,6 +37,17 @@ public sealed class BadRequestException : HttpException
     /// <param name="message">The error message.</param>
     public BadRequestException(string message)
         : base(message, BadRequestTitle, BadRequestStatusCode)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BadRequestException"/> class.
+    /// Uses the default BadRequest status code.
+    /// </summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="title">The error title.</param>
+    public BadRequestException(string message, string title)
+        : base(message, title, BadRequestStatusCode)
     {
     }
 

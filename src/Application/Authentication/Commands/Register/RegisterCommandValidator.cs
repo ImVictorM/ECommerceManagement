@@ -15,15 +15,16 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MinimumLength(3);
+            .MinimumLength(3).WithMessage("'Name' must be at least 3 characters long.");
 
         RuleFor(x => x.Password)
             .NotEmpty()
-            .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
-            .Matches(@"[0-9]").WithMessage("Password must contain at least one digit.");
+            .MinimumLength(6).WithMessage("'Password' must be at least 6 characters long.")
+            .Matches(@"[a-z]").WithMessage("'Password' must contain at least one character.")
+            .Matches(@"[0-9]").WithMessage("'Password' must contain at least one digit.");
 
         RuleFor(x => x.Email)
             .NotEmpty()
-            .Must(Email.IsValidEmail);
+            .Must(Email.IsValidEmail).WithMessage("'Email' does not follow the required pattern.");
     }
 }

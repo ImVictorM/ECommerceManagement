@@ -100,7 +100,7 @@ public class RegisterCommandHandlerTests
 
         await FluentActions.Invoking(() => _handler.Handle(registerCommand, default))
            .Should()
-           .ThrowAsync<BadRequestException>()
+           .ThrowAsync<ConflictRequestException>()
            .WithMessage("User already exists.");
     }
 
