@@ -20,11 +20,13 @@ public static class ServicesRegistration
     /// </returns>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(ApplicationAssemblyReference.Assembly));
+        var assembly = typeof(ServicesRegistration).Assembly;
+
+        services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-        services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
+        services.AddValidatorsFromAssembly(assembly);
 
         return services;
     }
