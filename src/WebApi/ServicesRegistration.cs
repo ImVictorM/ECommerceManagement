@@ -1,3 +1,4 @@
+using Application.Common.Constants.Policies;
 using Carter;
 using Mapster;
 using MapsterMapper;
@@ -31,6 +32,10 @@ public static class ServicesRegistration
                 context.ProblemDetails.Extensions["userAgent"] = context.HttpContext.Request.Headers.UserAgent.ToString();
             }
         );
+
+        services.AddAuthorizationBuilder()
+            .AddPolicy(PolicyConstants.Admin.Name, policy => policy.RequireRole(PolicyConstants.Admin.RoleName))
+            .AddPolicy(PolicyConstants.Customer.Name, policy => policy.RequireRole(PolicyConstants.Customer.RoleName));
 
         services.AddMappings();
 

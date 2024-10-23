@@ -92,8 +92,6 @@ public static class ServicesRegistration
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
             });
 
-        services.AddAuthorization();
-
         return services;
     }
 }
