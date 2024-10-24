@@ -9,7 +9,7 @@ namespace Contracts.Authentication;
 /// <param name="Phone">The user phone (optional).</param>
 /// <param name="Token">The user authentication token.</param>
 public record AuthenticationResponse(
-    long Id,
+    string Id,
     string Name,
     string Email,
     string? Phone,
