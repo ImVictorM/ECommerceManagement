@@ -1,3 +1,4 @@
+using System.Globalization;
 using Domain.Common.Models;
 
 namespace Domain.UserAggregate.ValueObjects;
@@ -34,6 +35,22 @@ public sealed class UserId : ValueObject
     public static UserId Create(long value)
     {
         return new UserId(value);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="UserId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="UserId"/> class with the specified value.</returns>
+    public static UserId Create(string value)
+    {
+        return new UserId(long.Parse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo));
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Value.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <inheritdoc/>

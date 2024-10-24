@@ -35,7 +35,7 @@ public partial class LoginQueryHandler
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Information,
-        Message = "User with email {Email} was succesfully authenticated. Initiating token generation."
+        Message = "User with email {Email} was successfully authenticated. Initiating token generation."
     )]
     public partial void LogSuccessfullyAuthenticatedUser(string email);
 

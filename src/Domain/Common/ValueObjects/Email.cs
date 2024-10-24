@@ -12,12 +12,8 @@ public sealed class Email : ValueObject
     /// <summary>
     /// Gets the email.
     /// </summary>
-    public string Value { get; private set; }
+    public string Value { get; }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Email"/> class.
-    /// </summary>
-    /// <param name="value"></param>
     private Email(string value)
     {
         Value = value;
@@ -56,6 +52,12 @@ public sealed class Email : ValueObject
         {
             return false;
         }
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Value;
     }
 
     /// <inheritdoc/>

@@ -28,19 +28,8 @@ public sealed class Address : ValueObject
     /// </summary>
     public string City { get; } = string.Empty;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Address"/> class.
-    /// </summary>
     private Address() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Address"/> class.
-    /// </summary>
-    /// <param name="postalCode">The address postal code.</param>
-    /// <param name="street">The address street.</param>
-    /// <param name="neighborhood">The address neighborhood.</param>
-    /// <param name="state">The address state.</param>
-    /// <param name="city">The address city.</param>
     private Address(
         string postalCode,
         string street,

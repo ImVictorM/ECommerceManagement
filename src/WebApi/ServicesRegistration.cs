@@ -2,6 +2,8 @@ using Application.Common.Constants.Policies;
 using Carter;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 
 namespace WebApi;
 
@@ -21,9 +23,37 @@ public static class ServicesRegistration
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
         services.AddCarter();
-
+        services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(setup =>
+        {
+            setup.SwaggerDoc("v1", new OpenApiInfo()
+            {
+                Title = "ECommerce Management",
+                Version = "v1",
+            });
+
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme. Insert only your JWT Bearer token on the textbox below",
+                Name = "JWT Authentication",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme,
+                }
+            };
+
+            setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+            setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                { jwtSecurityScheme, Array.Empty<string>() }
+            });
+        });
 
         services.AddProblemDetails(
             options => options.CustomizeProblemDetails = context =>
