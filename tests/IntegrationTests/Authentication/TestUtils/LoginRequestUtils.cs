@@ -17,9 +17,23 @@ public static class LoginRequestUtils
     /// <returns>A new instance of the <see cref="LoginRequest"/> class.</returns>
     public static LoginRequest CreateRequest(string? email = null, string? password = null)
     {
+        var (DefaultEmail, DefaultPassword) = UserSeed.GetUserAuthenticationCredentials(SeedAvailableUsers.User1);
+
         return new LoginRequest(
-            email ?? UserSeed.User1.Email.Value,
-            password ?? UserSeed.UserPassword
+            email ?? DefaultEmail,
+            password ?? DefaultPassword
         );
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="LoginRequest"/> class.
+    /// </summary>
+    /// <param name="seedUser">The user type.</param>
+    /// <returns>A new instance of the <see cref="LoginRequest"/> class.</returns>
+    public static LoginRequest CreateRequest(SeedAvailableUsers seedUser)
+    {
+        var (Email, Password) = UserSeed.GetUserAuthenticationCredentials(seedUser);
+
+        return new LoginRequest(Email, Password);
     }
 }

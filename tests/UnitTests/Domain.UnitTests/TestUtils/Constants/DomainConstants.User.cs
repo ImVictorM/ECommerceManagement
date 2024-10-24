@@ -10,6 +10,10 @@ public static partial class DomainConstants
     public static class User
     {
         /// <summary>
+        /// The user identifier constant.
+        /// </summary>
+        public const long Id = 1L;
+        /// <summary>
         /// The user name constant.
         /// </summary>
         public const string Name = "Mjoln the Gold-seeker";

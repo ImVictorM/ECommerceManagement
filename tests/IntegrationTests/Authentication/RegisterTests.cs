@@ -130,7 +130,7 @@ public class RegisterTests : BaseIntegrationTest
         responseContent.Should().NotBeNull();
         responseContent!.Token.Should().NotBeNullOrWhiteSpace();
         responseContent.Email.Should().Be(registerRequest.Email);
-        responseContent.Id.Should().BePositive();
+        responseContent.Id.Should().NotBeNullOrWhiteSpace();
         responseContent.Phone.Should().BeNull();
     }
 
@@ -142,7 +142,7 @@ public class RegisterTests : BaseIntegrationTest
     /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(InvalidRequests))]
-    public async Task Register_WhenCreationParametersAreInvalid_RetunsBadRequestErrorResponse(
+    public async Task Register_WhenCreationParametersAreInvalid_ReturnsBadRequestErrorResponse(
         RegisterRequest registerRequest,
         Dictionary<string, string[]> expectedErrors
     )

@@ -29,9 +29,10 @@ public class LoginTests : BaseIntegrationTest
     /// <returns>A list of valid login requests.</returns>
     public static IEnumerable<object[]> ValidRequests()
     {
-        yield return new object[] { LoginRequestUtils.CreateRequest(UserSeed.User1.Email.Value, UserSeed.UserPassword) };
-        yield return new object[] { LoginRequestUtils.CreateRequest(UserSeed.User2.Email.Value, UserSeed.UserPassword) };
-        yield return new object[] { LoginRequestUtils.CreateRequest(UserSeed.Admin.Email.Value, UserSeed.AdminPassword) };
+        foreach (var (Email, Password) in UserSeed.ListUsersCredentials())
+        {
+            yield return new object[] { LoginRequestUtils.CreateRequest(Email, Password) };
+        }
     }
 
     /// <summary>

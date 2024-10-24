@@ -57,7 +57,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     {
         dbContext.Database.EnsureCreated();
 
-        dbContext.Users.AddRange(UserSeed.List());
+        dbContext.Users.AddRange(UserSeed.ListUsers());
 
         dbContext.SaveChanges();
     }
