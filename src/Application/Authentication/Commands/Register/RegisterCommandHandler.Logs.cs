@@ -4,9 +4,6 @@ namespace Application.Authentication.Commands.Register;
 
 public partial class RegisterCommandHandler
 {
-    /// <summary>
-    /// Logger to handle logging.
-    /// </summary>
     private readonly ILogger<RegisterCommandHandler> _logger;
 
     /// <summary>

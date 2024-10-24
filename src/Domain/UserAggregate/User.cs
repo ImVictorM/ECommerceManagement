@@ -11,13 +11,7 @@ namespace Domain.UserAggregate;
 /// </summary>
 public sealed class User : AggregateRoot<UserId>, ISoftDeletable
 {
-    /// <summary>
-    /// The user roles.
-    /// </summary>
     private readonly List<UserRole> _userRoles = [];
-    /// <summary>
-    /// The user addresses.
-    /// </summary>
     private readonly List<UserAddress> _userAddresses = [];
 
     /// <summary>
@@ -49,19 +43,8 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// </summary>
     public IReadOnlyList<UserAddress> UserAddresses => _userAddresses.AsReadOnly();
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
-    /// </summary>
     private User() { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
-    /// </summary>
-    /// <param name="name">The user name.</param>
-    /// <param name="email">The user email.</param>
-    /// <param name="roleId">The user associated role id.</param>
-    /// <param name="passwordHash">The user password hashed.</param>
-    /// <param name="phone">The user phone (optional).</param>
     private User(
         string name,
         Email email,

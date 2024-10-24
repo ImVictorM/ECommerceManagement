@@ -4,9 +4,6 @@ namespace Application.Authentication.Queries.Login;
 
 public partial class LoginQueryHandler
 {
-    /// <summary>
-    /// Logger to handle logging.
-    /// </summary>
     private readonly ILogger<LoginQueryHandler> _logger;
 
     /// <summary>

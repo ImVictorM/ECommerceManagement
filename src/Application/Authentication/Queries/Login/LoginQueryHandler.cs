@@ -15,17 +15,8 @@ namespace Application.Authentication.Queries.Login;
 /// </summary>
 public partial class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
 {
-    /// <summary>
-    /// Service to hash and verify passwords.
-    /// </summary>
     private readonly IPasswordHasher _passwordHasher;
-    /// <summary>
-    /// Service to generate authentication tokens.
-    /// </summary>
     private readonly IJwtTokenService _jwtTokenGenerator;
-    /// <summary>
-    /// Component to interact with the repositories and persist changes.
-    /// </summary>
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>

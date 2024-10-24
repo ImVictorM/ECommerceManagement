@@ -45,7 +45,6 @@ public class JwtTokenService : IJwtTokenService
              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         ];
 
-
         claims.AddRange(
             from roleName in user.GetRoleNames()
             select new Claim(ClaimTypes.Role, roleName)

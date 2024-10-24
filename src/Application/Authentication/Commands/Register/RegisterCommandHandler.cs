@@ -15,17 +15,8 @@ namespace Application.Authentication.Commands.Register;
 /// </summary>
 public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthenticationResult>
 {
-    /// <summary>
-    /// Component to interact with the repositories and persist changes.
-    /// </summary>
     private readonly IUnitOfWork _unitOfWork;
-    /// <summary>
-    /// Token service to generate authentication tokens.
-    /// </summary>
     private readonly IJwtTokenService _jwtTokenGenerator;
-    /// <summary>
-    /// Hash service to hash and verify passwords.
-    /// </summary>
     private readonly IPasswordHasher _passwordHasher;
 
     /// <summary>
