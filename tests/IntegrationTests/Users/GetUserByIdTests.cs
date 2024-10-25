@@ -1,16 +1,17 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Contracts.Users;
+using Domain.UserAggregate;
 using FluentAssertions;
 using IntegrationTests.Common;
+using IntegrationTests.TestUtils.Extensions.HttpClient;
+using IntegrationTests.TestUtils.Extensions.Users;
 using IntegrationTests.TestUtils.Seeds;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace IntegrationTests.Users;
 
 /// <summary>
-/// Integration tests for the process of getting a user by id.
+/// Integration tests for the process of getting a user by identifier.
 /// </summary>
 public class GetUserByIdTests : BaseIntegrationTest
 {
@@ -23,62 +24,66 @@ public class GetUserByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests if when calling the endpoint with a correct authentication token it returns the user data.
+    /// A list of users contained in the test database.
     /// </summary>
-    /// <param name="userType">The user type to be authenticated and queried.</param>
+    /// <returns>A list of seed users.</returns>
+    public static IEnumerable<object[]> SeedUsers()
+    {
+        foreach (var user in UserSeed.ListUsers())
+        {
+            yield return new object[] { user };
+        }
+    }
+
+    /// <summary>
+    /// Tests if it is possible to get an user authenticated as administrator.
+    /// </summary>
+    /// <param name="user">The user to get.</param>
     /// <returns>An asynchronous operation.</returns>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.User1)]
-    [InlineData(SeedAvailableUsers.User2)]
-    public async Task GetUserById_WhenUserIsAuthorizedByToken_ReturnsOk(SeedAvailableUsers userType)
+    [MemberData(nameof(SeedUsers))]
+    public async Task GetUserById_WhenRequesterIsAdmin_RetunsOkContainingTheUser(User user)
     {
-        var (AuthenticatedUser, AuthenticationToken) = await LoginAs(userType);
+        var (_, Token) = await LoginAs(SeedAvailableUsers.Admin);
 
-        var authHeader = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, AuthenticationToken);
-
-        HttpClient.DefaultRequestHeaders.Authorization = authHeader;
-
-        var response = await HttpClient.GetAsync("/users/self");
-
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Client.SetJwtBearerAuthorizationHeader(Token);
+ 
+        var response = await Client.GetAsync($"/users/{user.Id}");
 
         var responseContent = await response.Content.ReadFromJsonAsync<UserByIdResponse>();
 
-        responseContent.Should().NotBeNull();
-        responseContent!.Email.Should().Be(AuthenticatedUser.Email.ToString());
-        responseContent.Name.Should().Be(AuthenticatedUser.Name);
-        responseContent.Roles.Count().Should().Be(AuthenticatedUser.UserRoles.Count);
-        responseContent.Roles.Should().BeEquivalentTo(AuthenticatedUser.GetRoleNames());
-        responseContent.Phone.Should().BeEquivalentTo(AuthenticatedUser.Phone);
-        responseContent.Id.Should().Be(AuthenticatedUser.Id.ToString());
-        responseContent.Addresses.Count().Should().Be(AuthenticatedUser.UserAddresses.Count);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        responseContent!.EnsureUserCorrespondsTo(user);
     }
 
     /// <summary>
-    /// Tests if when trying to get user data without a token it returns unauthorized.
+    /// Tests if a customer cannot use this resource.
     /// </summary>
+    /// <param name="user">The user to be queried.</param>
     /// <returns>An asynchronous operation.</returns>
-    [Fact]
-    public async Task GetUserById_WhenAuthorizationIsNotGiven_ReturnsUnauthorized()
+    [Theory]
+    [MemberData(nameof(SeedUsers))]
+    public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(User user)
     {
-        var response = await HttpClient.GetAsync("/users/self");
+        var (_, Token) = await LoginAs(SeedAvailableUsers.User1);
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Client.SetJwtBearerAuthorizationHeader(Token);
+
+        var response = await Client.GetAsync($"/users/{user.Id}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Tests if when token is invalid it returns unauthorized response.
+    /// Tests if it is not possible to query for an user without authentication.
     /// </summary>
+    /// <param name="user">The user to be queried.</param>
     /// <returns>An asynchronous operation.</returns>
-    [Fact]
-    public async Task GetUserById_WhenTokenIsInvalid_ReturnsUnauthorized()
+    [Theory]
+    [MemberData(nameof(SeedUsers))]
+    public async Task GetUserById_WhenAuthenticationTokenIsNotGiven_ReturnsUnauthorized(User user)
     {
-        var authHeader = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, "token");
-
-        HttpClient.DefaultRequestHeaders.Authorization = authHeader;
-
-        var response = await HttpClient.GetAsync("/users/self");
+        var response = await Client.GetAsync($"/users/{user.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

@@ -15,7 +15,7 @@ public class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>
     /// <summary>
     /// The client used to make requests.
     /// </summary>
-    protected HttpClient HttpClient { get; init; }
+    protected HttpClient Client { get; init; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="BaseIntegrationTest"/> class.
@@ -23,7 +23,7 @@ public class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>
     /// <param name="webAppFactory">The test server factory.</param>
     public BaseIntegrationTest(IntegrationTestWebAppFactory webAppFactory)
     {
-        HttpClient = webAppFactory.CreateClient();
+        Client = webAppFactory.CreateClient();
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>
 
         var request = LoginRequestUtils.CreateRequest(Email, Password);
 
-        var response = await HttpClient.PostAsJsonAsync("/auth/login", request);
+        var response = await Client.PostAsJsonAsync("/auth/login", request);
 
         var responseContent = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
 

@@ -41,7 +41,7 @@ public class LoginTests : BaseIntegrationTest
     /// <returns>A list of invalid login requests.</returns>
     public static IEnumerable<object[]> RequestWithInvalidParameters()
     {
- 
+
 
         yield return new object[] { LoginRequestUtils.CreateRequest("", ""), "Email", "Password" };
         yield return new object[] { LoginRequestUtils.CreateRequest("          ", "        "), "Email", "Password" };
@@ -68,7 +68,7 @@ public class LoginTests : BaseIntegrationTest
     [MemberData(nameof(ValidRequests))]
     public async Task Login_WhenCredentialsAreValid_AuthenticateTheUserCorrectly(LoginRequest loginRequest)
     {
-        var httpResponse = await HttpClient.PostAsJsonAsync("/auth/login", loginRequest);
+        var httpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
         var authenticationResponse = await httpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -78,7 +78,7 @@ public class LoginTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Checks if it returs a bad request response when the login credentials are invalid.
+    /// Checks if it returns a bad request response when the login credentials are invalid.
     /// </summary>
     /// <param name="loginRequest">The invalid request object.</param>
     /// <param name="fieldsWithError">The fields that will contain some error.</param>
@@ -90,7 +90,7 @@ public class LoginTests : BaseIntegrationTest
         params string[] fieldsWithError
     )
     {
-        var httpResponse = await HttpClient.PostAsJsonAsync("/auth/login", loginRequest);
+        var httpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
@@ -116,7 +116,7 @@ public class LoginTests : BaseIntegrationTest
     [MemberData(nameof(IncorrectEmailPasswordPairs))]
     public async Task Login_WhenEmailOrPasswordIsIncorrect_ReturnsBadRequest(LoginRequest loginRequest)
     {
-        var httpResponse = await HttpClient.PostAsJsonAsync("/auth/login", loginRequest);
+        var httpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
         var authenticationResponse = await httpResponse.Content.ReadFromJsonAsync<ProblemDetails>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);

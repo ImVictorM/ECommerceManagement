@@ -23,13 +23,13 @@ public class RegisterLoginFlowTests : BaseIntegrationTest
     /// </summary>
     /// <returns>An asynchronous operation.</returns>
     [Fact]
-    public async Task RegisterThenLogin_AfterCreatingAnUserAndTryingToAuthenticaWithIt_AuthenticateTheUserCorrectly()
+    public async Task RegisterThenLogin_AfterCreatingAnUserAndTryingToAuthenticateWithIt_AuthenticateTheUserCorrectly()
     {
         var registerRequest = RegisterRequestUtils.CreateRequest();
         var loginRequest = LoginRequestUtils.CreateRequest(registerRequest.Email, registerRequest.Password);
 
-        var registerResponse = await HttpClient.PostAsJsonAsync("/auth/register", registerRequest);
-        var loginResponse = await HttpClient.PostAsJsonAsync("/auth/login", loginRequest);
+        var registerResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
+        var loginResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
 
         registerResponse.Should().BeSuccessful();
         loginResponse.Should().BeSuccessful();

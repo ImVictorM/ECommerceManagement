@@ -122,7 +122,7 @@ public class RegisterTests : BaseIntegrationTest
     [MemberData(nameof(ValidRequests))]
     public async Task Register_WhenCreationParametersAreValid_CreatesNewAndReturnWithAuthenticationToken(RegisterRequest registerRequest)
     {
-        var httpResponse = await HttpClient.PostAsJsonAsync("/auth/register", registerRequest);
+        var httpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
 
         var responseContent = await httpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
@@ -147,7 +147,7 @@ public class RegisterTests : BaseIntegrationTest
         Dictionary<string, string[]> expectedErrors
     )
     {
-        var httpResponse = await HttpClient.PostAsJsonAsync("/auth/register", registerRequest);
+        var httpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
         var responseContent = await httpResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -173,9 +173,9 @@ public class RegisterTests : BaseIntegrationTest
     {
         var registerRequest = RegisterRequestUtils.CreateRequest();
 
-        await HttpClient.PostAsJsonAsync("/auth/register", registerRequest);
+        await Client.PostAsJsonAsync("/auth/register", registerRequest);
 
-        var httpResponse = await HttpClient.PostAsJsonAsync("/auth/register", registerRequest);
+        var httpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
         var responseContent = await httpResponse.Content.ReadFromJsonAsync<ProblemDetails>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
