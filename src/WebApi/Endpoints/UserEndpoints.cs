@@ -1,10 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Application.Common.Constants.Policies;
 using Application.Users.Queries.GetUserById;
 using Carter;
 using Contracts.Users;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Endpoints;
 
@@ -27,6 +29,7 @@ public sealed class UserEndpoints : ICarterModule
         var userGroup = app.MapGroup(BaseEndpoint);
 
         userGroup.MapGet("/self", GetUserByAuthenticationToken).RequireAuthorization();
+        userGroup.MapGet("/{id:long}", GetUserById).RequireAuthorization(PolicyConstants.Admin.Name);
     }
 
     /// <summary>
@@ -50,6 +53,26 @@ public sealed class UserEndpoints : ICarterModule
         }
 
         var query = new GetUserByIdQuery(userId);
+
+        var result = await sender.Send(query);
+
+        return Results.Ok(mapper.Map<UserByIdResponse>(result));
+    }
+
+    /// <summary>
+    /// Gets a user by the identifier.
+    /// </summary>
+    /// <param name="id">The user identifier.</param>
+    /// <param name="sender">The mediatr sender.</param>
+    /// <param name="mapper">The mapper.</param>
+    /// <returns>An OK result containing the user.</returns>
+    private async Task<IResult> GetUserById(
+        [FromRoute] string id,
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var query = new GetUserByIdQuery(id);
 
         var result = await sender.Send(query);
 
