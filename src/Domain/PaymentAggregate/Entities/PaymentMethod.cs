@@ -1,6 +1,7 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
 using Domain.PaymentAggregate.ValueObjects;
+using SharedResources.Extensions;
 
 namespace Domain.PaymentAggregate.Entities;
 
@@ -12,19 +13,19 @@ public sealed class PaymentMethod : Entity<PaymentMethodId>
     /// <summary>
     /// Represents a credit card payment method.
     /// </summary>
-    public static readonly PaymentMethod CreditCard = new(PaymentMethodId.Create(1), "credit_card");
+    public static readonly PaymentMethod CreditCard = new(PaymentMethodId.Create(1), nameof(CreditCard).ToLowerSnakeCase());
     /// <summary>
     /// Represents a PIX payment method.
     /// </summary>
-    public static readonly PaymentMethod Pix = new(PaymentMethodId.Create(2), nameof(Pix).ToLowerInvariant());
+    public static readonly PaymentMethod Pix = new(PaymentMethodId.Create(2), nameof(Pix).ToLowerSnakeCase());
     /// <summary>
     /// Represents a bank transfer payment method.
     /// </summary>
-    public static readonly PaymentMethod BankTransfer = new(PaymentMethodId.Create(3), "bank_transfer");
+    public static readonly PaymentMethod BankTransfer = new(PaymentMethodId.Create(3), nameof(BankTransfer).ToLowerSnakeCase());
     /// <summary>
     /// Represents a cash payment method.
     /// </summary>
-    public static readonly PaymentMethod Cash = new(PaymentMethodId.Create(4), nameof(Cash).ToLowerInvariant());
+    public static readonly PaymentMethod Cash = new(PaymentMethodId.Create(4), nameof(Cash).ToLowerSnakeCase());
 
     /// <summary>
     /// Gets the payment method name.
@@ -72,7 +73,7 @@ public sealed class PaymentMethod : Entity<PaymentMethodId>
     /// <summary>
     /// Gets all the payment methods in a list format.
     /// </summary>
-    /// <returns>All the payment mtehods.</returns>
+    /// <returns>All the payment methods.</returns>
     public static IEnumerable<PaymentMethod> List()
     {
         return

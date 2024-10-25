@@ -1,6 +1,7 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
 using Domain.ShipmentAggregate.ValueObjects;
+using SharedResources.Extensions;
 
 namespace Domain.ShipmentAggregate.Entities;
 
@@ -12,23 +13,23 @@ public sealed class ShipmentStatus : Entity<ShipmentStatusId>
     /// <summary>
     /// Represents the pending status.
     /// </summary>
-    public static readonly ShipmentStatus Pending = new(ShipmentStatusId.Create(1), nameof(Pending).ToLowerInvariant());
+    public static readonly ShipmentStatus Pending = new(ShipmentStatusId.Create(1), nameof(Pending).ToLowerSnakeCase());
     /// <summary>
     /// Represents the shipped status.
     /// </summary>
-    public static readonly ShipmentStatus Shipped = new(ShipmentStatusId.Create(2), nameof(Shipped).ToLowerInvariant());
+    public static readonly ShipmentStatus Shipped = new(ShipmentStatusId.Create(2), nameof(Shipped).ToLowerSnakeCase());
     /// <summary>
     /// Represents the in route status.
     /// </summary>
-    public static readonly ShipmentStatus InRoute = new(ShipmentStatusId.Create(3), "in_route");
+    public static readonly ShipmentStatus InRoute = new(ShipmentStatusId.Create(3), nameof(InRoute).ToLowerSnakeCase());
     /// <summary>
     /// Represents the delivered status.
     /// </summary>
-    public static readonly ShipmentStatus Delivered = new(ShipmentStatusId.Create(4), nameof(Delivered).ToLowerInvariant());
+    public static readonly ShipmentStatus Delivered = new(ShipmentStatusId.Create(4), nameof(Delivered).ToLowerSnakeCase());
     /// <summary>
     /// Represents the canceled status.
     /// </summary>
-    public static readonly ShipmentStatus Canceled = new(ShipmentStatusId.Create(5), nameof(Canceled).ToLowerInvariant());
+    public static readonly ShipmentStatus Canceled = new(ShipmentStatusId.Create(5), nameof(Canceled).ToLowerSnakeCase());
 
     /// <summary>
     /// Gets the shipment status.

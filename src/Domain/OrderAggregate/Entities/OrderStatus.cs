@@ -1,6 +1,7 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
 using Domain.OrderAggregate.ValueObjects;
+using SharedResources.Extensions;
 
 namespace Domain.OrderAggregate.Entities;
 
@@ -12,23 +13,23 @@ public sealed class OrderStatus : Entity<OrderStatusId>
     /// <summary>
     /// Represents a pending status.
     /// </summary>
-    public static readonly OrderStatus Pending = new(OrderStatusId.Create(1), nameof(Pending).ToLowerInvariant());
+    public static readonly OrderStatus Pending = new(OrderStatusId.Create(1), nameof(Pending).ToLowerSnakeCase());
     /// <summary>
     /// Represents a paid status.
     /// </summary>
-    public static readonly OrderStatus Paid = new(OrderStatusId.Create(2), nameof(Paid).ToLowerInvariant());
+    public static readonly OrderStatus Paid = new(OrderStatusId.Create(2), nameof(Paid).ToLowerSnakeCase());
     /// <summary>
     /// Represents a shipped status.
     /// </summary>
-    public static readonly OrderStatus Shipped = new(OrderStatusId.Create(3), nameof(Shipped).ToLowerInvariant());
+    public static readonly OrderStatus Shipped = new(OrderStatusId.Create(3), nameof(Shipped).ToLowerSnakeCase());
     /// <summary>
     /// Represents a delivered status.
     /// </summary>
-    public static readonly OrderStatus Delivered = new(OrderStatusId.Create(4), nameof(Delivered).ToLowerInvariant());
+    public static readonly OrderStatus Delivered = new(OrderStatusId.Create(4), nameof(Delivered).ToLowerSnakeCase());
     /// <summary>
     /// Represents a canceled status.
     /// </summary>
-    public static readonly OrderStatus Canceled = new(OrderStatusId.Create(5), nameof(Canceled).ToLowerInvariant());
+    public static readonly OrderStatus Canceled = new(OrderStatusId.Create(5), nameof(Canceled).ToLowerSnakeCase());
 
     /// <summary>
     /// Gets the order status name.

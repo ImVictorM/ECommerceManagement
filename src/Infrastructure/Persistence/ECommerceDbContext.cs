@@ -13,6 +13,7 @@ using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
+using SharedResources.Extensions;
 
 namespace Infrastructure.Persistence;
 
@@ -119,7 +120,7 @@ public class ECommerceDbContext : DbContext
             return;
         }
 
-        var snakeCaseColumnName = ConvertToSnakeCase(property.Name);
+        var snakeCaseColumnName = property.Name.ToLowerSnakeCase();
 
         if (snakeCaseColumnName.EndsWith($"_{KeyPrefix}", StringComparison.OrdinalIgnoreCase))
         {
@@ -138,17 +139,5 @@ public class ECommerceDbContext : DbContext
     private static bool IsShadowPrimaryKeyOfOwnedType(IMutableProperty p)
     {
         return typeof(ValueObject).IsAssignableFrom(p.DeclaringType.ClrType) && p.IsKey();
-    }
-
-    /// <summary>
-    /// Converts a string to snake case.
-    /// </summary>
-    /// <param name="str">The string to be converted</param>
-    /// <returns>A snake case string.</returns>
-    private static string ConvertToSnakeCase(string str)
-    {
-        return string.Concat(
-            str.Select((character, index) => index > 0 && char.IsUpper(character) ? $"_{character}" : $"{character}")
-        ).ToLowerInvariant();
     }
 }

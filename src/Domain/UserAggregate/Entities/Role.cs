@@ -1,6 +1,7 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
 using Domain.UserAggregate.ValueObjects;
+using SharedResources.Extensions;
 
 namespace Domain.UserAggregate.Entities;
 
@@ -12,12 +13,12 @@ public sealed class Role : Entity<RoleId>
     /// <summary>
     /// Represents the administrator role.
     /// </summary>
-    public static readonly Role Admin = new(RoleId.Create(1), nameof(Admin).ToLowerInvariant());
+    public static readonly Role Admin = new(RoleId.Create(1), nameof(Admin).ToLowerSnakeCase());
 
     /// <summary>
     /// Represents the customer role.
     /// </summary>
-    public static readonly Role Customer = new(RoleId.Create(2), nameof(Customer).ToLowerInvariant());
+    public static readonly Role Customer = new(RoleId.Create(2), nameof(Customer).ToLowerSnakeCase());
 
     /// <summary>
     /// Gets the role name.

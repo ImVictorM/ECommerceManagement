@@ -1,6 +1,7 @@
 using Domain.Common.Errors;
 using Domain.Common.Models;
 using Domain.PaymentAggregate.ValueObjects;
+using SharedResources.Extensions;
 
 namespace Domain.PaymentAggregate.Entities;
 
@@ -12,19 +13,19 @@ public sealed class PaymentStatus : Entity<PaymentStatusId>
     /// <summary>
     /// Represents a pending status.
     /// </summary>
-    public static readonly PaymentStatus Pending = new(PaymentStatusId.Create(1), nameof(Pending).ToLowerInvariant());
+    public static readonly PaymentStatus Pending = new(PaymentStatusId.Create(1), nameof(Pending).ToLowerSnakeCase());
     /// <summary>
     /// Represents a completed status.
     /// </summary>
-    public static readonly PaymentStatus Completed = new(PaymentStatusId.Create(2), nameof(Completed).ToLowerInvariant());
+    public static readonly PaymentStatus Completed = new(PaymentStatusId.Create(2), nameof(Completed).ToLowerSnakeCase());
     /// <summary>
     /// Represents a failed status.
     /// </summary>
-    public static readonly PaymentStatus Failed = new(PaymentStatusId.Create(3), nameof(Failed).ToLowerInvariant());
+    public static readonly PaymentStatus Failed = new(PaymentStatusId.Create(3), nameof(Failed).ToLowerSnakeCase());
     /// <summary>
     /// Represents a refunded status.
     /// </summary>
-    public static readonly PaymentStatus Refunded = new(PaymentStatusId.Create(4), nameof(Refunded).ToLowerInvariant());
+    public static readonly PaymentStatus Refunded = new(PaymentStatusId.Create(4), nameof(Refunded).ToLowerSnakeCase());
 
     /// <summary>
     /// Gets the status name.
