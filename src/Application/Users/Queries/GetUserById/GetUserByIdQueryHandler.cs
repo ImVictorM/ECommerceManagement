@@ -1,5 +1,6 @@
 using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
+using Application.Users.Common;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 
@@ -8,7 +9,7 @@ namespace Application.Users.Queries.GetUserById;
 /// <summary>
 /// Query handler for the <see cref="GetUserByIdQuery"/> query.
 /// </summary>
-public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, GetUserByIdResult>
+public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserResult>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -26,8 +27,8 @@ public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, 
     /// </summary>
     /// <param name="request">The request object.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A <see cref="GetUserByIdResult"/> result object.</returns>
-    public async Task<GetUserByIdResult> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    /// <returns>A <see cref="UserResult"/> result object.</returns>
+    public async Task<UserResult> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var id = UserId.Create(request.Id);
 
@@ -35,6 +36,6 @@ public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, 
             await _unitOfWork.UserRepository.FindByIdAsync(id) ??
             throw new BadRequestException(message: $"User with identifier {id} not found.");
 
-        return new GetUserByIdResult(user);
+        return new UserResult(user);
     }
 }

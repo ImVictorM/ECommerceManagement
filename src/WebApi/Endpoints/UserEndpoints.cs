@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Application.Common.Constants.Policies;
+using Application.Users.Queries.GetAllUsers;
 using Application.Users.Queries.GetUserById;
 using Carter;
 using Contracts.Users;
@@ -30,6 +31,7 @@ public sealed class UserEndpoints : ICarterModule
 
         userGroup.MapGet("/self", GetUserByAuthenticationToken).RequireAuthorization();
         userGroup.MapGet("/{id:long}", GetUserById).RequireAuthorization(PolicyConstants.Admin.Name);
+        userGroup.MapGet("/", GetAllUsers).RequireAuthorization(PolicyConstants.Admin.Name);
     }
 
     /// <summary>
@@ -56,7 +58,7 @@ public sealed class UserEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return Results.Ok(mapper.Map<UserByIdResponse>(result));
+        return Results.Ok(mapper.Map<UserResponse>(result));
     }
 
     /// <summary>
@@ -76,6 +78,19 @@ public sealed class UserEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return Results.Ok(mapper.Map<UserByIdResponse>(result));
+        return Results.Ok(mapper.Map<UserResponse>(result));
+    }
+
+    private async Task<IResult> GetAllUsers(
+        [FromQuery(Name = "active")] bool? IsActive,
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var query = new GetAllUsersQuery(IsActive);
+
+        var result = await sender.Send(query);
+
+        return Results.Ok(mapper.Map<UserListResponse>(result));
     }
 }

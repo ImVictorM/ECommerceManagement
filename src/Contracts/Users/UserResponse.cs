@@ -1,7 +1,7 @@
 namespace Contracts.Users;
 
 /// <summary>
-/// The response type when getting a user by identifier.
+/// Single user response type.
 /// </summary>
 /// <param name="Id">The user identifier.</param>
 /// <param name="Name">The user name.</param>
@@ -9,7 +9,7 @@ namespace Contracts.Users;
 /// <param name="Phone">The user phone.</param>
 /// <param name="Addresses">The user addresses.</param>
 /// <param name="Roles">The user role names.</param>
-public record UserByIdResponse(
+public record UserResponse(
     string Id,
     string Name,
     string Email,

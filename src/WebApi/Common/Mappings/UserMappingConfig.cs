@@ -1,4 +1,4 @@
-using Application.Users.Queries.GetUserById;
+using Application.Users.Common;
 using Contracts.Users;
 using Mapster;
 
@@ -15,11 +15,14 @@ public class UserMappingConfig : IRegister
     /// <param name="config">The global configuration object.</param>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<GetUserByIdResult, UserByIdResponse>()
+        config.NewConfig<UserResult, UserResponse>()
             .Map(dest => dest.Id, src => src.User.Id.ToString())
             .Map(dest => dest.Email, src => src.User.Email.ToString())
             .Map(dest => dest.Roles, src => src.User.GetRoleNames())
-            .Map(dest => dest.Addresses, src => src.User.UserAddresses)
+            .Map(dest => dest.Addresses, src => src.User.UserAddresses.Select(ua => ua.Address))
             .Map(dest => dest, src => src.User);
+
+        config.NewConfig<UserListResult, UserListResponse>()
+            .Map(dest => dest.Users, src => src.Users.Select(user => new UserResult(user)));
     }
 }

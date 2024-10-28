@@ -1,3 +1,4 @@
+using Application.Users.Common;
 using MediatR;
 
 namespace Application.Users.Queries.GetUserById;
@@ -6,4 +7,4 @@ namespace Application.Users.Queries.GetUserById;
 /// Query to get the user by identifier.
 /// </summary>
 /// <param name="Id">The identifier value.</param>
-public record GetUserByIdQuery(string Id) : IRequest<GetUserByIdResult>;
+public record GetUserByIdQuery(string Id) : IRequest<UserResult>;
