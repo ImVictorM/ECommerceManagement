@@ -42,15 +42,15 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(SeedUsers))]
-    public async Task GetUserById_WhenRequesterIsAdmin_RetunsOkContainingTheUser(User user)
+    public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkContainingTheUser(User user)
     {
         var (_, Token) = await LoginAs(SeedAvailableUsers.Admin);
 
         Client.SetJwtBearerAuthorizationHeader(Token);
- 
+
         var response = await Client.GetAsync($"/users/{user.Id}");
 
-        var responseContent = await response.Content.ReadFromJsonAsync<UserByIdResponse>();
+        var responseContent = await response.Content.ReadFromJsonAsync<UserResponse>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent!.EnsureUserCorrespondsTo(user);

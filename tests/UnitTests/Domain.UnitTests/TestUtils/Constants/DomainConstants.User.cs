@@ -37,5 +37,12 @@ public static partial class DomainConstants
         /// The user role constant.
         /// </summary>
         public static readonly Role Role = Role.Customer;
+
+        /// <summary>
+        /// Returns a name concatenated with an index.
+        /// </summary>
+        /// <param name="index">The index to concatenate with.</param>
+        /// <returns>A new name with a concatenated index.</returns>
+        public static string UserNameFromIndex(int index) => $"{Name}-{index}";
     }
 }

@@ -36,4 +36,34 @@ public static class UserUtils
             phone ?? Constants.DomainConstants.User.Phone
         );
     }
+
+    /// <summary>
+    /// Creates a list of users with unique name and email.
+    /// </summary>
+    /// <param name="count">The quantity of users to be created.</param>
+    /// <param name="active">Specify if the created users should be active or inactive.</param>
+    /// <returns>A list of unique users.</returns>
+    public static IEnumerable<User> CreateUsers(int count = 1, bool? active = true)
+    {
+        var users = Enumerable
+            .Range(0, count)
+            .Select(index =>
+                CreateUser(
+                    name: Constants.DomainConstants.User.UserNameFromIndex(index),
+                    email: Constants.DomainConstants.Email.EmailFromIndex(index)
+                )
+            );
+
+        if (active == null)
+        {
+            return users;
+        }
+
+        foreach (var user in users)
+        {
+            user.MakeInactive();
+        }
+
+        return users;
+    }
 }

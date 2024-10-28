@@ -43,7 +43,7 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var responseContent = await response.Content.ReadFromJsonAsync<UserByIdResponse>();
+        var responseContent = await response.Content.ReadFromJsonAsync<UserResponse>();
 
         responseContent.Should().NotBeNull();
         responseContent!.EnsureUserCorrespondsTo(AuthenticatedUser);

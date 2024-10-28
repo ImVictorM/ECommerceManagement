@@ -80,9 +80,11 @@ public static class UserSeed
     /// List all seed users.
     /// </summary>
     /// <returns>A list of all seed users.</returns>
-    public static IEnumerable<User> ListUsers()
+    public static IEnumerable<User> ListUsers(Func<User, bool>? filter = null)
     {
-        return _users.Values.Select(u => u.User);
+        var users = _users.Values.Select(u => u.User);
+
+        return filter != null ? users.Where(filter) : users;
     }
 
     /// <summary>
