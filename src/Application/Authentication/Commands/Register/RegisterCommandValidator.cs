@@ -1,10 +1,10 @@
-using Domain.Common.ValueObjects;
+using Application.Common.Extensions.Validations;
 using FluentValidation;
 
 namespace Application.Authentication.Commands.Register;
 
 /// <summary>
-/// Validates the <see cref="RegisterCommand"/> input.
+/// Validates the <see cref="RegisterCommand"/> inputs.
 /// </summary>
 public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {
@@ -13,9 +13,7 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     /// </summary>
     public RegisterCommandValidator()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .MinimumLength(3).WithMessage("'Name' must be at least 3 characters long.");
+        RuleFor(x => x.Name).IsValidName();
 
         RuleFor(x => x.Password)
             .NotEmpty()
@@ -23,8 +21,6 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
             .Matches(@"[a-z]").WithMessage("'Password' must contain at least one character.")
             .Matches(@"[0-9]").WithMessage("'Password' must contain at least one digit.");
 
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .Must(Email.IsValidEmail).WithMessage("'Email' does not follow the required pattern.");
+        RuleFor(x => x.Email).IsValidEmail();
     }
 }

@@ -1,3 +1,4 @@
+using Application.Users.Commands.UpdateUser;
 using Application.Users.Common;
 using Contracts.Users;
 using Mapster;
@@ -24,5 +25,9 @@ public class UserMappingConfig : IRegister
 
         config.NewConfig<UserListResult, UserListResponse>()
             .Map(dest => dest.Users, src => src.Users.Select(user => new UserResult(user)));
+
+        config.NewConfig<(UpdateUserRequest Request, string Id), UpdateUserCommand>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest, src => src.Request);
     }
 }
