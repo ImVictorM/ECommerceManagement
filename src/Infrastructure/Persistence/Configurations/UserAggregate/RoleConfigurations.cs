@@ -1,7 +1,6 @@
-using Domain.UserAggregate.Entities;
-using Domain.UserAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedKernel.Authorization;
 
 namespace Infrastructure.Persistence.Configurations.UserAggregate;
 
@@ -19,10 +18,6 @@ public sealed class RoleConfigurations : IEntityTypeConfiguration<Role>
 
         builder
             .Property(r => r.Id)
-            .HasConversion(
-                id => id.Value,
-                value => RoleId.Create(value)
-            )
             .ValueGeneratedNever()
             .IsRequired();
 

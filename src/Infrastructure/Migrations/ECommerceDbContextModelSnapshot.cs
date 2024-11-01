@@ -90,37 +90,37 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4010), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 387, DateTimeKind.Unspecified).AddTicks(9749), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "pending",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4387), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(49), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4656), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(538), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "paid",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4656), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(538), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4658), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(551), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "shipped",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4658), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(552), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4660), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(562), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "delivered",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4661), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(563), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 5L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4662), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(574), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "canceled",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 419, DateTimeKind.Unspecified).AddTicks(4662), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 388, DateTimeKind.Unspecified).AddTicks(574), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -193,30 +193,30 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7968), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6437), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "credit_card",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7971), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6440), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6464), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "pix",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6465), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7992), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6483), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "bank_transfer",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7993), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6484), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7995), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6491), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "cash",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 434, DateTimeKind.Unspecified).AddTicks(7995), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 403, DateTimeKind.Unspecified).AddTicks(6491), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -251,30 +251,30 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4767), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5391), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "pending",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4775), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5394), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4782), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5424), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "completed",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4783), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5424), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4784), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5483), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "failed",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4785), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5483), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4786), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5496), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "refunded",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 436, DateTimeKind.Unspecified).AddTicks(4786), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 405, DateTimeKind.Unspecified).AddTicks(5496), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -360,135 +360,135 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6282), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7193), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "electronics",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6285), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7196), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6293), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "homeappliances",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6293), new TimeSpan(0, 0, 0, 0, 0))
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7237), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "home_appliances",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7238), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6295), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7248), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "fashion",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6295), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7248), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6297), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7260), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "footwear",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6297), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7260), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 5L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6298), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7271), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "beauty",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6299), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7272), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 6L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6300), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7288), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "health_wellness",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6300), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7288), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 7L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6302), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7299), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "groceries",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6302), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7300), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 8L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6304), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7311), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "furniture",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6304), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7311), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 9L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6306), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7323), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "toys_games",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6306), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7323), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 10L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6307), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7340), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "books_stationery",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6307), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7340), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 11L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6308), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7355), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "sports_outdoor",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6309), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7355), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 12L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6310), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7404), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "automotive",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6310), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7404), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 13L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6311), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7418), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "pet_supplies",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6311), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7419), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 14L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6312), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7434), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "jewelry_watches",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6313), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7434), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 15L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6314), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7450), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "office_supplies",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6314), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7450), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 16L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6315), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7467), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "home_improvement",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6315), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7467), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 17L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6377), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7481), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "baby_products",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6378), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7481), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 18L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6379), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7496), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "travel_luggage",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6379), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7497), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 19L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6380), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7514), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "music_instruments",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 439, DateTimeKind.Unspecified).AddTicks(6380), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 408, DateTimeKind.Unspecified).AddTicks(7515), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -631,37 +631,37 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8601), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(1976), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "pending",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8604), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(1979), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8611), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2012), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "shipped",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8611), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2012), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8613), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2026), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "in_route",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8613), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2026), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2039), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "delivered",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8616), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2039), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 5L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8652), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2050), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "canceled",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 489, DateTimeKind.Unspecified).AddTicks(8653), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 31, 20, 25, 57, 458, DateTimeKind.Unspecified).AddTicks(2050), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -705,25 +705,17 @@ namespace Infrastructure.Migrations
                     b.ToTable("shipments", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.UserAggregate.Entities.Role", b =>
+            modelBuilder.Entity("Domain.UserAggregate.Enumerations.Role", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)")
                         .HasColumnName("name");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -736,16 +728,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8258), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "customer",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8258), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "customer"
                         },
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8247), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "admin",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 10, 21, 19, 45, 17, 492, DateTimeKind.Unspecified).AddTicks(8250), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "admin"
                         });
                 });
 
@@ -1409,32 +1397,24 @@ namespace Infrastructure.Migrations
                                 .IsRequired();
                         });
 
-                    b.OwnsMany("Domain.UserAggregate.Entities.UserRole", "UserRoles", b1 =>
+                    b.OwnsMany("Domain.UserAggregate.ValueObjects.UserRole", "UserRoles", b1 =>
                         {
-                            b1.Property<long>("Id")
+                            b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("bigint")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
-
-                            b1.Property<DateTimeOffset>("CreatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("created_at");
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
 
                             b1.Property<long>("RoleId")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_role");
 
-                            b1.Property<DateTimeOffset>("UpdatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("updated_at");
-
                             b1.Property<long>("id_user")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_user");
 
-                            b1.HasKey("Id");
+                            b1.HasKey("id");
 
                             b1.HasIndex("RoleId");
 
@@ -1442,7 +1422,7 @@ namespace Infrastructure.Migrations
 
                             b1.ToTable("users_roles", (string)null);
 
-                            b1.HasOne("Domain.UserAggregate.Entities.Role", null)
+                            b1.HasOne("Domain.UserAggregate.Enumerations.Role", null)
                                 .WithMany()
                                 .HasForeignKey("RoleId")
                                 .OnDelete(DeleteBehavior.Cascade)

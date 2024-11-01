@@ -1,10 +1,10 @@
 using Domain.Common.ValueObjects;
 using Domain.UserAggregate;
-using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
 using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedKernel.Authorization;
 
 namespace Infrastructure.Persistence.Configurations.UserAggregate;
 
@@ -126,17 +126,12 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
         {
             userRolesBuilder.ToTable("users_roles");
 
-            userRolesBuilder.HasKey(userRole => userRole.Id);
-
             userRolesBuilder
-                .Property(userRole => userRole.Id)
-                .HasConversion(
-                    id => id.Value,
-                    value => UserRoleId.Create(value)
-                )
+                .Property<long>("id")
                 .ValueGeneratedOnAdd()
                 .IsRequired();
 
+            userRolesBuilder.HasKey("id");
 
             userRolesBuilder
                 .HasOne<Role>()

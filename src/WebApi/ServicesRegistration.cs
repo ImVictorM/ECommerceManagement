@@ -1,9 +1,10 @@
-using Application.Common.Constants.Policies;
 using Carter;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
+using WebApi.Common.Interfaces;
 
 namespace WebApi;
 
@@ -25,6 +26,29 @@ public static class ServicesRegistration
         services.AddCarter();
         services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
+        services.AddSwagger();
+        services.AddAuthorizationPolicies();
+
+        services.AddProblemDetails(
+            options => options.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+                context.ProblemDetails.Extensions["userAgent"] = context.HttpContext.Request.Headers.UserAgent.ToString();
+            }
+        );
+
+        services.AddMappings();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configures swagger and add it to the DI pipeline.
+    /// </summary>
+    /// <param name="services">The application services.</param>
+    /// <returns>The application services including the registration of the swagger services.</returns>
+    public static IServiceCollection AddSwagger(this IServiceCollection services)
+    {
         services.AddSwaggerGen(setup =>
         {
             setup.SwaggerDoc("v1", new OpenApiInfo()
@@ -55,19 +79,41 @@ public static class ServicesRegistration
             });
         });
 
-        services.AddProblemDetails(
-            options => options.CustomizeProblemDetails = context =>
+        return services;
+    }
+
+    /// <summary>
+    /// Configures authorization policies and add it to the DI pipeline.
+    /// </summary>
+    /// <param name="services">The application services.</param>
+    /// <returns>The application services including the registration of policy-related services.</returns>
+    public static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+    {
+        // Configure policies
+        services.AddAuthorization(options =>
+        {
+            var assembly = typeof(ServicesRegistration).Assembly;
+
+            var policyTypes = assembly.GetTypes()
+                .Where(type => typeof(IAuthorizationPolicy).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
+
+            foreach (var policyType in policyTypes)
             {
-                context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
-                context.ProblemDetails.Extensions["userAgent"] = context.HttpContext.Request.Headers.UserAgent.ToString();
+                if (Activator.CreateInstance(policyType) is IAuthorizationPolicy policy)
+                {
+                    policy.ConfigurePolicy(options);
+                }
             }
-        );
+        });
 
-        services.AddAuthorizationBuilder()
-            .AddPolicy(PolicyConstants.Admin.Name, policy => policy.RequireRole(PolicyConstants.Admin.RoleName))
-            .AddPolicy(PolicyConstants.Customer.Name, policy => policy.RequireRole(PolicyConstants.Customer.RoleName));
+        // Configure authorization handler
+        var handlerTypes = typeof(ServicesRegistration).Assembly.GetTypes()
+            .Where(type => typeof(IAuthorizationHandler).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
 
-        services.AddMappings();
+        foreach (var handlerType in handlerTypes)
+        {
+            services.AddSingleton(typeof(IAuthorizationHandler), handlerType);
+        }
 
         return services;
     }

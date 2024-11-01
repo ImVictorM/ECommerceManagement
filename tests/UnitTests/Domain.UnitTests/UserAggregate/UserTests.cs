@@ -1,7 +1,7 @@
 using Domain.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
-using Domain.UserAggregate.Entities;
+using SharedKernel.Authorization;
 using FluentAssertions;
 
 namespace Domain.UnitTests.UserAggregate;
@@ -141,7 +141,7 @@ public class UserTests
     [Fact]
     public void User_WhenCreatingWithSpecificRole_AssociateItCorrectly()
     {
-        var user = UserUtils.CreateUser(roleId: Role.Admin.Id);
+        var user = UserUtils.CreateUser(role: Role.Admin);
 
         user.UserRoles.Count.Should().Be(1);
         user.UserRoles[0].RoleId.Should().Be(Role.Admin.Id);
@@ -155,7 +155,7 @@ public class UserTests
     {
         var user = UserUtils.CreateUser();
 
-        user.AddRole(Role.Admin.Id);
+        user.AssignRole(Role.Admin);
 
         user.UserRoles.Count.Should().Be(2);
 
@@ -170,7 +170,7 @@ public class UserTests
     {
         var user = UserUtils.CreateUser();
 
-        user.AddRole(Role.Customer.Id);
+        user.AssignRole(Role.Customer);
 
         user.UserRoles.Count.Should().Be(1);
     }
@@ -185,7 +185,7 @@ public class UserTests
 
         var user = UserUtils.CreateUser();
 
-        user.AddRole(Role.Admin.Id);
+        user.AssignRole(Role.Admin);
 
         var roleNames = user.GetRoleNames();
 

@@ -1,5 +1,5 @@
 using Domain.UserAggregate;
-using Domain.UserAggregate.ValueObjects;
+using SharedKernel.Authorization;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -15,7 +15,7 @@ public static class UserUtils
     /// <param name="passwordHash">The password hash.</param>
     /// <param name="passwordSalt">The password salt.</param>
     /// <param name="phone">The user phone.</param>
-    /// <param name="roleId">The user role id.</param>
+    /// <param name="role">The user role.</param>
     /// <param name="email">The user email.</param>
     /// <returns>A new instance of the <see cref="User"/> class.</returns>
     public static User CreateUser(
@@ -23,7 +23,7 @@ public static class UserUtils
         string? passwordHash = null,
         string? passwordSalt = null,
         string? phone = null,
-        RoleId? roleId = null,
+        Role? role = null,
         string? email = null
     )
     {
@@ -32,7 +32,7 @@ public static class UserUtils
             EmailUtils.CreateEmail(email: email),
             passwordHash ?? Constants.DomainConstants.User.PasswordHash,
             passwordSalt ?? Constants.DomainConstants.User.PasswordSalt,
-            roleId ?? Constants.DomainConstants.User.Role.Id,
+            role ?? Constants.DomainConstants.User.Role,
             phone ?? Constants.DomainConstants.User.Phone
         );
     }

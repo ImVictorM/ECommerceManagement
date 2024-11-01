@@ -1,4 +1,4 @@
-using Domain.UserAggregate.Entities;
+using SharedKernel.Authorization;
 
 namespace Domain.UnitTests.TestUtils.Constants;
 

@@ -1,17 +1,16 @@
 using Domain.Common.Models;
-using Domain.UserAggregate.ValueObjects;
 
-namespace Domain.UserAggregate.Entities;
+namespace Domain.UserAggregate.ValueObjects;
 
 /// <summary>
 /// Represent user related roles.
 /// </summary>
-public sealed class UserRole : Entity<UserRoleId>
+public sealed class UserRole : ValueObject
 {
     /// <summary>
     /// Gets the role identifier.
     /// </summary>
-    public RoleId RoleId { get; private set; } = null!;
+    public long RoleId { get; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UserRole"/> class.
@@ -23,7 +22,7 @@ public sealed class UserRole : Entity<UserRoleId>
     /// </summary>
     /// <param name="roleId">The user role.</param>
     private UserRole(
-        RoleId roleId
+        long roleId
     )
     {
         RoleId = roleId;
@@ -34,8 +33,14 @@ public sealed class UserRole : Entity<UserRoleId>
     /// </summary>
     /// <param name="roleId">The user role id.</param>
     /// <returns>A new instance of the <see cref="UserRole"/> class.</returns>
-    public static UserRole Create(RoleId roleId)
+    public static UserRole Create(long roleId)
     {
         return new UserRole(roleId);
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return RoleId;
     }
 }
