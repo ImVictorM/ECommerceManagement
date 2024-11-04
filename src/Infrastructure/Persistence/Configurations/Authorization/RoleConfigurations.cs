@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedKernel.Authorization;
 
-namespace Infrastructure.Persistence.Configurations.UserAggregate;
+namespace Infrastructure.Persistence.Configurations.Authorization;
 
 /// <summary>
 /// Configures the <see cref="Role"/> entity to its table.
