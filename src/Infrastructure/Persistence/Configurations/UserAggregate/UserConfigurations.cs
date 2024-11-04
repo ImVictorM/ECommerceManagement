@@ -80,25 +80,15 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedUserAddressTable(EntityTypeBuilder<User> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(User.UserAddresses))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(user => user.UserAddresses, userAddressBuilder =>
         {
+            userAddressBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
             userAddressBuilder.ToTable("user_addresses");
 
-            userAddressBuilder
-                .HasKey(userAddress => userAddress.Id);
+            userAddressBuilder.Property<long>("id").ValueGeneratedOnAdd().IsRequired();
 
-            userAddressBuilder
-                .Property(userAddress => userAddress.Id)
-                .HasConversion(
-                    id => id.Value,
-                    value => UserAddressId.Create(value)
-                )
-                .ValueGeneratedOnAdd()
-                .IsRequired();
+            userAddressBuilder.HasKey("id");
 
             userAddressBuilder
                 .WithOwner()
@@ -108,7 +98,7 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
                 .Property("id_user")
                 .IsRequired();
 
-            userAddressBuilder.OwnsOne(o => o.Address, AddressNavigationBuilderConfigurations.Configure);
+            AddressNavigationBuilderConfigurations.Configure(userAddressBuilder);
         });
     }
 

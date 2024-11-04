@@ -20,7 +20,7 @@ public class UserMappingConfig : IRegister
             .Map(dest => dest.Id, src => src.User.Id.ToString())
             .Map(dest => dest.Email, src => src.User.Email.ToString())
             .Map(dest => dest.Roles, src => src.User.GetRoleNames())
-            .Map(dest => dest.Addresses, src => src.User.UserAddresses.Select(ua => ua.Address))
+            .Map(dest => dest.Addresses, src => src.User.UserAddresses)
             .Map(dest => dest, src => src.User);
 
         config.NewConfig<UserListResult, UserListResponse>()

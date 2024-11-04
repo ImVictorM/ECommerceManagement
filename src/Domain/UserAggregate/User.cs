@@ -1,7 +1,6 @@
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
 using Domain.Common.ValueObjects;
-using Domain.UserAggregate.Entities;
 using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
 
@@ -13,7 +12,7 @@ namespace Domain.UserAggregate;
 public sealed class User : AggregateRoot<UserId>, ISoftDeletable
 {
     private readonly List<UserRole> _userRoles = [];
-    private readonly List<UserAddress> _userAddresses = [];
+    private readonly List<Address> _userAddresses = [];
 
     /// <summary>
     /// Gets the user name.
@@ -42,7 +41,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <summary>
     /// Gets the user related addresses.
     /// </summary>
-    public IReadOnlyList<UserAddress> UserAddresses => _userAddresses.AsReadOnly();
+    public IReadOnlyList<Address> UserAddresses => _userAddresses.AsReadOnly();
 
     private User() { }
 
@@ -142,6 +141,10 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
         IsActive = false;
     }
 
+    /// <summary>
+    /// Checks if the user has the admin role assigned to them.
+    /// </summary>
+    /// <returns>A boolean value indicating if the user is an administrator.</returns>
     public bool IsAdmin()
     {
         return Role.HasAdminRole(UserRoles.Select(ur => ur.RoleId));
