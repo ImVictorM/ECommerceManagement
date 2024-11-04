@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using Domain.Common.ValueObjects;
 using Domain.UserAggregate;
 using SharedKernel.Authorization;
 
@@ -17,6 +19,8 @@ public static class UserUtils
     /// <param name="phone">The user phone.</param>
     /// <param name="role">The user role.</param>
     /// <param name="email">The user email.</param>
+    /// <param name="addresses">The user addresses.</param>
+    /// <param name="active">Defines if the user should be inactive.</param>
     /// <returns>A new instance of the <see cref="User"/> class.</returns>
     public static User CreateUser(
         string? name = null,
@@ -24,10 +28,12 @@ public static class UserUtils
         string? passwordSalt = null,
         string? phone = null,
         Role? role = null,
-        string? email = null
+        string? email = null,
+        ReadOnlyCollection<Address>? addresses = null,
+        bool active = true
     )
     {
-        return User.Create(
+        var user = User.Create(
             name ?? Constants.DomainConstants.User.Name,
             EmailUtils.CreateEmail(email: email),
             passwordHash ?? Constants.DomainConstants.User.PasswordHash,
@@ -35,6 +41,21 @@ public static class UserUtils
             role ?? Constants.DomainConstants.User.Role,
             phone ?? Constants.DomainConstants.User.Phone
         );
+
+        if (addresses != null)
+        {
+            foreach (var address in addresses)
+            {
+                user.AddAddress(address);
+            }
+        }
+
+        if (!active)
+        {
+            user.MakeInactive();
+        }
+
+        return user;
     }
 
     /// <summary>
@@ -43,26 +64,17 @@ public static class UserUtils
     /// <param name="count">The quantity of users to be created.</param>
     /// <param name="active">Specify if the created users should be active or inactive.</param>
     /// <returns>A list of unique users.</returns>
-    public static IEnumerable<User> CreateUsers(int count = 1, bool? active = true)
+    public static IEnumerable<User> CreateUsers(int count = 1, bool active = true)
     {
         var users = Enumerable
             .Range(0, count)
             .Select(index =>
                 CreateUser(
                     name: Constants.DomainConstants.User.UserNameFromIndex(index),
-                    email: Constants.DomainConstants.Email.EmailFromIndex(index)
+                    email: Constants.DomainConstants.Email.EmailFromIndex(index),
+                    active: active
                 )
             );
-
-        if (active == null)
-        {
-            return users;
-        }
-
-        foreach (var user in users)
-        {
-            user.MakeInactive();
-        }
 
         return users;
     }

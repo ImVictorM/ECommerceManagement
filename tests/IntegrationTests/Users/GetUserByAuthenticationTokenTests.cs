@@ -31,8 +31,8 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     /// <returns>An asynchronous operation.</returns>
     [Theory]
     [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.User1)]
-    [InlineData(SeedAvailableUsers.User2)]
+    [InlineData(SeedAvailableUsers.User)]
+    [InlineData(SeedAvailableUsers.UserWithAddress)]
     public async Task GetUserByAuthenticationToken_WhenUserIsAuthorizedByToken_ReturnsOk(SeedAvailableUsers userType)
     {
         var (AuthenticatedUser, AuthenticationToken) = await LoginAs(userType);

@@ -1,4 +1,5 @@
 using Contracts.Users;
+using Domain.Common.ValueObjects;
 using Domain.UserAggregate;
 using FluentAssertions;
 
@@ -23,6 +24,7 @@ public static class UserResponseExtensions
         response.Roles.Should().BeEquivalentTo(expectedUser.GetRoleNames());
         response.Phone.Should().BeEquivalentTo(expectedUser.Phone);
         response.Addresses.Count().Should().Be(expectedUser.UserAddresses.Count);
+        response.Addresses.Should().BeEquivalentTo(expectedUser.UserAddresses, opts => opts.ComparingByMembers<Address>());
     }
 
     /// <summary>

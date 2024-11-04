@@ -1,3 +1,4 @@
+using Domain.Common.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using SharedKernel.Authorization;
@@ -14,13 +15,17 @@ public enum SeedAvailableUsers
     /// </summary>
     Admin,
     /// <summary>
-    /// A normal user.
+    /// A customer user.
     /// </summary>
-    User1,
+    User,
     /// <summary>
-    /// A normal user.
+    /// A customer user with an address.
     /// </summary>
-    User2
+    UserWithAddress,
+    /// <summary>
+    /// A customer inactive user.
+    /// </summary>
+    InactiveUser,
 }
 
 /// <summary>
@@ -41,17 +46,25 @@ public static class UserSeed
             passwordSalt: "4FDE231393F2C8AECC2B26F356E3D89E"
         ), AdminPassword),
 
-        [SeedAvailableUsers.User1] = (UserUtils.CreateUser(
-            name: "user 1",
-            email: "user1@email.com",
+        [SeedAvailableUsers.User] = (UserUtils.CreateUser(
+            name: "normal user",
+            email: "user_normal@email.com",
             role: Role.Customer
         ), UserPassword),
 
-        [SeedAvailableUsers.User2] = (UserUtils.CreateUser(
-            name: "user 2",
-            email: "user2@email.com",
-            role: Role.Customer
-        ), UserPassword)
+        [SeedAvailableUsers.UserWithAddress] = (UserUtils.CreateUser(
+            name: "user with address",
+            email: "user_addr@email.com",
+            role: Role.Customer,
+            addresses: new List<Address> { AddressUtils.CreateAddress() }.AsReadOnly()
+        ), UserPassword),
+
+        [SeedAvailableUsers.InactiveUser] = (UserUtils.CreateUser(
+            name: "inactive user",
+            email: "user_inactive@email.com",
+            role: Role.Customer,
+            active: false
+        ), UserPassword),
     };
 
     /// <summary>
@@ -79,6 +92,7 @@ public static class UserSeed
     /// <summary>
     /// List all seed users.
     /// </summary>
+    /// <param name="filter">Filter the users based on a predicate.</param>
     /// <returns>A list of all seed users.</returns>
     public static IEnumerable<User> ListUsers(Func<User, bool>? filter = null)
     {
@@ -88,11 +102,15 @@ public static class UserSeed
     }
 
     /// <summary>
-    /// List all the credentials for the seed users.
+    /// List all the credentials for the seed users. By default retrieves only active users.
     /// </summary>
+    /// <param name="filter">Filter the users credentials based on a predicate.</param>
     /// <returns>A tuple of email and password for each seed user.</returns>
-    public static IEnumerable<(string Email, string Password)> ListUsersCredentials()
+    public static IEnumerable<(string Email, string Password)> ListUsersCredentials(Func<User, bool>? filter = null)
     {
-        return _users.Values.Select(u => (u.User.Email.ToString(), u.Password));
+
+        return filter != null ?
+            _users.Values.Where(u => filter(u.User)).Select(u => (u.User.Email.ToString(), u.Password)) :
+            _users.Values.Select(u => (u.User.Email.ToString(), u.Password));
     }
 }

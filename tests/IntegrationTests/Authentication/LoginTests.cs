@@ -24,12 +24,24 @@ public class LoginTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// List of valid login request objects.
+    /// List of login request containing credentials for active users.
     /// </summary>
     /// <returns>A list of valid login requests.</returns>
-    public static IEnumerable<object[]> ValidRequests()
+    public static IEnumerable<object[]> ActiveUserRequests()
     {
-        foreach (var (Email, Password) in UserSeed.ListUsersCredentials())
+        foreach (var (Email, Password) in UserSeed.ListUsersCredentials(user => user.IsActive))
+        {
+            yield return new object[] { LoginRequestUtils.CreateRequest(Email, Password) };
+        }
+    }
+
+    /// <summary>
+    /// List of login request containing credentials for inactive users.
+    /// </summary>
+    /// <returns>A list of invalid login requests.</returns>
+    public static IEnumerable<object[]> InactiveUserRequests()
+    {
+        foreach (var (Email, Password) in UserSeed.ListUsersCredentials(user => !user.IsActive))
         {
             yield return new object[] { LoginRequestUtils.CreateRequest(Email, Password) };
         }
@@ -60,13 +72,13 @@ public class LoginTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Checks if it is possible to login with valid credentials.
+    /// Checks if it is possible to login active users with valid credentials.
     /// </summary>
     /// <param name="loginRequest">The request object.</param>
     /// <returns>An asynchronous operation.</returns>
     [Theory]
-    [MemberData(nameof(ValidRequests))]
-    public async Task Login_WhenCredentialsAreValid_AuthenticateTheUserCorrectly(LoginRequest loginRequest)
+    [MemberData(nameof(ActiveUserRequests))]
+    public async Task Login_WhenCredentialsAreValidAndUserIsActive_AuthenticateTheUserCorrectly(LoginRequest loginRequest)
     {
         var httpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
         var authenticationResponse = await httpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
@@ -75,6 +87,25 @@ public class LoginTests : BaseIntegrationTest
         authenticationResponse.Should().NotBeNull();
         authenticationResponse!.Token.Should().NotBeNullOrWhiteSpace();
         authenticationResponse!.Email.Should().Be(loginRequest.Email);
+    }
+
+    /// <summary>
+    /// Checks if it is not possible to login inactive users with valid credentials.
+    /// </summary>
+    /// <param name="loginRequest">The request object.</param>
+    /// <returns>An asynchronous operation.</returns>
+    [Theory]
+    [MemberData(nameof(InactiveUserRequests))]
+    public async Task Login_WhenCredentialsAreValidAndUserIsInactive_ReturnsBadRequest(LoginRequest loginRequest)
+    {
+        var httpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
+        var authenticationResponse = await httpResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+
+        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        authenticationResponse!.Should().NotBeNull();
+        authenticationResponse!.Status.Should().Be((int)HttpStatusCode.BadRequest);
+        authenticationResponse!.Title.Should().Be("Authentication Failed.");
+        authenticationResponse!.Detail.Should().Be("User email or password is incorrect.");
     }
 
     /// <summary>

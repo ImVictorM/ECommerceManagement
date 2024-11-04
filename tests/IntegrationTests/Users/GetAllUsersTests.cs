@@ -59,7 +59,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsNotAdmin_ReturnsForbidden()
     {
-        var (_, AuthToken) = await LoginAs(SeedAvailableUsers.User1);
+        var (_, AuthToken) = await LoginAs(SeedAvailableUsers.User);
 
         Client.SetJwtBearerAuthorizationHeader(AuthToken);
 

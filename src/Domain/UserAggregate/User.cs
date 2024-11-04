@@ -149,4 +149,13 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     {
         return Role.HasAdminRole(UserRoles.Select(ur => ur.RoleId));
     }
+
+    /// <summary>
+    /// Adds a new address to the user.
+    /// </summary>
+    /// <param name="address">The address to be added.</param>
+    public void AddAddress(Address address)
+    {
+        _userAddresses.Add(address);
+    }
 }

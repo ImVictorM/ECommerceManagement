@@ -194,4 +194,19 @@ public class UserTests
             expectedRoleNames.Should().Contain(roleName);
         }
     }
+
+    /// <summary>
+    /// Tests if it is possible to add a new address to a user.
+    /// </summary>
+    [Fact]
+    public void User_WhenAddingAddress_AddsItAndIncreaseCount()
+    {
+        var user = UserUtils.CreateUser();
+        var address = AddressUtils.CreateAddress();
+
+        user.AddAddress(address);
+
+        user.UserAddresses.Count.Should().Be(1);
+        user.UserAddresses.Should().Contain(address);
+    }
 }

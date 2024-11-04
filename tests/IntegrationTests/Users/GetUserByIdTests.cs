@@ -65,7 +65,7 @@ public class GetUserByIdTests : BaseIntegrationTest
     [MemberData(nameof(SeedUsers))]
     public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(User user)
     {
-        var (_, Token) = await LoginAs(SeedAvailableUsers.User1);
+        var (_, Token) = await LoginAs(SeedAvailableUsers.User);
 
         Client.SetJwtBearerAuthorizationHeader(Token);
 

@@ -17,7 +17,7 @@ public static class LoginRequestUtils
     /// <returns>A new instance of the <see cref="LoginRequest"/> class.</returns>
     public static LoginRequest CreateRequest(string? email = null, string? password = null)
     {
-        var (DefaultEmail, DefaultPassword) = UserSeed.GetUserAuthenticationCredentials(SeedAvailableUsers.User1);
+        var (DefaultEmail, DefaultPassword) = UserSeed.GetUserAuthenticationCredentials(SeedAvailableUsers.User);
 
         return new LoginRequest(
             email ?? DefaultEmail,
