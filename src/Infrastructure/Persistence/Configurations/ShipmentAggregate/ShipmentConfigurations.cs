@@ -74,12 +74,10 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedShipmentStatusHistoryTable(EntityTypeBuilder<Shipment> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(Shipment.ShipmentStatusHistories))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(s => s.ShipmentStatusHistories, shipmentStatusHistoryBuilder =>
         {
+            shipmentStatusHistoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
             shipmentStatusHistoryBuilder.ToTable("shipment_status_histories");
 
             shipmentStatusHistoryBuilder.Property<long>("id").ValueGeneratedOnAdd();

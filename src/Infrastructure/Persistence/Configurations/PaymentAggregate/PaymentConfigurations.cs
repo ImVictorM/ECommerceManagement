@@ -106,12 +106,10 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedPaymentStatusHistoryTable(EntityTypeBuilder<Payment> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(Payment.PaymentStatusHistories))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(p => p.PaymentStatusHistories, paymentStatusHistoryBuilder =>
         {
+            paymentStatusHistoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
             paymentStatusHistoryBuilder.ToTable("payment_status_histories");
 
             paymentStatusHistoryBuilder

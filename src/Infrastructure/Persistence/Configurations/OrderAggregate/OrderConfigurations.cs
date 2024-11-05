@@ -87,14 +87,12 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedOrderDiscountTable(EntityTypeBuilder<Order> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(Order.OrderDiscounts))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(
             order => order.OrderDiscounts,
             orderDiscountBuilder =>
             {
+                orderDiscountBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
                 orderDiscountBuilder.ToTable("order_discounts");
 
                 orderDiscountBuilder.HasKey(orderDiscount => orderDiscount.Id);
@@ -126,12 +124,10 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedOrderProductTable(EntityTypeBuilder<Order> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(Order.OrderProducts))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(order => order.OrderProducts, orderProductsBuilder =>
         {
+            orderProductsBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
             orderProductsBuilder.ToTable("orders_products");
 
             orderProductsBuilder.HasKey(orderProduct => orderProduct.Id);
@@ -183,12 +179,10 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedOrderStatusHistoryTable(EntityTypeBuilder<Order> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(Order.OrderStatusHistories))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(o => o.OrderStatusHistories, orderStatusHistoryBuilder =>
         {
+            orderStatusHistoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
             orderStatusHistoryBuilder.ToTable("order_status_histories");
 
             orderStatusHistoryBuilder

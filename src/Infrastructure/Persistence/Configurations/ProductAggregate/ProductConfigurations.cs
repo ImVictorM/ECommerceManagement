@@ -113,14 +113,12 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     /// <param name="builder">Then entity type builder.</param>
     private static void ConfigureOwnedProductDiscountTable(EntityTypeBuilder<Product> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(Product.ProductDiscounts))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(
             product => product.ProductDiscounts,
             productDiscountBuilder =>
             {
+                productDiscountBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
                 productDiscountBuilder.ToTable("product_discounts");
 
                 productDiscountBuilder.HasKey(productDiscount => productDiscount.Id);
@@ -150,14 +148,12 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedProductImageTable(EntityTypeBuilder<Product> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(Product.ProductImages))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(
             product => product.ProductImages,
             productImageBuilder =>
             {
+                productImageBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
                 productImageBuilder.ToTable("product_images");
 
                 productImageBuilder.HasKey(productImage => productImage.Id);

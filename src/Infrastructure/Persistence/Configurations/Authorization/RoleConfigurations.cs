@@ -5,7 +5,7 @@ using SharedKernel.Authorization;
 namespace Infrastructure.Persistence.Configurations.Authorization;
 
 /// <summary>
-/// Configures the <see cref="Role"/> entity to its table.
+/// Configures the <see cref="Role"/> enumeration to its table.
 /// </summary>
 public sealed class RoleConfigurations : IEntityTypeConfiguration<Role>
 {

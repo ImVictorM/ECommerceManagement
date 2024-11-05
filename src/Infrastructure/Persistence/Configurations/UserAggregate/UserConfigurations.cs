@@ -108,12 +108,10 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     /// <param name="builder">The entity type builder.</param>
     private static void ConfigureOwnedUserRolesTable(EntityTypeBuilder<User> builder)
     {
-        builder.Metadata
-            .FindNavigation(nameof(User.UserRoles))!
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.OwnsMany(user => user.UserRoles, userRolesBuilder =>
         {
+            userRolesBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
             userRolesBuilder.ToTable("users_roles");
 
             userRolesBuilder
