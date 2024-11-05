@@ -37,7 +37,7 @@ public class GetUserByIdQueryHandlerTests
     /// </summary>
     /// <returns>An asynchronous operation.</returns>
     [Fact]
-    public async Task HandleGetUserById_WhenUserExits_ReturnIt()
+    public async Task HandleGetUserById_WhenUserExists_ReturnsIt()
     {
         var mockUser = UserUtils.CreateUser();
 
@@ -56,7 +56,7 @@ public class GetUserByIdQueryHandlerTests
     /// </summary>
     /// <returns>An asynchronous operation.</returns>
     [Fact]
-    public async Task HandleGetUserById_WhenUserDoesNotExist_ThrowsBadRequest()
+    public async Task HandleGetUserById_WhenUserDoesNotExist_ThrowsException()
     {
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))

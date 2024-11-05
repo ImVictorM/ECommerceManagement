@@ -1,3 +1,4 @@
+using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Users.Common.Errors;
 using Domain.UserAggregate.ValueObjects;
@@ -35,7 +36,17 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
 
         var user = await
             _unitOfWork.UserRepository.FindByIdAsync(userId) ??
-            throw new UserNotFoundException().WithContext("UserId", userId.ToString());
+            throw new UserNotFoundException("The user to be updated does not exist").WithContext("UserId", userId.ToString());
+
+        if (user.Email.ToString() != request.Email)
+        {
+            var existingUserWithEmail = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email.ToString() == request.Email);
+
+            if (existingUserWithEmail != null)
+            {
+                throw new UserAlreadyExistsException("The email you entered is already in use");
+            }
+        }
 
         user.Update(
             name: request.Name,
