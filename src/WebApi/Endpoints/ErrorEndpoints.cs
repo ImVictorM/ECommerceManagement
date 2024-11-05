@@ -1,8 +1,8 @@
-using Application.Common.Errors;
 using Carter;
-using Domain.Common.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
+using SharedKernel.Errors;
+using WebApi.Common.Extensions;
 
 namespace WebApi.Endpoints;
 
@@ -50,14 +50,11 @@ public sealed class ErrorEndpoints : ICarterModule
         // Handle custom errors
         return exception switch
         {
-            DomainValidationException domainValidationException => Results.Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: domainValidationException.Message
-            ),
-            HttpException httpException => Results.Problem(
-                statusCode: (int)httpException.StatusCode,
-                title: httpException.Title,
-                detail: httpException.Message
+            BaseException baseException => Results.Problem(
+                statusCode: (int)baseException.ErrorCode.ToHttpStatusCode(),
+                title: baseException.Title,
+                detail: baseException.Message,
+                extensions: baseException.Context
             ),
             ValidationException validationException => HandleValidationException(validationException),
             _ => genericProblem,

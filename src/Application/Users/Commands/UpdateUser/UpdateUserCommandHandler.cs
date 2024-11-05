@@ -1,5 +1,5 @@
-using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
+using Application.Users.Common.Errors;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 
@@ -28,17 +28,14 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
     /// <param name="request">The <see cref="UpdateUserCommand"/> containing the details of the user to be updated.</param>
     /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    /// <exception cref="BadRequestException">Thrown when the user to be updated does not exist.</exception>
+    /// <exception cref="UserNotFoundException">Thrown when the user to be updated does not exist.</exception>
     public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var userId = UserId.Create(request.Id);
 
         var user = await
             _unitOfWork.UserRepository.FindByIdAsync(userId) ??
-            throw new BadRequestException(
-                title: "There was an error when trying to update an user.",
-                message: $"User with id {userId} does not exist."
-            );
+            throw new UserNotFoundException().WithContext("UserId", userId.ToString());
 
         user.Update(
             name: request.Name,

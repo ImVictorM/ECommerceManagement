@@ -1,5 +1,5 @@
 using Application.Common.Interfaces.Persistence;
-using Application.Users.Common;
+using Application.Users.Common.DTOs;
 using MediatR;
 
 namespace Application.Users.Queries.GetAllUsers;

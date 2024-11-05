@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
-using Application.Users.Common;
+using Application.Users.Common.DTOs;
+using Application.Users.Common.Errors;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 
@@ -34,7 +34,7 @@ public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, 
 
         var user =
             await _unitOfWork.UserRepository.FindByIdAsync(id) ??
-            throw new BadRequestException(message: $"User with identifier {id} not found.");
+            throw new UserNotFoundException().WithContext("UserId", id.ToString());
 
         return new UserResult(user);
     }

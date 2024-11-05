@@ -1,5 +1,5 @@
 using Application.Authentication.Commands.Register;
-using Application.Authentication.Common;
+using Application.Authentication.Common.DTOs;
 using Application.Authentication.Queries.Login;
 using Contracts.Authentication;
 using Mapster;

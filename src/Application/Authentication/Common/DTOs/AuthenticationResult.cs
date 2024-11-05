@@ -1,6 +1,6 @@
 using Domain.UserAggregate;
 
-namespace Application.Authentication.Common;
+namespace Application.Authentication.Common.DTOs;
 
 /// <summary>
 /// Return type for an authenticated user.

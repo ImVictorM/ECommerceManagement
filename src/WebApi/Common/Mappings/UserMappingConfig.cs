@@ -1,5 +1,5 @@
 using Application.Users.Commands.UpdateUser;
-using Application.Users.Common;
+using Application.Users.Common.DTOs;
 using Contracts.Users;
 using Mapster;
 

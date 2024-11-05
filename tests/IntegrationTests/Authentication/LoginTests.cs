@@ -104,8 +104,8 @@ public class LoginTests : BaseIntegrationTest
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         authenticationResponse!.Should().NotBeNull();
         authenticationResponse!.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        authenticationResponse!.Title.Should().Be("Authentication Failed.");
-        authenticationResponse!.Detail.Should().Be("User email or password is incorrect.");
+        authenticationResponse!.Title.Should().Be("Authentication Failed");
+        authenticationResponse!.Detail.Should().Be("User email or password is incorrect");
     }
 
     /// <summary>
@@ -153,7 +153,7 @@ public class LoginTests : BaseIntegrationTest
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         authenticationResponse.Should().NotBeNull();
         authenticationResponse!.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        authenticationResponse!.Title.Should().Be("Authentication Failed.");
-        authenticationResponse!.Detail.Should().Be("User email or password is incorrect.");
+        authenticationResponse!.Title.Should().Be("Authentication Failed");
+        authenticationResponse!.Detail.Should().Be("User email or password is incorrect");
     }
 }

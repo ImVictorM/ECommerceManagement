@@ -1,6 +1,6 @@
 using Domain.UserAggregate;
 
-namespace Application.Users.Common;
+namespace Application.Users.Common.DTOs;
 
 /// <summary>
 /// Result when getting multiple users.

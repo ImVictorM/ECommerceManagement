@@ -1,4 +1,4 @@
-using Application.Authentication.Common;
+using Application.Authentication.Common.DTOs;
 using MediatR;
 
 namespace Application.Authentication.Queries.Login;

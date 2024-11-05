@@ -1,11 +1,11 @@
 using MediatR;
-using Application.Authentication.Common;
 using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Domain.UserAggregate;
 using Application.Common.Interfaces.Persistence;
 using Microsoft.Extensions.Logging;
 using Domain.Common.ValueObjects;
+using Application.Authentication.Common.DTOs;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -45,7 +45,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
     /// <param name="command">The command that will trigger the registration process.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>An authentication result including the authentication token.</returns>
-    /// <exception cref="BadRequestException">Exception in case the user already exists.</exception>
+    /// <exception cref="UserAlreadyExistsException">Thrown when user with same email already exists.</exception>
     public async Task<AuthenticationResult> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
         LogHandlingRegisterCommand(command.Email);
@@ -56,10 +56,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
         {
             LogUserAlreadyExists();
 
-            throw new ConflictRequestException(
-                message: "User already exists.",
-                title: "There was an error when trying to create a new user."
-            );
+            throw new UserAlreadyExistsException().WithContext("Email", command.Email);
         }
 
         var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);

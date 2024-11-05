@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Queries.TestUtils;
+using Application.Users.Common.Errors;
 using Application.Users.Queries.GetUserById;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -33,9 +33,9 @@ public class GetUserByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests the user is returned when they exists.
+    /// Tests if the user is returned when they exists.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task HandleGetUserById_WhenUserExits_ReturnIt()
     {
@@ -52,9 +52,9 @@ public class GetUserByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests an error is thrown when the user is not found.
+    /// Tests if an error is thrown when the user is not found.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task HandleGetUserById_WhenUserDoesNotExist_ThrowsBadRequest()
     {
@@ -67,7 +67,7 @@ public class GetUserByIdQueryHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(GetUserByIdQueryUtils.CreateQuery(idToBeFound), default))
             .Should()
-            .ThrowAsync<BadRequestException>()
-            .WithMessage($"User with identifier {idToBeFound} not found.");
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage("The user being queried was not found");
     }
 }

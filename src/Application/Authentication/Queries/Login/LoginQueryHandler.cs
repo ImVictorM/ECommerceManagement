@@ -1,5 +1,5 @@
-using Application.Authentication.Common;
-using Application.Common.Errors;
+using Application.Authentication.Common.DTOs;
+using Application.Authentication.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
 using Domain.Common.ValueObjects;
@@ -60,10 +60,8 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
         )
         {
             LogAuthenticationFailed();
-            throw new BadRequestException(
-                message: "User email or password is incorrect.",
-                title: "Authentication Failed."
-            );
+
+            throw new AuthenticationFailedException();
         }
 
         LogSuccessfullyAuthenticatedUser(query.Email);

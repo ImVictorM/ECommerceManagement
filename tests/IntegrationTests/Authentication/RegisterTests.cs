@@ -181,7 +181,7 @@ public class RegisterTests : BaseIntegrationTest
         httpResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
         responseContent.Should().NotBeNull();
         responseContent!.Status.Should().Be((int)HttpStatusCode.Conflict);
-        responseContent.Title.Should().Be("There was an error when trying to create a new user.");
-        responseContent.Detail.Should().Be("User already exists.");
+        responseContent.Title.Should().Be("User Conflict");
+        responseContent.Detail.Should().Be("The user already exists");
     }
 }

@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
+using Application.Authentication.Common.Errors;
 using Application.Authentication.Queries.Login;
-using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Authentication.Queries.TestUtils;
@@ -20,9 +20,9 @@ namespace Application.UnitTests.Authentication.Queries.Login;
 public class LoginQueryHandlerTests
 {
     /// <summary>
-    /// The default message used when authentication errors occurr.
+    /// The default message used when authentication errors occur.
     /// </summary>
-    public const string LoginDefaultErrorMessage = "User email or password is incorrect.";
+    public const string LoginDefaultErrorMessage = "User email or password is incorrect";
 
     private readonly LoginQueryHandler _handler;
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;
@@ -103,7 +103,7 @@ public class LoginQueryHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
             .Should()
-            .ThrowAsync<BadRequestException>()
+            .ThrowAsync<AuthenticationFailedException>()
             .WithMessage(LoginDefaultErrorMessage);
     }
 
@@ -125,7 +125,7 @@ public class LoginQueryHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
             .Should()
-            .ThrowAsync<BadRequestException>()
+            .ThrowAsync<AuthenticationFailedException>()
             .WithMessage(LoginDefaultErrorMessage);
     }
 
@@ -148,7 +148,7 @@ public class LoginQueryHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
             .Should()
-            .ThrowAsync<BadRequestException>()
+            .ThrowAsync<AuthenticationFailedException>()
             .WithMessage(LoginDefaultErrorMessage);
     }
 }
