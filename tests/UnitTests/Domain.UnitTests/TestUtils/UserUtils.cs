@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Domain.Common.ValueObjects;
+using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
 using SharedKernel.Authorization;
 
@@ -34,12 +35,12 @@ public static class UserUtils
     )
     {
         var user = User.Create(
-            name ?? Constants.DomainConstants.User.Name,
+            name ?? DomainConstants.User.Name,
             EmailUtils.CreateEmail(email: email),
-            passwordHash ?? Constants.DomainConstants.User.PasswordHash,
-            passwordSalt ?? Constants.DomainConstants.User.PasswordSalt,
-            role ?? Constants.DomainConstants.User.Role,
-            phone ?? Constants.DomainConstants.User.Phone
+            passwordHash ?? DomainConstants.User.PasswordHash,
+            passwordSalt ?? DomainConstants.User.PasswordSalt,
+            role ?? DomainConstants.User.Role,
+            phone ?? DomainConstants.User.Phone
         );
 
         if (addresses != null)
@@ -70,12 +71,80 @@ public static class UserUtils
             .Range(0, count)
             .Select(index =>
                 CreateUser(
-                    name: Constants.DomainConstants.User.UserNameFromIndex(index),
-                    email: Constants.DomainConstants.Email.EmailFromIndex(index),
+                    name: DomainConstants.User.UserNameFromIndex(index),
+                    email: DomainConstants.Email.EmailFromIndex(index),
                     active: active
                 )
             );
 
         return users;
+    }
+
+    /// <summary>
+    /// Gets a list of invalid user name with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(string Value, Dictionary<string, string[]>)> GetInvalidNameWithCorrespondingErrors()
+    {
+        yield return ("", new Dictionary<string, string[]>
+        {
+            { "Name", [DomainConstants.User.Validations.EmptyName, DomainConstants.User.Validations.ShortName] }
+        });
+
+        yield return ("7S", new Dictionary<string, string[]>
+        {
+            { "Name", [DomainConstants.User.Validations.ShortName] }
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of invalid passwords with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(string Value, Dictionary<string, string[]>)> GetInvalidPasswordWithCorrespondingErrors()
+    {
+        yield return (
+            "",
+            new Dictionary<string, string[]>
+            {
+                {
+                    "Password",
+                    [
+                        DomainConstants.User.Validations.EmptyPassword,
+                        DomainConstants.User.Validations.MissingCharacterPassword,
+                        DomainConstants.User.Validations.MissingDigitPassword,
+                        DomainConstants.User.Validations.ShortPassword
+                    ]
+                }
+            }
+         );
+
+        yield return (
+            "123456",
+            new Dictionary<string, string[]>
+            {
+                {
+                    "Password", [DomainConstants.User.Validations.MissingCharacterPassword]
+                }
+            }
+        );
+
+        yield return (
+            "abcdef",
+            new Dictionary<string, string[]>
+            {
+                {
+                    "Password", [DomainConstants.User.Validations.MissingDigitPassword]
+                }
+            }
+        );
+
+        yield return (
+            "a2345",
+            new Dictionary<string, string[]>
+            {
+                {
+                    "Password", [DomainConstants.User.Validations.ShortPassword]
+                }
+            }
+        );
     }
 }

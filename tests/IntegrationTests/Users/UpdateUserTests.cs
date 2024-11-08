@@ -1,8 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using Contracts.Users;
+using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using IntegrationTests.Common;
+using IntegrationTests.TestUtils.Extensions.Errors;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 using IntegrationTests.Users.TestUtils;
@@ -22,50 +24,15 @@ public class UpdateUserTests : BaseIntegrationTest
     /// </summary>
     public static IEnumerable<object[]> InvalidRequests()
     {
-        const string emailInvalidPatternMessage = "'Email' does not follow the required pattern.";
+        foreach (var (invalidEmail, expectedErrors) in EmailUtils.GetInvalidEmailsWithCorrespondingErrors())
+        {
+            yield return new object[] { UpdateUserRequestUtils.CreateRequest(email: invalidEmail), expectedErrors };
+        }
 
-        yield return new object[] {
-            UpdateUserRequestUtils.CreateRequest(email: ""),
-            new Dictionary<string, string[]>()
-            {
-                { "Email", ["'Email' must not be empty.", emailInvalidPatternMessage] }
-            }
-        };
-        yield return new object[] {
-            UpdateUserRequestUtils.CreateRequest(email: "invalidemailformat"),
-            new Dictionary<string, string[]>()
-            {
-                { "Email", [emailInvalidPatternMessage] }
-            }
-        };
-        yield return new object[] {
-            UpdateUserRequestUtils.CreateRequest(email: "invalidemailformat@invalid@.com"),
-            new Dictionary<string, string[]>()
-            {
-                { "Email", [emailInvalidPatternMessage] }
-            }
-        };
-        yield return new object[] {
-            UpdateUserRequestUtils.CreateRequest(email: "invalidemailformat@invalid.com."),
-            new Dictionary<string, string[]>()
-            {
-                { "Email", [emailInvalidPatternMessage] }
-            }
-        };
-        yield return new object[] {
-            UpdateUserRequestUtils.CreateRequest(name: ""),
-            new Dictionary<string, string[]>()
-            {
-                { "Name", ["'Name' must not be empty.", "'Name' must be at least 3 characters long."] }
-            }
-        };
-        yield return new object[] {
-            UpdateUserRequestUtils.CreateRequest(name: "7S"),
-            new Dictionary<string, string[]>()
-            {
-                { "Name", ["'Name' must be at least 3 characters long."] }
-            }
-        };
+        foreach (var (invalidName, expectedErrors) in UserUtils.GetInvalidNameWithCorrespondingErrors())
+        {
+            yield return new object[] { UpdateUserRequestUtils.CreateRequest(name: invalidName), expectedErrors };
+        }
     }
 
     /// <summary>
@@ -163,17 +130,7 @@ public class UpdateUserTests : BaseIntegrationTest
         var updateResponseContent = await updateResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        updateResponseContent.Should().NotBeNull();
-        updateResponseContent!.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        updateResponseContent.Errors.Should().NotBeEmpty();
-        updateResponseContent.Errors.Should().ContainKeys(expectedErrors.Keys);
-
-        foreach (var expectedError in expectedErrors)
-        {
-            var actualMessages = updateResponseContent.Errors[expectedError.Key];
-
-            actualMessages.Should().BeEquivalentTo(expectedError.Value);
-        }
+        updateResponseContent!.EnsureCorrespondsToExpectedErrors(expectedErrors);
     }
 
     /// <summary>
