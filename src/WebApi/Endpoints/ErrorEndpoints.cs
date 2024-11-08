@@ -34,18 +34,13 @@ public sealed class ErrorEndpoints : ICarterModule
     /// <returns>A <see cref="IResult"/> containing a <see cref="Microsoft.AspNetCore.Mvc.ProblemDetails"/> response</returns>
     private IResult HandleGlobalErrors(HttpContext httpContext)
     {
-        Exception? exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
+        var exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
         var genericProblem = Results.Problem(
             statusCode: StatusCodes.Status500InternalServerError,
-            title: "An unexpected error ocurred."
+            title: "An unexpected error ocurred.",
+            detail: exception?.Message
         );
-
-        if (exception is null)
-        {
-            // Handle unexpected errors
-            return genericProblem;
-        }
 
         // Handle custom errors
         return exception switch
