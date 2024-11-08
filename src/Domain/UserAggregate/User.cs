@@ -103,11 +103,11 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     public void Update(
         string? name = null,
         string? phone = null,
-        string? email = null)
+        Email? email = null)
     {
         Name = name ?? Name;
         Phone = phone ?? Phone;
-        Email = email != null ? Email.Create(email) : Email;
+        Email = email ?? Email;
     }
 
     /// <summary>

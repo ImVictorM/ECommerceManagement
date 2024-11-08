@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Application.Users.Queries.GetUserById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using SharedKernel.Authorization;
 
 namespace WebApi.Authorization.UpdateUser;
@@ -28,7 +29,14 @@ public class UpdateUserRequirementHandler : AuthorizationHandler<UpdateUserRequi
     {
         var authenticatedUserId = context.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
-        if (context.Resource is not string userToUpdateId)
+        if (context.Resource is not HttpContext httpContext)
+        {
+            return;
+        }
+
+        var userToUpdateId = httpContext.GetRouteValue("id")?.ToString();
+
+        if (userToUpdateId == null)
         {
             return;
         }

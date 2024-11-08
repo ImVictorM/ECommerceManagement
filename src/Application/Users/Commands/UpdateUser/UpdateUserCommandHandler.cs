@@ -1,6 +1,7 @@
 using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Users.Common.Errors;
+using Domain.Common.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 
@@ -10,7 +11,7 @@ namespace Application.Users.Commands.UpdateUser;
 /// Command handler for the command <see cref="UpdateUserCommand"/>.
 /// Handles user registration.
 /// </summary>
-public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
+public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -30,17 +31,18 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
     /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     /// <exception cref="UserNotFoundException">Thrown when the user to be updated does not exist.</exception>
-    public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var userId = UserId.Create(request.Id);
+        var userToUpdateId = UserId.Create(request.Id);
+        var inputEmail = Email.Create(request.Email);
 
         var user = await
-            _unitOfWork.UserRepository.FindByIdAsync(userId) ??
-            throw new UserNotFoundException("The user to be updated does not exist").WithContext("UserId", userId.ToString());
+            _unitOfWork.UserRepository.FindByIdAsync(userToUpdateId) ??
+            throw new UserNotFoundException("The user to be updated does not exist").WithContext("UserId", userToUpdateId.ToString());
 
-        if (user.Email.ToString() != request.Email)
+        if (user.Email != inputEmail)
         {
-            var existingUserWithEmail = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email.ToString() == request.Email);
+            var existingUserWithEmail = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
 
             if (existingUserWithEmail != null)
             {
@@ -50,12 +52,14 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
 
         user.Update(
             name: request.Name,
-            email: request.Email,
+            email: inputEmail,
             phone: request.Phone
         );
 
         await _unitOfWork.UserRepository.UpdateAsync(user);
 
         await _unitOfWork.SaveChangesAsync();
+
+        return Unit.Value;
     }
 }
