@@ -7,6 +7,7 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Users;
 using IntegrationTests.TestUtils.Seeds;
+using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;
 
@@ -16,18 +17,10 @@ namespace IntegrationTests.Users;
 public class GetUserByIdTests : BaseIntegrationTest
 {
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetUserByIdTests"/> class.
-    /// </summary>
-    /// <param name="webAppFactory">The test server.</param>
-    public GetUserByIdTests(IntegrationTestWebAppFactory webAppFactory) : base(webAppFactory)
-    {
-    }
-
-    /// <summary>
     /// A list of users contained in the test database.
     /// </summary>
     /// <returns>A list of seed users.</returns>
-    public static IEnumerable<object[]> SeedUsers()
+    public static IEnumerable<object[]> AvailableUsers()
     {
         foreach (var user in UserSeed.ListUsers())
         {
@@ -36,18 +29,24 @@ public class GetUserByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
+    /// Initiates a new instance of the <see cref="GetUserByIdTests"/> class.
+    /// </summary>
+    /// <param name="factory">The test server factory.</param>
+    /// <param name="output">The log helper.</param>
+    public GetUserByIdTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    {
+    }
+
+    /// <summary>
     /// Tests if it is possible to get an user authenticated as administrator.
     /// </summary>
     /// <param name="user">The user to get.</param>
     /// <returns>An asynchronous operation.</returns>
     [Theory]
-    [MemberData(nameof(SeedUsers))]
-    public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkContainingTheUser(User user)
+    [MemberData(nameof(AvailableUsers))]
+    public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkWithUser(User user)
     {
-        var (_, Token) = await LoginAs(SeedAvailableUsers.Admin);
-
-        Client.SetJwtBearerAuthorizationHeader(Token);
-
+        await Client.LoginAs(SeedAvailableUsers.Admin);
         var response = await Client.GetAsync($"/users/{user.Id}");
 
         var responseContent = await response.Content.ReadFromJsonAsync<UserResponse>();
@@ -62,12 +61,10 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// <param name="user">The user to be queried.</param>
     /// <returns>An asynchronous operation.</returns>
     [Theory]
-    [MemberData(nameof(SeedUsers))]
+    [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(User user)
     {
-        var (_, Token) = await LoginAs(SeedAvailableUsers.User);
-
-        Client.SetJwtBearerAuthorizationHeader(Token);
+        await Client.LoginAs(SeedAvailableUsers.User);
 
         var response = await Client.GetAsync($"/users/{user.Id}");
 
@@ -80,7 +77,7 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// <param name="user">The user to be queried.</param>
     /// <returns>An asynchronous operation.</returns>
     [Theory]
-    [MemberData(nameof(SeedUsers))]
+    [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenAuthenticationTokenIsNotGiven_ReturnsUnauthorized(User user)
     {
         var response = await Client.GetAsync($"/users/{user.Id}");

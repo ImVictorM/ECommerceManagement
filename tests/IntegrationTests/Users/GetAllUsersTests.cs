@@ -7,6 +7,7 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Users;
 using IntegrationTests.TestUtils.Seeds;
+using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;
 
@@ -20,8 +21,9 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// <summary>
     /// Initiates a new instance of the <see cref="GetAllUsersTests"/> class.
     /// </summary>
-    /// <param name="webAppFactory">The test server.</param>
-    public GetAllUsersTests(IntegrationTestWebAppFactory webAppFactory) : base(webAppFactory)
+    /// <param name="factory">The test server factory.</param>
+    /// <param name="output">The log helper.</param>
+    public GetAllUsersTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
     }
 
@@ -43,13 +45,11 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsAdmin_ReturnsSuccess()
     {
-        var (_, AuthToken) = await LoginAs(SeedAvailableUsers.Admin);
-
-        Client.SetJwtBearerAuthorizationHeader(AuthToken);
+        await Client.LoginAs(SeedAvailableUsers.Admin);
 
         var response = await Client.GetAsync(BaseRequestUri);
 
-        response.EnsureSuccessStatusCode();
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
     }
 
     /// <summary>
@@ -59,9 +59,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsNotAdmin_ReturnsForbidden()
     {
-        var (_, AuthToken) = await LoginAs(SeedAvailableUsers.User);
-
-        Client.SetJwtBearerAuthorizationHeader(AuthToken);
+        await Client.LoginAs(SeedAvailableUsers.User);
 
         var response = await Client.GetAsync(BaseRequestUri);
 
@@ -93,9 +91,7 @@ public class GetAllUsersTests : BaseIntegrationTest
         ReadOnlyCollection<User> expectedUsers
     )
     {
-        var (_, AuthToken) = await LoginAs(SeedAvailableUsers.Admin);
-
-        Client.SetJwtBearerAuthorizationHeader(AuthToken);
+        await Client.LoginAs(SeedAvailableUsers.Admin);
 
         var response = await Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadFromJsonAsync<UserListResponse>();

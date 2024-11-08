@@ -6,6 +6,7 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Users;
 using IntegrationTests.TestUtils.Seeds;
+using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;
 
@@ -19,8 +20,9 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     /// <summary>
     /// Initiates a new instance of the <see cref="GetUserByAuthenticationTokenTests"/> class.
     /// </summary>
-    /// <param name="webAppFactory">The test server.</param>
-    public GetUserByAuthenticationTokenTests(IntegrationTestWebAppFactory webAppFactory) : base(webAppFactory)
+    /// <param name="factory">The test server factory.</param>
+    /// <param name="output">The log helper.</param>
+    public GetUserByAuthenticationTokenTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
     }
 
@@ -35,9 +37,7 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     [InlineData(SeedAvailableUsers.UserWithAddress)]
     public async Task GetUserByAuthenticationToken_WhenUserIsAuthorizedByToken_ReturnsOk(SeedAvailableUsers userType)
     {
-        var (AuthenticatedUser, AuthenticationToken) = await LoginAs(userType);
-
-        Client.SetJwtBearerAuthorizationHeader(AuthenticationToken);
+        var authenticatedUser = await Client.LoginAs(userType);
 
         var response = await Client.GetAsync(RequestUri);
 
@@ -46,7 +46,7 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
         var responseContent = await response.Content.ReadFromJsonAsync<UserResponse>();
 
         responseContent.Should().NotBeNull();
-        responseContent!.EnsureUserCorrespondsTo(AuthenticatedUser);
+        responseContent!.EnsureUserCorrespondsTo(authenticatedUser);
     }
 
     /// <summary>

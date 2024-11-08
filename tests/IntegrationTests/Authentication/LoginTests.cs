@@ -7,6 +7,7 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Xunit.Abstractions;
 
 namespace IntegrationTests.Authentication;
 
@@ -18,15 +19,15 @@ public class LoginTests : BaseIntegrationTest
     /// <summary>
     /// Initiates a new instance of the <see cref="LoginTests"/> class.
     /// </summary>
-    /// <param name="webAppFactory">The test server.</param>
-    public LoginTests(IntegrationTestWebAppFactory webAppFactory) : base(webAppFactory)
+    /// <param name="factory">The test server factory.</param>
+    /// <param name="output">The log helper.</param>
+    public LoginTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
     }
 
     /// <summary>
     /// List of login request containing credentials for active users.
     /// </summary>
-    /// <returns>A list of valid login requests.</returns>
     public static IEnumerable<object[]> ActiveUserRequests()
     {
         foreach (var (Email, Password) in UserSeed.ListUsersCredentials(user => user.IsActive))
@@ -38,7 +39,6 @@ public class LoginTests : BaseIntegrationTest
     /// <summary>
     /// List of login request containing credentials for inactive users.
     /// </summary>
-    /// <returns>A list of invalid login requests.</returns>
     public static IEnumerable<object[]> InactiveUserRequests()
     {
         foreach (var (Email, Password) in UserSeed.ListUsersCredentials(user => !user.IsActive))
@@ -50,7 +50,6 @@ public class LoginTests : BaseIntegrationTest
     /// <summary>
     /// List of invalid login request objects.
     /// </summary>
-    /// <returns>A list of invalid login requests.</returns>
     public static IEnumerable<object[]> RequestWithInvalidParameters()
     {
 
@@ -64,7 +63,6 @@ public class LoginTests : BaseIntegrationTest
     /// <summary>
     /// List of login requests with incorrect pairs of email and password.
     /// </summary>
-    /// <returns>List of incorrect email and password pairs.</returns>
     public static IEnumerable<object[]> IncorrectEmailPasswordPairs()
     {
         yield return new object[] { LoginRequestUtils.CreateRequest(password: "incorrectpassword") };
@@ -75,7 +73,6 @@ public class LoginTests : BaseIntegrationTest
     /// Checks if it is possible to login active users with valid credentials.
     /// </summary>
     /// <param name="loginRequest">The request object.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(ActiveUserRequests))]
     public async Task Login_WhenCredentialsAreValidAndUserIsActive_AuthenticateTheUserCorrectly(LoginRequest loginRequest)
@@ -93,7 +90,6 @@ public class LoginTests : BaseIntegrationTest
     /// Checks if it is not possible to login inactive users with valid credentials.
     /// </summary>
     /// <param name="loginRequest">The request object.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(InactiveUserRequests))]
     public async Task Login_WhenCredentialsAreValidAndUserIsInactive_ReturnsBadRequest(LoginRequest loginRequest)
@@ -113,7 +109,6 @@ public class LoginTests : BaseIntegrationTest
     /// </summary>
     /// <param name="loginRequest">The invalid request object.</param>
     /// <param name="fieldsWithError">The fields that will contain some error.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(RequestWithInvalidParameters))]
     public async Task Login_WhenCredentialAreInvalid_ReturnsCorrectErrorResponse(
@@ -142,7 +137,6 @@ public class LoginTests : BaseIntegrationTest
     /// Tests if it returns a bad request with the same message when the authentication credentials are incorrect.
     /// </summary>
     /// <param name="loginRequest">The request object containing invalid email/password pairs.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(IncorrectEmailPasswordPairs))]
     public async Task Login_WhenEmailOrPasswordIsIncorrect_ReturnsBadRequest(LoginRequest loginRequest)

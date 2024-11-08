@@ -15,6 +15,10 @@ public enum SeedAvailableUsers
     /// </summary>
     Admin,
     /// <summary>
+    /// Other admin with different name and email.
+    /// </summary>
+    OtherAdmin,
+    /// <summary>
     /// A customer user.
     /// </summary>
     User,
@@ -42,6 +46,14 @@ public static class UserSeed
             name: "admin",
             role: Role.Admin,
             email: "system_admin@email.com",
+            passwordHash: "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9",
+            passwordSalt: "4FDE231393F2C8AECC2B26F356E3D89E"
+        ), AdminPassword),
+
+        [SeedAvailableUsers.OtherAdmin] = (UserUtils.CreateUser(
+            name: "other admin",
+            role: Role.Admin,
+            email: "otherm_admin@email.com",
             passwordHash: "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9",
             passwordSalt: "4FDE231393F2C8AECC2B26F356E3D89E"
         ), AdminPassword),

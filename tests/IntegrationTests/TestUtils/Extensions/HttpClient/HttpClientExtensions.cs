@@ -1,7 +1,14 @@
 
 
 using System.Net.Http.Headers;
+using Contracts.Authentication;
+using IntegrationTests.Authentication.TestUtils;
+using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Domain.UserAggregate;
+using System.Net.Http.Json;
+using System.Security.Authentication;
+using Xunit.Abstractions;
 
 namespace IntegrationTests.TestUtils.Extensions.HttpClient;
 
@@ -20,5 +27,26 @@ public static class HttpClientExtensions
         var authenticationValue = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);
 
         httpClient.DefaultRequestHeaders.Authorization = authenticationValue;
+    }
+
+    /// <summary>
+    /// Login as a seed user and returns it.
+    /// </summary>
+    /// <returns>the user authenticated.</returns>
+    public static async Task<User> LoginAs(this System.Net.Http.HttpClient httpClient, SeedAvailableUsers userType)
+    {
+        var (Email, Password) = UserSeed.GetUserAuthenticationCredentials(userType);
+
+        var request = LoginRequestUtils.CreateRequest(Email, Password);
+
+        var response = await httpClient.PostAsJsonAsync("/auth/login", request);
+
+        var responseContent =
+            await response.Content.ReadFromJsonAsync<AuthenticationResponse>() ??
+            throw new AuthenticationException($"Failed to login as {nameof(userType)}");
+
+        httpClient.SetJwtBearerAuthorizationHeader(responseContent!.Token);
+
+        return UserSeed.GetSeedUser(userType);
     }
 }

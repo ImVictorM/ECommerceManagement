@@ -4,7 +4,9 @@ using Contracts.Authentication;
 using FluentAssertions;
 using IntegrationTests.Authentication.TestUtils;
 using IntegrationTests.Common;
+using IntegrationTests.TestUtils.Extensions.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Xunit.Abstractions;
 using RegisterRequest = Contracts.Authentication.RegisterRequest;
 
 namespace IntegrationTests.Authentication;
@@ -17,15 +19,15 @@ public class RegisterTests : BaseIntegrationTest
     /// <summary>
     /// Initiates a new instance of the <see cref="RegisterTests"/> class.
     /// </summary>
-    /// <param name="webAppFactory">The test server.</param>
-    public RegisterTests(IntegrationTestWebAppFactory webAppFactory) : base(webAppFactory)
+    /// <param name="factory">The test server factory.</param>
+    /// <param name="output">The log helper.</param>
+    public RegisterTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
     }
 
     /// <summary>
     /// List of valid register request objects with unique emails.
     /// </summary>
-    /// <returns>A list of valid request objects.</returns>
     public static IEnumerable<object[]> ValidRequests()
     {
         yield return new object[] { RegisterRequestUtils.CreateRequest(email: "testing1@email.com") };
@@ -36,7 +38,6 @@ public class RegisterTests : BaseIntegrationTest
     /// <summary>
     /// List of invalid register request objects.
     /// </summary>
-    /// <returns>A list of invalid register request objects.</returns>
     public static IEnumerable<object[]> InvalidRequests()
     {
         const string emailInvalidPatternMessage = "'Email' does not follow the required pattern.";
@@ -117,21 +118,22 @@ public class RegisterTests : BaseIntegrationTest
     /// Tests if it is possible to create users with valid requests.
     /// </summary>
     /// <param name="registerRequest">The request object.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(ValidRequests))]
     public async Task Register_WhenCreationParametersAreValid_CreatesNewAndReturnWithAuthenticationToken(RegisterRequest registerRequest)
     {
-        var httpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
+        var loginRequest = LoginRequestUtils.CreateRequest(registerRequest.Email, registerRequest.Password);
 
-        var responseContent = await httpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
+        var updateHttpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
+        var loginHttpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
 
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        responseContent.Should().NotBeNull();
-        responseContent!.Token.Should().NotBeNullOrWhiteSpace();
-        responseContent.Email.Should().Be(registerRequest.Email);
-        responseContent.Id.Should().NotBeNullOrWhiteSpace();
-        responseContent.Phone.Should().BeNull();
+        var loginHttpResponseContent = await loginHttpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
+        var updateHttpResponseContent = await updateHttpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
+
+        updateHttpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        loginHttpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        updateHttpResponseContent!.EnsureCreatedFromRequest(registerRequest);
+        loginHttpResponseContent!.EnsureCreatedFromRequest(registerRequest);
     }
 
     /// <summary>
@@ -139,7 +141,6 @@ public class RegisterTests : BaseIntegrationTest
     /// </summary>
     /// <param name="registerRequest">The request object with invalid parameters.</param>
     /// <param name="expectedErrors">A dictionary containing the field and the expected errors.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(InvalidRequests))]
     public async Task Register_WhenCreationParametersAreInvalid_ReturnsBadRequestErrorResponse(
@@ -167,7 +168,6 @@ public class RegisterTests : BaseIntegrationTest
     /// <summary>
     /// Tests if creating a duplicated user returns a conflict error.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task Register_WhenEmailIsAlreadyRegistered_ReturnsConflictErrorResponse()
     {

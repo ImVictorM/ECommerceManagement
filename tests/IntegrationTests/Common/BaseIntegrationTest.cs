@@ -1,47 +1,63 @@
-using System.Net.Http.Json;
-using Contracts.Authentication;
-using Domain.UserAggregate;
-using FluentAssertions;
-using IntegrationTests.Authentication.TestUtils;
+using Infrastructure.Persistence;
 using IntegrationTests.TestUtils.Seeds;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit.Abstractions;
 
 namespace IntegrationTests.Common;
 
 /// <summary>
-/// Base component of integrations tests.
+/// Base integration test that uses the shared database and has a pre-configured setup and teardown for each test.
 /// </summary>
-public class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>
+[Collection(nameof(SharedDatabaseCollectionFixture))]
+public class BaseIntegrationTest : IAsyncLifetime
 {
+    private readonly IntegrationTestWebAppFactory _factory;
+
     /// <summary>
-    /// The client used to make requests.
+    /// Gets an HTTP client to make requests.
     /// </summary>
-    protected HttpClient Client { get; init; }
+    public HttpClient Client { get; init; }
+
+    /// <summary>
+    /// Gets a helper to log some data to the console.
+    /// </summary>
+    public ITestOutputHelper Output { get; init; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="BaseIntegrationTest"/> class.
     /// </summary>
-    /// <param name="webAppFactory">The test server factory.</param>
-    public BaseIntegrationTest(IntegrationTestWebAppFactory webAppFactory)
+    /// <param name="factory">The test server factory.</param>
+    /// <param name="output">A log helper.</param>
+    public BaseIntegrationTest(IntegrationTestWebAppFactory factory, ITestOutputHelper output)
     {
-        Client = webAppFactory.CreateClient();
+        _factory = factory;
+        Output = output;
+        Client = factory.CreateClient();
+    }
+
+    /// <inheritdoc/>
+    public async Task InitializeAsync()
+    {
+        await SeedDataAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task DisposeAsync()
+    {
+        await _factory.ResetDatabaseAsync();
     }
 
     /// <summary>
-    /// Login as a seed user and returns it containing a JWT token.
+    /// Seeds the database.
     /// </summary>
-    /// <returns>the user authenticated and a JWT token.</returns>
-    public async Task<(User User, string Token)> LoginAs(SeedAvailableUsers userType)
+    public async Task SeedDataAsync()
     {
-        var (Email, Password) = UserSeed.GetUserAuthenticationCredentials(userType);
+        using var scope = _factory.Services.CreateAsyncScope();
 
-        var request = LoginRequestUtils.CreateRequest(Email, Password);
+        var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
 
-        var response = await Client.PostAsJsonAsync("/auth/login", request);
+        await dbContext.Users.AddRangeAsync(UserSeed.ListUsers());
 
-        var responseContent = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
-
-        responseContent.Should().NotBeNull();
-
-        return (UserSeed.GetSeedUser(userType), responseContent!.Token);
+        await dbContext.SaveChangesAsync();
     }
 }

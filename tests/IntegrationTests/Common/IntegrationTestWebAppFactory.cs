@@ -1,11 +1,13 @@
+using System.Data.Common;
 using Infrastructure.Persistence;
-using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Npgsql;
+using Respawn;
 using Testcontainers.PostgreSql;
 
 namespace IntegrationTests.Common;
@@ -15,16 +17,63 @@ namespace IntegrationTests.Common;
 /// </summary>
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer;
+    private PostgreSqlContainer _dbContainer = null!;
+    private Respawner _respawner = null!;
+    private DbConnection _dbConnection = null!;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="IntegrationTestWebAppFactory"/> class.
+    /// Uses respawn to reset the database.
     /// </summary>
-    public IntegrationTestWebAppFactory()
+    public async Task ResetDatabaseAsync()
+    {
+        if (_dbConnection.State != System.Data.ConnectionState.Open)
+        {
+            await _dbConnection.OpenAsync();
+        }
+
+        await _respawner.ResetAsync(_dbConnection);
+    }
+
+    /// <inheritdoc/>
+    public async Task InitializeAsync()
     {
         _dbContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:latest")
-            .Build();
+           .WithImage("postgres:latest")
+           .WithDatabase("ecommerce-management-test")
+           .WithPortBinding("49173", "5432")
+           .Build();
+
+        await _dbContainer.StartAsync();
+
+        _dbConnection = new NpgsqlConnection(_dbContainer.GetConnectionString());
+
+        await CreateDatabaseAsync();
+
+        await _dbConnection.OpenAsync();
+
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.Postgres,
+            WithReseed = false,
+            TablesToIgnore =
+            [
+                "roles",
+                "order_statuses",
+                "payment_methods",
+                "payment_statuses",
+                "product_categories",
+                "shipment_statuses",
+            ],
+        });
+    }
+
+    /// <inheritdoc/>
+    public new async Task DisposeAsync()
+    {
+        await _dbConnection.CloseAsync();
+        await _dbConnection.DisposeAsync();
+        await _dbContainer.StopAsync();
+        await _dbContainer.DisposeAsync();
     }
 
     /// <inheritdoc/>
@@ -38,40 +87,17 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
             services.AddDbContext<ECommerceDbContext>(options =>
             {
-                options.UseNpgsql(_dbContainer.GetConnectionString());
+                options.UseNpgsql(_dbConnection);
             });
-
-            var sp = services.BuildServiceProvider();
-            using var scope = sp.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
-
-            SeedDatabase(dbContext);
         });
     }
 
-    /// <summary>
-    /// Seeds the database with initial data.
-    /// </summary>
-    /// <param name="dbContext">The db context.</param>
-    private static void SeedDatabase(ECommerceDbContext dbContext)
+    private async Task CreateDatabaseAsync()
     {
-        dbContext.Database.EnsureCreated();
+        using var scope = Services.CreateScope();
 
-        dbContext.Users.AddRange(UserSeed.ListUsers());
+        var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
 
-        dbContext.SaveChanges();
-    }
-
-    /// <inheritdoc/>
-    public Task InitializeAsync()
-    {
-        return _dbContainer.StartAsync();
-    }
-
-    /// <inheritdoc/>
-    public new async Task DisposeAsync()
-    {
-        await _dbContainer.StopAsync();
-        await _dbContainer.DisposeAsync();
+        await dbContext.Database.EnsureCreatedAsync();
     }
 }
