@@ -22,12 +22,7 @@ public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, 
         _unitOfWork = unitOfWork;
     }
 
-    /// <summary>
-    /// Handles a get user by id query request.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A <see cref="UserResult"/> result object.</returns>
+    /// <inheritdoc/>
     public async Task<UserResult> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var id = UserId.Create(request.Id);

@@ -39,12 +39,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
         _logger = logger;
     }
 
-    /// <summary>
-    /// Handle user authentication.
-    /// </summary>
-    /// <param name="query">The query that triggers the authentication process.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The user with authentication token.</returns>
+    /// <inheritdoc/>
     public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
         var inputEmail = Email.Create(query.Email);

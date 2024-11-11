@@ -39,13 +39,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
         _logger = logger;
     }
 
-    /// <summary>
-    /// Handle user registration.
-    /// </summary>
-    /// <param name="command">The command that will trigger the registration process.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>An authentication result including the authentication token.</returns>
-    /// <exception cref="UserAlreadyExistsException">Thrown when user with same email already exists.</exception>
+    /// <inheritdoc/>
     public async Task<AuthenticationResult> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
         LogHandlingRegisterCommand(command.Email);

@@ -24,13 +24,7 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
         _unitOfWork = unitOfWork;
     }
 
-    /// <summary>
-    /// Handles the updating of a user based on the provided command.
-    /// </summary>
-    /// <param name="request">The <see cref="UpdateUserCommand"/> containing the details of the user to be updated.</param>
-    /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
-    /// <exception cref="UserNotFoundException">Thrown when the user to be updated does not exist.</exception>
+    /// <inheritdoc/>
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var userToUpdateId = UserId.Create(request.Id);

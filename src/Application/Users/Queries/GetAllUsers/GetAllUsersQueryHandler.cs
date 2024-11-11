@@ -20,12 +20,7 @@ public sealed class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, 
         _unitOfWork = unitOfWork;
     }
 
-    /// <summary>
-    /// Handle getting all the users.
-    /// </summary>
-    /// <param name="request">The query request object.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A list with all the users.</returns>
+    /// <inheritdoc/>
     public async Task<UserListResult> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
         var users = request.IsActive == null ?
