@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Domain.UserAggregate;
 using System.Net.Http.Json;
 using System.Security.Authentication;
-using Xunit.Abstractions;
 
 namespace IntegrationTests.TestUtils.Extensions.HttpClient;
 

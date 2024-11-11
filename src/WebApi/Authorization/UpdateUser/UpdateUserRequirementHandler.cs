@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Application.Users.Queries.GetUserById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using SharedKernel.Authorization;
 
 namespace WebApi.Authorization.UpdateUser;

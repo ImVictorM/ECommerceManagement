@@ -1,10 +1,10 @@
 using Application.Authentication.Commands.Register;
-using Application.Authentication.Common.DTOs;
 using Application.Authentication.Queries.Login;
 using Carter;
 using Contracts.Authentication;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace WebApi.Endpoints;
 
@@ -13,26 +13,34 @@ namespace WebApi.Endpoints;
 /// </summary>
 public sealed class AuthenticationEndpoints : ICarterModule
 {
-    /// <summary>
-    /// Add the routes related to authentication.
-    /// </summary>
-    /// <param name="app">The application instance.</param>
+    /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var authenticationGroup = app.MapGroup("/auth");
+        var authenticationGroup = app
+            .MapGroup("/auth")
+            .WithTags("Authentication")
+            .WithOpenApi();
 
-        authenticationGroup.MapPost("/register", Register);
-        authenticationGroup.MapPost("/login", Login);
+        authenticationGroup
+            .MapPost("/register", Register)
+            .WithName("Register")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Register",
+                Description = "Registers a new user"
+            });
+
+        authenticationGroup
+            .MapPost("/login", Login)
+            .WithName("Login")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Login",
+                Description = "Authenticates a registered user"
+            });
     }
 
-    /// <summary>
-    /// Route to register a new user.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <param name="mapper">The mapper used to map objects.</param>
-    /// <param name="sender">The sender used to send command/queries.</param>
-    /// <returns>An authentication response containing the token.</returns>
-    private async Task<IResult> Register(
+    private async Task<Results<Created<AuthenticationResponse>, BadRequest, Conflict>> Register(
         RegisterRequest request,
         ISender sender,
         IMapper mapper
@@ -40,21 +48,14 @@ public sealed class AuthenticationEndpoints : ICarterModule
     {
         var command = mapper.Map<RegisterCommand>(request);
 
-        AuthenticationResult result = await sender.Send(command);
+        var result = await sender.Send(command);
 
         var mappedResult = mapper.Map<AuthenticationResponse>(result);
 
-        return Results.Created($"/users/{mappedResult.Id}", mappedResult);
+        return TypedResults.Created($"/users/{mappedResult.Id}", mappedResult);
     }
 
-    /// <summary>
-    /// Route to authenticate a registered user.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <param name="mapper">The mapper used to map objects.</param>
-    /// <param name="sender">The sender used to send command/queries.</param>
-    /// <returns>An authentication response containing the user token.</returns>
-    private async Task<IResult> Login(
+    private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> Login(
         LoginRequest request,
         ISender sender,
         IMapper mapper
@@ -62,8 +63,8 @@ public sealed class AuthenticationEndpoints : ICarterModule
     {
         var query = mapper.Map<LoginQuery>(request);
 
-        AuthenticationResult result = await sender.Send(query);
+        var result = await sender.Send(query);
 
-        return Results.Ok(mapper.Map<AuthenticationResponse>(result));
+        return TypedResults.Ok(mapper.Map<AuthenticationResponse>(result));
     }
 }

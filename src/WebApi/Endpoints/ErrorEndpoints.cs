@@ -1,6 +1,7 @@
 using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
 using SharedKernel.Errors;
 using WebApi.Common.Extensions;
 
@@ -14,12 +15,10 @@ public sealed class ErrorEndpoints : ICarterModule
     /// <summary>
     /// Base endpoint for handling errors.
     /// </summary>
-    public static readonly string BaseEndpoint = "/error";
+    public const string BaseEndpoint = "/error";
 
-    /// <summary>
-    /// Add the routes related to errors.
-    /// </summary>
-    /// <param name="app">The application instance.</param>
+
+    /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         var errorGroup = app.MapGroup(BaseEndpoint);
@@ -27,25 +26,19 @@ public sealed class ErrorEndpoints : ICarterModule
         errorGroup.Map("/", HandleGlobalErrors);
     }
 
-    /// <summary>
-    /// Handle all thrown exceptions.
-    /// </summary>
-    /// <param name="httpContext">Context of the request.</param>
-    /// <returns>A <see cref="IResult"/> containing a <see cref="Microsoft.AspNetCore.Mvc.ProblemDetails"/> response</returns>
-    private IResult HandleGlobalErrors(HttpContext httpContext)
+    private Results<ProblemHttpResult, ValidationProblem> HandleGlobalErrors(HttpContext httpContext)
     {
         var exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
-        var genericProblem = Results.Problem(
+        var genericProblem = TypedResults.Problem(
             statusCode: StatusCodes.Status500InternalServerError,
             title: "An unexpected error ocurred.",
             detail: exception?.Message
         );
 
-        // Handle custom errors
         return exception switch
         {
-            BaseException baseException => Results.Problem(
+            BaseException baseException => TypedResults.Problem(
                 statusCode: (int)baseException.ErrorCode.ToHttpStatusCode(),
                 title: baseException.Title,
                 detail: baseException.Message,
@@ -56,12 +49,7 @@ public sealed class ErrorEndpoints : ICarterModule
         };
     }
 
-    /// <summary>
-    /// Generates an validation error response.
-    /// </summary>
-    /// <param name="validationException">The validation exception.</param>
-    /// <returns>An error response in the <see cref="Results.ValidationProblem"/> format.</returns>
-    private static IResult HandleValidationException(ValidationException validationException)
+    private static ValidationProblem HandleValidationException(ValidationException validationException)
     {
         var errors = validationException.Errors
             .GroupBy(e => e.PropertyName)
@@ -70,6 +58,6 @@ public sealed class ErrorEndpoints : ICarterModule
                 g => g.Select(e => e.ErrorMessage).ToArray()
             );
 
-        return Results.ValidationProblem(errors);
+        return TypedResults.ValidationProblem(errors);
     }
 }
