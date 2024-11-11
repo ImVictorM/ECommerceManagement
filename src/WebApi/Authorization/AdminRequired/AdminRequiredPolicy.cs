@@ -12,7 +12,7 @@ public class AdminRequiredPolicy : IAuthorizationPolicy
     /// <summary>
     /// The policy name.
     /// </summary>
-    public const string Name = "AdminRequired";
+    public const string Name = nameof(AdminRequiredPolicy);
 
     /// <inheritdoc/>
     public void ConfigurePolicy(AuthorizationOptions options)

@@ -11,7 +11,7 @@ public class UpdateUserPolicy : IAuthorizationPolicy
     /// <summary>
     /// The policy name.
     /// </summary>
-    public const string Name = "UpdateUser";
+    public const string Name = nameof(UpdateUserPolicy);
 
     /// <inheritdoc/>
     public void ConfigurePolicy(AuthorizationOptions options)

@@ -1,14 +1,12 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Application.Users.Queries.GetUserById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using SharedKernel.Authorization;
+using WebApi.Common.Extensions;
 
 namespace WebApi.Authorization.UpdateUser;
 
 /// <summary>
-/// Requirement handler for the <see cref="UpdateUserRequirement"/>.
+/// Requirement handler for the <see cref="UpdateUserRequirement"/> requirement.
 /// </summary>
 public class UpdateUserRequirementHandler : AuthorizationHandler<UpdateUserRequirement>
 {
@@ -24,10 +22,8 @@ public class UpdateUserRequirementHandler : AuthorizationHandler<UpdateUserRequi
     }
 
     /// <inheritdoc/>
-    protected async override Task HandleRequirementAsync(AuthorizationHandlerContext context, UpdateUserRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, UpdateUserRequirement requirement)
     {
-        var authenticatedUserId = context.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
         if (context.Resource is not HttpContext httpContext)
         {
             return;
@@ -40,15 +36,10 @@ public class UpdateUserRequirementHandler : AuthorizationHandler<UpdateUserRequi
             return;
         }
 
-        if (authenticatedUserId != userToUpdateId)
+        if (context.User.GetId() != userToUpdateId)
         {
-            var authenticatedUserRoleNames= context.User
-                .FindAll(ClaimTypes.Role)
-                .Select(claim => claim.Value);
 
-            var authenticatedUserIsAdmin = Role.HasAdminRole(authenticatedUserRoleNames);
-
-            if (!authenticatedUserIsAdmin)
+            if (!context.User.IsAdmin())
             {
                 return;
             }

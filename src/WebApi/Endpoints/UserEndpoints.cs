@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Application.Users.Commands.DeactivateUser;
 using Application.Users.Commands.UpdateUser;
 using Application.Users.Queries.GetAllUsers;
 using Application.Users.Queries.GetUserById;
@@ -10,6 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Authorization.AdminRequired;
+using WebApi.Authorization.DeactivateUser;
 using WebApi.Authorization.UpdateUser;
 
 namespace WebApi.Endpoints;
@@ -66,9 +68,19 @@ public sealed class UserEndpoints : ICarterModule
                 Description = " Updates a user's information"
             })
             .RequireAuthorization(UpdateUserPolicy.Name);
+
+        userGroup
+            .MapDelete("/{id:long}", DeactivateUser)
+            .WithName("DeactivateUser")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Delete User",
+                Description = "Softly deletes a user by making them inactive"
+            })
+            .RequireAuthorization(DeactivateUserPolicy.Name);
     }
 
-    private async Task<Results<Ok<UserResponse>, UnauthorizedHttpResult, BadRequest>> GetUserByAuthenticationToken(
+    private async Task<Results<Ok<UserResponse>, BadRequest, UnauthorizedHttpResult>> GetUserByAuthenticationToken(
         IHttpContextAccessor httpContextAccessor,
         ISender sender,
         IMapper mapper
@@ -88,7 +100,7 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserResponse>(result));
     }
 
-    private async Task<Results<Ok<UserResponse>, BadRequest>> GetUserById(
+    private async Task<Results<Ok<UserResponse>, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> GetUserById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper
@@ -101,7 +113,7 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserResponse>(result));
     }
 
-    private async Task<Ok<UserListResponse>> GetAllUsers(
+    private async Task<Results<Ok<UserListResponse>, ForbidHttpResult, UnauthorizedHttpResult>> GetAllUsers(
         [FromQuery(Name = "active")] bool? IsActive,
         ISender sender,
         IMapper mapper
@@ -114,7 +126,7 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserListResponse>(result));
     }
 
-    private async Task<Results<Ok, BadRequest, Conflict>> UpdateUser(
+    private async Task<Results<Ok, BadRequest, Conflict, ForbidHttpResult, UnauthorizedHttpResult>> UpdateUser(
         [FromRoute] string id,
         [FromBody] UpdateUserRequest request,
         ISender sender,
@@ -122,6 +134,18 @@ public sealed class UserEndpoints : ICarterModule
     )
     {
         var command = mapper.Map<UpdateUserCommand>((request, id));
+
+        await sender.Send(command);
+
+        return TypedResults.Ok();
+    }
+
+    private async Task<Results<Ok, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
+        [FromRoute] string id,
+        ISender sender
+    )
+    {
+        var command = new DeactivateUserCommand(id);
 
         await sender.Send(command);
 

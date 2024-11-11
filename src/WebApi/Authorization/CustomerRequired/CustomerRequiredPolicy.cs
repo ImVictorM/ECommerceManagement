@@ -12,7 +12,7 @@ public class CustomerRequiredPolicy : IAuthorizationPolicy
     /// <summary>
     /// The policy name.
     /// </summary>
-    public const string Name = "CustomerRequired";
+    public const string Name = nameof(CustomerRequiredPolicy);
 
     /// <inheritdoc/>
     public void ConfigurePolicy(AuthorizationOptions options)
