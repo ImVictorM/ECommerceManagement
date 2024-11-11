@@ -49,13 +49,13 @@ public class UpdateUserTests : BaseIntegrationTest
     /// </summary>
     [Theory]
     [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.UserWithAddress)]
+    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
     public async Task UpdateUser_WhenCustomerTriesToUpdateSomeoneElse_ReturnsForbidden(SeedAvailableUsers otherUserType)
     {
         var otherUser = UserSeed.GetSeedUser(otherUserType);
         var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb name for another user");
 
-        await Client.LoginAs(SeedAvailableUsers.User);
+        await Client.LoginAs(SeedAvailableUsers.Customer);
 
         var response = await Client.PutAsJsonAsync($"users/{otherUser.Id}", request);
 
@@ -71,7 +71,7 @@ public class UpdateUserTests : BaseIntegrationTest
     {
         var request = UpdateUserRequestUtils.CreateRequest(name: "marcos rogério", phone: "19982748242", email: "marcao@email.com");
 
-        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.User);
+        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.Customer);
         var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", request);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -106,10 +106,10 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenCustomerTriesToUpdateEmailWithExistingOne_ReturnsConflict()
     {
-        var anotherUserEmail = UserSeed.GetSeedUser(SeedAvailableUsers.UserWithAddress).Email;
+        var anotherUserEmail = UserSeed.GetSeedUser(SeedAvailableUsers.CustomerWithAddress).Email;
         var requestContainingAnotherUserEmail = UpdateUserRequestUtils.CreateRequest(email: anotherUserEmail.ToString());
 
-        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.User);
+        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.Customer);
         var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", requestContainingAnotherUserEmail);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -125,7 +125,7 @@ public class UpdateUserTests : BaseIntegrationTest
         Dictionary<string, string[]> expectedErrors
     )
     {
-        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.User);
+        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.Customer);
         var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", invalidRequest);
         var updateResponseContent = await updateResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
@@ -140,7 +140,7 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsOkAndUpdatesUser()
     {
-        var customerToBeUpdated = UserSeed.GetSeedUser(SeedAvailableUsers.InactiveUser);
+        var customerToBeUpdated = UserSeed.GetSeedUser(SeedAvailableUsers.InactiveCustomer);
         var request = UpdateUserRequestUtils.CreateRequest(name: "User new name", phone: "19982748242", email: "newemail@email.com");
 
         await Client.LoginAs(SeedAvailableUsers.Admin);

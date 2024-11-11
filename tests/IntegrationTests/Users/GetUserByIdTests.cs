@@ -64,7 +64,7 @@ public class GetUserByIdTests : BaseIntegrationTest
     [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(User user)
     {
-        await Client.LoginAs(SeedAvailableUsers.User);
+        await Client.LoginAs(SeedAvailableUsers.Customer);
 
         var response = await Client.GetAsync($"/users/{user.Id}");
 

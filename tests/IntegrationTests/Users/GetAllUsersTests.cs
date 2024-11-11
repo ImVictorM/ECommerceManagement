@@ -59,7 +59,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsNotAdmin_ReturnsForbidden()
     {
-        await Client.LoginAs(SeedAvailableUsers.User);
+        await Client.LoginAs(SeedAvailableUsers.Customer);
 
         var response = await Client.GetAsync(BaseRequestUri);
 

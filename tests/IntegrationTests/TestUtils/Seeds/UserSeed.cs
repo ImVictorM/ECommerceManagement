@@ -21,15 +21,15 @@ public enum SeedAvailableUsers
     /// <summary>
     /// A customer user.
     /// </summary>
-    User,
+    Customer,
     /// <summary>
     /// A customer user with an address.
     /// </summary>
-    UserWithAddress,
+    CustomerWithAddress,
     /// <summary>
     /// A customer inactive user.
     /// </summary>
-    InactiveUser,
+    InactiveCustomer,
 }
 
 /// <summary>
@@ -58,20 +58,20 @@ public static class UserSeed
             passwordSalt: "4FDE231393F2C8AECC2B26F356E3D89E"
         ), AdminPassword),
 
-        [SeedAvailableUsers.User] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.Customer] = (UserUtils.CreateUser(
             name: "normal user",
             email: "user_normal@email.com",
             role: Role.Customer
         ), UserPassword),
 
-        [SeedAvailableUsers.UserWithAddress] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.CustomerWithAddress] = (UserUtils.CreateUser(
             name: "user with address",
             email: "user_addr@email.com",
             role: Role.Customer,
             addresses: new List<Address> { AddressUtils.CreateAddress() }.AsReadOnly()
         ), UserPassword),
 
-        [SeedAvailableUsers.InactiveUser] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.InactiveCustomer] = (UserUtils.CreateUser(
             name: "inactive user",
             email: "user_inactive@email.com",
             role: Role.Customer,
