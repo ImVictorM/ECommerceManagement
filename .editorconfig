@@ -517,6 +517,7 @@ dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
 dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
 dotnet_style_predefined_type_for_member_access = true:suggestion
 dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA2213.severity = none
 
 # Verify settings
 [*.{received,verified}.{txt,xml,json}]

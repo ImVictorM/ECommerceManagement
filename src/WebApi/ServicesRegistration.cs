@@ -112,7 +112,7 @@ public static class ServicesRegistration
 
         foreach (var handlerType in handlerTypes)
         {
-            services.AddSingleton(typeof(IAuthorizationHandler), handlerType);
+            services.AddScoped(typeof(IAuthorizationHandler), handlerType);
         }
 
         return services;

@@ -23,11 +23,6 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "src\Contracts\Contracts.csproj", "{B4A6E145-9C5E-4B8D-BC70-7E94F547A6ED}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{DB1A54E4-FB29-43B5-9DCF-C01BFDF2BE50}"
-	ProjectSection(SolutionItems) = preProject
-		api.md = api.md
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A9939777-A0D2-493C-9651-993F0E5D2C06}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{D5BA6565-9342-4503-9656-3C80DB59163F}"

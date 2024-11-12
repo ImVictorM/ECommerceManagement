@@ -1,0 +1,40 @@
+# All of the user endpoints required authentication. To get a valid
+# token, login using the authentication.http file (docs/Authentication/Authentication.http).
+# Set the user_id and token variables to match the id and token received from the login response.
+
+@base_endpoint = http://localhost:8000/users
+@user_id = 1
+@token = put-token-here
+
+### Gets the user using the authentication token.
+### Useful to get a customer's detail.
+GET {{base_endpoint}}/self
+Authorization: Bearer {{token}}
+
+### Gets the user by id. Only for administrators.
+GET {{base_endpoint}}/{{user_id}}
+Authorization: Bearer {{token}}
+
+### Updates the user by id. Customers can only update themlseves.
+### Administrators can update other customer's details.
+PUT {{base_endpoint}}/{{user_id}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Victor F",
+  "phone": "52948572842",
+  "email": "newemail@email.com"
+}
+
+### "Deletes" the user by id by making them inactive.
+### Customers can only make themselves inactive.
+### Administrators can make customers inactive.
+DELETE {{base_endpoint}}/{{user_id}}
+Authorization: Bearer {{token}}
+
+### Gets a list of users. Can only be used by administrators.
+### It is possible to filter users by the active field.
+### Remove the "?active=true" to list all users.
+GET {{base_endpoint}}?active=true
+Authorization: Bearer {{token}}
