@@ -1,5 +1,7 @@
 using Domain.UserAggregate.ValueObjects;
 using Domain.UserAggregate;
+using Domain.ProductAggregate;
+using Domain.ProductAggregate.ValueObjects;
 
 namespace Application.Common.Interfaces.Persistence;
 
@@ -9,9 +11,13 @@ namespace Application.Common.Interfaces.Persistence;
 public interface IUnitOfWork : IDisposable
 {
     /// <summary>
-    /// The user repository.
+    /// Gets the user repository.
     /// </summary>
     public IRepository<User, UserId> UserRepository { get; }
+    /// <summary>
+    /// Gets the product repository.
+    /// </summary>
+    public IRepository<Product, ProductId> ProductRepository { get; }
     /// <summary>
     /// Save all the operations done within the repositories.
     /// </summary>

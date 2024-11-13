@@ -1,9 +1,9 @@
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.ProductFeedbackAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+using SharedKernel.Interfaces;
+using SharedKernel.Models;
 
 namespace Domain.ProductFeedbackAggregate;
 
