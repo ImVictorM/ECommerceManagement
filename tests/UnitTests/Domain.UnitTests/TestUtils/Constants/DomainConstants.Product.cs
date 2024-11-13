@@ -27,7 +27,7 @@ public static partial class DomainConstants
         /// <summary>
         /// The product category constant.
         /// </summary>
-        public static readonly IReadOnlyList<string> Categories = new List<string>() { "Books" }.AsReadOnly();
+        public static readonly IEnumerable<string> Categories = ["books_stationery"];
 
         /// <summary>
         /// The product image constant.
@@ -37,11 +37,42 @@ public static partial class DomainConstants
         /// <summary>
         /// Creates a new product image containing the index.
         /// </summary>
-        /// <param name="index">The index to be concateneted to the image url.</param>
+        /// <param name="index">The index to be concatenated to the image url.</param>
         /// <returns>A new product image containing the index concatenation.</returns>
         public static Uri ProductImageFromIndex(int index)
         {
             return new Uri($"{ProductImage}-{index}");
+        }
+
+        /// <summary>
+        /// Defines product validation error message constants.
+        /// </summary>
+        public static class Validations
+        {
+            /// <summary>
+            /// Error message for empty names.
+            /// </summary>
+            public const string EmptyName = "'Name' must not be empty.";
+            /// <summary>
+            /// Error message for empty descriptions.
+            /// </summary>
+            public const string EmptyDescription = "'Description' must not be empty.";
+            /// <summary>
+            /// Error message for empty categories.
+            /// </summary>
+            public const string EmptyCategories = "'Categories' must not be empty.";
+            /// <summary>
+            /// Error message for empty images.
+            /// </summary>
+            public const string EmptyImages = "'Images' must not be empty.";
+            /// <summary>
+            /// Error message for negative initial quantities.
+            /// </summary>
+            public const string NegativeInitialQuantity = "'Initial Quantity' must be greater than '0'.";
+            /// <summary>
+            /// Error message for negative initial prices.
+            /// </summary>
+            public const string NegativeInitialPrice = "'Initial Price' must be greater than '0'.";
         }
     }
 }

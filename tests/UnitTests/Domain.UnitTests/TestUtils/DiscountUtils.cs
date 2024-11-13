@@ -30,4 +30,18 @@ public static class DiscountUtils
             endingDate ?? DomainConstants.Discount.EndingDate
         );
     }
+
+    /// <summary>
+    /// Creates a list of discounts.
+    /// </summary>
+    /// <param name="count">The discounts number to be created.</param>
+    /// <returns>A list of discounts</returns>
+    public static IEnumerable<Discount> CreateDiscounts(
+        int count = 1
+    )
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(index => CreateDiscount(description: DomainConstants.Discount.CreateDescriptionFromIndex(index)));
+    }
 }

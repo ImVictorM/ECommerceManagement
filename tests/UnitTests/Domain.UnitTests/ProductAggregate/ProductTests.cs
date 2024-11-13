@@ -67,7 +67,7 @@ public class ProductTests
             DomainConstants.Product.Description,
             DomainConstants.Product.Price,
             DomainConstants.Product.QuantityAvailable,
-            Category.Automotive.Id,
+            ProductUtils.GetCategoryNames(Category.Footwear),
             ProductUtils.CreateProductImagesUrl(6),
         };
     }
@@ -79,7 +79,7 @@ public class ProductTests
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available.</param>
-    /// <param name="categoryId">The product category.</param>
+    /// <param name="categories">The product categories.</param>
     /// <param name="productImageUrls">The product image urls.</param>
     [Theory]
     [MemberData(nameof(ValidProductParameters))]
@@ -88,8 +88,8 @@ public class ProductTests
         string description,
         decimal price,
         int quantityAvailable,
-        IReadOnlyList<string> categories,
-        IReadOnlyList<Uri> productImageUrls
+        IEnumerable<string> categories,
+        IEnumerable<Uri> productImageUrls
     )
     {
         var act = () =>
@@ -108,7 +108,7 @@ public class ProductTests
             product.Description.Should().Be(description);
             product.Price.Should().Be(price);
             product.Inventory.QuantityAvailable.Should().Be(quantityAvailable);
-            product.ProductCategories.Should().BeEquivalentTo(categories);
+            product.ProductCategories.Select(pc => pc.Category.Name).Should().BeEquivalentTo(categories);
 
             for (var i = 0; i < product.ProductImages.Count; i += 1)
             {
@@ -131,5 +131,20 @@ public class ProductTests
         product.MakeInactive();
 
         product.IsActive.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// Tests the correctness of adding a discount to a product.
+    /// </summary>
+    [Fact]
+    public void Product_WhenAddingDiscount_AddsAndIncrementTheProductDiscounts()
+    {
+        var product = ProductUtils.CreateProduct();
+        var discount = DiscountUtils.CreateDiscount();
+
+        product.AddDiscount(discount);
+
+        product.ProductDiscounts.Should().NotBeEmpty();
+        product.ProductDiscounts.Should().Contain(discount);
     }
 }

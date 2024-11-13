@@ -1,4 +1,5 @@
 using Domain.ProductAggregate;
+using Domain.ProductAggregate.Enumerations;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils;
@@ -23,8 +24,8 @@ public static class ProductUtils
         string? description = null,
         decimal? price = null,
         int? quantityAvailable = null,
-        IReadOnlyList<string>? categories = null,
-        IReadOnlyList<Uri>? productImagesUrl = null
+        IEnumerable<string>? categories = null,
+        IEnumerable<Uri>? productImagesUrl = null
     )
     {
         return Product.Create(
@@ -42,10 +43,89 @@ public static class ProductUtils
     /// </summary>
     /// <param name="imageCount">The quantity of product images to be created.</param>
     /// <returns>A list of product image urls.</returns>
-    public static IReadOnlyList<Uri> CreateProductImagesUrl(int imageCount = 0)
+    public static IEnumerable<Uri> CreateProductImagesUrl(int imageCount = 1)
     {
         return Enumerable
             .Range(0, imageCount)
-            .Select(DomainConstants.Product.ProductImageFromIndex).ToList().AsReadOnly();
+            .Select(DomainConstants.Product.ProductImageFromIndex);
+    }
+
+    /// <summary>
+    /// Creates a list of the category names.
+    /// </summary>
+    /// <param name="categories">The categories to extract the name from.</param>
+    /// <returns>A list of category names.</returns>
+    public static IEnumerable<string> GetCategoryNames(params Category[] categories)
+    {
+        foreach (var category in categories)
+        {
+            yield return category.Name;
+        }
+    }
+
+    /// <summary>
+    /// Gets a list of invalid names with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(string Value, Dictionary<string, string[]> ExpectedErrors)> GetInvalidNameWithCorrespondingErrors()
+    {
+        yield return ("", new Dictionary<string, string[]>
+        {
+            { "Name", [DomainConstants.Product.Validations.EmptyName] }
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of invalid descriptions with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(string Value, Dictionary<string, string[]> ExpectedErrors)> GetInvalidDescriptionWithCorrespondingErrors()
+    {
+        yield return ("", new Dictionary<string, string[]>
+        {
+            { "Description", [DomainConstants.Product.Validations.EmptyDescription] }
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of invalid categories with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(IEnumerable<string>, Dictionary<string, string[]> ExpectedErrors)> GetInvalidCategoriesWithCorrespondingErrors()
+    {
+        yield return (new List<string>() { }, new Dictionary<string, string[]>
+        {
+            { "Categories", [DomainConstants.Product.Validations.EmptyCategories] }
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of invalid images with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(IEnumerable<Uri>, Dictionary<string, string[]> ExpectedErrors)> GetInvalidImagesWithCorrespondingErrors()
+    {
+        yield return (new List<Uri>() { }, new Dictionary<string, string[]>
+        {
+            { "Images", [DomainConstants.Product.Validations.EmptyImages] }
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of invalid initial prices with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(decimal Value, Dictionary<string, string[]> ExpectedErrors)> GetInvalidInitialPriceWithCorrespondingErrors()
+    {
+        yield return (-15m, new Dictionary<string, string[]>
+        {
+            { "InitialPrice", [DomainConstants.Product.Validations.NegativeInitialPrice] }
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of invalid initial quantities with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    public static IEnumerable<(int Value, Dictionary<string, string[]> ExpectedErrors)> GetInvalidInitialQuantityWithCorrespondingErrors()
+    {
+        yield return (-10, new Dictionary<string, string[]>
+        {
+            { "InitialQuantity", [DomainConstants.Product.Validations.NegativeInitialQuantity] }
+        });
     }
 }

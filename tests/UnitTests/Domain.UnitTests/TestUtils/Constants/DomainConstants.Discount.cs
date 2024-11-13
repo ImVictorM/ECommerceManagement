@@ -23,5 +23,15 @@ public static partial class DomainConstants
         /// The discount ending date constant.
         /// </summary>
         public static readonly DateTimeOffset EndingDate = StartingDate.AddDays(5);
+
+        /// <summary>
+        /// Creates a new unique description based on an index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns>A new unique description.</returns>
+        public static string CreateDescriptionFromIndex(int index)
+        {
+            return $"{Description}-{index}";
+        }
     }
 }
