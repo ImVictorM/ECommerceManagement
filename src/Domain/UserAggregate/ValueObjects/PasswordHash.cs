@@ -1,5 +1,5 @@
-using Domain.Common.Errors;
-using Domain.Common.Models;
+using SharedKernel.Errors;
+using SharedKernel.Models;
 
 namespace Domain.UserAggregate.ValueObjects;
 

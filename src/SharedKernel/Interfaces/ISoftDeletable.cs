@@ -1,4 +1,4 @@
-namespace Domain.Common.Interfaces;
+namespace SharedKernel.Interfaces;
 
 /// <summary>
 /// Defines a contract for entities that can ne soft deleted.

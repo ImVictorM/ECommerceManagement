@@ -1,11 +1,11 @@
-using Domain.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
+using SharedKernel.Errors;
 
 namespace Domain.UnitTests.Common.ValueObjects;
 
 /// <summary>
-/// Tests for the <see cref="Domain.Common.ValueObjects.Email"/> value object.
+/// Tests for the <see cref="SharedKernel.ValueObjects.Email"/> value object.
 /// </summary>
 public class EmailTests
 {

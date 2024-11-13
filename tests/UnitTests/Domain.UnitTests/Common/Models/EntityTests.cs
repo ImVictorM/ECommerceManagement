@@ -4,7 +4,7 @@ using FluentAssertions;
 namespace Domain.UnitTests.Common.Models;
 
 /// <summary>
-/// Tests for the <see cref="Domain.Common.Models.Entity{TId}"/> model.
+/// Tests for the <see cref="SharedKernel.Models.Entity{TId}"/> model.
 /// </summary>
 public class EntityTests
 {

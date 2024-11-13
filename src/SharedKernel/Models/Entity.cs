@@ -1,6 +1,6 @@
-using Domain.Common.Interfaces;
+using SharedKernel.Interfaces;
 
-namespace Domain.Common.Models;
+namespace SharedKernel.Models;
 
 /// <summary>
 /// Base class for domain entities.

@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Domain.Common.Interfaces;
+namespace SharedKernel.Interfaces;
 
 /// <summary>
 /// Contract for domain events.

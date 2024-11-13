@@ -1,7 +1,7 @@
-using Domain.Common.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
+using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.Common.ValueObjects;
 

@@ -17,7 +17,7 @@ using WebApi.Authorization.UpdateUser;
 namespace WebApi.Endpoints;
 
 /// <summary>
-/// Define all user-related endpoints.
+/// Defines all user-related endpoints.
 /// </summary>
 public sealed class UserEndpoints : ICarterModule
 {

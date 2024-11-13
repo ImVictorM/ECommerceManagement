@@ -3,7 +3,7 @@ namespace Domain.UnitTests.TestUtils.Constants;
 public static partial class DomainConstants
 {
     /// <summary>
-    /// Declare constants related to the <see cref="Domain.Common.ValueObjects.Discount"/> aggregate root for testing purposes.
+    /// Declare constants related to the <see cref="SharedKernel.ValueObjects.Discount"/> aggregate root for testing purposes.
     /// </summary>
     public static class Discount
     {

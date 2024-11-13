@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Domain.Common.Models;
+using SharedKernel.Models;
 
 namespace Application.Common.Interfaces.Persistence;
 
@@ -41,7 +41,7 @@ public interface IRepository<TEntity, TEntityId>
     Task AddAsync(TEntity entity);
 
     /// <summary>
-    /// Removes or inactives a record.
+    /// Removes or deactivate a record.
     /// </summary>
     /// <param name="id">The record identifier.</param>
     /// <returns>An asynchronous operation.</returns>

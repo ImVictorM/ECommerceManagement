@@ -1,8 +1,8 @@
-using Domain.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.Authorization;
 using FluentAssertions;
+using SharedKernel.Errors;
 
 namespace Domain.UnitTests.UserAggregate;
 

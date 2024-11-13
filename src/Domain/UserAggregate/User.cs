@@ -1,8 +1,8 @@
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
-using Domain.Common.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
+using SharedKernel.Interfaces;
+using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 namespace Domain.UserAggregate;
 

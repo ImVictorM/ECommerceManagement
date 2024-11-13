@@ -1,5 +1,4 @@
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils;
@@ -16,7 +15,7 @@ public static class ProductUtils
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available in inventory.</param>
-    /// <param name="productCategoryId">The product category id.</param>
+    /// <param name="categories">The product categories.</param>
     /// <param name="productImagesUrl">The product image urls.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product CreateProduct(
@@ -24,8 +23,8 @@ public static class ProductUtils
         string? description = null,
         decimal? price = null,
         int? quantityAvailable = null,
-        ProductCategoryId? productCategoryId = null,
-        IEnumerable<Uri>? productImagesUrl = null
+        IReadOnlyList<string>? categories = null,
+        IReadOnlyList<Uri>? productImagesUrl = null
     )
     {
         return Product.Create(
@@ -33,7 +32,7 @@ public static class ProductUtils
             description ?? DomainConstants.Product.Description,
             price ?? DomainConstants.Product.Price,
             quantityAvailable ?? DomainConstants.Product.QuantityAvailable,
-            productCategoryId ?? DomainConstants.Product.Category.Id,
+            categories ?? DomainConstants.Product.Categories,
             productImagesUrl ?? CreateProductImagesUrl()
         );
     }
@@ -43,10 +42,10 @@ public static class ProductUtils
     /// </summary>
     /// <param name="imageCount">The quantity of product images to be created.</param>
     /// <returns>A list of product image urls.</returns>
-    public static IEnumerable<Uri> CreateProductImagesUrl(int imageCount = 0)
+    public static IReadOnlyList<Uri> CreateProductImagesUrl(int imageCount = 0)
     {
         return Enumerable
             .Range(0, imageCount)
-            .Select(DomainConstants.Product.ProductImageFromIndex);
+            .Select(DomainConstants.Product.ProductImageFromIndex).ToList().AsReadOnly();
     }
 }

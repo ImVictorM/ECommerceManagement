@@ -1,6 +1,6 @@
-using Domain.Common.Models;
 using Domain.UnitTests.Common.Models.TestUtils;
 using FluentAssertions;
+using SharedKernel.Models;
 
 namespace Domain.UnitTests.Common.Models;
 

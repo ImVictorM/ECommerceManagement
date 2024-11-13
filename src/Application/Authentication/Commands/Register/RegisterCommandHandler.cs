@@ -4,8 +4,8 @@ using Application.Common.Interfaces.Authentication;
 using Domain.UserAggregate;
 using Application.Common.Interfaces.Persistence;
 using Microsoft.Extensions.Logging;
-using Domain.Common.ValueObjects;
 using Application.Authentication.Common.DTOs;
+using SharedKernel.ValueObjects;
 
 namespace Application.Authentication.Commands.Register;
 

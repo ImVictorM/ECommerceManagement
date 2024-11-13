@@ -2,10 +2,10 @@ using Application.Authentication.Common.DTOs;
 using Application.Authentication.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
-using Domain.Common.ValueObjects;
 using Domain.UserAggregate;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SharedKernel.ValueObjects;
 
 namespace Application.Authentication.Queries.Login;
 

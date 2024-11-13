@@ -1,6 +1,4 @@
-using SharedKernel.Errors;
-
-namespace Domain.Common.Errors;
+namespace SharedKernel.Errors;
 
 /// <summary>
 /// Exception related to domain entity validations.

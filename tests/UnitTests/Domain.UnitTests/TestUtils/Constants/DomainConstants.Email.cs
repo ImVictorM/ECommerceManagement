@@ -3,7 +3,7 @@ namespace Domain.UnitTests.TestUtils.Constants;
 public static partial class DomainConstants
 {
     /// <summary>
-    /// Define the <see cref="Domain.Common.ValueObjects.Email"/> test constants.
+    /// Define the <see cref="SharedKernel.ValueObjects.Email"/> test constants.
     /// </summary>
     public static class Email
     {

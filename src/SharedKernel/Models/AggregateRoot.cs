@@ -1,4 +1,4 @@
-namespace Domain.Common.Models;
+namespace SharedKernel.Models;
 
 /// <summary>
 /// Base class for domain aggregate roots.

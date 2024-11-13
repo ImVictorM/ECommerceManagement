@@ -1,4 +1,4 @@
-using Domain.Common.Models;
+using SharedKernel.Models;
 
 namespace Domain.UnitTests.Common.Models.TestUtils;
 

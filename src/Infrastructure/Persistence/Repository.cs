@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
 using Application.Common.Interfaces.Persistence;
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
 using Microsoft.EntityFrameworkCore;
+using SharedKernel.Interfaces;
+using SharedKernel.Models;
 
 namespace Infrastructure.Persistence;
 

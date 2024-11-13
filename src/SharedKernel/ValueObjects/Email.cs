@@ -1,8 +1,8 @@
 using System.Net.Mail;
-using Domain.Common.Errors;
-using Domain.Common.Models;
+using SharedKernel.Errors;
+using SharedKernel.Models;
 
-namespace Domain.Common.ValueObjects;
+namespace SharedKernel.ValueObjects;
 
 /// <summary>
 /// Represents an email.

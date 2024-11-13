@@ -4,7 +4,7 @@ using FluentAssertions;
 namespace Domain.UnitTests.Common.Models;
 
 /// <summary>
-/// Tests for the <see cref="Domain.Common.Models.ValueObject"/> model.
+/// Tests for the <see cref="SharedKernel.Models.ValueObject"/> model.
 /// </summary>
 public class ValueObjectTests
 {

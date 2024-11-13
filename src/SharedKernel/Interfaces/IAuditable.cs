@@ -1,4 +1,4 @@
-namespace Domain.Common.Interfaces;
+namespace SharedKernel.Interfaces;
 
 /// <summary>
 /// Contract to define properties to track an object.

@@ -1,5 +1,5 @@
-using Domain.Common.ValueObjects;
 using FluentValidation;
+using SharedKernel.ValueObjects;
 
 namespace Application.Common.Extensions.Validations;
 

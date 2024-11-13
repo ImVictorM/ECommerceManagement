@@ -1,5 +1,5 @@
+using SharedKernel.Extensions;
 using SharedKernel.Models;
-using SharedResources.Extensions;
 
 namespace SharedKernel.Authorization;
 

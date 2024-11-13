@@ -1,10 +1,10 @@
-using Domain.Common.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedKernel.Authorization;
+using SharedKernel.ValueObjects;
 
 namespace Infrastructure.Persistence.Configurations.UserAggregate;
 

@@ -1,5 +1,3 @@
-using Domain.ProductAggregate.Entities;
-
 namespace Domain.UnitTests.TestUtils.Constants;
 
 public static partial class DomainConstants
@@ -29,7 +27,7 @@ public static partial class DomainConstants
         /// <summary>
         /// The product category constant.
         /// </summary>
-        public static readonly ProductCategory Category = ProductCategory.BooksStationery;
+        public static readonly IReadOnlyList<string> Categories = new List<string>() { "Books" }.AsReadOnly();
 
         /// <summary>
         /// The product image constant.

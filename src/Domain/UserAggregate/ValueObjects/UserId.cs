@@ -1,5 +1,5 @@
 using System.Globalization;
-using Domain.Common.Models;
+using SharedKernel.Models;
 
 namespace Domain.UserAggregate.ValueObjects;
 

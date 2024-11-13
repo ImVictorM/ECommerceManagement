@@ -1,6 +1,6 @@
-using Domain.Common.Models;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.ValueObjects;
+using SharedKernel.Models;
 
 namespace Domain.ShipmentAggregate;
 

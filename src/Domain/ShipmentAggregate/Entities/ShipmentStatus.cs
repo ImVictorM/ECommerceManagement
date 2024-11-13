@@ -1,7 +1,7 @@
-using Domain.Common.Errors;
-using Domain.Common.Models;
 using Domain.ShipmentAggregate.ValueObjects;
-using SharedResources.Extensions;
+using SharedKernel.Errors;
+using SharedKernel.Extensions;
+using SharedKernel.Models;
 
 namespace Domain.ShipmentAggregate.Entities;
 

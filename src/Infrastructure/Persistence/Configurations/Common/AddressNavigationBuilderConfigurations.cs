@@ -1,5 +1,5 @@
-using Domain.Common.ValueObjects;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedKernel.ValueObjects;
 
 namespace Infrastructure.Persistence.Configurations.Common;
 

@@ -1,5 +1,5 @@
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
+using SharedKernel.Interfaces;
+using SharedKernel.Models;
 
 namespace Domain.UnitTests.Common.Models.TestUtils;
 

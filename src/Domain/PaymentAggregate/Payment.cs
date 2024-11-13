@@ -1,7 +1,7 @@
-using Domain.Common.Models;
 using Domain.InstallmentAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.PaymentAggregate.ValueObjects;
+using SharedKernel.Models;
 
 namespace Domain.PaymentAggregate;
 

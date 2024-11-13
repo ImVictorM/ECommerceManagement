@@ -1,4 +1,4 @@
-namespace SharedResources.Extensions;
+namespace SharedKernel.Extensions;
 
 /// <summary>
 /// Define shared string extensions.

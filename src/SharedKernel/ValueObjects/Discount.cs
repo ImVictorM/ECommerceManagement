@@ -1,7 +1,7 @@
-using Domain.Common.Errors;
-using Domain.Common.Models;
+using SharedKernel.Errors;
+using SharedKernel.Models;
 
-namespace Domain.Common.ValueObjects;
+namespace SharedKernel.ValueObjects;
 
 /// <summary>
 /// Represents a discount in percentage with

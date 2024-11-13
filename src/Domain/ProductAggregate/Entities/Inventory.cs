@@ -1,5 +1,5 @@
-using Domain.Common.Models;
 using Domain.ProductAggregate.ValueObjects;
+using SharedKernel.Models;
 
 namespace Domain.ProductAggregate.Entities;
 

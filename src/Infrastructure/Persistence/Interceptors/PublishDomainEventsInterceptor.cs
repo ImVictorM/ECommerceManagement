@@ -1,7 +1,7 @@
-using Domain.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using SharedKernel.Interfaces;
 
 namespace Infrastructure.Persistence.Interceptors;
 

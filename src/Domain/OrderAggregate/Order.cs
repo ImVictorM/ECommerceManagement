@@ -1,8 +1,8 @@
-using Domain.Common.Models;
-using Domain.Common.ValueObjects;
 using Domain.OrderAggregate.Entities;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 namespace Domain.OrderAggregate;
 

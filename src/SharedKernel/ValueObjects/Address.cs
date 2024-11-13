@@ -1,6 +1,6 @@
-using Domain.Common.Models;
+using SharedKernel.Models;
 
-namespace Domain.Common.ValueObjects;
+namespace SharedKernel.ValueObjects;
 
 /// <summary>
 /// Represents an address.
