@@ -1,5 +1,5 @@
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Entities;
+using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.ValueObjects;
 using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +16,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     public void Configure(EntityTypeBuilder<Product> builder)
     {
         ConfigureProductTable(builder);
+        ConfigureOwnedProductCategoryTable(builder);
         ConfigureOwnedInventoryTable(builder);
         ConfigureOwnedProductDiscountTable(builder);
         ConfigureOwnedProductImageTable(builder);
@@ -25,7 +26,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     /// Configures the products table.
     /// </summary>
     /// <param name="builder">The entity type builder.</param>
-    public static void ConfigureProductTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureProductTable(EntityTypeBuilder<Product> builder)
     {
         builder.ToTable("products");
 
@@ -38,20 +39,6 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
                 value => ProductId.Create(value)
             )
             .ValueGeneratedOnAdd()
-            .IsRequired();
-
-        builder
-            .HasOne<ProductCategory>()
-            .WithMany()
-            .HasForeignKey(p => p.ProductCategoryId)
-            .IsRequired();
-
-        builder
-            .Property(product => product.ProductCategoryId)
-            .HasConversion(
-                id => id.Value,
-                value => ProductCategoryId.Create(value)
-            )
             .IsRequired();
 
         builder
@@ -70,6 +57,38 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
         builder
            .Property(product => product.IsActive)
            .IsRequired();
+    }
+
+    /// <summary>
+    /// Configures the many-to-many relationship between products and categories
+    /// creating the products_categories table.
+    /// </summary>
+    /// <param name="builder">The entity type builder.</param>
+    private static void ConfigureOwnedProductCategoryTable(EntityTypeBuilder<Product> builder)
+    {
+        builder.OwnsMany(p => p.ProductCategories, productCategoryBuilder =>
+        {
+            productCategoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            productCategoryBuilder.ToTable("products_categories");
+
+            productCategoryBuilder
+                .Property<long>("id")
+                .ValueGeneratedOnAdd()
+                .IsRequired();
+
+            productCategoryBuilder.HasKey("id");
+
+            productCategoryBuilder.WithOwner().HasForeignKey("id_product");
+
+            productCategoryBuilder.Property("id_product").IsRequired();
+
+            productCategoryBuilder
+                .HasOne<Category>()
+                .WithMany()
+                .HasForeignKey("_categoryId")
+                .IsRequired();
+        });
     }
 
     /// <summary>
@@ -121,16 +140,13 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
 
                 productDiscountBuilder.ToTable("product_discounts");
 
-                productDiscountBuilder.HasKey(productDiscount => productDiscount.Id);
-
                 productDiscountBuilder
-                    .Property(productDiscount => productDiscount.Id)
-                    .HasConversion(
-                        id => id.Value,
-                        value => ProductDiscountId.Create(value)
-                    )
+                    .Property<long>("id")
                     .ValueGeneratedOnAdd()
                     .IsRequired();
+
+                productDiscountBuilder.HasKey("id");
+
 
                 productDiscountBuilder.WithOwner().HasForeignKey("id_product");
 
@@ -138,7 +154,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
                     .Property("id_product")
                     .IsRequired();
 
-                productDiscountBuilder.OwnsOne(pd => pd.Discount, DiscountNavigationBuilderConfigurations.Configure);
+                DiscountNavigationBuilderConfigurations.Configure(productDiscountBuilder);
             });
     }
 
@@ -156,16 +172,12 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
 
                 productImageBuilder.ToTable("product_images");
 
-                productImageBuilder.HasKey(productImage => productImage.Id);
-
                 productImageBuilder
-                    .Property(productImage => productImage.Id)
-                    .HasConversion(
-                        id => id.Value,
-                        value => ProductImageId.Create(value)
-                    )
+                    .Property<long>("id")
                     .ValueGeneratedOnAdd()
                     .IsRequired();
+
+                productImageBuilder.HasKey("id");
 
                 productImageBuilder.WithOwner().HasForeignKey("id_product");
 

@@ -1,17 +1,16 @@
-using Domain.Common.Models;
-using Domain.ProductAggregate.ValueObjects;
+using SharedKernel.Models;
 
-namespace Domain.ProductAggregate.Entities;
+namespace Domain.ProductAggregate.ValueObjects;
 
 /// <summary>
 /// Represents a product image.
 /// </summary>
-public sealed class ProductImage : Entity<ProductImageId>
+public sealed class ProductImage : ValueObject
 {
     /// <summary>
     /// Gets the image url.
     /// </summary>
-    public Uri Url { get; private set; } = null!;
+    public Uri Url { get; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductImage"/> class.
@@ -35,5 +34,11 @@ public sealed class ProductImage : Entity<ProductImageId>
     public static ProductImage Create(Uri url)
     {
         return new ProductImage(url);
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Url;
     }
 }

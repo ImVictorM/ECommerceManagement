@@ -1,8 +1,9 @@
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
-using Domain.Common.ValueObjects;
 using Domain.ProductAggregate.Entities;
+using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.ValueObjects;
+using SharedKernel.Interfaces;
+using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 namespace Domain.ProductAggregate;
 
@@ -11,14 +12,9 @@ namespace Domain.ProductAggregate;
 /// </summary>
 public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
 {
-    /// <summary>
-    /// The product images.
-    /// </summary>
     private readonly List<ProductImage> _productImages = [];
-    /// <summary>
-    /// The product discounts.
-    /// </summary>
-    private readonly List<ProductDiscount> _productDiscounts = [];
+    private readonly List<Discount> _productDiscounts = [];
+    private readonly List<ProductCategory> _productCategories = [];
 
     /// <summary>
     /// Gets the name of the product.
@@ -41,48 +37,42 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// </summary>
     public Inventory Inventory { get; private set; } = null!;
     /// <summary>
-    /// Gets the product category identifier.
-    /// </summary>
-    public ProductCategoryId ProductCategoryId { get; private set; } = null!;
-    /// <summary>
     /// Gets the product images.
     /// </summary>
     public IReadOnlyList<ProductImage> ProductImages => _productImages.AsReadOnly();
     /// <summary>
     /// Gets the product discount that holds a list of discounts.
     /// </summary>
-    public IReadOnlyList<ProductDiscount> ProductDiscounts => _productDiscounts.AsReadOnly();
-
+    public IReadOnlyList<Discount> ProductDiscounts => _productDiscounts.AsReadOnly();
     /// <summary>
-    /// Initializes a new instance of the <see cref="Product"/> class.
+    /// Gets the product categories.
     /// </summary>
+    public IReadOnlyList<ProductCategory> ProductCategories => _productCategories.AsReadOnly();
+
     private Product() { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Product"/> class.
-    /// </summary>
-    /// <param name="name">The product name.</param>
-    /// <param name="description">The product description.</param>
-    /// <param name="price">The product price.</param>
-    /// <param name="inventory">The product inventory.</param>
-    /// <param name="productCategoryId">The category related to this product.</param>
-    /// <param name="productImages">The product images.</param>
     private Product(
         string name,
         string description,
         decimal price,
         Inventory inventory,
-        ProductCategoryId productCategoryId,
-        List<ProductImage> productImages
+        IEnumerable<ProductCategory> productCategories,
+        IEnumerable<ProductImage> productImages,
+        IEnumerable<Discount>? initialDiscounts = null
     )
     {
         Name = name;
         Description = description;
         Price = price;
         Inventory = inventory;
-        ProductCategoryId = productCategoryId;
 
+        _productCategories.AddRange(productCategories);
         _productImages.AddRange(productImages);
+
+        if (initialDiscounts != null)
+        {
+            _productDiscounts.AddRange(initialDiscounts);
+        }
 
         IsActive = true;
     }
@@ -90,42 +80,51 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
-    /// <param name="categoryId">The category related to this product.</param>
+
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
-    /// <param name="quantityAvailable">The quantity of this product in inventory.</param>
+    /// <param name="initialQuantityInInventory">The initial quantity of this product in the inventory.</param>
+    /// <param name="productCategories">The categories related to this product.</param>
     /// <param name="productImageUrls">The product images.</param>
+    /// <param name="initialDiscounts">The initial discount the product will have.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product Create(
         string name,
         string description,
         decimal price,
-        int quantityAvailable,
-        ProductCategoryId categoryId,
-        IEnumerable<Uri> productImageUrls
+        int initialQuantityInInventory,
+        IEnumerable<string> productCategories,
+        IEnumerable<Uri> productImageUrls,
+        IEnumerable<Discount>? initialDiscounts = null
     )
     {
-        var inventory = Inventory.Create(quantityAvailable);
-        var productImages = productImageUrls.Select(ProductImage.Create).ToList();
+        var inventory = Inventory.Create(initialQuantityInInventory);
+
+        var images = productImageUrls.Select(ProductImage.Create);
+
+        var categories = productCategories
+            .Select(Category.Create)
+            .Select(ProductCategory.Create);
 
         return new Product(
             name,
             description,
             price,
             inventory,
-            categoryId,
-            productImages
+            categories,
+            images,
+            initialDiscounts
         );
     }
 
     /// <summary>
-    /// Adds a new discount to the product by id.
+    /// Adds a new discount to the product.
     /// </summary>
     /// <param name="discount">The discount.</param>
     public void AddDiscount(Discount discount)
     {
-        _productDiscounts.Add(ProductDiscount.Create(discount));
+        _productDiscounts.Add(discount);
     }
 
     /// <inheritdoc/>

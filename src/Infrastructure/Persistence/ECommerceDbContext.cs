@@ -1,6 +1,3 @@
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
-
 using Domain.InstallmentAggregate;
 using Domain.OrderAggregate;
 using Domain.PaymentAggregate;
@@ -13,7 +10,9 @@ using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
-using SharedResources.Extensions;
+using SharedKernel.Extensions;
+using SharedKernel.Interfaces;
+using SharedKernel.Models;
 
 namespace Infrastructure.Persistence;
 
@@ -120,7 +119,7 @@ public class ECommerceDbContext : DbContext
             return;
         }
 
-        var snakeCaseColumnName = property.Name.ToLowerSnakeCase();
+        var snakeCaseColumnName = property.Name.ToLowerSnakeCase().Trim('_');
 
         if (snakeCaseColumnName.EndsWith($"_{KeyPrefix}", StringComparison.OrdinalIgnoreCase))
         {
