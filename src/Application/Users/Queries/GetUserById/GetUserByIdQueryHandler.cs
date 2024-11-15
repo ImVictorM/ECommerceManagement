@@ -29,7 +29,8 @@ public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, 
 
         var user =
             await _unitOfWork.UserRepository.FindByIdAsync(id) ??
-            throw new UserNotFoundException().WithContext("UserId", id.ToString());
+            throw new UserNotFoundException($"User with id {id} was not found")
+                .WithContext("UserId", id.ToString());
 
         return new UserResult(user);
     }
