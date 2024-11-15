@@ -146,28 +146,7 @@ public sealed class Category : BaseEnumeration
     /// <returns>All predefined product categories.</returns>
     public static IEnumerable<Category> List()
     {
-        return
-        [
-            Electronics,
-            HomeAppliances,
-            Fashion,
-            Footwear,
-            Beauty,
-            HealthWellness,
-            Groceries,
-            Furniture,
-            ToysGames,
-            BooksStationery,
-            SportsOutdoor,
-            Automotive,
-            PetSupplies,
-            JewelryWatches,
-            OfficeSupplies,
-            HomeImprovement,
-            BabyProducts,
-            TravelLuggage,
-            MusicInstruments
-        ];
+        return GetAll<Category>().ToList();
     }
 
     private static Category? GetCategoryById(long id)

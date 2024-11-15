@@ -1,3 +1,4 @@
+using SharedKernel.Errors;
 using SharedKernel.Extensions;
 using SharedKernel.Models;
 
@@ -39,7 +40,9 @@ public sealed class Role : BaseEnumeration
     /// <returns>The role or null.</returns>
     public static Role GetRoleByName(string name)
     {
-        return List().First(r => r.Name == name);
+        return List()
+            .FirstOrDefault(r => r.Name == name)
+            ?? throw new ArgumentException($"{name} is not a valid role name");
     }
 
     /// <summary>
@@ -68,7 +71,7 @@ public sealed class Role : BaseEnumeration
     /// <returns>All the roles.</returns>
     public static IEnumerable<Role> List()
     {
-        return [Customer, Admin];
+        return GetAll<Role>().ToList();
     }
 
     /// <summary>
