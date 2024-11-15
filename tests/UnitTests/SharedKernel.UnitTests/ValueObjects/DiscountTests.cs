@@ -19,7 +19,7 @@ public class DiscountTests
         var now = DateTimeOffset.UtcNow;
 
         yield return new object[] {
-             now.AddDays(1).AddHours(10),
+             now.AddHours(10),
              now.AddDays(1).AddHours(20)
         };
         yield return new object[] {
@@ -38,14 +38,49 @@ public class DiscountTests
         var now = DateTimeOffset.UtcNow;
 
         yield return new object[] {
-            now.AddHours(23),
+            now.AddDays(-1).AddHours(-23),
             now.AddDays(2),
-            "The starting date for the discount must be at least one day in the future"
+            "The starting date for the discount cannot be in the past"
         };
         yield return new object[] {
             now.AddDays(2),
             now.AddDays(2).AddMinutes(59),
             "The ending date and time must be at least one hour after the starting date"
+        };
+    }
+
+    /// <summary>
+    /// Defines pairs of discount and the expected return value when validating if the discount is valid to date.
+    /// </summary>
+    public static IEnumerable<object[]> DiscountAndExpectedValidToDatePairs()
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        yield return new object[]
+        {
+            DiscountUtils.CreateDiscount(
+                startingDate: now.AddHours(-2),
+                endingDate: now.AddDays(1)
+            ),
+            true
+        };
+
+        yield return new object[]
+        {
+            DiscountUtils.CreateDiscount(
+                startingDate: now.AddHours(-20),
+                endingDate: now.AddHours(-5)
+            ),
+            false
+        };
+
+        yield return new object[]
+        {
+            DiscountUtils.CreateDiscount(
+                startingDate: now.AddDays(4),
+                endingDate: now.AddDays(10)
+            ),
+            false
         };
     }
 
@@ -80,5 +115,38 @@ public class DiscountTests
         Action act = () => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate);
 
         act.Should().Throw<DomainValidationException>().WithMessage(expectedErrorMessage);
+    }
+
+    /// <summary>
+    /// Tests if it throws an error when the percentage of the discount is not betweeen 1 and 100.
+    /// </summary>
+    /// <param name="percentage">The discount percentage.</param>
+    [Theory]
+    [InlineData(-5)]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(101)]
+    [InlineData(200)]
+    public void Discount_WhenCreatingDiscountWithInvalidPercentage_ThrowsAnError(int percentage)
+    {
+        FluentActions
+            .Invoking(() => DiscountUtils.CreateDiscount(percentage: percentage))
+            .Should()
+            .Throw<DomainValidationException>()
+            .WithMessage("Discount percentage must be between 1 and 100");
+    }
+
+    /// <summary>
+    /// Tests the method to validate if the current discount should be applied.
+    /// </summary>
+    /// <param name="discount">The discount.</param>
+    /// <param name="expectedValidToDate">The expected value indicating if the discount should be applied.</param>
+    [Theory]
+    [MemberData(nameof(DiscountAndExpectedValidToDatePairs))]
+    public void Discount_WhenCheckingIfDiscountIsValidToDate_ReturnsCorrectBooleanValue(Discount discount, bool expectedValidToDate)
+    {
+        var result = Discount.IsDiscountValidToDate(discount);
+
+        result.Should().Be(expectedValidToDate);
     }
 }
