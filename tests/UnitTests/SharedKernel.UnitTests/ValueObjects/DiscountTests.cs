@@ -1,9 +1,9 @@
-using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using SharedKernel.Errors;
+using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
-namespace Domain.UnitTests.Common.ValueObjects;
+namespace SharedKernel.UnitTests.ValueObjects;
 
 /// <summary>
 /// Tests for the <see cref="Discount"/> value object.

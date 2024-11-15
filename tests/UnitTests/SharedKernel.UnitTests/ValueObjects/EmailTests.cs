@@ -1,8 +1,8 @@
-using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using SharedKernel.Errors;
+using SharedKernel.UnitTests.TestUtils;
 
-namespace Domain.UnitTests.Common.ValueObjects;
+namespace SharedKernel.UnitTests.ValueObjects;
 
 /// <summary>
 /// Tests for the <see cref="SharedKernel.ValueObjects.Email"/> value object.

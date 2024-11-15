@@ -68,6 +68,6 @@ public class GetUserByIdQueryHandlerTests
             .Invoking(() => _handler.Handle(GetUserByIdQueryUtils.CreateQuery(idToBeFound), default))
             .Should()
             .ThrowAsync<UserNotFoundException>()
-            .WithMessage("The user being queried was not found");
+            .WithMessage($"User with id {idToBeFound} was not found");
     }
 }

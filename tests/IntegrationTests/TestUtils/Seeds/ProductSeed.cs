@@ -1,6 +1,7 @@
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Enumerations;
 using Domain.UnitTests.TestUtils;
+using SharedKernel.UnitTests.TestUtils;
 
 namespace IntegrationTests.TestUtils.Seeds;
 

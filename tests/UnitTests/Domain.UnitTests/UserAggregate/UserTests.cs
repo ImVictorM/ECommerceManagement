@@ -3,6 +3,7 @@ using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.Authorization;
 using FluentAssertions;
 using SharedKernel.Errors;
+using SharedKernel.UnitTests.TestUtils;
 
 namespace Domain.UnitTests.UserAggregate;
 
@@ -22,7 +23,7 @@ public class UserTests
             DomainConstants.User.PasswordHash,
             DomainConstants.User.PasswordSalt,
             DomainConstants.User.Phone,
-            DomainConstants.Email.Value
+            DomainConstants.User.Email.ToString()
         };
 
         yield return new object[] {
@@ -30,7 +31,7 @@ public class UserTests
             DomainConstants.User.PasswordHash,
             DomainConstants.User.PasswordSalt,
             DomainConstants.User.Phone,
-            DomainConstants.Email.Value
+            DomainConstants.User.Email.ToString()
         };
 
         yield return new object[] {
@@ -38,7 +39,7 @@ public class UserTests
             "1847564AEFE",
             DomainConstants.User.PasswordSalt,
             DomainConstants.User.Phone,
-            DomainConstants.Email.Value
+            DomainConstants.User.Email.ToString()
         };
 
         yield return new object[] {
@@ -46,7 +47,7 @@ public class UserTests
             DomainConstants.User.PasswordHash,
             "ABCDEF123456",
             DomainConstants.User.Phone,
-            DomainConstants.Email.Value
+            DomainConstants.User.Email.ToString()
         };
 
         yield return new object[] {
@@ -54,7 +55,7 @@ public class UserTests
             DomainConstants.User.PasswordHash,
             DomainConstants.User.PasswordSalt,
             "19987093231",
-            DomainConstants.Email.Value
+            DomainConstants.User.Email.ToString()
         };
     }
     /// <summary>

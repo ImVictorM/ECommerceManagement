@@ -1,9 +1,9 @@
-using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
+using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
-namespace Domain.UnitTests.Common.ValueObjects;
+namespace SharedKernel.UnitTests.ValueObjects;
 
 /// <summary>
 /// Tests for the <see cref="Address"/> aggregate root.
@@ -19,37 +19,37 @@ public class AddressTests
 
         yield return new object[] {
             "66845",
-            DomainConstants.Address.Street,
-            DomainConstants.Address.Neighborhood,
-            DomainConstants.Address.State,
-            DomainConstants.Address.City
+            SharedKernelConstants.Address.Street,
+            SharedKernelConstants.Address.Neighborhood,
+            SharedKernelConstants.Address.State,
+            SharedKernelConstants.Address.City
         };
         yield return new object[] {
-            DomainConstants.Address.PostalCode,
+            SharedKernelConstants.Address.PostalCode,
             "401 Mill",
-            DomainConstants.Address.Neighborhood,
-            DomainConstants.Address.State,
-            DomainConstants.Address.City
+            SharedKernelConstants.Address.Neighborhood,
+            SharedKernelConstants.Address.State,
+            SharedKernelConstants.Address.City
         };
         yield return new object[] {
-            DomainConstants.Address.PostalCode,
-            DomainConstants.Address.Street,
+            SharedKernelConstants.Address.PostalCode,
+            SharedKernelConstants.Address.Street,
             "Borderlands",
-            DomainConstants.Address.State,
-            DomainConstants.Address.City
+            SharedKernelConstants.Address.State,
+            SharedKernelConstants.Address.City
         };
         yield return new object[] {
-            DomainConstants.Address.PostalCode,
-            DomainConstants.Address.Street,
-            DomainConstants.Address.Neighborhood,
+            SharedKernelConstants.Address.PostalCode,
+            SharedKernelConstants.Address.Street,
+            SharedKernelConstants.Address.Neighborhood,
             "Kansas",
-            DomainConstants.Address.City
+            SharedKernelConstants.Address.City
         };
         yield return new object[] {
-            DomainConstants.Address.PostalCode,
-            DomainConstants.Address.Street,
-            DomainConstants.Address.Neighborhood,
-            DomainConstants.Address.State,
+            SharedKernelConstants.Address.PostalCode,
+            SharedKernelConstants.Address.Street,
+            SharedKernelConstants.Address.Neighborhood,
+            SharedKernelConstants.Address.State,
             "Cottonwood Falls"
         };
     }

@@ -1,5 +1,8 @@
 namespace Domain.UnitTests.TestUtils.Constants;
 
+/// <summary>
+/// Defines domain constants.
+/// </summary>
 public static partial class DomainConstants
 {
     /// <summary>

@@ -23,7 +23,7 @@ public static class RegisterCommandUtils
     {
         return new RegisterCommand(
             name ?? DomainConstants.User.Name,
-            email ?? DomainConstants.Email.Value,
+            email ?? SharedKernelConstants.Email.Value,
             password ?? DomainConstants.User.Password
         );
     }

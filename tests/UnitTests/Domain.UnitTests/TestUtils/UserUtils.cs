@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
 using SharedKernel.Authorization;
+using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils;
@@ -36,7 +37,7 @@ public static class UserUtils
     {
         var user = User.Create(
             name ?? DomainConstants.User.Name,
-            EmailUtils.CreateEmail(email: email),
+            email != null ? EmailUtils.CreateEmail(email: email) : DomainConstants.User.Email,
             passwordHash ?? DomainConstants.User.PasswordHash,
             passwordSalt ?? DomainConstants.User.PasswordSalt,
             role ?? DomainConstants.User.Role,
@@ -72,7 +73,7 @@ public static class UserUtils
             .Select(index =>
                 CreateUser(
                     name: DomainConstants.User.UserNameFromIndex(index),
-                    email: DomainConstants.Email.EmailFromIndex(index),
+                    email: SharedKernelConstants.Email.EmailFromIndex(index),
                     active: active
                 )
             );

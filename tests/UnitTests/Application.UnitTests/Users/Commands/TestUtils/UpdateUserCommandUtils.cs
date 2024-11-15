@@ -28,7 +28,7 @@ public static class UpdateUserCommandUtils
             id ?? DomainConstants.User.Id.ToString(CultureInfo.InvariantCulture),
             name ?? DomainConstants.User.Name,
             phone ?? DomainConstants.User.Phone,
-            email ?? DomainConstants.Email.Value
+            email ?? SharedKernelConstants.Email.Value
         );
     }
 }

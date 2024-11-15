@@ -1,7 +1,7 @@
 using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
 
-namespace Domain.UnitTests.TestUtils;
+namespace SharedKernel.UnitTests.TestUtils;
 
 /// <summary>
 /// Discount utilities.
@@ -24,10 +24,10 @@ public static class DiscountUtils
     )
     {
         return Discount.Create(
-            percentage ?? DomainConstants.Discount.Percentage,
-            description ?? DomainConstants.Discount.Description,
-            startingDate ?? DomainConstants.Discount.StartingDate,
-            endingDate ?? DomainConstants.Discount.EndingDate
+            percentage ?? SharedKernelConstants.Discount.Percentage,
+            description ?? SharedKernelConstants.Discount.Description,
+            startingDate ?? SharedKernelConstants.Discount.StartingDate,
+            endingDate ?? SharedKernelConstants.Discount.EndingDate
         );
     }
 
@@ -42,6 +42,6 @@ public static class DiscountUtils
     {
         return Enumerable
             .Range(0, count)
-            .Select(index => CreateDiscount(description: DomainConstants.Discount.CreateDescriptionFromIndex(index)));
+            .Select(index => CreateDiscount(description: SharedKernelConstants.Discount.CreateDescriptionFromIndex(index)));
     }
 }

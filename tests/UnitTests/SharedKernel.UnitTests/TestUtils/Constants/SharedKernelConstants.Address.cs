@@ -1,9 +1,12 @@
 namespace Domain.UnitTests.TestUtils.Constants;
 
-public static partial class DomainConstants
+/// <summary>
+/// Defines shared kernel constants.
+/// </summary>
+public static partial class SharedKernelConstants
 {
     /// <summary>
-    /// Declare constants related to the <see cref="SharedKernel.ValueObjects.Address"/> aggregate root for testing purposes.
+    /// Declare constants related to the <see cref="SharedKernel.ValueObjects.Address"/>.
     /// </summary>
     public static class Address
     {

@@ -24,7 +24,7 @@ public static class UpdateUserRequestUtils
         return new UpdateUserRequest(
             name ?? DomainConstants.User.Name,
             phone,
-            email ?? DomainConstants.Email.Value
+            email ?? SharedKernelConstants.Email.Value
         );
     }
 }

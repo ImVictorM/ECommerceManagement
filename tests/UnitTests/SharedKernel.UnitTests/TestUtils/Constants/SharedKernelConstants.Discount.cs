@@ -1,9 +1,9 @@
 namespace Domain.UnitTests.TestUtils.Constants;
 
-public static partial class DomainConstants
+public static partial class SharedKernelConstants
 {
     /// <summary>
-    /// Declare constants related to the <see cref="SharedKernel.ValueObjects.Discount"/> aggregate root for testing purposes.
+    /// Declare constants related to the <see cref="SharedKernel.ValueObjects.Discount"/>.
     /// </summary>
     public static class Discount
     {
@@ -18,7 +18,7 @@ public static partial class DomainConstants
         /// <summary>
         /// The discount starting date constant.
         /// </summary>
-        public static readonly DateTimeOffset StartingDate = DateTimeOffset.Now.AddDays(10);
+        public static readonly DateTimeOffset StartingDate = DateTimeOffset.UtcNow;
         /// <summary>
         /// The discount ending date constant.
         /// </summary>

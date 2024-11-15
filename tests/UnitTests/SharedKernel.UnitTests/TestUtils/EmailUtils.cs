@@ -1,7 +1,7 @@
 using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
 
-namespace Domain.UnitTests.TestUtils;
+namespace SharedKernel.UnitTests.TestUtils;
 
 /// <summary>
 /// Email utilities.
@@ -15,7 +15,7 @@ public static class EmailUtils
     /// <returns>A new instance of the <see cref="Email"/> class.</returns>
     public static Email CreateEmail(string? email = null)
     {
-        return Email.Create(email ?? DomainConstants.Email.Value);
+        return Email.Create(email ?? SharedKernelConstants.Email.Value);
     }
 
     /// <summary>
@@ -26,29 +26,29 @@ public static class EmailUtils
         yield return (
             "",
             new Dictionary<string, string[]> { { "Email", [
-                DomainConstants.Email.Validations.EmptyEmail,
-                DomainConstants.Email.Validations.InvalidPatternEmail
+                SharedKernelConstants.Email.Validations.EmptyEmail,
+                SharedKernelConstants.Email.Validations.InvalidPatternEmail
             ] } }
         );
 
         yield return (
             "invalidemailformat",
             new Dictionary<string, string[]> { { "Email", [
-                DomainConstants.Email.Validations.InvalidPatternEmail
+                SharedKernelConstants.Email.Validations.InvalidPatternEmail
             ] } }
         );
 
         yield return (
             "invalidemailformat@invalid@.com",
             new Dictionary<string, string[]> { { "Email", [
-                DomainConstants.Email.Validations.InvalidPatternEmail
+                SharedKernelConstants.Email.Validations.InvalidPatternEmail
             ] } }
         );
 
         yield return (
             "invalidemailformat@invalid.com.",
             new Dictionary<string, string[]> { { "Email", [
-                DomainConstants.Email.Validations.InvalidPatternEmail
+                SharedKernelConstants.Email.Validations.InvalidPatternEmail
             ] } }
         );
     }

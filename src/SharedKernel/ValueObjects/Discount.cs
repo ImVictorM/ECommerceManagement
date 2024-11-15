@@ -4,8 +4,7 @@ using SharedKernel.Models;
 namespace SharedKernel.ValueObjects;
 
 /// <summary>
-/// Represents a discount in percentage with
-/// starting and ending date.
+/// Represents a discount.
 /// </summary>
 public sealed class Discount : ValueObject
 {

@@ -1,6 +1,6 @@
 using SharedKernel.Models;
 
-namespace Domain.UnitTests.Common.Models.TestUtils;
+namespace SharedKernel.UnitTests.Models.TestUtils;
 
 /// <summary>
 /// Value object utilities.

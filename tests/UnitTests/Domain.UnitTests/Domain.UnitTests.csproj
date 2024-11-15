@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Domain\Domain.csproj" />
+    <ProjectReference Include="..\SharedKernel.UnitTests\SharedKernel.UnitTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

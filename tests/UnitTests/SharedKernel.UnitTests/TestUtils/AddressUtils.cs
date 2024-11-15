@@ -1,7 +1,7 @@
 using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
 
-namespace Domain.UnitTests.TestUtils;
+namespace SharedKernel.UnitTests.TestUtils;
 
 /// <summary>
 /// The address utilities for testing purposes.
@@ -26,11 +26,11 @@ public static class AddressUtils
     )
     {
         return Address.Create(
-            postalCode ?? DomainConstants.Address.PostalCode,
-            street ?? DomainConstants.Address.Street,
-            neighborhood ?? DomainConstants.Address.Neighborhood,
-            state ?? DomainConstants.Address.State,
-            city ?? DomainConstants.Address.City
+            postalCode ?? SharedKernelConstants.Address.PostalCode,
+            street ?? SharedKernelConstants.Address.Street,
+            neighborhood ?? SharedKernelConstants.Address.Neighborhood,
+            state ?? SharedKernelConstants.Address.State,
+            city ?? SharedKernelConstants.Address.City
         );
     }
 }

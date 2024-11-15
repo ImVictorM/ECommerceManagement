@@ -2,6 +2,7 @@ using Domain.ProductAggregate.Enumerations;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
+using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.ProductAggregate;

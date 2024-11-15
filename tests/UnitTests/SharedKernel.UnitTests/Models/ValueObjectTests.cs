@@ -1,7 +1,7 @@
-using Domain.UnitTests.Common.Models.TestUtils;
 using FluentAssertions;
+using SharedKernel.UnitTests.Models.TestUtils;
 
-namespace Domain.UnitTests.Common.Models;
+namespace SharedKernel.UnitTests.Models;
 
 /// <summary>
 /// Tests for the <see cref="SharedKernel.Models.ValueObject"/> model.

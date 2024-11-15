@@ -7,6 +7,7 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Moq;
+using SharedKernel.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Products.Commands.CreateProduct;
 

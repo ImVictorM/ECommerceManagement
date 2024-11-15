@@ -8,6 +8,7 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.Authentication;
 using IntegrationTests.TestUtils.Extensions.Errors;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.UnitTests.TestUtils;
 using Xunit.Abstractions;
 using RegisterRequest = Contracts.Authentication.RegisterRequest;
 

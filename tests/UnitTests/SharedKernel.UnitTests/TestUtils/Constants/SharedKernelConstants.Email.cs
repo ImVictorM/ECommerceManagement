@@ -1,6 +1,6 @@
 namespace Domain.UnitTests.TestUtils.Constants;
 
-public static partial class DomainConstants
+public static partial class SharedKernelConstants
 {
     /// <summary>
     /// Define the <see cref="SharedKernel.ValueObjects.Email"/> test constants.

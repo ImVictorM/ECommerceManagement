@@ -10,6 +10,7 @@ using IntegrationTests.TestUtils.Seeds;
 using IntegrationTests.Users.TestUtils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.UnitTests.TestUtils;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;

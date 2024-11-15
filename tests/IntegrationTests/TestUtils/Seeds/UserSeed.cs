@@ -1,6 +1,7 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using SharedKernel.Authorization;
+using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
 namespace IntegrationTests.TestUtils.Seeds;
