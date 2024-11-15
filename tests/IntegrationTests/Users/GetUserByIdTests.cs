@@ -7,6 +7,7 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Users;
 using IntegrationTests.TestUtils.Seeds;
+using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;
@@ -83,5 +84,24 @@ public class GetUserByIdTests : BaseIntegrationTest
         var response = await Client.GetAsync($"/users/{user.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    /// <summary>
+    /// Tests when the user being queried does not exist the response is NOT_FOUND and the error content is correct.
+    /// </summary>
+    [Fact]
+    public async Task GetUserById_WhenUserDoesNotExist_ReturnsBadRequest()
+    {
+        var userNotFoundId = "5000";
+
+        await Client.LoginAs(SeedAvailableUsers.Admin);
+        var response = await Client.GetAsync($"/users/{userNotFoundId}");
+
+        var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
+        responseContent.Title.Should().Be("User Not Found");
+        responseContent.Detail.Should().Be($"User with id {userNotFoundId} was not found");
     }
 }
