@@ -1,6 +1,7 @@
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Enumerations;
 using Domain.UnitTests.TestUtils.Constants;
+using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -18,6 +19,7 @@ public static class ProductUtils
     /// <param name="quantityAvailable">The product quantity available in inventory.</param>
     /// <param name="categories">The product categories.</param>
     /// <param name="productImagesUrl">The product image urls.</param>
+    /// <param name="initialDiscounts">The product initial discounts.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product CreateProduct(
         string? name = null,
@@ -25,7 +27,8 @@ public static class ProductUtils
         decimal? price = null,
         int? quantityAvailable = null,
         IEnumerable<string>? categories = null,
-        IEnumerable<Uri>? productImagesUrl = null
+        IEnumerable<Uri>? productImagesUrl = null,
+        IEnumerable<Discount>? initialDiscounts = null
     )
     {
         return Product.Create(
@@ -34,7 +37,8 @@ public static class ProductUtils
             price ?? DomainConstants.Product.Price,
             quantityAvailable ?? DomainConstants.Product.QuantityAvailable,
             categories ?? DomainConstants.Product.Categories,
-            productImagesUrl ?? CreateProductImagesUrl()
+            productImagesUrl ?? CreateProductImagesUrl(),
+            initialDiscounts
         );
     }
 

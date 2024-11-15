@@ -2,6 +2,7 @@ using Domain.ProductAggregate.Enumerations;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
+using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.ProductAggregate;
 
@@ -73,6 +74,30 @@ public class ProductTests
     }
 
     /// <summary>
+    /// A list containing the product price, a list of discounts, and the expected price after those discounts.
+    /// </summary>
+    public static IEnumerable<object[]> PriceWithDiscountsAndExpectedPriceAfterDiscounts()
+    {
+        yield return new object[]
+        {
+            100,
+            new List<Discount>() {
+                DiscountUtils.CreateDiscount(percentage: 20),
+                DiscountUtils.CreateDiscount(percentage: 10)
+            },
+            72
+        };
+
+        yield return new object[]
+        {
+            200,
+            new List<Discount>() {
+                DiscountUtils.CreateDiscount(percentage: 10)
+            },
+            180
+        };
+    }
+    /// <summary>
     /// Tests if it is possible to create a new product with valid parameters.
     /// </summary>
     /// <param name="name">The product name.</param>
@@ -106,9 +131,9 @@ public class ProductTests
             product.Should().NotBeNull();
             product.Name.Should().Be(name);
             product.Description.Should().Be(description);
-            product.Price.Should().Be(price);
+            product.BasePrice.Should().Be(price);
             product.Inventory.QuantityAvailable.Should().Be(quantityAvailable);
-            product.ProductCategories.Select(pc => pc.Category.Name).Should().BeEquivalentTo(categories);
+            product.GetCategoryNames().Should().BeEquivalentTo(categories);
 
             for (var i = 0; i < product.ProductImages.Count; i += 1)
             {
@@ -140,11 +165,37 @@ public class ProductTests
     public void Product_WhenAddingDiscount_AddsAndIncrementTheProductDiscounts()
     {
         var product = ProductUtils.CreateProduct();
-        var discount = DiscountUtils.CreateDiscount();
 
-        product.AddDiscount(discount);
+        var tenPercentDiscount = DiscountUtils.CreateDiscount(percentage: 10);
+        var fivePercentDiscount = DiscountUtils.CreateDiscount(percentage: 5);
 
-        product.ProductDiscounts.Should().NotBeEmpty();
-        product.ProductDiscounts.Should().Contain(discount);
+        product.AddDiscounts(tenPercentDiscount, fivePercentDiscount);
+
+        product.Discounts.Should().NotBeEmpty();
+        product.Discounts.Count.Should().Be(2);
+        product.Discounts.Should().Contain(tenPercentDiscount);
+        product.Discounts.Should().Contain(fivePercentDiscount);
+    }
+
+    /// <summary>
+    /// Tests getting the price after discounts calculates the price with discount correctly.
+    /// </summary>
+    /// <param name="price">The product price.</param>
+    /// <param name="discounts">The product discounts.</param>
+    /// <param name="expectedPriceAfterDiscount">The expected price after discounts were applied.</param>
+    [Theory]
+    [MemberData(nameof(PriceWithDiscountsAndExpectedPriceAfterDiscounts))]
+    public void Product_WhenGettingPriceAfterDiscount_CalculatesItCorrectly(
+        decimal price,
+        IEnumerable<Discount> discounts,
+        decimal expectedPriceAfterDiscount
+    )
+    {
+        var product = ProductUtils.CreateProduct(
+            price: price,
+            initialDiscounts: discounts
+        );
+
+        product.GetPriceAfterDiscounts().Should().Be(expectedPriceAfterDiscount);
     }
 }

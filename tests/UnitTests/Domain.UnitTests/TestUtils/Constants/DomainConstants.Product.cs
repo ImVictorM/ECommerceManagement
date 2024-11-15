@@ -8,6 +8,10 @@ public static partial class DomainConstants
     public static class Product
     {
         /// <summary>
+        /// The product id constant.
+        /// </summary>
+        public const long Id = 1L;
+        /// <summary>
         /// The product name constant.
         /// </summary>
         public const string Name = "Pen";
