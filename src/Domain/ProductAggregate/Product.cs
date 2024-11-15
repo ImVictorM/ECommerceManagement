@@ -1,8 +1,11 @@
 using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.ValueObjects;
+using SharedKernel.Errors;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
+using SharedKernel.Services;
+using SharedKernel.Specifications;
 using SharedKernel.ValueObjects;
 
 namespace Domain.ProductAggregate;
@@ -10,10 +13,10 @@ namespace Domain.ProductAggregate;
 /// <summary>
 /// Represents a product aggregate.
 /// </summary>
-public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
+public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable, IDiscountable
 {
     private readonly List<ProductImage> _productImages = [];
-    private readonly List<Discount> _productDiscounts = [];
+    private readonly List<Discount> _discounts = [];
     private readonly List<ProductCategory> _productCategories = [];
 
     /// <summary>
@@ -24,13 +27,9 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// Gets the description of the product.
     /// </summary>
     public string Description { get; private set; } = string.Empty;
-    /// <summary>
-    /// Gets the price of the product.
-    /// </summary>
-    public decimal Price { get; private set; }
-    /// <summary>
-    /// A boolean value indicating if the product is active.
-    /// </summary>
+    /// <inheritdoc/>
+    public decimal BasePrice { get; private set; }
+    /// <inheritdoc/>
     public bool IsActive { get; private set; }
     /// <summary>
     /// Gets the product inventory.
@@ -40,21 +39,20 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// Gets the product images.
     /// </summary>
     public IReadOnlyList<ProductImage> ProductImages => _productImages.AsReadOnly();
-    /// <summary>
-    /// Gets the product discount that holds a list of discounts.
-    /// </summary>
-    public IReadOnlyList<Discount> ProductDiscounts => _productDiscounts.AsReadOnly();
+    /// <inheritdoc/>
+    public IReadOnlyList<Discount> Discounts => _discounts.AsReadOnly();
     /// <summary>
     /// Gets the product categories.
     /// </summary>
     public IReadOnlyList<ProductCategory> ProductCategories => _productCategories.AsReadOnly();
+
 
     private Product() { }
 
     private Product(
         string name,
         string description,
-        decimal price,
+        decimal basePrice,
         Inventory inventory,
         IEnumerable<ProductCategory> productCategories,
         IEnumerable<ProductImage> productImages,
@@ -63,7 +61,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     {
         Name = name;
         Description = description;
-        Price = price;
+        BasePrice = basePrice;
         Inventory = inventory;
 
         _productCategories.AddRange(productCategories);
@@ -71,7 +69,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
 
         if (initialDiscounts != null)
         {
-            _productDiscounts.AddRange(initialDiscounts);
+            AddDiscounts(initialDiscounts.ToArray());
         }
 
         IsActive = true;
@@ -80,10 +78,9 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
-
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
-    /// <param name="price">The product price.</param>
+    /// <param name="basePrice">The product base price.</param>
     /// <param name="initialQuantityInInventory">The initial quantity of this product in the inventory.</param>
     /// <param name="productCategories">The categories related to this product.</param>
     /// <param name="productImageUrls">The product images.</param>
@@ -92,7 +89,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     public static Product Create(
         string name,
         string description,
-        decimal price,
+        decimal basePrice,
         int initialQuantityInInventory,
         IEnumerable<string> productCategories,
         IEnumerable<Uri> productImageUrls,
@@ -110,7 +107,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
         return new Product(
             name,
             description,
-            price,
+            basePrice,
             inventory,
             categories,
             images,
@@ -119,12 +116,29 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     }
 
     /// <summary>
-    /// Adds a new discount to the product.
+    /// Gets the product category names.
     /// </summary>
-    /// <param name="discount">The discount.</param>
-    public void AddDiscount(Discount discount)
+    /// <returns>The product category names.</returns>
+    public IEnumerable<string> GetCategoryNames()
     {
-        _productDiscounts.Add(discount);
+        return ProductCategories.Select(pc => Category.Create(pc.CategoryId).Name);
+    }
+
+    /// <inheritdoc/>
+    public void AddDiscounts(params Discount[] discounts)
+    {
+        _discounts.AddRange(discounts);
+
+        if (!new DiscountThresholdSpecification().IsSatisfiedBy(this))
+        {
+            throw new DomainValidationException("Total discounts exceed the allowed threshold");
+        }
+    }
+
+    /// <inheritdoc/>
+    public decimal GetPriceAfterDiscounts()
+    {
+        return DiscountService.ApplyDiscounts(BasePrice, [.. Discounts]);
     }
 
     /// <inheritdoc/>

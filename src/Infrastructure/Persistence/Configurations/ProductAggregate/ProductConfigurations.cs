@@ -51,7 +51,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
             .HasMaxLength(255);
 
         builder
-           .Property(product => product.Price)
+           .Property(product => product.BasePrice)
            .IsRequired();
 
         builder
@@ -86,7 +86,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
             productCategoryBuilder
                 .HasOne<Category>()
                 .WithMany()
-                .HasForeignKey("_categoryId")
+                .HasForeignKey(pc => pc.CategoryId)
                 .IsRequired();
         });
     }
@@ -133,7 +133,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     private static void ConfigureOwnedProductDiscountTable(EntityTypeBuilder<Product> builder)
     {
         builder.OwnsMany(
-            product => product.ProductDiscounts,
+            product => product.Discounts,
             productDiscountBuilder =>
             {
                 productDiscountBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);

@@ -123,19 +123,21 @@ public sealed class Category : BaseEnumeration
     /// </summary>
     /// <param name="name">The name of the product category.</param>
     /// <returns>A new instance of <see cref="Category"/> with the specified name.</returns>
+    /// <exception cref="DomainValidationException">Thrown when category of the specified name does not exist.</exception>
     public static Category Create(string name)
     {
         return GetCategoryByName(name) ?? throw new DomainValidationException($"The {name} category does not exist");
     }
 
     /// <summary>
-    /// Gets a product category by name, or null if not found.
+    /// Creates a new instance of the <see cref="Category"/> class with the specified id.
     /// </summary>
-    /// <param name="name">The category name.</param>
-    /// <returns>The category or null.</returns>
-    private static Category? GetCategoryByName(string name)
+    /// <param name="id">The category id.</param>
+    /// <returns>A new instance of the <see cref="Category"/> class.</returns>
+    /// <exception cref="DomainValidationException">Thrown when category of the specified id does not exist.</exception>
+    public static Category Create(long id)
     {
-        return List().FirstOrDefault(category => category.Name == name);
+        return GetCategoryById(id) ?? throw new DomainValidationException($"Category with id {id} does not exist");
     }
 
     /// <summary>
@@ -166,5 +168,15 @@ public sealed class Category : BaseEnumeration
             TravelLuggage,
             MusicInstruments
         ];
+    }
+
+    private static Category? GetCategoryById(long id)
+    {
+        return List().FirstOrDefault(c => c.Id == id);
+    }
+
+    private static Category? GetCategoryByName(string name)
+    {
+        return List().FirstOrDefault(category => category.Name == name);
     }
 }

@@ -5,23 +5,22 @@ namespace Domain.ProductAggregate.ValueObjects;
 
 /// <summary>
 /// Represents a product category.
-/// Used mainly to create a many-to-many relationship between products and categories.
+/// The purpose of this class is to create a many-to-many relationship between products and categories.
 /// </summary>
 public class ProductCategory : ValueObject
 {
-    private readonly long _categoryId;
-
     /// <summary>
-    /// Gets the category.
+    /// Gets the category id.
     /// </summary>
-    public Category Category { get; } = null!;
+    public long CategoryId { get; }
 
-    private ProductCategory() { }
+    private ProductCategory()
+    {
+    }
 
     private ProductCategory(Category category)
     {
-        _categoryId = category.Id;
-        Category = category;
+        CategoryId = category.Id;
     }
 
     /// <summary>
@@ -37,6 +36,6 @@ public class ProductCategory : ValueObject
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return _categoryId;
+        yield return CategoryId;
     }
 }

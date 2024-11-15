@@ -72,16 +72,41 @@ public sealed class Discount : ValueObject
     }
 
     /// <summary>
-    /// Validate the address fields.
+    /// Checks if a discount is still valid.
+    /// </summary>
+    /// <returns>A bool value indicating if the discount is still valid.</returns>
+    public bool IsDiscountValidToDate()
+    {
+        return IsDiscountValidToDate(this);
+    }
+
+    /// <summary>
+    /// Checks if a discount is still valid.
+    /// </summary>
+    /// <returns>A bool value indicating if the discount is still valid.</returns>
+    public static bool IsDiscountValidToDate(Discount discount)
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        return now >= discount.StartingDate && now <= discount.EndingDate;
+    }
+
+    /// <summary>
+    /// Validate the discount fields.
     /// </summary>
     /// <exception cref="DomainValidationException">Exception thrown case any field is invalid.</exception>
     private void Validate()
     {
+        if (Percentage <= 0 || Percentage > 100)
+        {
+            throw new DomainValidationException("Discount percentage must be between 1 and 100");
+        }
+
         var now = DateTimeOffset.UtcNow;
 
-        if (StartingDate < now.AddDays(1))
+        if (StartingDate < now.AddDays(-1))
         {
-            throw new DomainValidationException("The starting date for the discount must be at least one day in the future");
+            throw new DomainValidationException("The starting date for the discount cannot be in the past");
         }
         else if (EndingDate < StartingDate.AddHours(1))
         {
