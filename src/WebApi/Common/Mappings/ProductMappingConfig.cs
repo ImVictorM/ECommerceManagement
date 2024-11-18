@@ -17,6 +17,7 @@ public class ProductMappingConfig : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<CreateProductRequest, CreateProductCommand>();
+
         config.NewConfig<ProductResult, ProductResponse>()
             .Map(dest => dest.OriginalPrice, src => src.Product.BasePrice)
             .Map(dest => dest.PriceWithDiscount, src => src.Product.GetPriceAfterDiscounts())
@@ -25,7 +26,11 @@ public class ProductMappingConfig : IRegister
             .Map(dest => dest.Categories, src => src.Product.GetCategoryNames())
             .Map(dest => dest.Id, src => src.Product.Id.Value)
             .Map(dest => dest, src => src.Product);
+
         config.NewConfig<ProductListResult, ProductListResponse>()
             .Map(dest => dest.Products, src => src.Products.Select(p => new ProductResult(p)));
+
+        config.NewConfig<ProductCategoriesResult, ProductCategoriesResponse>()
+            .Map(dest => dest.Categories, src => src.Categories.Select(c => c.Name));
     }
 }

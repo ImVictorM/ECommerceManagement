@@ -1,5 +1,6 @@
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Queries.GetProductById;
+using Application.Products.Queries.GetProductCategories;
 using Application.Products.Queries.GetProducts;
 using Carter;
 using Contracts.Products;
@@ -51,6 +52,15 @@ public class ProductsEndpoints : ICarterModule
                 Summary = "Get Products",
                 Description = "Retrieves all products. Will retrieve the first 20 products if no limit is specified. Does not require authentication."
             });
+
+        productGroup
+            .MapGet("/categories", GetAllProductCategories)
+            .WithName("GetAllProductCategories")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Get Product Categories",
+                Description = "Retrieves all available product categories. Does not require authentication"
+            });
     }
 
     private async Task<Results<Ok<ProductResponse>, BadRequest>> GetProductById(
@@ -90,5 +100,17 @@ public class ProductsEndpoints : ICarterModule
         var result = await sender.Send(query);
 
         return TypedResults.Ok(mapper.Map<ProductListResponse>(result));
+    }
+
+    private async Task<Ok<ProductCategoriesResponse>> GetAllProductCategories(
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var query = new GetProductCategoriesQuery();
+
+        var result = await sender.Send(query); 
+
+        return TypedResults.Ok(mapper.Map<ProductCategoriesResponse>(result));
     }
 }
