@@ -50,7 +50,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Products",
-                Description = "Retrieves all products. Will retrieve the first 20 products if no limit is specified. Does not require authentication."
+                Description = "Retrieves all products. Will retrieve the first 20 products if no limit is specified. Can filter the products by the specified categories. Does not require authentication."
             });
 
         productGroup
@@ -92,10 +92,11 @@ public class ProductsEndpoints : ICarterModule
     private async Task<Ok<ProductListResponse>> GetAllProducts(
         ISender sender,
         IMapper mapper,
-        [FromQuery(Name = "limit")] int limit = default
+        [FromQuery(Name = "limit")] int? limit = null,
+        [FromQuery(Name = "category")] string[]? categories = null
     )
     {
-        var query = new GetProductsQuery(limit);
+        var query = new GetProductsQuery(limit, categories);
 
         var result = await sender.Send(query);
 
@@ -109,7 +110,7 @@ public class ProductsEndpoints : ICarterModule
     {
         var query = new GetProductCategoriesQuery();
 
-        var result = await sender.Send(query); 
+        var result = await sender.Send(query);
 
         return TypedResults.Ok(mapper.Map<ProductCategoriesResponse>(result));
     }

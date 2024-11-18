@@ -1,5 +1,7 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.DTOs;
+using Domain.ProductAggregate;
+using Domain.ProductAggregate.Enumerations;
 using MediatR;
 
 namespace Application.Products.Queries.GetProducts;
@@ -10,6 +12,7 @@ namespace Application.Products.Queries.GetProducts;
 public sealed class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, ProductListResult>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private const int DefaultProductQuantityToTake = 20;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetProductsQueryHandler"/> class.
@@ -23,8 +26,22 @@ public sealed class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, 
     /// <inheritdoc/>
     public async Task<ProductListResult> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        var products = await _unitOfWork.ProductRepository.FindAllAsync();
+        IEnumerable<Product> products;
+        var limit = request.Limit ?? DefaultProductQuantityToTake;
 
-        return new ProductListResult(products.Take(request.Limit));
+        if (request.categories != null && request.categories.Any())
+        {
+            var categoryIds = new HashSet<long>(request.categories.Select(Category.Create).Select(c => c.Id));
+
+            products = await _unitOfWork.ProductRepository.FindAllAsync(product =>
+                product.ProductCategories.Any(pc => categoryIds.Contains(pc.CategoryId))
+            );
+        }
+        else
+        {
+            products = await _unitOfWork.ProductRepository.FindAllAsync();
+        }
+
+        return new ProductListResult(products.Take(limit));
     }
 }

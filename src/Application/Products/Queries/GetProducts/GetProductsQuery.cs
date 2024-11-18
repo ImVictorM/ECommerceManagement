@@ -7,4 +7,8 @@ namespace Application.Products.Queries.GetProducts;
 /// Query to get all products.
 /// </summary>
 /// <param name="Limit">The quantity of products to be fetched.</param>
-public record GetProductsQuery(int Limit = 20) : IRequest<ProductListResult>;
+/// <param name="categories">The categories the product should have.</param>
+public record GetProductsQuery(
+    int? Limit,
+    IEnumerable<string>? categories = null
+) : IRequest<ProductListResult>;
