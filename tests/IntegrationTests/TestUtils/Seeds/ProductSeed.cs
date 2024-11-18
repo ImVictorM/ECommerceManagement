@@ -21,7 +21,11 @@ public enum SeedAvailableProducts
     /// <summary>
     /// Represents a chain bracelet.
     /// </summary>
-    CHAIN_BRACELET
+    CHAIN_BRACELET,
+    /// <summary>
+    /// Represents a pencil.
+    /// </summary>
+    PENCIL
 }
 
 /// <summary>
@@ -78,6 +82,18 @@ public static class ProductSeed
             productImagesUrl: [
                 new Uri("bracelet.png", UriKind.Relative)
             ]
+        ),
+        [SeedAvailableProducts.PENCIL] = ProductUtils.CreateProduct(
+            name: "Holiday Mixed Set - Blackwing Matte - Set of 12",
+            description: "Ideal for artists, musicians, woodworkers, and anyone who prefers a soft, dark line.",
+            price: 160m,
+            quantityAvailable: 150,
+            categories: [
+                Category.BooksStationery.Name
+            ],
+            productImagesUrl: [
+                new Uri("pencil.png", UriKind.Relative)
+            ]
         )
     };
 
@@ -97,5 +113,22 @@ public static class ProductSeed
     public static Product GetSeedProduct(SeedAvailableProducts productType)
     {
         return _products[productType];
+    }
+
+    /// <summary>
+    /// Gets the products that contains certain categories.
+    /// </summary>
+    /// <param name="categories">The categories the products should contain.</param>
+    /// <returns>A list of products that contain certain categories.</returns>
+    public static IEnumerable<Product> GetSeedProductsByCategories(params Category[] categories)
+    {
+        var categoriesId = categories.Select(c => c.Id);
+
+        return ListProducts()
+            .Where(p =>
+                p.ProductCategories
+                    .Select(pc => pc.CategoryId)
+                    .Any(id => categoriesId.Contains(id))
+            );
     }
 }

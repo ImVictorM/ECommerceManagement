@@ -46,14 +46,16 @@ public static class ProductUtils
     /// Creates a list of products.
     /// </summary>
     /// <param name="count">The quantity of products to be created.</param>
+    /// <param name="categories">The categories the products will have.</param>
     /// <returns>A list of products.</returns>
-    public static IEnumerable<Product> CreateProducts(int count = 1)
+    public static IEnumerable<Product> CreateProducts(int count = 1, IEnumerable<string>? categories = null)
     {
         return Enumerable
             .Range(0, count)
             .Select(index => CreateProduct(
                 name: DomainConstants.Product.ProductNameFromIndex(index),
-                description: DomainConstants.Product.ProductDescriptionFromIndex(index)
+                description: DomainConstants.Product.ProductDescriptionFromIndex(index),
+                categories: categories
             ));
     }
 

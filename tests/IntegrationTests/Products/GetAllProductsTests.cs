@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Contracts.Products;
+using Domain.ProductAggregate.Enumerations;
 using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.Products;
@@ -47,5 +48,20 @@ public class GetAllProductsTests : BaseIntegrationTest
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent!.Products.Count().Should().Be(limit);
+    }
+
+    /// <summary>
+    /// Tests that it is possible to get the products within certain categories.
+    /// </summary>
+    [Fact]
+    public async Task GetAllProducts_WhenGettingProductsWithCategoriesParameter_ReturnOkContainingProductsThatHasTheSpecifiedCategories()
+    {
+        var expectedProducts = ProductSeed.GetSeedProductsByCategories(Category.Fashion, Category.BooksStationery);
+
+        var response = await Client.GetAsync($"/products?category={Category.Fashion.Name}&category={Category.BooksStationery.Name}");
+        var responseContent = await response.Content.ReadFromJsonAsync<ProductListResponse>();
+
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        responseContent!.Products.EnsureCorrespondsTo(expectedProducts);
     }
 }

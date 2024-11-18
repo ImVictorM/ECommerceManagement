@@ -11,9 +11,13 @@ public static class GetProductsQueryUtils
     /// Creates a new instance of the <see cref="GetProductsQuery"/> with default limit.
     /// </summary>
     /// <param name="limit">The limit of products to retrieve.</param>
+    /// <param name="categories">The categories the products should have.</param>
     /// <returns>A new instance of the <see cref="GetProductsQuery"/> class.</returns>
-    public static GetProductsQuery CreateQuery(int? limit = null)
+    public static GetProductsQuery CreateQuery(
+        int? limit = null,
+        IEnumerable<string>? categories = null
+    )
     {
-        return limit.HasValue ? new GetProductsQuery(Limit: limit.Value) : new GetProductsQuery();
+        return new GetProductsQuery(limit, categories);
     }
 }
