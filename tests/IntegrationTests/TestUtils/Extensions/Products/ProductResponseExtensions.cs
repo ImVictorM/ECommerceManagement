@@ -33,11 +33,11 @@ public static class ProductResponseExtensions
     /// <param name="expectedProducts">The expected products.</param>
     public static void EnsureCorrespondsTo(this IEnumerable<ProductResponse> response, IEnumerable<Product> expectedProducts)
     {
-        foreach (var responseProduct in response)
+        foreach (var expected in expectedProducts)
         {
-            var expectedProduct = expectedProducts.First(ep => ep.Id.ToString() == responseProduct.Id);
+            var responseProduct = response.First(r => r.Id == expected.Id.ToString());
 
-            responseProduct.EnsureCorrespondsTo(expectedProduct);
+            responseProduct.EnsureCorrespondsTo(expected);
         }
     }
 }

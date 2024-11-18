@@ -37,11 +37,11 @@ public static class UserResponseExtensions
         IEnumerable<User> expectedUsers
     )
     {
-        foreach (var responseUser in responseUsers)
+        foreach (var expected in expectedUsers)
         {
-            var expectedUser = expectedUsers.First(eu => eu.Id.ToString() == responseUser.Id);
+            var responseUser = responseUsers.First(r => r.Id == expected.Id.ToString());
 
-            responseUser.EnsureUserCorrespondsTo(expectedUser);
+            responseUser.EnsureUserCorrespondsTo(expected);
         }
     }
 }
