@@ -36,7 +36,7 @@ public class GetProductByIdTests : BaseIntegrationTest
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-        responseContent!.EnsureCreatedFrom(productToFetch);
+        responseContent!.EnsureCorrespondsTo(productToFetch);
     }
 
     /// <summary>

@@ -10,11 +10,11 @@ namespace IntegrationTests.TestUtils.Extensions.Products;
 public static class ProductResponseExtensions
 {
     /// <summary>
-    /// Ensure a response was created based on a product.
+    /// Ensures a response corresponds to a product.
     /// </summary>
     /// <param name="response">The response.</param>
     /// <param name="product">The product to be tested against.</param>
-    public static void EnsureCreatedFrom(this ProductResponse response, Product product)
+    public static void EnsureCorrespondsTo(this ProductResponse response, Product product)
     {
         response!.Id.Should().Be(product.Id.ToString());
         response.Name.Should().Be(product.Name);
@@ -24,5 +24,20 @@ public static class ProductResponseExtensions
         response.Images.Should().BeEquivalentTo(product.ProductImages.Select(pi => pi.Url));
         response.OriginalPrice.Should().Be(product.BasePrice);
         response.PriceWithDiscount.Should().Be(product.GetPriceAfterDiscounts());
+    }
+
+    /// <summary>
+    /// Ensures a list of product responses corresponds to a list of expected products.
+    /// </summary>
+    /// <param name="response">The current response.</param>
+    /// <param name="expectedProducts">The expected products.</param>
+    public static void EnsureCorrespondsTo(this IEnumerable<ProductResponse> response, IEnumerable<Product> expectedProducts)
+    {
+        foreach (var responseProduct in response)
+        {
+            var expectedProduct = expectedProducts.First(ep => ep.Id.ToString() == responseProduct.Id);
+
+            responseProduct.EnsureCorrespondsTo(expectedProduct);
+        }
     }
 }

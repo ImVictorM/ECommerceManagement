@@ -13,7 +13,15 @@ public enum SeedAvailableProducts
     /// <summary>
     /// Simple computer containing discounts.
     /// </summary>
-    COMPUTER
+    COMPUTER,
+    /// <summary>
+    /// Represents a t-shirt.
+    /// </summary>
+    TSHIRT,
+    /// <summary>
+    /// Represents a chain bracelet.
+    /// </summary>
+    CHAIN_BRACELET
 }
 
 /// <summary>
@@ -43,6 +51,32 @@ public static class ProductSeed
             initialDiscounts: [
                 DiscountUtils.CreateDiscount(percentage: 20, description: "Black Friday discount"),
                 DiscountUtils.CreateDiscount(percentage: 5, description: "Base discount")
+            ]
+        ),
+        [SeedAvailableProducts.TSHIRT] = ProductUtils.CreateProduct(
+            name: "Mens Casual Premium Slim Fit T-Shirts",
+            description: "Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing.",
+            price: 22.3m,
+            quantityAvailable: 10,
+            categories: [
+                Category.Fashion.Name,
+                Category.SportsOutdoor.Name
+            ],
+            productImagesUrl: [
+                new Uri("t-shirt.png", UriKind.Relative)
+            ]
+        ),
+        [SeedAvailableProducts.CHAIN_BRACELET] = ProductUtils.CreateProduct(
+            name: "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet",
+            description: "From our Legends Collection, the Naga was inspired by the mythical water dragon that protects the ocean's pearl.",
+            price: 695m,
+            quantityAvailable: 2,
+            categories: [
+                Category.JewelryWatches.Name,
+                Category.Fashion.Name
+            ],
+            productImagesUrl: [
+                new Uri("bracelet.png", UriKind.Relative)
             ]
         )
     };

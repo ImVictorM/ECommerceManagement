@@ -43,6 +43,21 @@ public static class ProductUtils
     }
 
     /// <summary>
+    /// Creates a list of products.
+    /// </summary>
+    /// <param name="count">The quantity of products to be created.</param>
+    /// <returns>A list of products.</returns>
+    public static IEnumerable<Product> CreateProducts(int count = 1)
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(index => CreateProduct(
+                name: DomainConstants.Product.ProductNameFromIndex(index),
+                description: DomainConstants.Product.ProductDescriptionFromIndex(index)
+            ));
+    }
+
+    /// <summary>
     /// Creates a list of product image urls.
     /// </summary>
     /// <param name="imageCount">The quantity of product images to be created.</param>

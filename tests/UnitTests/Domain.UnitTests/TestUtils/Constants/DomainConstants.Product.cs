@@ -52,6 +52,26 @@ public static partial class DomainConstants
         }
 
         /// <summary>
+        /// Creates a new product name concatenating the index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns>A new products name.</returns>
+        public static string ProductNameFromIndex(int index)
+        {
+            return $"{Name}-{index}";
+        }
+
+        /// <summary>
+        /// Creates a new product description concatenating the index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns>A new product description.</returns>
+        public static string ProductDescriptionFromIndex(int index)
+        {
+            return $"{Description}-{index}";
+        }
+
+        /// <summary>
         /// Defines product validation error message constants.
         /// </summary>
         public static class Validations
