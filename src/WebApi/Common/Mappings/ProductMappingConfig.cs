@@ -25,5 +25,7 @@ public class ProductMappingConfig : IRegister
             .Map(dest => dest.Categories, src => src.Product.GetCategoryNames())
             .Map(dest => dest.Id, src => src.Product.Id.Value)
             .Map(dest => dest, src => src.Product);
+        config.NewConfig<ProductListResult, ProductListResponse>()
+            .Map(dest => dest.Products, src => src.Products.Select(p => new ProductResult(p)));
     }
 }
