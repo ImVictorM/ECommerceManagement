@@ -99,7 +99,7 @@ public static partial class DomainConstants
             /// <summary>
             /// Error message for negative initial prices.
             /// </summary>
-            public const string NegativeInitialPrice = "'Initial Price' must be greater than '0'.";
+            public const string NegativeBasePrice = "'Base Price' must be greater than '0'.";
         }
     }
 }

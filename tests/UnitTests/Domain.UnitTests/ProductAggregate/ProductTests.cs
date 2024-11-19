@@ -199,4 +199,33 @@ public class ProductTests
 
         product.GetPriceAfterDiscounts().Should().Be(expectedPriceAfterDiscount);
     }
+
+    /// <summary>
+    /// Tests it is possible to update a product correctly.
+    /// </summary>
+    [Fact]
+    public void Product_WhenUpdatingProduct_UpdatesCorrectly()
+    {
+        var product = ProductUtils.CreateProduct();
+
+        var newName = "new name";
+        var newDescription = "new description";
+        var newPrice = 200m;
+        var newImages = ProductUtils.CreateProductImagesUrl();
+        IEnumerable<string> newCategories = [Category.Automotive.Name];
+
+        product.UpdateProduct(
+            name: newName,
+            description: newDescription,
+            basePrice: newPrice,
+            images: newImages,
+            categories: newCategories
+        );
+
+        product.Name.Should().Be(newName);
+        product.Description.Should().Be(newDescription);
+        product.BasePrice.Should().Be(newPrice);
+        product.ProductImages.Select(pi => pi.Url).Should().BeEquivalentTo(newImages);
+        product.GetCategoryNames().Should().BeEquivalentTo(newCategories);
+    }
 }

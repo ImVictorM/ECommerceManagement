@@ -1,0 +1,88 @@
+using Application.Common.Interfaces.Persistence;
+using Application.Products.Commands.UpdateProduct;
+using Application.Products.Queries.Common.Errors;
+using Application.UnitTests.Products.Commands.CreateProduct;
+using Application.UnitTests.Products.Commands.TestUtils;
+using Domain.ProductAggregate;
+using Domain.ProductAggregate.Enumerations;
+using Domain.ProductAggregate.ValueObjects;
+using Domain.UnitTests.TestUtils;
+using FluentAssertions;
+using Moq;
+
+namespace Application.UnitTests.Products.Commands.UpdateProduct;
+
+/// <summary>
+/// Unit tests for the <see cref="UpdateProductCommandHandler"/> handler.
+/// </summary>
+public class UpdateProductCommandHandlerTests
+{
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly UpdateProductCommandHandler _handler;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CreateProductCommandHandlerTests"/> class,
+    /// </summary>
+    public UpdateProductCommandHandlerTests()
+    {
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
+
+        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
+
+        _handler = new UpdateProductCommandHandler(_mockUnitOfWork.Object);
+    }
+
+    /// <summary>
+    /// Tests when the product does not exists an exception is thrown.
+    /// </summary>
+    [Fact]
+    public async Task HandleUpdateProduct_WhenProductDoesNotExist_ThrowsError()
+    {
+        var notFoundId = "14";
+        var command = UpdateProductCommandUtils.CreateCommand(id: notFoundId);
+
+        _mockProductRepository
+            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .ReturnsAsync((Product?)null);
+
+        await FluentActions
+            .Invoking(() => _handler.Handle(command, default))
+            .Should()
+            .ThrowAsync<ProductNotFoundException>()
+            .WithMessage($"The product with id {notFoundId} could not be updated because it does not exist");
+
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never());
+    }
+
+    /// <summary>
+    /// Tests when the product exists it is updated correctly.
+    /// </summary>
+    [Fact]
+    public async Task HandleUpdateProduct_WhenProductExists_UpdatesIt()
+    {
+        var productToBeUpdated = ProductUtils.CreateProduct();
+
+        var command = UpdateProductCommandUtils.CreateCommand(
+            name: "new product name",
+            description: "new product description",
+            basePrice: 600m,
+            images: ProductUtils.CreateProductImagesUrl(imageCount: 1),
+            categories: [Category.HomeImprovement.Name]
+        );
+
+        _mockProductRepository
+            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .ReturnsAsync(productToBeUpdated);
+
+        await _handler.Handle(command, default);
+
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        productToBeUpdated.Name.Should().Be(command.Name);
+        productToBeUpdated.Description.Should().Be(command.Description);
+        productToBeUpdated.GetCategoryNames().Should().BeEquivalentTo(command.Categories);
+        productToBeUpdated.BasePrice.Should().Be(command.BasePrice);
+        productToBeUpdated.ProductImages.Select(pi => pi.Url).Should().BeEquivalentTo(command.Images);
+    }
+}

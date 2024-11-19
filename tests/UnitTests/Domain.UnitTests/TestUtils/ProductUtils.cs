@@ -131,11 +131,11 @@ public static class ProductUtils
     /// <summary>
     /// Gets a list of invalid initial prices with the corresponding errors similar to the validation problem details object.
     /// </summary>
-    public static IEnumerable<(decimal Value, Dictionary<string, string[]> ExpectedErrors)> GetInvalidInitialPriceWithCorrespondingErrors()
+    public static IEnumerable<(decimal Value, Dictionary<string, string[]> ExpectedErrors)> GetInvalidBasePriceWithCorrespondingErrors()
     {
         yield return (-15m, new Dictionary<string, string[]>
         {
-            { "InitialPrice", [DomainConstants.Product.Validations.NegativeInitialPrice] }
+            { "BasePrice", [DomainConstants.Product.Validations.NegativeBasePrice] }
         });
     }
 
