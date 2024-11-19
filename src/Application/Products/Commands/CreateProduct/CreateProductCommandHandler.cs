@@ -28,7 +28,7 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         var newProduct = Product.Create(
             request.Name,
             request.Description,
-            request.InitialPrice,
+            request.BasePrice,
             request.InitialQuantity,
             request.Categories,
             request.Images,
@@ -37,8 +37,8 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
 
         await _unitOfWork.ProductRepository.AddAsync(newProduct);
 
-        var createdId = await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
-        return new CreatedResult(createdId.ToString(CultureInfo.InvariantCulture));
+        return new CreatedResult(newProduct.Id.ToString());
     }
 }
