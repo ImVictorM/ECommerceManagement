@@ -7,6 +7,7 @@ using IntegrationTests.Common;
 using IntegrationTests.Products.TestUtils;
 using IntegrationTests.TestUtils.Extensions.Errors;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
+using IntegrationTests.TestUtils.Extensions.Products;
 using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
@@ -43,7 +44,7 @@ public class CreateProductTests : BaseIntegrationTest
             yield return new object[] { CreateProductRequestUtils.CreateRequest(description: invalidDescription), expectedErrors };
         }
 
-        foreach (var (invalidPrice, expectedErrors) in ProductUtils.GetInvalidInitialPriceWithCorrespondingErrors())
+        foreach (var (invalidPrice, expectedErrors) in ProductUtils.GetInvalidBasePriceWithCorrespondingErrors())
         {
             yield return new object[] { CreateProductRequestUtils.CreateRequest(initialPrice: invalidPrice), expectedErrors };
         }
@@ -72,7 +73,7 @@ public class CreateProductTests : BaseIntegrationTest
     [Theory]
     [InlineData(SeedAvailableUsers.CustomerWithAddress)]
     [InlineData(SeedAvailableUsers.Customer)]
-    public async Task CreateProduct_WhenUserAuthenticatedIsNotAdmin_RetunsForbidden(SeedAvailableUsers customerType)
+    public async Task CreateProduct_WhenUserAuthenticatedIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerType)
     {
         var request = CreateProductRequestUtils.CreateRequest();
 
@@ -103,14 +104,18 @@ public class CreateProductTests : BaseIntegrationTest
     [Fact]
     public async Task CreateProduct_WhenUserAuthenticatedIsAdmin_CreatesProductAndReturnsCreated()
     {
-        // TODO: Query for the product and test if it was created correctly (not possible yet)
         var request = CreateProductRequestUtils.CreateRequest();
 
         await Client.LoginAs(SeedAvailableUsers.Admin);
 
-        var response = await Client.PostAsJsonAsync("/products", request);
+        var postResponse = await Client.PostAsJsonAsync("/products", request);
+        var resourceLocation = postResponse.Headers.Location;
+        var getResponse = await Client.GetAsync(resourceLocation);
+        var getResponseContent = await getResponse.Content.ReadFromJsonAsync<ProductResponse>();
 
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        postResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        getResponseContent!.EnsureCreatedFrom(request);
     }
 
     /// <summary>

@@ -1,6 +1,9 @@
 using Contracts.Products;
 using Domain.ProductAggregate;
 using FluentAssertions;
+using Mapster;
+using SharedKernel.Services;
+using SharedKernel.ValueObjects;
 
 namespace IntegrationTests.TestUtils.Extensions.Products;
 
@@ -38,6 +41,27 @@ public static class ProductResponseExtensions
             var responseProduct = response.First(r => r.Id == expected.Id.ToString());
 
             responseProduct.EnsureCorrespondsTo(expected);
+        }
+    }
+
+    /// <summary>
+    /// Ensures the response was created from the specified request.
+    /// </summary>
+    /// <param name="response">The response object.</param>
+    /// <param name="request">The request object.</param>
+    public static void EnsureCreatedFrom(this ProductResponse response, CreateProductRequest request)
+    {
+        response.Id.Should().NotBeNull();
+        response.Name.Should().Be(request.Name);
+        response.Description.Should().Be(request.Description);
+        response.OriginalPrice.Should().Be(request.BasePrice);
+        
+        response.Categories.Should().BeEquivalentTo(request.Categories);
+        response.Images.Should().BeEquivalentTo(request.Images);
+
+        if (request.InitialDiscounts != null)
+        {
+            response.PriceWithDiscount.Should().Be(DiscountService.ApplyDiscounts(request.BasePrice, request.InitialDiscounts.Adapt<Discount>()));
         }
     }
 }
