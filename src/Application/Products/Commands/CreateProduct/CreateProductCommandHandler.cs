@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Common.DTOs;
 using Application.Common.Interfaces.Persistence;
 using Domain.ProductAggregate;

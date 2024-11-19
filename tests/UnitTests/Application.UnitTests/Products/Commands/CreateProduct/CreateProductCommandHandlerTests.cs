@@ -1,6 +1,7 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Commands.CreateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
+using Application.UnitTests.TestUtils.Behaviors;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.ValueObjects;
@@ -59,6 +60,10 @@ public class CreateProductCommandHandlerTests
     [MemberData(nameof(ValidRequests))]
     public async Task HandleCreateProduct_WhenCommandIsValid_AddsThenSavesThenReturnsTheId(CreateProductCommand request)
     {
+        var mockEntityId = ProductId.Create(5);
+
+        MockEFCoreBehaviors.MockSetEntityIdBehavior(_mockProductRepository, _mockUnitOfWork, mockEntityId);
+
         var actResult = await FluentActions
             .Invoking(() => _handler.Handle(request, default))
             .Should()
@@ -68,5 +73,6 @@ public class CreateProductCommandHandlerTests
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
 
         actResult.Which.Id.Should().NotBeNullOrWhiteSpace();
+        actResult.Which.Id.Should().Be(mockEntityId.ToString());
     }
 }
