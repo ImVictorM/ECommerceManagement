@@ -1,4 +1,5 @@
 using Application.Products.Commands.CreateProduct;
+using Application.Products.Commands.UpdateProduct;
 using Application.Products.Queries.GetProductById;
 using Application.Products.Queries.GetProductCategories;
 using Application.Products.Queries.GetProducts;
@@ -61,6 +62,16 @@ public class ProductsEndpoints : ICarterModule
                 Summary = "Get Product Categories",
                 Description = "Retrieves all available product categories. Does not require authentication"
             });
+
+        productGroup
+            .MapPut("/{id:long}", UpdateProduct)
+            .WithName("UpdateProduct")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Update Product",
+                Description = "Updates the base details of a product. Needs authentication as admin"
+            })
+            .RequireAuthorization(AdminRequiredPolicy.Name);
     }
 
     private async Task<Results<Ok<ProductResponse>, BadRequest>> GetProductById(
@@ -113,5 +124,19 @@ public class ProductsEndpoints : ICarterModule
         var result = await sender.Send(query);
 
         return TypedResults.Ok(mapper.Map<ProductCategoriesResponse>(result));
+    }
+
+    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProduct(
+        [FromRoute] string id,
+        [FromBody] UpdateProductRequest request,
+        IMapper mapper,
+        ISender sender
+    )
+    {
+        var command = mapper.Map<UpdateProductCommand>((id, request));
+
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
     }
 }

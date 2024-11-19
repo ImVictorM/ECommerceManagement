@@ -46,7 +46,6 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable, IDiscoun
     /// </summary>
     public IReadOnlyList<ProductCategory> ProductCategories => _productCategories.AsReadOnly();
 
-
     private Product() { }
 
     private Product(
@@ -112,6 +111,37 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable, IDiscoun
             categories,
             images,
             initialDiscounts
+        );
+    }
+
+    /// <summary>
+    /// Updates the product base details.
+    /// </summary>
+    /// <param name="name">The new product name.</param>
+    /// <param name="description">The new product description.</param>
+    /// <param name="basePrice">The new product base price.</param>
+    /// <param name="images">The new product images.</param>
+    /// <param name="categories">The new product categories.</param>
+    public void UpdateProduct(
+        string name,
+        string description,
+        decimal basePrice,
+        IEnumerable<Uri> images,
+        IEnumerable<string> categories
+    )
+    {
+        Name = name;
+        Description = description;
+        BasePrice = basePrice;
+
+        _productImages.Clear();
+        _productImages.AddRange(images.Select(ProductImage.Create));
+
+        _productCategories.Clear();
+        _productCategories.AddRange(
+            categories
+                .Select(Category.Create)
+                .Select(ProductCategory.Create)
         );
     }
 

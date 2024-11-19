@@ -1,4 +1,5 @@
 using Application.Products.Commands.CreateProduct;
+using Application.Products.Commands.UpdateProduct;
 using Application.Products.Queries.Common.DTOs;
 using Contracts.Products;
 using Mapster;
@@ -32,5 +33,9 @@ public class ProductMappingConfig : IRegister
 
         config.NewConfig<ProductCategoriesResult, ProductCategoriesResponse>()
             .Map(dest => dest.Categories, src => src.Categories.Select(c => c.Name));
+
+        config.NewConfig<(string Id, UpdateProductRequest Request), UpdateProductCommand>()
+            .Map(dest => dest, src => src.Request)
+            .Map(dest => dest.Id, src => src.Id);
     }
 }
