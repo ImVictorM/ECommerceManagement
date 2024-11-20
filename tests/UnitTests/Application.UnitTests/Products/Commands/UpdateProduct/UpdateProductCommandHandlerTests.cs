@@ -1,7 +1,6 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Commands.UpdateProduct;
 using Application.Products.Queries.Common.Errors;
-using Application.UnitTests.Products.Commands.CreateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Enumerations;
@@ -22,7 +21,7 @@ public class UpdateProductCommandHandlerTests
     private readonly UpdateProductCommandHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CreateProductCommandHandlerTests"/> class,
+    /// Initializes a new instance of the <see cref="UpdateProductCommandHandlerTests"/> class,
     /// </summary>
     public UpdateProductCommandHandlerTests()
     {

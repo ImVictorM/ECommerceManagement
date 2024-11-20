@@ -19,7 +19,7 @@ namespace IntegrationTests.Products;
 public class UpdateProductTests : BaseIntegrationTest
 {
     /// <summary>
-    /// Initiates a new instance of the <see cref="CreateProductTests"/> class.
+    /// Initiates a new instance of the <see cref="UpdateProductTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>

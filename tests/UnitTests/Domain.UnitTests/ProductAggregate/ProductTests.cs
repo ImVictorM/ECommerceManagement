@@ -228,4 +228,24 @@ public class ProductTests
         product.ProductImages.Select(pi => pi.Url).Should().BeEquivalentTo(newImages);
         product.GetCategoryNames().Should().BeEquivalentTo(newCategories);
     }
+
+    /// <summary>
+    /// Tests that is possible to increment the product's inventory quantity available.
+    /// </summary>
+    [Theory]
+    [InlineData(10, 55, 65)]
+    [InlineData(20, 5, 25)]
+    [InlineData(12, 1, 13)]
+    public void Product_WhenAddingProductsToInventory_IncrementsInventoryQuantityAvailable(
+        int initialQuantity,
+        int quantityToAdd,
+        int expectedQuantityAvailable
+    )
+    {
+        var product = ProductUtils.CreateProduct(quantityAvailable: initialQuantity);
+
+        product.IncrementQuantityInInventory(quantityToAdd);
+
+        product.Inventory.QuantityAvailable.Should().Be(expectedQuantityAvailable);
+    }
 }

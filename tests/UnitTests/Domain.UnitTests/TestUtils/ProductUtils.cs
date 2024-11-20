@@ -135,7 +135,7 @@ public static class ProductUtils
     {
         yield return (-15m, new Dictionary<string, string[]>
         {
-            { "BasePrice", [DomainConstants.Product.Validations.NegativeBasePrice] }
+            { "BasePrice", [DomainConstants.Product.Validations.LessThanZeroBasePrice] }
         });
     }
 
@@ -146,7 +146,24 @@ public static class ProductUtils
     {
         yield return (-10, new Dictionary<string, string[]>
         {
-            { "InitialQuantity", [DomainConstants.Product.Validations.NegativeInitialQuantity] }
+            { "InitialQuantity", [DomainConstants.Product.Validations.LessThanZeroInitialQuantity] }
+        });
+    }
+
+    /// <summary>
+    /// Gets a list of invalid quantities to increment with the corresponding errors similar to the validation problem details object.
+    /// </summary>
+    /// <returns></returns>
+    public static IEnumerable<(int Value, Dictionary<string, string[]> ExpectedErrors)> GetInvalidQuantityToIncrementWithCorrespondingErrors()
+    {
+        yield return (-22, new Dictionary<string, string[]>
+        {
+            { "QuantityToIncrement", [DomainConstants.Product.Validations.LessThanZeroQuantityToIncrement] }
+        });
+
+        yield return (0, new Dictionary<string, string[]>
+        {
+            { "QuantityToIncrement", [DomainConstants.Product.Validations.LessThanZeroQuantityToIncrement] }
         });
     }
 }

@@ -456,6 +456,7 @@ dotnet_diagnostic.CA2022.severity = suggestion
 dotnet_diagnostic.CA2201.severity = suggestion
 # CA2249: Use string.Contains instead of string.IndexOf to improve readability.
 dotnet_diagnostic.CA2249.severity = suggestion
+dotnet_diagnostic.CA5394.severity = suggestion
 # IDE0005: Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = suggestion
 # IDE0020: Use pattern matching to avoid is check followed by a cast (with variable)
@@ -472,6 +473,7 @@ dotnet_diagnostic.IDE0038.severity = suggestion
 dotnet_diagnostic.IDE0044.severity = suggestion
 # IDE0051: Remove unused private members
 dotnet_diagnostic.IDE0051.severity = suggestion
+dotnet_diagnostic.IDE0058.severity = none
 # IDE0059: Unnecessary assignment to a value
 dotnet_diagnostic.IDE0059.severity = suggestion
 # IDE0060: Remove unused parameters

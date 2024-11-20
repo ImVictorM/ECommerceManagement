@@ -93,13 +93,17 @@ public static partial class DomainConstants
             /// </summary>
             public const string EmptyImages = "'Images' must not be empty.";
             /// <summary>
-            /// Error message for negative initial quantities.
+            /// Error message for less than zero initial quantities.
             /// </summary>
-            public const string NegativeInitialQuantity = "'Initial Quantity' must be greater than '0'.";
+            public const string LessThanZeroInitialQuantity = "'Initial Quantity' must be greater than '0'.";
             /// <summary>
-            /// Error message for negative initial prices.
+            /// Error message for less than zero initial prices.
             /// </summary>
-            public const string NegativeBasePrice = "'Base Price' must be greater than '0'.";
+            public const string LessThanZeroBasePrice = "'Base Price' must be greater than '0'.";
+            /// <summary>
+            /// Error message for less than zero quantity to increment.
+            /// </summary>
+            public const string LessThanZeroQuantityToIncrement = "'Quantity To Increment' must be greater than '0'.";
         }
     }
 }
