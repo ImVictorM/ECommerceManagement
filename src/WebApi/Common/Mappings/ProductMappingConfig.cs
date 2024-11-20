@@ -1,5 +1,6 @@
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.UpdateProduct;
+using Application.Products.Commands.UpdateProductInventory;
 using Application.Products.Queries.Common.DTOs;
 using Contracts.Products;
 using Mapster;
@@ -37,5 +38,9 @@ public class ProductMappingConfig : IRegister
         config.NewConfig<(string Id, UpdateProductRequest Request), UpdateProductCommand>()
             .Map(dest => dest, src => src.Request)
             .Map(dest => dest.Id, src => src.Id);
+
+        config.NewConfig<(string Id, UpdateProductInventoryRequest Request), UpdateProductInventoryCommand>()
+            .Map(dest => dest.ProductId, src => src.Id)
+            .Map(dest => dest, src => src.Request);
     }
 }

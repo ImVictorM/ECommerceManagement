@@ -36,4 +36,13 @@ public sealed class Inventory : Entity<InventoryId>
     {
         return new Inventory(quantityAvailable);
     }
+
+    /// <summary>
+    /// Increments the quantity available by the value specified.
+    /// </summary>
+    /// <param name="quantityToAdd">The quantity to increment.</param>
+    public void IncrementQuantityAvailable(int quantityToAdd)
+    {
+        QuantityAvailable += quantityToAdd;
+    }
 }

@@ -1,5 +1,6 @@
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.UpdateProduct;
+using Application.Products.Commands.UpdateProductInventory;
 using Application.Products.Queries.GetProductById;
 using Application.Products.Queries.GetProductCategories;
 using Application.Products.Queries.GetProducts;
@@ -72,6 +73,16 @@ public class ProductsEndpoints : ICarterModule
                 Description = "Updates the base details of a product. Needs authentication as admin"
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
+
+        productGroup
+            .MapPut("/{id:long}/inventory", UpdateProductInventory)
+            .WithName("UpdateProductInvetory")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Update Product Inventory",
+                Description = "Increments a product's inventory quantity available. Needs authentication as admin"
+            })
+            .RequireAuthorization(AdminRequiredPolicy.Name);
     }
 
     private async Task<Results<Ok<ProductResponse>, BadRequest>> GetProductById(
@@ -134,6 +145,21 @@ public class ProductsEndpoints : ICarterModule
     )
     {
         var command = mapper.Map<UpdateProductCommand>((id, request));
+
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
+    }
+
+    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProductInventory
+    (
+        [FromRoute] string id,
+        [FromBody] UpdateProductInventoryRequest request,
+        IMapper mapper,
+        ISender sender
+    )
+    {
+        var command = mapper.Map<UpdateProductInventoryCommand>((id, request));
 
         await sender.Send(command);
 
