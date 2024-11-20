@@ -1,11 +1,12 @@
 <Project>
   <PropertyGroup>
-    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisLevel>8.0</AnalysisLevel>
     <AnalysisMode>All</AnalysisMode>
 	  <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 	  <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>NU1901,NU1902,NU1903,NU1904</NoWarn>
   </PropertyGroup>
 	
   <ItemGroup>

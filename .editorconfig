@@ -294,6 +294,8 @@ dotnet_diagnostic.CA2014.severity = warning
 # CA2016: Forward the 'CancellationToken' parameter to methods that take one
 dotnet_diagnostic.CA2016.severity = warning
 
+dotnet_diagnostic.CA5394.severity = suggestion
+
 # CA2022: Avoid inexact read with `Stream.Read`
 dotnet_diagnostic.CA2022.severity = warning
 
@@ -456,7 +458,6 @@ dotnet_diagnostic.CA2022.severity = suggestion
 dotnet_diagnostic.CA2201.severity = suggestion
 # CA2249: Use string.Contains instead of string.IndexOf to improve readability.
 dotnet_diagnostic.CA2249.severity = suggestion
-dotnet_diagnostic.CA5394.severity = suggestion
 # IDE0005: Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = suggestion
 # IDE0020: Use pattern matching to avoid is check followed by a cast (with variable)
