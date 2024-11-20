@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using Contracts.Products;
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using IntegrationTests.Common;
@@ -40,6 +39,9 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         }
     }
 
+    /// <summary>
+    /// Provides pairs of products and a random quantity to add to the product inventory.
+    /// </summary>
     public static IEnumerable<object[]> ProductAndQuantityToIncrementPairs()
     {
         foreach (var product in ProductSeed.ListProducts())
@@ -118,9 +120,16 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         responseContent!.EnsureCorrespondsToExpectedErrors(expectedErrors);
     }
 
+    /// <summary>
+    /// Tests when the user is admin and the quantity to add in the inventory is valid the product inventory is updated and the response is no content.
+    /// Also fetches the product by id to test if the quantity in inventory was indeed updated.
+    /// </summary>
+    /// <param name="product">The product to update the inventory.</param>
+    /// <param name="quantityToIncrement">The quantity to add to the inventory.</param>
+    /// <returns></returns>
     [Theory]
     [MemberData(nameof(ProductAndQuantityToIncrementPairs))]
-    public async Task UpdateProductinventory_WhenUserIsAdminAndQuantityToAddIsValid_UpdatesInventoryAndReturnsNoContent(
+    public async Task UpdateProductInventory_WhenUserIsAdminAndQuantityToAddIsValid_UpdatesInventoryAndReturnsNoContent(
         Product product,
         int quantityToIncrement
     )

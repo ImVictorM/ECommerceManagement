@@ -1,4 +1,3 @@
-using SharedKernel.Errors;
 using SharedKernel.Extensions;
 using SharedKernel.Models;
 
