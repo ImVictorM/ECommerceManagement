@@ -1,16 +1,18 @@
-using Application.Products.Commands.CreateProduct;
-using Application.Products.Commands.UpdateProduct;
-using Application.Products.Commands.UpdateProductInventory;
-using Application.Products.Queries.GetProductById;
-using Application.Products.Queries.GetProductCategories;
-using Application.Products.Queries.GetProducts;
 using Carter;
-using Contracts.Products;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Authorization.AdminRequired;
+
+using Contracts.Products;
+using Application.Products.Commands.CreateProduct;
+using Application.Products.Commands.DeactivateProduct;
+using Application.Products.Commands.UpdateProduct;
+using Application.Products.Commands.UpdateProductInventory;
+using Application.Products.Queries.GetProductById;
+using Application.Products.Queries.GetProductCategories;
+using Application.Products.Queries.GetProducts;
 
 namespace WebApi.Endpoints;
 
@@ -75,8 +77,18 @@ public class ProductsEndpoints : ICarterModule
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
         productGroup
+            .MapDelete("/{id:long}", DeactivateProduct)
+            .WithName("DeactivateProduct")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Deactivate Product",
+                Description = "Deactivates a product and set the inventory to 0 items. Needs authentication as admin"
+            })
+            .RequireAuthorization(AdminRequiredPolicy.Name);
+
+        productGroup
             .MapPut("/{id:long}/inventory", UpdateProductInventory)
-            .WithName("UpdateProductInvetory")
+            .WithName("UpdateProductInventory")
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product Inventory",
@@ -145,6 +157,18 @@ public class ProductsEndpoints : ICarterModule
     )
     {
         var command = mapper.Map<UpdateProductCommand>((id, request));
+
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
+    }
+
+    private async Task<Results<NoContent, NotFound, UnauthorizedHttpResult>> DeactivateProduct(
+        [FromRoute] string id,
+        ISender sender
+    )
+    {
+        var command = new DeactivateProductCommand(id);
 
         await sender.Send(command);
 

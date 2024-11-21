@@ -45,4 +45,12 @@ public sealed class Inventory : Entity<InventoryId>
     {
         QuantityAvailable += quantityToAdd;
     }
+
+    /// <summary>
+    /// Sets the quantity available in inventory to 0.
+    /// </summary>
+    public void Reset()
+    {
+        QuantityAvailable = 0;
+    }
 }

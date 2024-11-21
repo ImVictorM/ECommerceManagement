@@ -184,5 +184,6 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable, IDiscoun
     public void MakeInactive()
     {
         IsActive = false;
+        Inventory.Reset();
     }
 }
