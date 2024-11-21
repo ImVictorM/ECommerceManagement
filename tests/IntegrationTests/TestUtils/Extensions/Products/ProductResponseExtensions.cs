@@ -1,8 +1,7 @@
 using Contracts.Products;
 using Domain.ProductAggregate;
 using FluentAssertions;
-using Mapster;
-using SharedKernel.Services;
+using IntegrationTests.TestUtils.Extensions.Assertions;
 using SharedKernel.ValueObjects;
 
 namespace IntegrationTests.TestUtils.Extensions.Products;
@@ -20,6 +19,7 @@ public static class ProductResponseExtensions
     public static void EnsureCorrespondsTo(this ProductResponse response, Product product)
     {
         response!.Id.Should().Be(product.Id.ToString());
+        response.IsCurrentlyActive.Should().Be(product.IsActive);
         response.Name.Should().Be(product.Name);
         response.QuantityAvailable.Should().Be(product.Inventory.QuantityAvailable);
         response.Categories.Should().BeEquivalentTo(product.GetCategoryNames());
@@ -27,6 +27,9 @@ public static class ProductResponseExtensions
         response.Images.Should().BeEquivalentTo(product.ProductImages.Select(pi => pi.Url));
         response.OriginalPrice.Should().Be(product.BasePrice);
         response.PriceWithDiscount.Should().Be(product.GetPriceAfterDiscounts());
+        response.DiscountsApplied.Should().BeEquivalentTo(product.GetApplicableDiscounts(),
+            options => options.ComparingByMembers<Discount>().ComparingWithDateTimeOffset()
+        );
     }
 
     /// <summary>
@@ -55,13 +58,8 @@ public static class ProductResponseExtensions
         response.Name.Should().Be(request.Name);
         response.Description.Should().Be(request.Description);
         response.OriginalPrice.Should().Be(request.BasePrice);
-        
+        response.IsCurrentlyActive.Should().BeTrue();
         response.Categories.Should().BeEquivalentTo(request.Categories);
         response.Images.Should().BeEquivalentTo(request.Images);
-
-        if (request.InitialDiscounts != null)
-        {
-            response.PriceWithDiscount.Should().Be(DiscountService.ApplyDiscounts(request.BasePrice, request.InitialDiscounts.Adapt<Discount>()));
-        }
     }
 }

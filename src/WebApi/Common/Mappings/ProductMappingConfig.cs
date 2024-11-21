@@ -26,6 +26,8 @@ public class ProductMappingConfig : IRegister
             .Map(dest => dest.QuantityAvailable, src => src.Product.Inventory.QuantityAvailable)
             .Map(dest => dest.Images, src => src.Product.ProductImages.Select(pi => pi.Url))
             .Map(dest => dest.Categories, src => src.Product.GetCategoryNames())
+            .Map(dest => dest.DiscountsApplied, src => src.Product.GetApplicableDiscounts())
+            .Map(dest => dest.IsCurrentlyActive, src => src.Product.IsActive)
             .Map(dest => dest.Id, src => src.Product.Id.Value)
             .Map(dest => dest, src => src.Product);
 

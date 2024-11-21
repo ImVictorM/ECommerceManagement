@@ -19,9 +19,7 @@ public static class DiscountService
     {
         return discountsToApply
             .OrderByDescending(a => a.Percentage)
-            .Aggregate(basePrice, (total, discount) =>
-                discount.IsDiscountValidToDate() ? CalculateDiscount(total, discount.Percentage) : total
-            );
+            .Aggregate(basePrice, (total, discount) => CalculateDiscount(total, discount.Percentage));
     }
 
     private static decimal CalculateDiscount(decimal amount, int percentage)

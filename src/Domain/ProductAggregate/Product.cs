@@ -174,10 +174,16 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable, IDiscoun
         }
     }
 
+    /// <inheritdoc />
+    public IEnumerable<Discount> GetApplicableDiscounts()
+    {
+        return Discounts.Where(d => d.IsDiscountValidToDate());
+    }
+
     /// <inheritdoc/>
     public decimal GetPriceAfterDiscounts()
     {
-        return DiscountService.ApplyDiscounts(BasePrice, [.. Discounts]);
+        return DiscountService.ApplyDiscounts(BasePrice, [.. GetApplicableDiscounts()]);
     }
 
     /// <inheritdoc/>

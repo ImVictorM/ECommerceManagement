@@ -79,6 +79,8 @@ public class ProductTests
     /// </summary>
     public static IEnumerable<object[]> PriceWithDiscountsAndExpectedPriceAfterDiscounts()
     {
+        var now = DateTimeOffset.UtcNow;
+
         yield return new object[]
         {
             100,
@@ -96,6 +98,74 @@ public class ProductTests
                 DiscountUtils.CreateDiscount(percentage: 10)
             },
             180
+        };
+
+        yield return new object[]
+        {
+            500,
+            new List<Discount>
+            {
+                DiscountUtils.CreateDiscount(
+                    percentage: 20,
+                    startingDate: now.AddDays(4),
+                    endingDate: now.AddDays(6)
+                ),
+                DiscountUtils.CreateDiscount(
+                    percentage: 50
+                )
+            },
+            250
+        };
+    }
+
+    /// <summary>
+    /// Pairs of discounts and valid to date discounts.
+    /// </summary>
+    public static IEnumerable<object[]> DiscountsAndDiscountsValidToDatePairs()
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        yield return new object[]
+        {
+            new List<Discount>()
+            {
+                DiscountUtils.CreateDiscount(percentage: 5, startingDate: now.AddDays(2), endingDate: now.AddDays(4)),
+                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
+                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now.AddHours(-10), endingDate: now.AddHours(-5)),
+            },
+
+            new List<Discount>()
+            {
+                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
+            }
+        };
+
+        yield return new object[]
+        {
+            new List<Discount>()
+            {
+                DiscountUtils.CreateDiscount(percentage: 5, startingDate: now.AddDays(2), endingDate: now.AddDays(4)),
+                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now.AddHours(-10), endingDate: now.AddHours(-5)),
+            },
+
+            new List<Discount>()
+            {
+            }
+        };
+
+        yield return new object[]
+        {
+            new List<Discount>()
+            {
+                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
+                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now, endingDate: now.AddDays(2)),
+            },
+
+            new List<Discount>()
+            {
+                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
+                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now, endingDate: now.AddDays(2)),
+            }
         };
     }
     /// <summary>
@@ -179,7 +249,8 @@ public class ProductTests
     }
 
     /// <summary>
-    /// Tests getting the price after discounts calculates the price with discount correctly.
+    /// Tests getting the price after discounts calculates the price with discount correctly, considering only discounts
+    /// that are valid to the current date.
     /// </summary>
     /// <param name="price">The product price.</param>
     /// <param name="discounts">The product discounts.</param>
@@ -198,6 +269,25 @@ public class ProductTests
         );
 
         product.GetPriceAfterDiscounts().Should().Be(expectedPriceAfterDiscount);
+    }
+
+    /// <summary>
+    /// Tests the <see cref="Domain.ProductAggregate.Product.GetApplicableDiscounts"/> method to see if it returns the discoutns correctly.
+    /// </summary>
+    /// <param name="discounts">The discounts.</param>
+    /// <param name="expectedValidDiscounts">The expected discounts the method should return.</param>
+    [Theory]
+    [MemberData(nameof(DiscountsAndDiscountsValidToDatePairs))]
+    public void Product_GettingDiscountsValidToDate_ReturnsTheDiscountsCorrectly(
+        IEnumerable<Discount> discounts,
+        IEnumerable<Discount> expectedValidDiscounts
+    )
+    {
+        var product = ProductUtils.CreateProduct(initialDiscounts: discounts);
+
+        var discountsValidToDate = product.GetApplicableDiscounts();
+
+        discountsValidToDate.Should().BeEquivalentTo(expectedValidDiscounts);
     }
 
     /// <summary>

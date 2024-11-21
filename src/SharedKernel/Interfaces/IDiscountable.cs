@@ -28,4 +28,10 @@ public interface IDiscountable
     /// </summary>
     /// <returns>The price with discounts.</returns>
     decimal GetPriceAfterDiscounts();
+
+    /// <summary>
+    /// Gets the discounts that can be applied when calculating discounts.
+    /// </summary>
+    /// <returns>A list of discounts valid.</returns>
+    IEnumerable<Discount> GetApplicableDiscounts();
 }

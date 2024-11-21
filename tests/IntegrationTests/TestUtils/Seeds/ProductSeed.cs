@@ -13,7 +13,7 @@ public enum SeedAvailableProducts
     /// <summary>
     /// Simple computer containing discounts.
     /// </summary>
-    COMPUTER,
+    COMPUTER_WITH_DISCOUNTS,
     /// <summary>
     /// Represents a t-shirt.
     /// </summary>
@@ -38,7 +38,7 @@ public static class ProductSeed
     /// </summary>
     private static readonly Dictionary<SeedAvailableProducts, Product> _products = new Dictionary<SeedAvailableProducts, Product>()
     {
-        [SeedAvailableProducts.COMPUTER] = ProductUtils.CreateProduct(
+        [SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS] = ProductUtils.CreateProduct(
             name: "Computer",
             description: "Simple computer",
             price: 3000m,
@@ -54,7 +54,19 @@ public static class ProductSeed
             ],
             initialDiscounts: [
                 DiscountUtils.CreateDiscount(percentage: 20, description: "Black Friday discount"),
-                DiscountUtils.CreateDiscount(percentage: 5, description: "Base discount")
+                DiscountUtils.CreateDiscount(percentage: 5, description: "Base discount"),
+                DiscountUtils.CreateDiscount(
+                    percentage: 30,
+                    description: "Future discount",
+                    startingDate: DateTimeOffset.UtcNow.AddDays(2),
+                    endingDate: DateTimeOffset.UtcNow.AddDays(5)
+                ),
+                DiscountUtils.CreateDiscount(
+                    percentage: 10,
+                    description: "Next month discount",
+                    startingDate: DateTimeOffset.UtcNow.AddMonths(1),
+                    endingDate: DateTimeOffset.UtcNow.AddMonths(2)
+                )
             ]
         ),
         [SeedAvailableProducts.TSHIRT] = ProductUtils.CreateProduct(

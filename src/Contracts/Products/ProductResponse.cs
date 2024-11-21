@@ -1,3 +1,5 @@
+using Contracts.Products.Common;
+
 namespace Contracts.Products;
 
 /// <summary>
@@ -9,6 +11,8 @@ namespace Contracts.Products;
 /// <param name="OriginalPrice">The product original price.</param>
 /// <param name="PriceWithDiscount">The product price with discounts applied.</param>
 /// <param name="QuantityAvailable">The product quantity in inventory.</param>
+/// <param name="IsCurrentlyActive">Boolean value that indicates if the current product is active or not.</param>
+/// <param name="DiscountsApplied">The discounts applied that generated the price with discount.</param>
 /// <param name="Categories">The product categories.</param>
 /// <param name="Images">The product images.</param>
 public record ProductResponse(
@@ -18,6 +22,8 @@ public record ProductResponse(
     decimal OriginalPrice,
     decimal PriceWithDiscount,
     int QuantityAvailable,
+    bool IsCurrentlyActive,
+    IEnumerable<Discount> DiscountsApplied,
     IEnumerable<string> Categories,
     IEnumerable<Uri> Images
 );
