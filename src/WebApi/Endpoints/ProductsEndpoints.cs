@@ -13,6 +13,7 @@ using Application.Products.Commands.UpdateProductInventory;
 using Application.Products.Queries.GetProductById;
 using Application.Products.Queries.GetProductCategories;
 using Application.Products.Queries.GetProducts;
+using Application.Products.Commands.UpdateProductDiscounts;
 
 namespace WebApi.Endpoints;
 
@@ -95,6 +96,17 @@ public class ProductsEndpoints : ICarterModule
                 Description = "Increments a product's inventory quantity available. Needs authentication as admin"
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
+
+        productGroup
+            .MapPut("/{id:long}/discounts", UpdateProductDiscounts)
+            .WithName("UpdateProductDiscounts")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Update Product Discounts",
+                Description = "Updates the list of discounts related to a product. Needs authentication as admin"
+            })
+            .RequireAuthorization(AdminRequiredPolicy.Name);
+
     }
 
     private async Task<Results<Ok<ProductResponse>, BadRequest>> GetProductById(
@@ -184,6 +196,20 @@ public class ProductsEndpoints : ICarterModule
     )
     {
         var command = mapper.Map<UpdateProductInventoryCommand>((id, request));
+
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
+    }
+
+    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProductDiscounts(
+        [FromRoute] string id,
+        [FromBody] UpdateProductDiscountsRequest request,
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var command = mapper.Map<UpdateProductDiscountsCommand>((id, request));
 
         await sender.Send(command);
 

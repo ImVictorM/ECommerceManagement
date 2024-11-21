@@ -24,6 +24,11 @@ public interface IDiscountable
     void AddDiscounts(params Discount[] discounts);
 
     /// <summary>
+    /// Clears the discounts.
+    /// </summary>
+    void ClearDiscounts();
+
+    /// <summary>
     /// Gets the price applying all the discounts.
     /// </summary>
     /// <returns>The price with discounts.</returns>

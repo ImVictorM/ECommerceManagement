@@ -174,6 +174,12 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable, IDiscoun
         }
     }
 
+    /// <inheritdoc/>
+    public void ClearDiscounts()
+    {
+        _discounts.Clear();
+    }
+
     /// <inheritdoc />
     public IEnumerable<Discount> GetApplicableDiscounts()
     {
