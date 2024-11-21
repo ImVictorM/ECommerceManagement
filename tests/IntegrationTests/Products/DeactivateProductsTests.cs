@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Contracts.Products;
 using Domain.ProductAggregate;
 using FluentAssertions;
 using IntegrationTests.Common;
@@ -90,10 +91,14 @@ public class DeactivateProductsTests : BaseIntegrationTest
         Product productToDeactivate
     )
     {
-        /// TODO: query for the product and check if it is deactivated.
         await Client.LoginAs(SeedAvailableUsers.Admin);
-        var response = await Client.DeleteAsync($"/products/{productToDeactivate.Id}");
+        var responseDelete = await Client.DeleteAsync($"/products/{productToDeactivate.Id}");
+        var responseGet = await Client.GetAsync($"/products/{productToDeactivate.Id}");
+        var responseGetContent = await responseGet.Content.ReadFromJsonAsync<ProductResponse>();
 
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        responseDelete.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        responseGet.StatusCode.Should().Be(HttpStatusCode.OK);
+        responseGetContent!.IsCurrentlyActive.Should().BeFalse();
+        responseGetContent.QuantityAvailable.Should().Be(0);
     }
 }
