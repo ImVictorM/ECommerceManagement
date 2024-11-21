@@ -248,4 +248,18 @@ public class ProductTests
 
         product.Inventory.QuantityAvailable.Should().Be(expectedQuantityAvailable);
     }
+
+    /// <summary>
+    /// Tests that making a product inactivate deactivates it and sets the inventory to 0.
+    /// </summary>
+    [Fact]
+    public void Product_WhenMakingInactive_DeactivatesAndSetsInventoryToZero()
+    {
+        var product = ProductUtils.CreateProduct(quantityAvailable: 500);
+
+        product.MakeInactive();
+
+        product.IsActive.Should().BeFalse();
+        product.Inventory.QuantityAvailable.Should().Be(0);
+    }
 }

@@ -126,7 +126,6 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     /// </summary>
     /// <param name="product">The product to update the inventory.</param>
     /// <param name="quantityToIncrement">The quantity to add to the inventory.</param>
-    /// <returns></returns>
     [Theory]
     [MemberData(nameof(ProductAndQuantityToIncrementPairs))]
     public async Task UpdateProductInventory_WhenUserIsAdminAndQuantityToAddIsValid_UpdatesInventoryAndReturnsNoContent(
