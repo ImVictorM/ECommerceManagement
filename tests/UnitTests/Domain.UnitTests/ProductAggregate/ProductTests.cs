@@ -272,7 +272,7 @@ public class ProductTests
     }
 
     /// <summary>
-    /// Tests the <see cref="Domain.ProductAggregate.Product.GetApplicableDiscounts"/> method to see if it returns the discoutns correctly.
+    /// Tests the <see cref="Domain.ProductAggregate.Product.GetApplicableDiscounts"/> method to see if it returns the discounts correctly.
     /// </summary>
     /// <param name="discounts">The discounts.</param>
     /// <param name="expectedValidDiscounts">The expected discounts the method should return.</param>
@@ -351,5 +351,23 @@ public class ProductTests
 
         product.IsActive.Should().BeFalse();
         product.Inventory.QuantityAvailable.Should().Be(0);
+    }
+
+    /// <summary>
+    /// Tests that clearing the product discounts works correctly.
+    /// </summary>
+    [Fact]
+    public void Product_WhenClearingTheDiscounts_DiscountsIsReset()
+    {
+        var product = ProductUtils.CreateProduct();
+
+        product.AddDiscounts(
+            DiscountUtils.CreateDiscount(percentage: 20),
+            DiscountUtils.CreateDiscount(percentage: 10)
+        );
+
+        product.ClearDiscounts();
+
+        product.Discounts.Should().BeEmpty();
     }
 }
