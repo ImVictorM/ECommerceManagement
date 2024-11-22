@@ -141,6 +141,18 @@ public sealed class Category : BaseEnumeration
     }
 
     /// <summary>
+    /// Parses a list of category names to a list of category ids.
+    /// </summary>
+    /// <param name="names">The category names.</param>
+    /// <returns>A list of category ids.</returns>
+    public static IEnumerable<long> Parse(IEnumerable<string> names)
+    {
+        var categories = List();
+
+        return names.Select(name => categories.First(c => c.Name == name).Id);
+    }
+
+    /// <summary>
     /// Gets all the predefined product categories in a list format.
     /// </summary>
     /// <returns>All predefined product categories.</returns>

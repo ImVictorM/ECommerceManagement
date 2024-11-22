@@ -40,7 +40,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         _dbContainer = new PostgreSqlBuilder()
            .WithImage("postgres:latest")
            .WithDatabase("ecommerce-management-test")
-           .WithPortBinding("49173", "5432")
+           .WithPortBinding("8002", "5432")
            .Build();
 
         await _dbContainer.StartAsync();

@@ -7,6 +7,7 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Moq;
+using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
@@ -43,7 +44,7 @@ public class UpdateProductDiscountsHandlerTests
         var command = UpdateProductDiscountsCommandUtils.CreateCommand();
 
         _mockProductRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
             .ReturnsAsync((Product?)null);
 
         await FluentActions
@@ -80,7 +81,7 @@ public class UpdateProductDiscountsHandlerTests
         var command = UpdateProductDiscountsCommandUtils.CreateCommand(discounts: discountsToAdd);
 
         _mockProductRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
             .ReturnsAsync(product);
 
         await _handler.Handle(command, default);

@@ -65,11 +65,50 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
     }
 
     /// <inheritdoc/>
+    public async Task<IEnumerable<TEntity>> FindSatisfyingAsync(ISpecificationQuery<TEntity> specification, int? limit = null)
+    {
+        var query = _dbSet.Where(specification.Criteria);
+
+        if (limit is int limitValue)
+        {
+            query = query.Take(limitValue);
+        }
+
+        return await query.ToListAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<TEntity?> FindFirstSatisfyingAsync(ISpecificationQuery<TEntity> specification)
+    {
+        return await _dbSet.Where(specification.Criteria).FirstOrDefaultAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<TEntity?> FindByIdSatisfyingAsync(TEntityId id, ISpecificationQuery<TEntity> specification)
+    {
+        var parameter = Expression.Parameter(typeof(TEntity), "entity");
+
+        var idProperty = Expression.Property(parameter, nameof(AggregateRoot<TEntityId>.Id));
+        var idValue = Expression.Constant(id);
+        var idFilter = Expression.Equal(idProperty, idValue);
+
+        var specFilter = Expression.Invoke(specification.Criteria, parameter);
+        var combinedFilter = Expression.AndAlso(idFilter, specFilter);
+
+        var combinedExpression = Expression.Lambda<Func<TEntity, bool>>(combinedFilter, parameter);
+
+        return await _dbSet.FirstOrDefaultAsync(combinedExpression);
+    }
+
+    /// <inheritdoc/>
     public async Task RemoveAsync(TEntityId id)
     {
         var entity = await _dbSet.FindAsync(id);
 
-        if (entity == null) return;
+        if (entity == null)
+        {
+            return;
+        }
 
         if (entity is ISoftDeletable softDeletable)
         {
@@ -93,7 +132,10 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
     {
         var existingEntity = await _dbSet.FindAsync(entity.Id);
 
-        if (existingEntity == null) return;
+        if (existingEntity == null)
+        {
+            return;
+        }
 
         _context.Entry(existingEntity).CurrentValues.SetValues(entity);
     }

@@ -7,6 +7,7 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Moq;
+using SharedKernel.Interfaces;
 
 namespace Application.UnitTests.Products.Commands.UpdateProductInventory;
 
@@ -41,7 +42,7 @@ public class UpdateProductInventoryCommandHandlerTests
         var command = UpdateProductInventoryCommandUtils.CreateCommand();
 
         _mockProductRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
             .ReturnsAsync((Product?)null);
 
         await FluentActions
@@ -64,7 +65,7 @@ public class UpdateProductInventoryCommandHandlerTests
         var expectedQuantityAfterIncrement = 32;
 
         _mockProductRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
             .ReturnsAsync(product);
 
         await _handler.Handle(command, default);

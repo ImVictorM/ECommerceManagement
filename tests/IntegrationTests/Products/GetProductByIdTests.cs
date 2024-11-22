@@ -24,6 +24,15 @@ public class GetProductByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
+    /// List of ids that correspond to inactive or products that does not exist.
+    /// </summary>
+    public static IEnumerable<object[]> NotFoundProductIds()
+    {
+        yield return new object[] { ProductSeed.GetSeedProduct(SeedAvailableProducts.INACTIVE_JACKET).Id };
+        yield return new object[] { 404 };
+    }
+
+    /// <summary>
     /// Tests when the product with the specified id exists the response code is OK and the response content is correct.
     /// </summary>
     [Fact]
@@ -40,18 +49,18 @@ public class GetProductByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests when the product with the specified id does not exist the response code is NOT_FOUND and the response content is correct.
+    /// Tests when the product with the specified id does not exist or is inactive the response code is NOT_FOUND and the response content is correct.
     /// </summary>
-    [Fact]
-    public async Task GetProductById_WhenProductDoesNotExists_ReturnsNotFound()
+    [Theory]
+    [MemberData(nameof(NotFoundProductIds))]
+    public async Task GetProductById_WhenProductDoesNotExistsOrIsInactive_ReturnsNotFound(long notFoundId)
     {
-        var invalidId = "4000";
-        var response = await Client.GetAsync($"/products/{invalidId}");
+        var response = await Client.GetAsync($"/products/{notFoundId}");
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         responseContent!.Status.Should().Be((int)System.Net.HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
-        responseContent.Detail.Should().Be($"The product with id {invalidId} does not exist");
+        responseContent.Detail.Should().Be($"The product with id {notFoundId} does not exist");
     }
 }

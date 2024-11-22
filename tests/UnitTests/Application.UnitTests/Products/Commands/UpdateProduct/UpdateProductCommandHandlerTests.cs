@@ -8,6 +8,7 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Moq;
+using SharedKernel.Interfaces;
 
 namespace Application.UnitTests.Products.Commands.UpdateProduct;
 
@@ -43,7 +44,7 @@ public class UpdateProductCommandHandlerTests
         var command = UpdateProductCommandUtils.CreateCommand(id: notFoundId);
 
         _mockProductRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
             .ReturnsAsync((Product?)null);
 
         await FluentActions
@@ -72,7 +73,7 @@ public class UpdateProductCommandHandlerTests
         );
 
         _mockProductRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ProductId>()))
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
             .ReturnsAsync(productToBeUpdated);
 
         await _handler.Handle(command, default);

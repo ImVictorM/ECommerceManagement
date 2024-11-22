@@ -28,9 +28,9 @@ public class DeactivateProductsTests : BaseIntegrationTest
     /// <summary>
     /// List of products contained in the database.
     /// </summary>
-    public static IEnumerable<object[]> SeedProducts()
+    public static IEnumerable<object[]> ActiveProducts()
     {
-        foreach (var product in ProductSeed.ListProducts())
+        foreach (var product in ProductSeed.ListProducts(p => p.IsActive))
         {
             yield return new object[] { product };
         }
@@ -77,28 +77,25 @@ public class DeactivateProductsTests : BaseIntegrationTest
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
-        responseContent.Detail.Should().Be($"Product with id {notFoundId} could not be deactivated because it does not exist");
+        responseContent.Detail.Should().Be($"Product with id {notFoundId} could not be deactivated because it does not exist or is already inactive");
     }
 
     /// <summary>
     /// Tests that when the product is deactivate the response is no content.
-    /// Also checks if the product was indeed deactivated and the inventory was set to zero.
+    /// Also checks if the product was made inaccessible by trying to fetch it.
     /// </summary>
     /// <param name="productToDeactivate">The product to be deactivated.</param>
     [Theory]
-    [MemberData(nameof(SeedProducts))]
-    public async Task DeactivateProduct_WhenProductExistAndUserHasPermission_DeactivatesAndSetsInventoryToZero(
+    [MemberData(nameof(ActiveProducts))]
+    public async Task DeactivateProduct_WhenProductExistAndUserHasPermission_DeactivatesAndMakesItInaccessible(
         Product productToDeactivate
     )
     {
         await Client.LoginAs(SeedAvailableUsers.Admin);
         var responseDelete = await Client.DeleteAsync($"/products/{productToDeactivate.Id}");
         var responseGet = await Client.GetAsync($"/products/{productToDeactivate.Id}");
-        var responseGetContent = await responseGet.Content.ReadFromJsonAsync<ProductResponse>();
 
         responseDelete.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        responseGet.StatusCode.Should().Be(HttpStatusCode.OK);
-        responseGetContent!.IsCurrentlyActive.Should().BeFalse();
-        responseGetContent.QuantityAvailable.Should().Be(0);
+        responseGet.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

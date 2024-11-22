@@ -7,6 +7,7 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Moq;
+using SharedKernel.Interfaces;
 
 namespace Application.UnitTests.Products.Queries.GetProductById;
 
@@ -41,7 +42,9 @@ public class GetProductByIdQueryHandlerTests
         var query = GetProductByIdQueryUtils.CreateQuery(id: "1");
         var productToFind = ProductUtils.CreateProduct();
 
-        _mockProductRepository.Setup(r => r.FindByIdAsync(It.IsAny<ProductId>())).ReturnsAsync(productToFind);
+        _mockProductRepository
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
+            .ReturnsAsync(productToFind);
 
         var result = await _handler.Handle(query, default);
 
@@ -52,12 +55,14 @@ public class GetProductByIdQueryHandlerTests
     /// Tests that when the product being retrieved does not exist throws a not found error.
     /// </summary>
     [Fact]
-    public async Task HandleGetProductById_WhenProductDoesNotExist_ThrowsNotFoundError()
+    public async Task HandleGetProductById_WhenProductDoesNotExistOrIsInactive_ThrowsNotFoundError()
     {
         var notFoundId = "5";
         var query = GetProductByIdQueryUtils.CreateQuery(id: notFoundId);
 
-        _mockProductRepository.Setup(r => r.FindByIdAsync(It.IsAny<ProductId>())).ReturnsAsync((Product?)null);
+        _mockProductRepository
+            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
+            .ReturnsAsync((Product?)null!);
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))

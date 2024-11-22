@@ -24,16 +24,18 @@ public class GetAllProductsTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests that is possible to get all the products.
+    /// Tests that is possible to get all the products that are active.
     /// </summary>
     [Fact]
-    public async Task GetAllProducts_WhenGettingAllProducts_ReturnsOkContainingTheProducts()
+    public async Task GetAllProducts_WhenGettingAllProducts_ReturnsOkContainingTheActiveProducts()
     {
+        var activeProduct = ProductSeed.ListProducts(product => product.IsActive);
+
         var response = await Client.GetAsync("/products");
         var responseContent = await response.Content.ReadFromJsonAsync<ProductListResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent!.Products.EnsureCorrespondsTo(ProductSeed.ListProducts());
+        responseContent!.Products.EnsureCorrespondsTo(activeProduct);
     }
 
     /// <summary>
@@ -54,9 +56,11 @@ public class GetAllProductsTests : BaseIntegrationTest
     /// Tests that it is possible to get the products within certain categories.
     /// </summary>
     [Fact]
-    public async Task GetAllProducts_WhenGettingProductsWithCategoriesParameter_ReturnOkContainingProductsThatHasTheSpecifiedCategories()
+    public async Task GetAllProducts_WhenGettingProductsWithCategoriesParameter_ReturnOkContainingProductsThatHaveTheSpecifiedCategories()
     {
-        var expectedProducts = ProductSeed.GetSeedProductsByCategories(Category.Fashion, Category.BooksStationery);
+        var expectedProducts = ProductSeed
+            .GetSeedProductsByCategories(Category.Fashion, Category.BooksStationery)
+            .Where(product => product.IsActive);
 
         var response = await Client.GetAsync($"/products?category={Category.Fashion.Name}&category={Category.BooksStationery.Name}");
         var responseContent = await response.Content.ReadFromJsonAsync<ProductListResponse>();

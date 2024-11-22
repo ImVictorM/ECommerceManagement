@@ -25,7 +25,11 @@ public enum SeedAvailableProducts
     /// <summary>
     /// Represents a pencil.
     /// </summary>
-    PENCIL
+    PENCIL,
+    /// <summary>
+    /// Represents a jacket that is inactive.
+    /// </summary>
+    INACTIVE_JACKET
 }
 
 /// <summary>
@@ -106,15 +110,28 @@ public static class ProductSeed
             productImagesUrl: [
                 new Uri("pencil.png", UriKind.Relative)
             ]
+        ),
+        [SeedAvailableProducts.INACTIVE_JACKET] = ProductUtils.CreateProduct(
+            name: "Mens Cotton Jacket",
+            description: "Great outerwear jackets for Spring/Autumn/Winter, suitable for many occasions.",
+            price: 200,
+            categories: [
+                Category.Fashion.Name
+            ],
+            productImagesUrl: [
+                new Uri("jacket.png", UriKind.Relative)
+            ],
+            active: false
         )
     };
 
     /// <summary>
     /// List all the seed products.
     /// </summary>
-    public static IEnumerable<Product> ListProducts()
+    /// <param name="filter">A filter to list specific products.</param>
+    public static IEnumerable<Product> ListProducts(Func<Product, bool>? filter = null)
     {
-        return _products.Values;
+        return filter != null ? _products.Values.Where(filter) : _products.Values;
     }
 
     /// <summary>

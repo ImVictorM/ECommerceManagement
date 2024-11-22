@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.Errors;
+using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using MediatR;
 
@@ -26,7 +27,7 @@ public class UpdateProductDiscountsCommandHandler : IRequestHandler<UpdateProduc
     {
         var productId = ProductId.Create(request.Id);
         var product =
-            await _unitOfWork.ProductRepository.FindByIdAsync(productId)
+            await _unitOfWork.ProductRepository.FindByIdSatisfyingAsync(productId, new QueryProductActiveSpec())
             ?? throw new ProductNotFoundException($"Product with id {productId} does not exist");
 
         product.ClearDiscounts();

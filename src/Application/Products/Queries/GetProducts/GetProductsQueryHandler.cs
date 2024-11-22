@@ -2,7 +2,9 @@ using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.DTOs;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Enumerations;
+using Domain.ProductAggregate.Specifications;
 using MediatR;
+using SharedKernel.Abstracts;
 
 namespace Application.Products.Queries.GetProducts;
 
@@ -26,22 +28,17 @@ public sealed class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, 
     /// <inheritdoc/>
     public async Task<ProductListResult> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        IEnumerable<Product> products;
         var limit = request.Limit ?? DefaultProductQuantityToTake;
+
+        CompositeQuerySpecification<Product> spec = new QueryProductActiveSpec();
 
         if (request.categories != null && request.categories.Any())
         {
-            var categoryIds = new HashSet<long>(request.categories.Select(Category.Create).Select(c => c.Id));
-
-            products = await _unitOfWork.ProductRepository.FindAllAsync(product =>
-                product.ProductCategories.Any(pc => categoryIds.Contains(pc.CategoryId))
-            );
-        }
-        else
-        {
-            products = await _unitOfWork.ProductRepository.FindAllAsync();
+            spec.And(new QueryProductByCategorySpec(Category.Parse(request.categories)));
         }
 
-        return new ProductListResult(products.Take(limit));
+        var products = await _unitOfWork.ProductRepository.FindSatisfyingAsync(spec, limit: limit);
+
+        return new ProductListResult(products);
     }
 }

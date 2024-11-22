@@ -44,7 +44,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     /// </summary>
     public static IEnumerable<object[]> ProductAndQuantityToIncrementPairs()
     {
-        foreach (var product in ProductSeed.ListProducts())
+        foreach (var product in ProductSeed.ListProducts(p => p.IsActive))
         {
             yield return new object[] { product, new Random().Next(1, 51) };
         }

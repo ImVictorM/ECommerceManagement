@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.Errors;
+using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using MediatR;
 
@@ -27,7 +28,7 @@ public class UpdateProductInventoryCommandHandler : IRequestHandler<UpdateProduc
         var productId = ProductId.Create(request.ProductId);
 
         var product =
-            await _unitOfWork.ProductRepository.FindByIdAsync(productId)
+            await _unitOfWork.ProductRepository.FindByIdSatisfyingAsync(productId, new QueryProductActiveSpec())
             ?? throw new ProductNotFoundException($"It was not possible to increment the inventory of the product with id {productId} because the product does not exist");
 
         product.IncrementQuantityInInventory(request.QuantityToIncrement);

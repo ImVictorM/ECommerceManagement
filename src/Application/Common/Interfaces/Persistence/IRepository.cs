@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using SharedKernel.Interfaces;
 using SharedKernel.Models;
 
 namespace Application.Common.Interfaces.Persistence;
@@ -32,6 +33,32 @@ public interface IRepository<TEntity, TEntityId>
     /// <param name="id">The identifier of type <typeparamref name="TEntityId"/>.</param>
     /// <returns>The record that matches the identifier.</returns>
     Task<TEntity?> FindByIdAsync(TEntityId id);
+
+    /// <summary>
+    /// Finds all records that satisfies an specification criteria.
+    /// </summary>
+    /// <param name="specification">The specification.</param>
+    /// <param name="limit">The max quantity of records to fetch.</param>
+    /// <returns>All records that satisfies the specification.</returns>
+    Task<IEnumerable<TEntity>> FindSatisfyingAsync(
+        ISpecificationQuery<TEntity> specification,
+        int? limit = null
+    );
+
+    /// <summary>
+    /// Retrieves the first record that satisfies an specification criteria.
+    /// </summary>
+    /// <param name="specification">The specification.</param>
+    /// <returns>The first record that satisfies the specification criteria.</returns>
+    Task<TEntity?> FindFirstSatisfyingAsync(ISpecificationQuery<TEntity> specification);
+
+    /// <summary>
+    /// Retrieves an entity by id that satisfies the specification criteria.
+    /// </summary>
+    /// <param name="id">The entity id.</param>
+    /// <param name="specification">The specification.</param>
+    /// <returns>The entity that has the specified id and satisfies the specification criteria.</returns>
+    Task<TEntity?> FindByIdSatisfyingAsync(TEntityId id, ISpecificationQuery<TEntity> specification);
 
     /// <summary>
     /// Adds a new record.

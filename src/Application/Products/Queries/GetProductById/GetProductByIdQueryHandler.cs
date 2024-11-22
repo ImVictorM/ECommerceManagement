@@ -1,6 +1,7 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.DTOs;
 using Application.Products.Queries.Common.Errors;
+using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using MediatR;
 
@@ -27,9 +28,9 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
     {
         var productId = ProductId.Create(request.Id);
 
-        var product =
-            await _unitOfWork.ProductRepository.FindByIdAsync(productId) ??
-            throw new ProductNotFoundException($"The product with id {productId} does not exist");
+        var product = await _unitOfWork.ProductRepository
+            .FindByIdSatisfyingAsync(productId, new QueryProductActiveSpec())
+            ?? throw new ProductNotFoundException($"The product with id {productId} does not exist");
 
         return new ProductResult(product);
     }

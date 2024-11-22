@@ -20,6 +20,7 @@ public static class ProductUtils
     /// <param name="categories">The product categories.</param>
     /// <param name="productImagesUrl">The product image urls.</param>
     /// <param name="initialDiscounts">The product initial discounts.</param>
+    /// <param name="active">Defines if the product should be created as an active or inactive product.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product CreateProduct(
         string? name = null,
@@ -28,10 +29,11 @@ public static class ProductUtils
         int? quantityAvailable = null,
         IEnumerable<string>? categories = null,
         IEnumerable<Uri>? productImagesUrl = null,
-        IEnumerable<Discount>? initialDiscounts = null
+        IEnumerable<Discount>? initialDiscounts = null,
+        bool active = true
     )
     {
-        return Product.Create(
+        var product = Product.Create(
             name ?? DomainConstants.Product.Name,
             description ?? DomainConstants.Product.Description,
             price ?? DomainConstants.Product.Price,
@@ -40,6 +42,13 @@ public static class ProductUtils
             productImagesUrl ?? CreateProductImagesUrl(),
             initialDiscounts
         );
+
+        if (!active)
+        {
+            product.MakeInactive();
+        }
+
+        return product;
     }
 
     /// <summary>
@@ -47,15 +56,17 @@ public static class ProductUtils
     /// </summary>
     /// <param name="count">The quantity of products to be created.</param>
     /// <param name="categories">The categories the products will have.</param>
+    /// <param name="active">Defines if the products created should be active or inactive.</param>
     /// <returns>A list of products.</returns>
-    public static IEnumerable<Product> CreateProducts(int count = 1, IEnumerable<string>? categories = null)
+    public static IEnumerable<Product> CreateProducts(int count = 1, IEnumerable<string>? categories = null, bool active = true)
     {
         return Enumerable
             .Range(0, count)
             .Select(index => CreateProduct(
                 name: DomainConstants.Product.ProductNameFromIndex(index),
                 description: DomainConstants.Product.ProductDescriptionFromIndex(index),
-                categories: categories
+                categories: categories,
+                active: active
             ));
     }
 
