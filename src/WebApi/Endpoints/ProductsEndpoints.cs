@@ -36,7 +36,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Create Product",
-                Description = "Creates a new product. Administrators only."
+                Description = "Creates a new product. Admin authentication is required."
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
@@ -46,7 +46,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Product By Identifier",
-                Description = "Retrieves a product by identifier value. Does not require authentication."
+                Description = "Retrieves an active product by its identifier. No authentication is required."
             });
 
         productGroup
@@ -55,7 +55,10 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Products",
-                Description = "Retrieves all products. Will retrieve the first 20 products if no limit is specified. Can filter the products by the specified categories. Does not require authentication."
+                Description = @"Retrieves all active products.
+It will retrieve the first 20 products if no limit is specified.
+It is possible to filter the products by the specified categories appending &category={category_name} to the URL.
+No authentication is required."
             });
 
         productGroup
@@ -64,7 +67,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Product Categories",
-                Description = "Retrieves all available product categories. Does not require authentication"
+                Description = "Retrieves all available product categories. No authentication is required."
             });
 
         productGroup
@@ -73,7 +76,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product",
-                Description = "Updates the base details of a product. Needs authentication as admin"
+                Description = "Updates the details of an active product. Admin authentication is required."
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
@@ -83,7 +86,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Deactivate Product",
-                Description = "Deactivates a product and set the inventory to 0 items. Needs authentication as admin"
+                Description = "Deactivates a product and set the inventory to 0 items. Admin authentication is required."
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
@@ -93,7 +96,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product Inventory",
-                Description = "Increments a product's inventory quantity available. Needs authentication as admin"
+                Description = "Increments the inventory quantity available for an active product. Admin authentication is required."
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
@@ -103,7 +106,9 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product Discounts",
-                Description = "Updates the list of discounts related to a product. Needs authentication as admin"
+                Description = @"Changes the list of discounts related to an active product.
+If you need to remove a product's discounts, send an empty discounts list.
+Admin authentication is required."
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
