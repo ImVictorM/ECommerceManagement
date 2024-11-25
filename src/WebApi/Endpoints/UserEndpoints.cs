@@ -35,7 +35,7 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get User By Authentication Token",
-                Description = "Retrieves the user based on their authentication token",
+                Description = "Retrieves the currently authenticated user's details. Requires authentication.",
             })
             .RequireAuthorization();
 
@@ -45,7 +45,7 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get User By Id",
-                Description = "Retrieves a user by their identifier",
+                Description = "Retrieves a specific user's details by identifier. Admin authentication is required.",
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
@@ -55,7 +55,7 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get All Users",
-                Description = "Retrieves all users, optionally filtered by active status"
+                Description = "Retrieves the users. The {{active}} query parameter is optional and can be used to filter active/inactive users. Admin authentication is required."
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
@@ -65,7 +65,7 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update User By Id",
-                Description = " Updates a user's information"
+                Description = "Updates a user's details. Users can only update their own details. Administrators can update any other non-administrator user's details. Requires authentication."
             })
             .RequireAuthorization(UpdateUserPolicy.Name);
 
@@ -75,7 +75,7 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Delete User",
-                Description = "Softly deletes a user by making them inactive"
+                Description = "Deactivates a user by setting them as inactive. Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account."
             })
             .RequireAuthorization(DeactivateUserPolicy.Name);
     }
@@ -126,7 +126,7 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserListResponse>(result));
     }
 
-    private async Task<Results<Ok, BadRequest, Conflict, ForbidHttpResult, UnauthorizedHttpResult>> UpdateUser(
+    private async Task<Results<NoContent, BadRequest, Conflict, ForbidHttpResult, UnauthorizedHttpResult>> UpdateUser(
         [FromRoute] string id,
         [FromBody] UpdateUserRequest request,
         ISender sender,
@@ -137,10 +137,10 @@ public sealed class UserEndpoints : ICarterModule
 
         await sender.Send(command);
 
-        return TypedResults.Ok();
+        return TypedResults.NoContent();
     }
 
-    private async Task<Results<Ok, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
+    private async Task<Results<NoContent, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
         [FromRoute] string id,
         ISender sender
     )
@@ -149,6 +149,6 @@ public sealed class UserEndpoints : ICarterModule
 
         await sender.Send(command);
 
-        return TypedResults.Ok();
+        return TypedResults.NoContent();
     }
 }

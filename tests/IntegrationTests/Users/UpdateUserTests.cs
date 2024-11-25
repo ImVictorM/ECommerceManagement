@@ -65,17 +65,17 @@ public class UpdateUserTests : BaseIntegrationTest
 
     /// <summary>
     /// Tests that a customer can update their own information.
-    /// Verifies that the response status is 200 OK and checks that the user's details are updated correctly.
+    /// Verifies that the response status and checks that the user's details are updated correctly.
     /// </summary>
     [Fact]
-    public async Task UpdateUser_WhenCustomerTriesToUpdateThemselves_ReturnsOkAndUpdatesUser()
+    public async Task UpdateUser_WhenCustomerTriesToUpdateThemselves_ReturnsNoContentAndUpdatesUser()
     {
         var request = UpdateUserRequestUtils.CreateRequest(name: "marcos rogério", phone: "19982748242", email: "marcao@email.com");
 
         var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.Customer);
         var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", request);
 
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var getResponse = await Client.GetAsync("/users/self");
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<UserResponse>();
@@ -136,10 +136,10 @@ public class UpdateUserTests : BaseIntegrationTest
 
     /// <summary>
     /// Tests that an admin user can successfully update a customer's information.
-    /// Verifies that the update succeeds with a 200 OK response and checks that the user's details are updated correctly.
+    /// Verifies that the update succeeds and checks that the user's details are updated correctly.
     /// </summary>
     [Fact]
-    public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsOkAndUpdatesUser()
+    public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsNoContentAndUpdatesUser()
     {
         var customerToBeUpdated = UserSeed.GetSeedUser(SeedAvailableUsers.InactiveCustomer);
         var request = UpdateUserRequestUtils.CreateRequest(name: "User new name", phone: "19982748242", email: "newemail@email.com");
@@ -147,7 +147,7 @@ public class UpdateUserTests : BaseIntegrationTest
         await Client.LoginAs(SeedAvailableUsers.Admin);
         var updateResponse = await Client.PutAsJsonAsync($"users/{customerToBeUpdated.Id}", request);
 
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var getResponse = await Client.GetAsync($"users/{customerToBeUpdated.Id}");
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<UserResponse>();

@@ -77,7 +77,7 @@ public class DeactivateUserTests : BaseIntegrationTest
     [Theory]
     [InlineData(SeedAvailableUsers.Customer)]
     [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    public async Task DeactivateUser_WhenAdminTriesToDeactivateAnotherUser_DeactivateTheUserAndReturnsOk(SeedAvailableUsers seedCustomerType)
+    public async Task DeactivateUser_WhenAdminTriesToDeactivateAnotherUser_DeactivateTheUserAndReturnsNoContent(SeedAvailableUsers seedCustomerType)
     {
         var customerToDeactivate = UserSeed.GetSeedUser(seedCustomerType);
 
@@ -87,7 +87,7 @@ public class DeactivateUserTests : BaseIntegrationTest
 
         var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<UserListResponse>();
 
-        responseDeactivate.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        responseDeactivate.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         responseGetInactiveUsers.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseGetInactiveUsersContent!.Users.Select(u => u.Id).Should().Contain(customerToDeactivate.Id.ToString());
     }
@@ -97,7 +97,7 @@ public class DeactivateUserTests : BaseIntegrationTest
     /// inactive. Verifies that the self-deactivated user is included in the list of inactive users.
     /// </summary>
     [Fact]
-    public async Task DeactivateUser_WhenCustomerTriesToDeactivateThemselves_DeactivateThemAndReturnsOk()
+    public async Task DeactivateUser_WhenCustomerTriesToDeactivateThemselves_DeactivateThemAndReturnsNoContent()
     {
         var customer = await Client.LoginAs(SeedAvailableUsers.Customer);
         var responseDeactivate = await Client.DeleteAsync($"/users/{customer.Id}");
@@ -107,7 +107,7 @@ public class DeactivateUserTests : BaseIntegrationTest
 
         var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<UserListResponse>();
 
-        responseDeactivate.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        responseDeactivate.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         responseGetInactiveUsers.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseGetInactiveUsersContent!.Users.Select(u => u.Id).Should().Contain(customer.Id.ToString());
     }
