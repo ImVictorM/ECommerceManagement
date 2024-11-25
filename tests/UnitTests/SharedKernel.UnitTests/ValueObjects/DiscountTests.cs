@@ -16,16 +16,14 @@ public class DiscountTests
     /// <returns>A list of valid starting and ending dates.</returns>
     public static IEnumerable<object[]> ValidDiscountDates()
     {
-        var now = DateTimeOffset.UtcNow;
-
         yield return new object[] {
-             now.AddHours(10),
-             now.AddDays(1).AddHours(20)
+             DateTimeOffset.UtcNow.AddHours(10),
+             DateTimeOffset.UtcNow.AddDays(1).AddHours(20)
         };
         yield return new object[] {
 
-            now.AddDays(2),
-            now.AddDays(2).AddHours(10)
+            DateTimeOffset.UtcNow.AddDays(2),
+            DateTimeOffset.UtcNow.AddDays(2).AddHours(10)
         };
     }
 
