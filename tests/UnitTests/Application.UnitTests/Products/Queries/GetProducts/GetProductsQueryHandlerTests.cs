@@ -4,6 +4,7 @@ using Application.UnitTests.Products.Queries.TestUtils;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SharedKernel.Interfaces;
 
@@ -28,7 +29,10 @@ public class GetProductsQueryHandlerTests
 
         _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
 
-        _handler = new GetProductsQueryHandler(_mockUnitOfWork.Object);
+        _handler = new GetProductsQueryHandler(
+            _mockUnitOfWork.Object,
+            new Mock<ILogger<GetProductsQueryHandler>>().Object
+        );
     }
 
     /// <summary>

@@ -6,6 +6,7 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SharedKernel.Interfaces;
 
@@ -30,7 +31,10 @@ public class DeactivateProductCommandHandlerTests
 
         _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
 
-        _handler = new DeactivateProductCommandHandler(_mockUnitOfWork.Object);
+        _handler = new DeactivateProductCommandHandler(
+            _mockUnitOfWork.Object,
+            new Mock<ILogger<DeactivateProductCommandHandler>>().Object
+        );
     }
 
     /// <summary>

@@ -2,6 +2,8 @@ using Application.Products.Queries.GetProductCategories;
 using Application.UnitTests.Products.Queries.TestUtils;
 using Domain.ProductAggregate.Enumerations;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace Application.UnitTests.Products.Queries.GetProductCategories;
 
@@ -17,7 +19,7 @@ public class GetProductCategoriesQueryHandlerTests
     /// </summary>
     public GetProductCategoriesQueryHandlerTests()
     {
-        _handler = new GetProductCategoriesQueryHandler();
+        _handler = new GetProductCategoriesQueryHandler(new Mock<ILogger<GetProductCategoriesQueryHandler>>().Object);
     }
 
     /// <summary>

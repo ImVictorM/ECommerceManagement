@@ -6,6 +6,7 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SharedKernel.Interfaces;
 
@@ -30,7 +31,10 @@ public class UpdateProductInventoryCommandHandlerTests
 
         _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
 
-        _handler = new UpdateProductInventoryCommandHandler(_mockUnitOfWork.Object);
+        _handler = new UpdateProductInventoryCommandHandler(
+            _mockUnitOfWork.Object,
+            new Mock<ILogger<UpdateProductInventoryCommandHandler>>().Object
+        );
     }
 
     /// <summary>
