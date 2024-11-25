@@ -4,10 +4,10 @@
 
 ### Register
 
-This endpoint allows a new user to register for an account. Registration requires a valid name, email, and password.
+This endpoint allows a new user to register for an account.
 
 ```js
-POST {{base_endpoint}}/register
+POST "/auth/register"
 ```
 
 #### Headers
@@ -15,6 +15,12 @@ POST {{base_endpoint}}/register
 - `Content-Type: application/json`
 
 #### Request Format
+
+Field Rules:
+
+- name - must be at least 3 characters long
+- email - must be unique and have a valid format
+- password - Length must be greater or equal to 6 and contain at least one digit and one character
 
 ```json
 {
@@ -39,10 +45,11 @@ POST {{base_endpoint}}/register
 
 ### Login
 
-Users can log in using their email and password. Note: Inactive users will receive a `400 Bad Request` response.
+Users can log in using their email and password.
+PS: Inactive users cannot log in.
 
 ```js
-POST {{base_endpoint}}/login
+POST "/auth/login"
 ```
 
 #### Headers
@@ -50,6 +57,11 @@ POST {{base_endpoint}}/login
 - `Content-Type: application/json`
 
 #### Request Format
+
+Field Rules:
+
+- email - must not be empty
+- password - must not be empty
 
 ```json
 {

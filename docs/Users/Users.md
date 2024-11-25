@@ -4,10 +4,10 @@
 
 ### Get User By Authentication Token
 
-Retrieves the currently authenticated user's details. This endpoint is accessible to any authenticated user. It is meant to be used by customer to fetch data about themselves.
+Retrieves the currently authenticated user's details. Requires authentication.
 
 ```js
-GET {{base_endpoint}}/self
+GET "users/self"
 ```
 
 #### Headers
@@ -31,10 +31,10 @@ GET {{base_endpoint}}/self
 
 ### Get User By Id
 
-Retrieves a specific user's details by ID. This endpoint is only accessible to administrators.
+Retrieves a specific user's details by identifier. Admin authentication is required.
 
 ```js
-GET {{base_endpoint}}/{{user_id}}
+GET "/users/{{user_id}}"
 
 ```
 
@@ -59,10 +59,10 @@ GET {{base_endpoint}}/{{user_id}}
 
 ### Get Users
 
-Retrieves a list of users. This endpoint is only accessible to administrators. The active query parameter is optional and can be used to filter active/inactive users.
+Retrieves the users. The {{active}} query parameter is optional and can be used to filter active/inactive users. Admin authentication is required.
 
 ```js
-GET {{base_endpoint}}?active=true
+GET "/users?active=true"
 ```
 
 #### Headers
@@ -101,7 +101,7 @@ GET {{base_endpoint}}?active=true
 Updates a user's details. Users can only update their own details. Administrators can update any other non-administrator user's details.
 
 ```js
-PUT {{base_endpoint}}/{{user_id}}
+PUT "/users/{{user_id}}"
 ```
 
 #### Headers
@@ -110,6 +110,12 @@ PUT {{base_endpoint}}/{{user_id}}
 - `Authorization: Bearer {{token}}`
 
 #### Request Format
+
+Field Rules:
+
+- name - must be at least 3 characters long
+- phone - can be null
+- email - must be unique and have a valid format
 
 ```json
 {
@@ -121,14 +127,14 @@ PUT {{base_endpoint}}/{{user_id}}
 
 #### Response Format
 
-200 OK
+204 NO_CONTENT
 
 ### Deactivate User
 
-Deactivates a user by setting them as inactive. Users can deactivate their own accounts, while administrators can deactivate any non-administrator user's account.
+Deactivates a user by setting them as inactive. Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account.
 
 ```js
-DELETE {{base_endpoint}}/{{user_id}}
+DELETE "/users/{{user_id}}"
 ```
 
 #### Headers
@@ -137,4 +143,4 @@ DELETE {{base_endpoint}}/{{user_id}}
 
 #### Response Format
 
-200 Ok
+204 NO_CONTENT

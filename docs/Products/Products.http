@@ -3,7 +3,7 @@
 @product_id = 2
 
 ### Creates a new product. Admin authentication is required.
-### Returns a 204 NoContent response in case of success.
+### Returns a 204 NO_CONTENT response in case of success.
 POST {{base_endpoint}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -40,7 +40,7 @@ GET {{base_endpoint}}?category=fashion&category=books_stationery&limit=2
 GET {{base_endpoint}}/categories
 
 ### Updates the details of an active product. Admin authentication is required.
-### Returns a 204 NoContent response in case of success.
+### Returns a 204 NO_CONTENT response in case of success.
 PUT {{base_endpoint}}/{{product_id}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -59,12 +59,12 @@ Authorization: Bearer {{token}}
 }
 
 ### Deactivates a product and set the inventory to 0 items. Admin authentication is required.
-### Returns a 204 NoContent response in case of success.
+### Returns a 204 NO_CONTENT response in case of success.
 DELETE {{base_endpoint}}/{{product_id}}
 Authorization: Bearer {{token}}
 
 ### Increments the inventory quantity available for an active product. Admin authentication is required.
-### Returns a 204 NoContent response in case of success.
+### Returns a 204 NO_CONTENT response in case of success.
 PUT {{base_endpoint}}/{{product_id}}/inventory
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -74,7 +74,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Changes the list of discounts related to an active product. If you need to remove a product's discounts, send an empty discounts list. Admin authentication is required.
-### Returns a 204 NoContent response in case of success.
+### Returns a 204 NO_CONTENT response in case of success.
 PUT {{base_endpoint}}/{{product_id}}/discounts
 Content-Type: application/json
 Authorization: Bearer {{token}}

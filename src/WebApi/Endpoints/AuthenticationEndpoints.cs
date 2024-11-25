@@ -27,7 +27,7 @@ public sealed class AuthenticationEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Register",
-                Description = "Registers a new user"
+                Description = "This endpoint allows a new user to register for an account."
             });
 
         authenticationGroup
@@ -36,7 +36,7 @@ public sealed class AuthenticationEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Login",
-                Description = "Authenticates a registered user"
+                Description = "Users can log in using their email and password."
             });
     }
 
