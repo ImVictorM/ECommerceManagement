@@ -35,16 +35,14 @@ public class DiscountTests
     /// <returns>A list of invalid starting and ending dates.</returns>
     public static IEnumerable<object[]> InvalidDiscountDates()
     {
-        var now = DateTimeOffset.UtcNow;
-
         yield return new object[] {
-            now.AddDays(-1).AddHours(-23),
-            now.AddDays(2),
+            DateTimeOffset.UtcNow.AddDays(-1).AddHours(-23),
+            DateTimeOffset.UtcNow.AddDays(2),
             "The starting date for the discount cannot be in the past"
         };
         yield return new object[] {
-            now.AddDays(2),
-            now.AddDays(2).AddMinutes(59),
+            DateTimeOffset.UtcNow.AddDays(2),
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(59),
             "The ending date and time must be at least one hour after the starting date"
         };
     }
@@ -54,13 +52,11 @@ public class DiscountTests
     /// </summary>
     public static IEnumerable<object[]> DiscountAndExpectedValidToDatePairs()
     {
-        var now = DateTimeOffset.UtcNow;
-
         yield return new object[]
         {
             DiscountUtils.CreateDiscount(
-                startingDate: now.AddHours(-2),
-                endingDate: now.AddDays(1)
+                startingDate: DateTimeOffset.UtcNow.AddHours(-2),
+                endingDate: DateTimeOffset.UtcNow.AddDays(1)
             ),
             true
         };
@@ -68,8 +64,8 @@ public class DiscountTests
         yield return new object[]
         {
             DiscountUtils.CreateDiscount(
-                startingDate: now.AddHours(-20),
-                endingDate: now.AddHours(-5)
+                startingDate: DateTimeOffset.UtcNow.AddHours(-20),
+                endingDate: DateTimeOffset.UtcNow.AddHours(-5)
             ),
             false
         };
@@ -77,8 +73,8 @@ public class DiscountTests
         yield return new object[]
         {
             DiscountUtils.CreateDiscount(
-                startingDate: now.AddDays(4),
-                endingDate: now.AddDays(10)
+                startingDate: DateTimeOffset.UtcNow.AddDays(4),
+                endingDate: DateTimeOffset.UtcNow.AddDays(10)
             ),
             false
         };
