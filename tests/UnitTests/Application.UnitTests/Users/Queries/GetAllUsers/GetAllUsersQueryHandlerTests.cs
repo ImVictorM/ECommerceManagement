@@ -6,6 +6,7 @@ using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Application.UnitTests.Users.Queries.GetAllUsers;
@@ -29,7 +30,10 @@ public class GetAllUsersQueryHandlerTests
 
         _mockUnitOfWork.Setup(uw => uw.UserRepository).Returns(_mockUserRepository.Object);
 
-        _handler = new GetAllUsersQueryHandler(_mockUnitOfWork.Object);
+        _handler = new GetAllUsersQueryHandler(
+            _mockUnitOfWork.Object,
+            new Mock<ILogger<GetAllUsersQueryHandler>>().Object
+        );
     }
 
     /// <summary>

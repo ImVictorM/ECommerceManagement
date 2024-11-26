@@ -8,6 +8,7 @@ using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Application.UnitTests.Users.Commands.UpdateUser;
@@ -31,7 +32,10 @@ public class UpdateUserCommandHandlerTests
 
         _mockUnityOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
 
-        _handler = new UpdateUserCommandHandler(_mockUnityOfWork.Object);
+        _handler = new UpdateUserCommandHandler(
+            _mockUnityOfWork.Object,
+            new Mock<ILogger<UpdateUserCommandHandler>>().Object
+        );
     }
 
     /// <summary>
@@ -70,6 +74,25 @@ public class UpdateUserCommandHandlerTests
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
             .ReturnsAsync((User?)null);
+
+        await FluentActions
+            .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))
+            .Should()
+            .ThrowAsync<UserNotFoundException>()
+            .WithMessage("The user to be updated does not exist");
+    }
+
+    /// <summary>
+    /// Tests that when the user being updated is inactive an error is thrown.
+    /// </summary>
+    [Fact]
+    public async Task HandleUpdateUser_WhenUserIsInactive_ThrowsException()
+    {
+        var inactiveUser = UserUtils.CreateUser(active: false);
+
+        _mockUserRepository
+            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .ReturnsAsync(inactiveUser);
 
         await FluentActions
             .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))

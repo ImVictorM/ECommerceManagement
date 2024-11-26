@@ -1,31 +1,38 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Users.Common.DTOs;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Queries.GetAllUsers;
 
 /// <summary>
 /// Query handler for the <see cref="GetAllUsersQuery"/> query.
 /// </summary>
-public sealed class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, UserListResult>
+public sealed partial class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, UserListResult>
 {
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetAllUsersQueryHandler"/>.
     /// </summary>
-    /// <param name="unitOfWork">The unity of work.</param>
-    public GetAllUsersQueryHandler(IUnitOfWork unitOfWork)
+    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="logger">The logger.</param>
+    public GetAllUsersQueryHandler(IUnitOfWork unitOfWork, ILogger<GetAllUsersQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task<UserListResult> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
+        LogInitiatingUsersRetrieval();
+
         var users = request.IsActive == null ?
             await _unitOfWork.UserRepository.FindAllAsync()
             : await _unitOfWork.UserRepository.FindAllAsync(user => user.IsActive == request.IsActive);
+
+        LogUsersRetrieved(request.IsActive);
 
         return new UserListResult(users);
     }

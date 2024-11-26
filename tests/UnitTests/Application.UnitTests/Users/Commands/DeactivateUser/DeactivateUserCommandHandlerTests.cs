@@ -5,6 +5,7 @@ using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Application.UnitTests.Users.Commands.DeactivateUser;
@@ -28,7 +29,10 @@ public class DeactivateUserCommandHandlerTests
 
         _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
 
-        _handler = new DeactivateUserCommandHandler(_mockUnitOfWork.Object);
+        _handler = new DeactivateUserCommandHandler(
+            _mockUnitOfWork.Object,
+            new Mock<ILogger<DeactivateUserCommandHandler>>().Object
+        );
     }
 
     /// <summary>

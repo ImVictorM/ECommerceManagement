@@ -141,7 +141,7 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsNoContentAndUpdatesUser()
     {
-        var customerToBeUpdated = UserSeed.GetSeedUser(SeedAvailableUsers.InactiveCustomer);
+        var customerToBeUpdated = UserSeed.GetSeedUser(SeedAvailableUsers.Customer);
         var request = UpdateUserRequestUtils.CreateRequest(name: "User new name", phone: "19982748242", email: "newemail@email.com");
 
         await Client.LoginAs(SeedAvailableUsers.Admin);

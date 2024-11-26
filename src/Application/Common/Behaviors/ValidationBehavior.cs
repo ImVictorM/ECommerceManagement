@@ -1,5 +1,6 @@
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Common.Behaviors;
 
@@ -10,12 +11,9 @@ namespace Application.Common.Behaviors;
 /// </summary>
 /// <typeparam name="TRequest">The type of the request.</typeparam>
 /// <typeparam name="TResponse">The type of the response.</typeparam>
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public partial class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    /// <summary>
-    /// The validator associated with the request.
-    /// </summary>
     private readonly IValidator<TRequest>? _validator;
 
     /// <summary>
@@ -25,21 +23,17 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     /// An optional validator for the request. If no validator is provided, the request will not
     /// be validated.
     /// </param>
-    public ValidationBehavior(IValidator<TRequest>? validator = null)
+    /// <param name="logger">The logger.</param>
+    public ValidationBehavior(
+        ILogger<ValidationBehavior<TRequest, TResponse>> logger,
+        IValidator<TRequest>? validator = null
+    )
     {
+        _logger = logger;
         _validator = validator;
     }
 
-    /// <summary>
-    /// Handles the validation of the request before it reaches the next handler in the pipeline.
-    /// </summary>
-    /// <param name="request">The request to be handled.</param>
-    /// <param name="next">The next delegate in the pipeline.</param>
-    /// <param name="cancellationToken">A cancellation token for the request.</param>
-    /// <returns>The response from the next handler if the request passes validation.</returns>
-    /// <exception cref="ValidationException">
-    /// Thrown if the request fails validation.
-    /// </exception>
+    /// <inheritdoc/>
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
@@ -48,16 +42,23 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     {
         if (_validator is null)
         {
+            LogNoValidator(typeof(TRequest).Name);
+
             return await next();
         }
+
+        LogValidatingRequest(typeof(TRequest).Name);
 
         var validationResult = await _validator.ValidateAsync(request, cancellationToken);
 
         if (validationResult.IsValid)
         {
+            LogRequestIsValid();
+
             return await next();
         }
 
+        LogRequestIsInvalid();
         throw new ValidationException(validationResult.Errors);
     }
 }

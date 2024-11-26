@@ -3,6 +3,7 @@ using Application.Common.Interfaces.Persistence;
 using Application.Users.Common.Errors;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SharedKernel.ValueObjects;
 
 namespace Application.Users.Commands.UpdateUser;
@@ -11,7 +12,7 @@ namespace Application.Users.Commands.UpdateUser;
 /// Command handler for the command <see cref="UpdateUserCommand"/>.
 /// Handles user registration.
 /// </summary>
-public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Unit>
+public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -19,30 +20,42 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
     /// Initializes a new instance of the <see cref="UpdateUserCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public UpdateUserCommandHandler(IUnitOfWork unitOfWork)
+    /// <param name="logger">The logger.</param>
+    public UpdateUserCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateUserCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
+        LogInitiatingUserUpdate(request.Id);
+
         var userToUpdateId = UserId.Create(request.Id);
         var inputEmail = Email.Create(request.Email);
 
-        var user = await
-            _unitOfWork.UserRepository.FindByIdAsync(userToUpdateId) ??
-            throw new UserNotFoundException("The user to be updated does not exist").WithContext("UserId", userToUpdateId.ToString());
+        var user = await _unitOfWork.UserRepository.FindByIdAsync(userToUpdateId);
 
+        if (user == null || !user.IsActive)
+        {
+            LogUserNotFound();
+            throw new UserNotFoundException("The user to be updated does not exist").WithContext("UserId", userToUpdateId.ToString());
+        }
+            
         if (user.Email != inputEmail)
         {
             var existingUserWithEmail = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
 
             if (existingUserWithEmail != null)
             {
+                LogEmailConflict();
+
                 throw new UserAlreadyExistsException("The email you entered is already in use");
             }
         }
+
+        LogUpdatingUser();
 
         user.Update(
             name: request.Name,
@@ -53,6 +66,8 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
         await _unitOfWork.UserRepository.UpdateAsync(user);
 
         await _unitOfWork.SaveChangesAsync();
+
+        LogUpdateComplete();
 
         return Unit.Value;
     }
