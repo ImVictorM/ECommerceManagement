@@ -11,9 +11,6 @@ namespace Infrastructure.Persistence;
 /// </summary>
 public sealed class UnitOfWork : IUnitOfWork
 {
-    /// <summary>
-    /// The database context.
-    /// </summary>
     private readonly ECommerceDbContext _context;
 
     /// <inheritdoc/>

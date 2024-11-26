@@ -27,39 +27,36 @@ public class ECommerceDbContext : DbContext
     /// </summary>
     private const string KeyPrefix = "id";
 
-    /// <summary>
-    /// The context interceptors.
-    /// </summary>
     private readonly IEnumerable<IInterceptor> _interceptors;
 
     /// <summary>
     /// Gets or sets the user aggregate context.
     /// </summary>
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; } = null!;
     /// <summary>
     /// Gets or sets the installment aggregate context.
     /// </summary>
-    public DbSet<Installment> Installments { get; set; }
+    public DbSet<Installment> Installments { get; set; } = null!;
     /// <summary>
     /// Gets or sets the order aggregate context.
     /// </summary>
-    public DbSet<Order> Orders { get; set; }
+    public DbSet<Order> Orders { get; set; } = null!;
     /// <summary>
     /// Gets or sets the payment aggregate context.
     /// </summary>
-    public DbSet<Payment> Payments { get; set; }
+    public DbSet<Payment> Payments { get; set; } = null!;
     /// <summary>
     /// Gets or sets the product aggregate context.
     /// </summary>
-    public DbSet<Product> Products { get; set; }
+    public DbSet<Product> Products { get; set; } = null!;
     /// <summary>
     /// Gets or sets the product feedback aggregate context.
     /// </summary>
-    public DbSet<ProductFeedback> ProductFeedbacks { get; set; }
+    public DbSet<ProductFeedback> ProductFeedbacks { get; set; } = null!;
     /// <summary>
     /// Gets or sets the shipment aggregate context.
     /// </summary>
-    public DbSet<Shipment> Shipments { get; set; }
+    public DbSet<Shipment> Shipments { get; set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.
@@ -97,10 +94,6 @@ public class ECommerceDbContext : DbContext
         base.OnConfiguring(optionsBuilder);
     }
 
-    /// <summary>
-    /// Normalize the database column names to be snake case and lower case.
-    /// </summary>
-    /// <param name="modelBuilder">The model builder.</param>
     private static void NormalizeColumnNames(ModelBuilder modelBuilder)
     {
 
@@ -130,11 +123,6 @@ public class ECommerceDbContext : DbContext
         property.SetColumnName(snakeCaseColumnName);
     }
 
-    /// <summary>
-    /// Determines if the property is a shadow primary key of an owned type.
-    /// </summary>
-    /// <param name="p">The property to be checked.</param>
-    /// <returns>A boolean indicating if the property is a shadow PK of an owned type.</returns>
     private static bool IsShadowPrimaryKeyOfOwnedType(IMutableProperty p)
     {
         return typeof(ValueObject).IsAssignableFrom(p.DeclaringType.ClrType) && p.IsKey();

@@ -11,9 +11,6 @@ namespace Infrastructure.Persistence.Interceptors;
 /// </summary>
 public sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
 {
-    /// <summary>
-    /// The publisher of the event.
-    /// </summary>
     private readonly IPublisher _publisher;
 
     /// <summary>
@@ -40,14 +37,12 @@ public sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    /// <summary>
-    /// Publish the entities domain events then clear the domain events list.
-    /// </summary>
-    /// <param name="dbContext">The application db context.</param>
-    /// <returns>An asynchronous operation.</returns>
     private async Task PublishDomainEvents(DbContext? dbContext)
     {
-        if (dbContext == null) return;
+        if (dbContext == null)
+        {
+            return;
+        }
 
         var entitiesWithDomainEvents = dbContext.ChangeTracker
             .Entries<IHasDomainEvent>()

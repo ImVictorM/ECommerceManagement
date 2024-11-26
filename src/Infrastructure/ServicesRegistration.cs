@@ -62,13 +62,7 @@ public static class ServicesRegistration
         return services;
     }
 
-    /// <summary>
-    /// Add the required dependencies for the authentication process.
-    /// </summary>
-    /// <param name="services">The application services.</param>
-    /// <param name="configuration">The application configuration.</param>
-    /// <returns>The application services including the registration of the authentication services.</returns>
-    public static IServiceCollection AddAuth(
+    private static IServiceCollection AddAuth(
         this IServiceCollection services,
         IConfigurationManager configuration
     )

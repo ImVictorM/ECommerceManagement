@@ -42,12 +42,7 @@ public static class ServicesRegistration
         return services;
     }
 
-    /// <summary>
-    /// Configures swagger and add it to the DI pipeline.
-    /// </summary>
-    /// <param name="services">The application services.</param>
-    /// <returns>The application services including the registration of the swagger services.</returns>
-    public static IServiceCollection AddSwagger(this IServiceCollection services)
+    private static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(setup =>
         {
@@ -82,12 +77,7 @@ public static class ServicesRegistration
         return services;
     }
 
-    /// <summary>
-    /// Configures authorization policies and add it to the DI pipeline.
-    /// </summary>
-    /// <param name="services">The application services.</param>
-    /// <returns>The application services including the registration of policy-related services.</returns>
-    public static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+    private static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
     {
         // Configure policies
         services.AddAuthorization(options =>
@@ -118,12 +108,7 @@ public static class ServicesRegistration
         return services;
     }
 
-    /// <summary>
-    /// Add mapping related services.
-    /// </summary>
-    /// <param name="services">The application services.</param>
-    /// <returns>The application services including the registration of mapping services.</returns>
-    public static IServiceCollection AddMappings(this IServiceCollection services)
+    private static IServiceCollection AddMappings(this IServiceCollection services)
     {
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(typeof(ServicesRegistration).Assembly);

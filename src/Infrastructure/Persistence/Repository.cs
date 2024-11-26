@@ -15,13 +15,7 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
     where TEntity : AggregateRoot<TEntityId>
     where TEntityId : notnull
 {
-    /// <summary>
-    /// The database context.
-    /// </summary>
     private readonly ECommerceDbContext _context;
-    /// <summary>
-    /// The aggregate db set.
-    /// </summary>
     private readonly DbSet<TEntity> _dbSet;
 
     /// <summary>

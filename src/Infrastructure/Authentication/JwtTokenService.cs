@@ -1,5 +1,4 @@
 using Application.Common.Interfaces.Authentication;
-using Application.Common.Interfaces.Persistence;
 using Domain.UserAggregate;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,17 +14,13 @@ namespace Infrastructure.Authentication;
 /// </summary>
 public class JwtTokenService : IJwtTokenService
 {
-    /// <summary>
-    /// Settings containing token information.
-    /// </summary>
     private readonly JwtSettings _jwtSettings;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JwtTokenService"/> class.
     /// </summary>
     /// <param name="jwtOptions">The jwt settings options.</param>
-    /// <param name="unitOfWork">The unit of work.</param>
-    public JwtTokenService(IOptions<JwtSettings> jwtOptions, IUnitOfWork unitOfWork)
+    public JwtTokenService(IOptions<JwtSettings> jwtOptions)
     {
         _jwtSettings = jwtOptions.Value;
     }
