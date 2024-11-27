@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using Contracts.Products;
 using Domain.ProductAggregate;
 using FluentAssertions;
 using IntegrationTests.Common;

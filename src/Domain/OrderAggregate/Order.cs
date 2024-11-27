@@ -1,4 +1,5 @@
-using Domain.OrderAggregate.Entities;
+using Domain.OrderAggregate.Enumerations;
+using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Models;
@@ -11,18 +12,9 @@ namespace Domain.OrderAggregate;
 /// </summary>
 public sealed class Order : AggregateRoot<OrderId>
 {
-    /// <summary>
-    /// The order products.
-    /// </summary>
-    private readonly List<OrderProduct> _orderProducts = [];
-    /// <summary>
-    /// The order discounts.
-    /// </summary>
-    private readonly List<OrderDiscount>? _orderDiscounts = [];
-    /// <summary>
-    /// The order status change histories.
-    /// </summary>
+    private readonly List<OrderProduct> _products = [];
     private readonly List<OrderStatusHistory> _orderStatusHistories = [];
+    private readonly List<Discount> _discounts = [];
 
     /// <summary>
     /// Gets the order total amount.
@@ -39,11 +31,11 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Gets the order status identifier.
     /// </summary>
-    public OrderStatusId OrderStatusId { get; private set; } = null!;
+    public long OrderStatusId { get; private set; }
     /// <summary>
     /// Gets the order products.
     /// </summary>
-    public IReadOnlyList<OrderProduct> OrderProducts => _orderProducts.AsReadOnly();
+    public IReadOnlyList<OrderProduct> Products => _products.AsReadOnly();
     /// <summary>
     /// Gets the order status history.
     /// </summary>
@@ -51,30 +43,20 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Gets the order discounts.
     /// </summary>
-    public IReadOnlyList<OrderDiscount>? OrderDiscounts => _orderDiscounts?.AsReadOnly();
+    public IReadOnlyList<Discount> Discounts => _discounts.AsReadOnly();
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Order"/> class.
-    /// </summary>
     private Order() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Order"/> class.
-    /// </summary>
-    /// <param name="userId">The order owner id.</param>
-    /// <param name="address">The order delivery address.</param>
-    /// <param name="orderStatusId">The order status id.</param>
-    /// <param name="total">The order total.</param>
     private Order(
         UserId userId,
         Address address,
-        OrderStatusId orderStatusId,
+        OrderStatus orderStatus,
         float total
     )
     {
         UserId = userId;
         Address = address;
-        OrderStatusId = orderStatusId;
+        OrderStatusId = orderStatus.Id;
         Total = total;
     }
 
@@ -83,23 +65,23 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     /// <param name="userId">The order owner id.</param>
     /// <param name="address">The order delivery address.</param>
-    /// <param name="orderStatusId">The order status id.</param>
     /// <param name="total">The order total.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static Order Create(
         UserId userId,
         Address address,
-        OrderStatusId orderStatusId,
         float total
     )
     {
-        // TODO: check if the order status  is paid or pending for new orders.
-
-        return new Order(
+        var order = new Order(
             userId,
             address,
-            orderStatusId,
+            OrderStatus.Pending,
             total
         );
+
+        order.AddDomainEvent(new OrderCreated(order));
+
+        return order;
     }
 }

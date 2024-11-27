@@ -1,38 +1,28 @@
-using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using SharedKernel.Models;
 
-namespace Domain.OrderAggregate.Entities;
+namespace Domain.OrderAggregate.ValueObjects;
 
 /// <summary>
 /// Represents an order product.
 /// </summary>
-public sealed class OrderProduct : Entity<OrderProductId>
+public sealed class OrderProduct : ValueObject
 {
     /// <summary>
     /// Gets the price when the product was ordered.
     /// </summary>
-    public float PriceOnOrder { get; private set; }
+    public float PriceOnOrder { get; }
     /// <summary>
     /// Gets the quantity of products ordered.
     /// </summary>
-    public int Quantity { get; private set; }
+    public int Quantity { get; }
     /// <summary>
     /// Gets the product id.
     /// </summary>
-    public ProductId ProductId { get; private set; } = null!;
+    public ProductId ProductId { get; } = null!;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderProduct"/> class.
-    /// </summary>
     private OrderProduct() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderProduct"/> class.
-    /// </summary>
-    /// <param name="productId">The product id.</param>
-    /// <param name="priceOnOrder">The product price on order.</param>
-    /// <param name="quantity">The quantity of products ordered.</param>
     private OrderProduct(
         ProductId productId,
         float priceOnOrder,
@@ -58,5 +48,13 @@ public sealed class OrderProduct : Entity<OrderProductId>
     )
     {
         return new OrderProduct(productId, priceOnOrder, quantity);
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return PriceOnOrder;
+        yield return Quantity;
+        yield return ProductId;
     }
 }

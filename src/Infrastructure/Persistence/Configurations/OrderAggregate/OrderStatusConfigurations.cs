@@ -1,12 +1,11 @@
-using Domain.OrderAggregate.Entities;
-using Domain.OrderAggregate.ValueObjects;
+using Domain.OrderAggregate.Enumerations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations.OrderAggregate;
 
 /// <summary>
-/// Configures the <see cref="OrderStatus"/> entity to its table.
+/// Configures the <see cref="OrderStatus"/> value object to its table.
 /// </summary>
 public sealed class OrderStatusConfigurations : IEntityTypeConfiguration<OrderStatus>
 {
@@ -19,10 +18,6 @@ public sealed class OrderStatusConfigurations : IEntityTypeConfiguration<OrderSt
 
         builder
             .Property(os => os.Id)
-            .HasConversion(
-                id => id.Value,
-                value => OrderStatusId.Create(value)
-            )
             .ValueGeneratedNever()
             .IsRequired();
 

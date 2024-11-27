@@ -3,30 +3,23 @@ using SharedKernel.Models;
 namespace Domain.OrderAggregate.ValueObjects;
 
 /// <summary>
-/// Holds an historic change of status of an order.
+/// Represents the historic status change of an order.
 /// </summary>
 public sealed class OrderStatusHistory : ValueObject
 {
     /// <summary>
-    /// Gets the order status id of the change.
+    /// Gets the order status id.
     /// </summary>
-    public OrderStatusId OrderStatusId { get; } = null!;
+    public long OrderStatusId { get; }
 
     /// <summary>
-    /// Gets the date the order status was created.
+    /// Gets the date the order status changed.
     /// </summary>
     public DateTimeOffset CreatedAt { get; }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.
-    /// </summary>
     private OrderStatusHistory() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderStatusHistory"/> class.
-    /// </summary>
-    /// <param name="orderStatusId">The order status.</param>
-    private OrderStatusHistory(OrderStatusId orderStatusId)
+    private OrderStatusHistory(long orderStatusId)
     {
         OrderStatusId = orderStatusId;
 
@@ -38,7 +31,7 @@ public sealed class OrderStatusHistory : ValueObject
     /// </summary>
     /// <param name="orderStatusId">The order status.</param>
     /// <returns>A new instance of the <see cref="OrderStatusHistory"/> class.</returns>
-    public static OrderStatusHistory Create(OrderStatusId orderStatusId)
+    public static OrderStatusHistory Create(long orderStatusId)
     {
         return new OrderStatusHistory(orderStatusId);
     }

@@ -1,3 +1,4 @@
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -30,9 +31,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -338,9 +337,7 @@ namespace Infrastructure.Migrations
                     description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ending_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    id_order = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id_order = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -389,9 +386,7 @@ namespace Infrastructure.Migrations
                     price_on_order = table.Column<float>(type: "real", nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
-                    id_order = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id_order = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -602,14 +597,14 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "order_statuses",
-                columns: new[] { "id", "created_at", "name", "updated_at" },
+                columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(283), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(601), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1027), new TimeSpan(0, 0, 0, 0, 0)), "paid", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1028), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1044), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1044), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 4L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1059), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1059), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 5L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1070), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 771, DateTimeKind.Unspecified).AddTicks(1071), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, "pending" },
+                    { 2L, "paid" },
+                    { 3L, "shipped" },
+                    { 4L, "delivered" },
+                    { 5L, "canceled" }
                 });
 
             migrationBuilder.InsertData(
@@ -617,10 +612,10 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3014), new TimeSpan(0, 0, 0, 0, 0)), "credit_card", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3018), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3042), new TimeSpan(0, 0, 0, 0, 0)), "pix", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3042), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3061), new TimeSpan(0, 0, 0, 0, 0)), "bank_transfer", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3061), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 4L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3068), new TimeSpan(0, 0, 0, 0, 0)), "cash", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 789, DateTimeKind.Unspecified).AddTicks(3068), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(7062), new TimeSpan(0, 0, 0, 0, 0)), "credit_card", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(7686), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8059), new TimeSpan(0, 0, 0, 0, 0)), "pix", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8059), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8080), new TimeSpan(0, 0, 0, 0, 0)), "bank_transfer", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8081), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8088), new TimeSpan(0, 0, 0, 0, 0)), "cash", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8089), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.InsertData(
@@ -628,10 +623,10 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3366), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3368), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3397), new TimeSpan(0, 0, 0, 0, 0)), "completed", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3397), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3407), new TimeSpan(0, 0, 0, 0, 0)), "failed", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3408), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 4L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3418), new TimeSpan(0, 0, 0, 0, 0)), "refunded", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 791, DateTimeKind.Unspecified).AddTicks(3418), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7618), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7619), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7654), new TimeSpan(0, 0, 0, 0, 0)), "completed", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7654), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7665), new TimeSpan(0, 0, 0, 0, 0)), "failed", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7665), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7676), new TimeSpan(0, 0, 0, 0, 0)), "refunded", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7677), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.InsertData(
@@ -648,36 +643,12 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5647), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5650), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5679), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5679), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5695), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5696), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 4L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5708), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5708), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 5L, new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5719), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 11, 14, 21, 16, 31, 849, DateTimeKind.Unspecified).AddTicks(5719), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7764), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7767), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7803), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7804), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7852), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7852), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7866), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7866), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 5L, new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7877), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7878), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
-
-            // password: admin123
-            migrationBuilder.InsertData(
-                table: "users",
-                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
-                values: [
-                    1,
-                    "admin",
-                    "admin@email.com",
-                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
-                    true,
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
-
-            migrationBuilder.InsertData(
-                table: "users_roles",
-                columns: ["id_role", "id_user"],
-                values: [
-                    1,
-                    1,
-                ]
-            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_categories_name",
