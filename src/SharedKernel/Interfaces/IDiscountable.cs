@@ -13,11 +13,6 @@ public interface IDiscountable
     public IReadOnlyList<Discount> Discounts { get; }
 
     /// <summary>
-    /// Gets the base price.
-    /// </summary>
-    public decimal BasePrice { get; }
-
-    /// <summary>
     /// Adds discounts.
     /// </summary>
     /// <param name="discounts">The discounts to be added.</param>
@@ -33,10 +28,4 @@ public interface IDiscountable
     /// </summary>
     /// <returns>The price with discounts.</returns>
     decimal GetPriceAfterDiscounts();
-
-    /// <summary>
-    /// Gets the discounts that can be applied when calculating discounts.
-    /// </summary>
-    /// <returns>A list of discounts valid.</returns>
-    IEnumerable<Discount> GetApplicableDiscounts();
 }

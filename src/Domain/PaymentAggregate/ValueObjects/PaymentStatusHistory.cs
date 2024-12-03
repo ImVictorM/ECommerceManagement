@@ -10,7 +10,7 @@ public sealed class PaymentStatusHistory : ValueObject
     /// <summary>
     /// Gets the payment status id.
     /// </summary>
-    public PaymentStatusId PaymentStatusId { get; } = null!;
+    public long PaymentStatusId { get; }
 
     /// <summary>
     /// Gets the date the payment status was created;
@@ -26,7 +26,7 @@ public sealed class PaymentStatusHistory : ValueObject
     /// Initiates a new instance of the <see cref="PaymentStatusHistory"/> class.
     /// </summary>
     /// <param name="paymentStatusId">The payment status.</param>
-    private PaymentStatusHistory(PaymentStatusId paymentStatusId)
+    private PaymentStatusHistory(long paymentStatusId)
     {
         PaymentStatusId = paymentStatusId;
 
@@ -38,7 +38,7 @@ public sealed class PaymentStatusHistory : ValueObject
     /// </summary>
     /// <param name="paymentStatusId">The payment status id.</param>
     /// <returns>A new instance of the <see cref="PaymentStatusHistory"/> class.</returns>
-    public static PaymentStatusHistory Create(PaymentStatusId paymentStatusId)
+    public static PaymentStatusHistory Create(long paymentStatusId)
     {
         return new PaymentStatusHistory(paymentStatusId);
     }

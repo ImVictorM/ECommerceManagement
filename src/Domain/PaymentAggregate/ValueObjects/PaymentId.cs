@@ -1,3 +1,4 @@
+using System.Globalization;
 using SharedKernel.Models;
 
 namespace Domain.PaymentAggregate.ValueObjects;
@@ -40,5 +41,11 @@ public sealed class PaymentId : ValueObject
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Value.ToString(CultureInfo.InvariantCulture);
     }
 }

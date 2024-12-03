@@ -65,10 +65,8 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .IsRequired();
 
         builder
-            .Property(order => order.Total)
+            .Property(order => order.BaseTotal)
             .IsRequired();
-
-        builder.OwnsOne(order => order.Address, AddressNavigationBuilderConfigurations.Configure);
     }
 
     /// <summary>
@@ -143,10 +141,6 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
                     id => id.Value,
                     value => ProductId.Create(value)
                 )
-                .IsRequired();
-
-            orderProductsBuilder
-                .Property(orderProduct => orderProduct.PriceOnOrder)
                 .IsRequired();
 
             orderProductsBuilder

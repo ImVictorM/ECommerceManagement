@@ -1,4 +1,6 @@
 using Application.Common.Behaviors;
+using Application.Orders.Commands.Services;
+using Domain.OrderAggregate.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,8 @@ public static class ServicesRegistration
         services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+        services.AddScoped<IOrderServices, OrderServices>();
 
         services.AddValidatorsFromAssembly(assembly);
 

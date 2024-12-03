@@ -1,4 +1,4 @@
-using Contracts.Users.Common;
+using Contracts.Common;
 
 namespace Contracts.Users;
 

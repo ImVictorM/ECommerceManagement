@@ -272,25 +272,6 @@ public class ProductTests
     }
 
     /// <summary>
-    /// Tests the <see cref="Domain.ProductAggregate.Product.GetApplicableDiscounts"/> method to see if it returns the discounts correctly.
-    /// </summary>
-    /// <param name="discounts">The discounts.</param>
-    /// <param name="expectedValidDiscounts">The expected discounts the method should return.</param>
-    [Theory]
-    [MemberData(nameof(DiscountsAndDiscountsValidToDatePairs))]
-    public void Product_GettingDiscountsValidToDate_ReturnsTheDiscountsCorrectly(
-        IEnumerable<Discount> discounts,
-        IEnumerable<Discount> expectedValidDiscounts
-    )
-    {
-        var product = ProductUtils.CreateProduct(initialDiscounts: discounts);
-
-        var discountsValidToDate = product.GetApplicableDiscounts();
-
-        discountsValidToDate.Should().BeEquivalentTo(expectedValidDiscounts);
-    }
-
-    /// <summary>
     /// Tests it is possible to update a product correctly.
     /// </summary>
     [Fact]

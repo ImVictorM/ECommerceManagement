@@ -1,18 +1,15 @@
 using Mapster;
 using DomainDiscount = SharedKernel.ValueObjects.Discount;
-using ContractDiscount = Contracts.Products.Common.Discount;
+using ContractDiscount = Contracts.Common.Discount;
 
 namespace WebApi.Common.Mappings.Common;
 
 /// <summary>
-/// Configure mapping between discount objects.
+/// Configures mapping between discount objects.
 /// </summary>
 public class DiscountMappingConfig : IRegister
 {
-    /// <summary>
-    /// Register mapping for discount objects.
-    /// </summary>
-    /// <param name="config">The global configuration object.</param>
+   /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<ContractDiscount, DomainDiscount>()

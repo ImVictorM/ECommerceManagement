@@ -1,11 +1,12 @@
 using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.Enumerations;
+using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
+
 using SharedKernel.Errors;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
 using SharedKernel.Services;
-using SharedKernel.Specifications;
 using SharedKernel.ValueObjects;
 
 namespace Domain.ProductAggregate;
@@ -180,16 +181,19 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable, IDiscoun
         _discounts.Clear();
     }
 
-    /// <inheritdoc />
-    public IEnumerable<Discount> GetApplicableDiscounts()
-    {
-        return Discounts.Where(d => d.IsDiscountValidToDate());
-    }
-
     /// <inheritdoc/>
     public decimal GetPriceAfterDiscounts()
     {
         return DiscountService.ApplyDiscounts(BasePrice, [.. GetApplicableDiscounts()]);
+    }
+
+    /// <summary>
+    /// Gets the discounts that can be applied to the product.
+    /// </summary>
+    /// <returns>The discounts applicable.</returns>
+    public IEnumerable<Discount> GetApplicableDiscounts()
+    {
+        return Discounts.Where(d => d.IsDiscountValidToDate());
     }
 
     /// <inheritdoc/>

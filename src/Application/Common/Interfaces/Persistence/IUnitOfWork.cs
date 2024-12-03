@@ -2,6 +2,10 @@ using Domain.UserAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
+using Domain.OrderAggregate;
+using Domain.OrderAggregate.ValueObjects;
+using Domain.PaymentAggregate;
+using Domain.PaymentAggregate.ValueObjects;
 
 namespace Application.Common.Interfaces.Persistence;
 
@@ -18,6 +22,14 @@ public interface IUnitOfWork : IDisposable
     /// Gets the product repository.
     /// </summary>
     public IRepository<Product, ProductId> ProductRepository { get; }
+    /// <summary>
+    /// Gets the order repository.
+    /// </summary>
+    public IRepository<Order, OrderId> OrderRepository { get; }
+    /// <summary>
+    /// Gets the payment repository.
+    /// </summary>
+    public IRepository<Payment, PaymentId> PaymentRepository { get; }
     /// <summary>
     /// Save all the operations done within the repositories.
     /// </summary>

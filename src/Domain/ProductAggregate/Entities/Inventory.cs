@@ -47,6 +47,16 @@ public sealed class Inventory : Entity<InventoryId>
     }
 
     /// <summary>
+    /// Verifies the inventory has the quantity available based on the given quantity.
+    /// </summary>
+    /// <param name="quantity">The quantity to deduct.</param>
+    /// <returns>A bool indicating if the inventory has the quantity available.</returns>
+    public bool HasInventoryAvailable(int quantity)
+    {
+        return QuantityAvailable > quantity;
+    }
+
+    /// <summary>
     /// Sets the quantity available in inventory to 0.
     /// </summary>
     public void Reset()

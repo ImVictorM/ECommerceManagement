@@ -1,4 +1,3 @@
-using Domain.InstallmentAggregate;
 using Domain.OrderAggregate;
 using Domain.PaymentAggregate;
 using Domain.ProductAggregate;
@@ -33,10 +32,6 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the user aggregate context.
     /// </summary>
     public DbSet<User> Users { get; set; } = null!;
-    /// <summary>
-    /// Gets or sets the installment aggregate context.
-    /// </summary>
-    public DbSet<Installment> Installments { get; set; } = null!;
     /// <summary>
     /// Gets or sets the order aggregate context.
     /// </summary>

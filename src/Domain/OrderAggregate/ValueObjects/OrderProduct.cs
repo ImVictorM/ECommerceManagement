@@ -9,10 +9,6 @@ namespace Domain.OrderAggregate.ValueObjects;
 public sealed class OrderProduct : ValueObject
 {
     /// <summary>
-    /// Gets the price when the product was ordered.
-    /// </summary>
-    public float PriceOnOrder { get; }
-    /// <summary>
     /// Gets the quantity of products ordered.
     /// </summary>
     public int Quantity { get; }
@@ -25,12 +21,10 @@ public sealed class OrderProduct : ValueObject
 
     private OrderProduct(
         ProductId productId,
-        float priceOnOrder,
         int quantity
     )
     {
         ProductId = productId;
-        PriceOnOrder = priceOnOrder;
         Quantity = quantity;
     }
 
@@ -38,22 +32,19 @@ public sealed class OrderProduct : ValueObject
     /// Creates a new instance of the <see cref="OrderProduct"/> class.
     /// </summary>
     /// <param name="productId">The product id.</param>
-    /// <param name="priceOnOrder">The product price on order.</param>
     /// <param name="quantity">The quantity of products ordered.</param>
     /// <returns>A new instance of the <see cref="OrderProduct"/> class.</returns>
     public static OrderProduct Create(
         ProductId productId,
-        float priceOnOrder,
         int quantity
     )
     {
-        return new OrderProduct(productId, priceOnOrder, quantity);
+        return new OrderProduct(productId, quantity);
     }
 
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return PriceOnOrder;
         yield return Quantity;
         yield return ProductId;
     }

@@ -1,12 +1,11 @@
-using Domain.PaymentAggregate.Entities;
-using Domain.PaymentAggregate.ValueObjects;
+using Domain.PaymentAggregate.Enumeration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations.PaymentAggregate;
 
 /// <summary>
-/// Configures the <see cref="PaymentStatus"/> entity to its table.
+/// Configures the <see cref="PaymentStatus"/> enumeration to its table.
 /// </summary>
 public sealed class PaymentStatusConfigurations : IEntityTypeConfiguration<PaymentStatus>
 {
@@ -19,10 +18,6 @@ public sealed class PaymentStatusConfigurations : IEntityTypeConfiguration<Payme
 
         builder
             .Property(ps => ps.Id)
-            .HasConversion(
-                id => id.Value,
-                value => PaymentStatusId.Create(value)
-            )
             .ValueGeneratedNever()
             .IsRequired();
 

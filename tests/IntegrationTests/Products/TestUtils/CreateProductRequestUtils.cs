@@ -1,5 +1,5 @@
+using Contracts.Common;
 using Contracts.Products;
-using Contracts.Products.Common;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 

@@ -7,10 +7,10 @@ using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 using FluentAssertions;
-using Contracts.Products.Common;
 using IntegrationTests.TestUtils.Contracts;
 using Contracts.Products;
 using IntegrationTests.TestUtils.Extensions.Assertions;
+using Contracts.Common;
 
 namespace IntegrationTests.Products;
 

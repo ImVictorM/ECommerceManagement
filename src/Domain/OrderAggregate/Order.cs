@@ -2,7 +2,9 @@ using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+using SharedKernel.Interfaces;
 using SharedKernel.Models;
+using SharedKernel.Services;
 using SharedKernel.ValueObjects;
 
 namespace Domain.OrderAggregate;
@@ -10,24 +12,20 @@ namespace Domain.OrderAggregate;
 /// <summary>
 /// Represents an order.
 /// </summary>
-public sealed class Order : AggregateRoot<OrderId>
+public sealed class Order : AggregateRoot<OrderId>, IDiscountable
 {
     private readonly List<OrderProduct> _products = [];
     private readonly List<OrderStatusHistory> _orderStatusHistories = [];
     private readonly List<Discount> _discounts = [];
 
     /// <summary>
-    /// Gets the order total amount.
+    /// Gets the order total amount without discounts applied.
     /// </summary>
-    public float Total { get; private set; }
+    public decimal BaseTotal { get; private set; }
     /// <summary>
     /// Gets the order owner id.
     /// </summary>
     public UserId UserId { get; private set; } = null!;
-    /// <summary>
-    /// Gets the order address.
-    /// </summary>
-    public Address Address { get; private set; } = null!;
     /// <summary>
     /// Gets the order status identifier.
     /// </summary>
@@ -49,39 +47,63 @@ public sealed class Order : AggregateRoot<OrderId>
 
     private Order(
         UserId userId,
-        Address address,
+        IEnumerable<OrderProduct> products,
         OrderStatus orderStatus,
-        float total
+        decimal baseTotal
     )
     {
         UserId = userId;
-        Address = address;
         OrderStatusId = orderStatus.Id;
-        Total = total;
+        BaseTotal = baseTotal;
+
+        _products.AddRange(products);
+        _orderStatusHistories.Add(OrderStatusHistory.Create(orderStatus.Id));
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="Order"/> class.
     /// </summary>
     /// <param name="userId">The order owner id.</param>
-    /// <param name="address">The order delivery address.</param>
-    /// <param name="total">The order total.</param>
+    /// <param name="products">The order products.</param>
+    /// <param name="baseTotal">The order total without discounts applied.</param>
+    /// <param name="paymentMethod">The order payment method.</param>
+    /// <param name="installments">The installments.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static Order Create(
         UserId userId,
-        Address address,
-        float total
+        IEnumerable<OrderProduct> products,
+        decimal baseTotal,
+        IPaymentMethod paymentMethod,
+        int? installments = null
     )
     {
         var order = new Order(
             userId,
-            address,
+            products,
             OrderStatus.Pending,
-            total
+            baseTotal
         );
 
-        order.AddDomainEvent(new OrderCreated(order));
+        order.AddDomainEvent(new OrderCreated(order, paymentMethod, installments));
 
         return order;
+    }
+
+    /// <inheritdoc/>
+    public void AddDiscounts(params Discount[] discounts)
+    {
+        _discounts.AddRange(discounts);
+    }
+
+    /// <inheritdoc/>
+    public void ClearDiscounts()
+    {
+        _discounts.Clear();
+    }
+
+    /// <inheritdoc/>
+    public decimal GetPriceAfterDiscounts()
+    {
+        return DiscountService.ApplyDiscounts(BaseTotal, [.. _discounts]);
     }
 }

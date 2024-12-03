@@ -11,6 +11,8 @@ using Infrastructure.Persistence.Interceptors;
 using Application.Common.Interfaces.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Application.Common.Interfaces.Services;
+using Infrastructure.Payments;
 
 namespace Infrastructure;
 
@@ -55,6 +57,7 @@ public static class ServicesRegistration
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IPaymentGateway, MockPaymentGateway>();
 
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<PublishDomainEventsInterceptor>();

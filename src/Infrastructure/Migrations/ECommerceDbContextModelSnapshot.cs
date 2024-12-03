@@ -22,43 +22,6 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.InstallmentAggregate.Installment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<float>("AmountPerPayment")
-                        .HasColumnType("real")
-                        .HasColumnName("amount_per_payment");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_order");
-
-                    b.Property<int>("QuantityPayments")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity_payments");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
-                    b.ToTable("installments", (string)null);
-                });
-
             modelBuilder.Entity("Domain.OrderAggregate.Enumerations.OrderStatus", b =>
                 {
                     b.Property<long>("Id")
@@ -115,6 +78,10 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<decimal>("BaseTotal")
+                        .HasColumnType("numeric")
+                        .HasColumnName("base_total");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -122,10 +89,6 @@ namespace Infrastructure.Migrations
                     b.Property<long>("OrderStatusId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_order_status");
-
-                    b.Property<float>("Total")
-                        .HasColumnType("real")
-                        .HasColumnName("total");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -144,83 +107,17 @@ namespace Infrastructure.Migrations
                     b.ToTable("orders", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.PaymentAggregate.Entities.PaymentMethod", b =>
+            modelBuilder.Entity("Domain.PaymentAggregate.Enumeration.PaymentStatus", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)")
                         .HasColumnName("name");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("payment_methods", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(7062), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "credit_card",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(7686), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8059), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "pix",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8059), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8080), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "bank_transfer",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8081), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8088), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "cash",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 244, DateTimeKind.Unspecified).AddTicks(8089), new TimeSpan(0, 0, 0, 0, 0))
-                        });
-                });
-
-            modelBuilder.Entity("Domain.PaymentAggregate.Entities.PaymentStatus", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -233,30 +130,32 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7618), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "pending",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7619), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "in_progress"
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7654), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "completed",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7654), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "pending"
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7665), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "failed",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7665), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "approved"
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7676), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "refunded",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 246, DateTimeKind.Unspecified).AddTicks(7677), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "rejected"
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            Name = "canceled"
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            Name = "refunded"
                         });
                 });
 
@@ -269,25 +168,21 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<float>("Amount")
-                        .HasColumnType("real")
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric")
                         .HasColumnName("amount");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<long?>("InstallmentId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_installment");
+                    b.Property<int>("Installments")
+                        .HasColumnType("integer")
+                        .HasColumnName("installments");
 
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_order");
-
-                    b.Property<long>("PaymentMethodId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_payment_method");
 
                     b.Property<long>("PaymentStatusId")
                         .HasColumnType("bigint")
@@ -299,12 +194,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InstallmentId");
-
                     b.HasIndex("OrderId")
                         .IsUnique();
-
-                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("PaymentStatusId");
 
@@ -561,37 +452,37 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7764), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(335), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "pending",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7767), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(646), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7803), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1066), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "shipped",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7804), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1067), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7852), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1083), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "in_route",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7852), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1084), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7866), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1097), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "delivered",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7866), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1097), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
                             Id = 5L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7877), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1108), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "canceled",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 11, 27, 18, 54, 24, 294, DateTimeKind.Unspecified).AddTicks(7878), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 3, 17, 33, 26, 556, DateTimeKind.Unspecified).AddTicks(1109), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -719,15 +610,6 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.InstallmentAggregate.Installment", b =>
-                {
-                    b.HasOne("Domain.OrderAggregate.Order", null)
-                        .WithOne()
-                        .HasForeignKey("Domain.InstallmentAggregate.Installment", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
                     b.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
@@ -741,49 +623,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("SharedKernel.ValueObjects.Address", "Address", b1 =>
-                        {
-                            b1.Property<long>("OrderId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("city");
-
-                            b1.Property<string>("Neighborhood")
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("neighborhood");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("character varying(10)")
-                                .HasColumnName("postal_code");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("state");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("street");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
 
                     b.OwnsMany("SharedKernel.ValueObjects.Discount", "Discounts", b1 =>
                         {
@@ -834,10 +673,6 @@ namespace Infrastructure.Migrations
                                 .HasColumnName("id");
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
-
-                            b1.Property<float>("PriceOnOrder")
-                                .HasColumnType("real")
-                                .HasColumnName("price_on_order");
 
                             b1.Property<long>("ProductId")
                                 .HasColumnType("bigint")
@@ -908,9 +743,6 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_order");
                         });
 
-                    b.Navigation("Address")
-                        .IsRequired();
-
                     b.Navigation("Discounts");
 
                     b.Navigation("OrderStatusHistories");
@@ -920,23 +752,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
                 {
-                    b.HasOne("Domain.InstallmentAggregate.Installment", null)
-                        .WithMany()
-                        .HasForeignKey("InstallmentId");
-
                     b.HasOne("Domain.OrderAggregate.Order", null)
                         .WithOne()
                         .HasForeignKey("Domain.PaymentAggregate.Payment", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.PaymentAggregate.Entities.PaymentMethod", null)
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.PaymentAggregate.Entities.PaymentStatus", null)
+                    b.HasOne("Domain.PaymentAggregate.Enumeration.PaymentStatus", null)
                         .WithMany()
                         .HasForeignKey("PaymentStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -971,7 +793,7 @@ namespace Infrastructure.Migrations
 
                             b1.ToTable("payment_status_histories", (string)null);
 
-                            b1.HasOne("Domain.PaymentAggregate.Entities.PaymentStatus", null)
+                            b1.HasOne("Domain.PaymentAggregate.Enumeration.PaymentStatus", null)
                                 .WithMany()
                                 .HasForeignKey("PaymentStatusId")
                                 .OnDelete(DeleteBehavior.Cascade)
@@ -1171,6 +993,49 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("SharedKernel.ValueObjects.Address", "DeliveryAddress", b1 =>
+                        {
+                            b1.Property<long>("ShipmentId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("city");
+
+                            b1.Property<string>("Neighborhood")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("neighborhood");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("postal_code");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("state");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("street");
+
+                            b1.HasKey("ShipmentId");
+
+                            b1.ToTable("shipments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+                        });
+
                     b.OwnsMany("Domain.ShipmentAggregate.ValueObjects.ShipmentStatusHistory", "ShipmentStatusHistories", b1 =>
                         {
                             b1.Property<long>("id")
@@ -1209,6 +1074,9 @@ namespace Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("id_shipment");
                         });
+
+                    b.Navigation("DeliveryAddress")
+                        .IsRequired();
 
                     b.Navigation("ShipmentStatusHistories");
                 });

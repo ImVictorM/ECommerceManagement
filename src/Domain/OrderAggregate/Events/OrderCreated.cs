@@ -6,4 +6,10 @@ namespace Domain.OrderAggregate.Events;
 /// Event generated when an order is created.
 /// </summary>
 /// <param name="Order">The order.</param>
-public record OrderCreated(Order Order) : IDomainEvent;
+/// <param name="PaymentMethod">The payment method.</param>
+/// <param name="Installments">The installments.</param>
+public record OrderCreated(
+    Order Order,
+    IPaymentMethod PaymentMethod,
+    int? Installments = null
+) : IDomainEvent;

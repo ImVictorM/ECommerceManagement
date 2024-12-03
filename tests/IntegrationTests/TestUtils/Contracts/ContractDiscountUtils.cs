@@ -1,4 +1,4 @@
-using Contracts.Products.Common;
+using Contracts.Common;
 
 namespace IntegrationTests.TestUtils.Contracts;
 

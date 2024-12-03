@@ -1,9 +1,7 @@
-using Domain.InstallmentAggregate;
-using Domain.InstallmentAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.Entities;
+using Domain.PaymentAggregate.Enumeration;
 using Domain.PaymentAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -42,18 +40,6 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
             .IsRequired();
 
         builder
-            .HasOne<Installment>()
-            .WithMany()
-            .HasForeignKey(payment => payment.InstallmentId);
-
-        builder
-            .Property(payment => payment.InstallmentId)
-            .HasConversion(
-                id => id != null ? id.Value : (long?)null,
-                value => value != null ? InstallmentId.Create((long)value) : null
-            );
-
-        builder
             .HasOne<Order>()
             .WithOne()
             .HasForeignKey<Payment>(payment => payment.OrderId)
@@ -74,30 +60,13 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
             .IsRequired();
 
         builder
-            .Property(p => p.PaymentStatusId)
-            .HasConversion(
-                id => id.Value,
-                value => PaymentStatusId.Create(value)
-            )
-            .IsRequired();
-
-        builder
-            .HasOne<PaymentMethod>()
-            .WithMany()
-            .HasForeignKey(p => p.PaymentMethodId)
-            .IsRequired();
-
-        builder
-            .Property(p => p.PaymentMethodId)
-            .HasConversion(
-                id => id.Value,
-                value => PaymentMethodId.Create(value)
-            )
-            .IsRequired();
-
-        builder
             .Property(payment => payment.Amount)
             .IsRequired();
+
+        builder
+            .Property(payment => payment.Installments);
+
+        builder.Ignore(payment => payment.PaymentMethod);
     }
 
     /// <summary>
@@ -130,14 +99,6 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
                 .HasOne<PaymentStatus>()
                 .WithMany()
                 .HasForeignKey(psh => psh.PaymentStatusId)
-                .IsRequired();
-
-            paymentStatusHistoryBuilder
-                .Property(psh => psh.PaymentStatusId)
-                .HasConversion(
-                    id => id.Value,
-                    value => PaymentStatusId.Create(value)
-                )
                 .IsRequired();
 
             paymentStatusHistoryBuilder

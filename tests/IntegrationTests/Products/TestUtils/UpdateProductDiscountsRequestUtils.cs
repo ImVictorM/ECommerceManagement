@@ -1,5 +1,5 @@
+using Contracts.Common;
 using Contracts.Products;
-using Contracts.Products.Common;
 using IntegrationTests.TestUtils.Contracts;
 
 namespace IntegrationTests.Products.TestUtils;

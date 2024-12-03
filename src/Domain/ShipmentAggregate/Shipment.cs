@@ -1,6 +1,7 @@
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.ValueObjects;
 using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 namespace Domain.ShipmentAggregate;
 
@@ -25,6 +26,10 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// Get the shipment status identifier.
     /// </summary>
     public ShipmentStatusId ShipmentStatusId { get; private set; } = null!;
+    /// <summary>
+    /// Gets the shipment delivery address.
+    /// </summary>
+    public Address DeliveryAddress { get; private set; } = null!;
     /// <summary>
     /// Gets the shipment status change history.
     /// </summary>
