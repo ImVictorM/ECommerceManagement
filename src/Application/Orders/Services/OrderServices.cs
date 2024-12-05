@@ -3,7 +3,7 @@ using Application.Orders.Commands.Common.Errors;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 
-namespace Application.Orders.Commands.Services;
+namespace Application.Orders.Services;
 
 /// <summary>
 /// Represents services related to orders.

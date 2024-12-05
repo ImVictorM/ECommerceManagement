@@ -11,8 +11,8 @@ namespace Domain.UserAggregate;
 /// </summary>
 public sealed class User : AggregateRoot<UserId>, ISoftDeletable
 {
-    private readonly List<UserRole> _userRoles = [];
-    private readonly List<Address> _userAddresses = [];
+    private readonly HashSet<UserRole> _userRoles = [];
+    private readonly HashSet<Address> _userAddresses = [];
 
     /// <summary>
     /// Gets the user name.
@@ -37,11 +37,11 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <summary>
     /// Gets the user roles.
     /// </summary>
-    public IReadOnlyList<UserRole> UserRoles => _userRoles.AsReadOnly();
+    public IReadOnlySet<UserRole> UserRoles => _userRoles;
     /// <summary>
     /// Gets the user related addresses.
     /// </summary>
-    public IReadOnlyList<Address> UserAddresses => _userAddresses.AsReadOnly();
+    public IReadOnlySet<Address> UserAddresses => _userAddresses;
 
     private User() { }
 
@@ -116,11 +116,6 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// <param name="role">The role to be assigned to the user.</param>
     public void AssignRole(Role role)
     {
-        if (UserRoles.Any(ur => ur.RoleId == role.Id))
-        {
-            return;
-        }
-
         _userRoles.Add(UserRole.Create(role.Id));
     }
 
@@ -151,11 +146,14 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     }
 
     /// <summary>
-    /// Adds a new address to the user.
+    /// Adds addresses to the user.
     /// </summary>
-    /// <param name="address">The address to be added.</param>
-    public void AddAddress(Address address)
+    /// <param name="addresses">The addresses to be added.</param>
+    public void AddAddress(params Address[] addresses)
     {
-        _userAddresses.Add(address);
+        foreach (var address in addresses)
+        {
+            _userAddresses.Add(address);
+        }
     }
 }

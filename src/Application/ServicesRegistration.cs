@@ -1,5 +1,5 @@
 using Application.Common.Behaviors;
-using Application.Orders.Commands.Services;
+using Application.Orders.Services;
 using Domain.OrderAggregate.Services;
 using FluentValidation;
 using MediatR;

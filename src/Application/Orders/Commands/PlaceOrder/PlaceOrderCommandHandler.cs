@@ -1,3 +1,4 @@
+using Application.Common.DTOs;
 using Application.Common.Interfaces.Persistence;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Services;
@@ -11,7 +12,7 @@ namespace Application.Orders.Commands.PlaceOrder;
 /// <summary>
 /// Handles the process of placing an order.
 /// </summary>
-public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Unit>
+public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, CreatedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderServices _orderPricingService;
@@ -28,7 +29,7 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
     }
 
     /// <inheritdoc/>
-    public async Task<Unit> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResult> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
     {
         // 1. Verify inventory availability
         var userId = UserId.Create(request.UserId);
@@ -39,26 +40,28 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
 
         await _orderPricingService.VerifyInventoryAvailabilityAsync(orderProducts);
 
-        // 3. Calculate the order total
+        // 2. Calculate the order total
 
         var total = await _orderPricingService.CalculateTotalAsync(orderProducts);
 
-        // 4. Create the order
+        // 3. Create the order
 
         var order = Order.Create(
             userId,
             orderProducts,
             total,
             request.PaymentMethod,
+            request.BillingAddress,
+            request.DeliveryAddress,
             request.Installments
         );
 
-        // 5. Save order / Handle order created event
+        // 4. Save order / Handle order created event
 
         await _unitOfWork.OrderRepository.AddAsync(order);
 
         await _unitOfWork.SaveChangesAsync();
 
-        return Unit.Value;
+        return new CreatedResult(order.Id.ToString());
     }
 }

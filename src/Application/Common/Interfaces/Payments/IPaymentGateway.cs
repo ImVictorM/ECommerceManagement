@@ -1,6 +1,8 @@
 using Application.Common.Interfaces.Payments;
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.ValueObjects;
+using Domain.UserAggregate;
+using SharedKernel.ValueObjects;
 
 namespace Application.Common.Interfaces.Services;
 
@@ -13,8 +15,16 @@ public interface IPaymentGateway
     /// Pre-authorizes a payment, reserving the amount to be deducted.
     /// </summary>
     /// <param name="payment">The payment to be pre authorized.</param>
+    /// <param name="payer">Who is going to be charged.</param>
+    /// <param name="billingAddress">The billing address.</param>
+    /// <param name="deliveryAddress">The order delivery address (optional).</param>
     /// <returns>An authorize payment response.</returns>
-    Task<IAuthorizePaymentResponse> AuthorizePaymentAsync(Payment payment);
+    Task<IAuthorizePaymentResponse> AuthorizePaymentAsync(
+        Payment payment,
+        User? payer = null,
+        Address? billingAddress = null,
+        Address? deliveryAddress = null
+    );
     /// <summary>
     /// Completes the payment after it has been pre-authorized, deducting the reserved amount from the client.
     /// </summary>

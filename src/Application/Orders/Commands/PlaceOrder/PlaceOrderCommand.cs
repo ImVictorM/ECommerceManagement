@@ -1,3 +1,4 @@
+using Application.Common.DTOs;
 using Application.Orders.Commands.Common.DTOs;
 using MediatR;
 using SharedKernel.Interfaces;
@@ -21,4 +22,4 @@ public record PlaceOrderCommand(
     Address DeliveryAddress,
     IPaymentMethod PaymentMethod,
     int? Installments = null
-) : IRequest<Unit>;
+) : IRequest<CreatedResult>;

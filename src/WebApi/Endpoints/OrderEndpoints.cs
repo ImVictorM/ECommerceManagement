@@ -15,11 +15,16 @@ namespace WebApi.Endpoints;
 /// </summary>
 public class OrderEndpoints : ICarterModule
 {
+    /// <summary>
+    /// The base endpoint to access order resources.
+    /// </summary>
+    public const string BaseEndpoint = "orders";
+
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         var orderGroup = app
-            .MapGroup("orders")
+            .MapGroup(BaseEndpoint)
             .WithTags("Orders")
             .WithOpenApi();
 
@@ -34,7 +39,7 @@ public class OrderEndpoints : ICarterModule
             .RequireAuthorization(CustomerRequiredPolicy.Name);
     }
 
-    private async Task<Results<NoContent, UnauthorizedHttpResult, BadRequest>> PlaceOrder(
+    private async Task<Results<Created, UnauthorizedHttpResult, BadRequest>> PlaceOrder(
         [FromBody] PlaceOrderRequest request,
         IHttpContextAccessor httpContextAccessor,
         IMapper mapper,
@@ -45,8 +50,8 @@ public class OrderEndpoints : ICarterModule
 
         var command = mapper.Map<PlaceOrderCommand>((authenticatedUserId, request));
 
-        await sender.Send(command);
+        var response = await sender.Send(command);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created($"/{BaseEndpoint}/{response.Id}");
     }
 }

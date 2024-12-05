@@ -12,7 +12,7 @@ namespace Domain.OrderAggregate;
 /// <summary>
 /// Represents an order.
 /// </summary>
-public sealed class Order : AggregateRoot<OrderId>, IDiscountable
+public sealed class Order : AggregateRoot<OrderId>
 {
     private readonly List<OrderProduct> _products = [];
     private readonly List<OrderStatusHistory> _orderStatusHistories = [];
@@ -26,6 +26,10 @@ public sealed class Order : AggregateRoot<OrderId>, IDiscountable
     /// Gets the order owner id.
     /// </summary>
     public UserId UserId { get; private set; } = null!;
+    /// <summary>
+    /// Gets the order description.
+    /// </summary>
+    public string Description { get; private set; } = null!;
     /// <summary>
     /// Gets the order status identifier.
     /// </summary>
@@ -55,6 +59,7 @@ public sealed class Order : AggregateRoot<OrderId>, IDiscountable
         UserId = userId;
         OrderStatusId = orderStatus.Id;
         BaseTotal = baseTotal;
+        Description = "Order pending. Waiting for authorization";
 
         _products.AddRange(products);
         _orderStatusHistories.Add(OrderStatusHistory.Create(orderStatus.Id));
@@ -67,6 +72,8 @@ public sealed class Order : AggregateRoot<OrderId>, IDiscountable
     /// <param name="products">The order products.</param>
     /// <param name="baseTotal">The order total without discounts applied.</param>
     /// <param name="paymentMethod">The order payment method.</param>
+    /// <param name="billingAddress">The order payment billing address.</param>
+    /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="installments">The installments.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static Order Create(
@@ -74,6 +81,8 @@ public sealed class Order : AggregateRoot<OrderId>, IDiscountable
         IEnumerable<OrderProduct> products,
         decimal baseTotal,
         IPaymentMethod paymentMethod,
+        Address billingAddress,
+        Address deliveryAddress,
         int? installments = null
     )
     {
@@ -84,26 +93,37 @@ public sealed class Order : AggregateRoot<OrderId>, IDiscountable
             baseTotal
         );
 
-        order.AddDomainEvent(new OrderCreated(order, paymentMethod, installments));
+        order.AddDomainEvent(
+            new OrderCreated(
+                order,
+                paymentMethod,
+                billingAddress,
+                deliveryAddress,
+                installments
+            )
+        );
 
         return order;
     }
 
-    /// <inheritdoc/>
-    public void AddDiscounts(params Discount[] discounts)
+    /// <summary>
+    /// Cancels an order by setting its status to <see cref="OrderStatus.Canceled"/>.
+    /// </summary>
+    public void CancelOrder(string reason)
     {
-        _discounts.AddRange(discounts);
+        UpdateOrderStatus(OrderStatus.Canceled, reason);
     }
 
     /// <inheritdoc/>
-    public void ClearDiscounts()
-    {
-        _discounts.Clear();
-    }
-
-    /// <inheritdoc/>
-    public decimal GetPriceAfterDiscounts()
+    public decimal CalculateTotalApplyingDiscounts()
     {
         return DiscountService.ApplyDiscounts(BaseTotal, [.. _discounts]);
+    }
+
+    private void UpdateOrderStatus(OrderStatus status, string description)
+    {
+        OrderStatusId = status.Id;
+        Description = description;
+        _orderStatusHistories.Add(OrderStatusHistory.Create(status.Id));
     }
 }

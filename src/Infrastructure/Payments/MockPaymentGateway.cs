@@ -2,7 +2,9 @@ using Application.Common.Interfaces.Payments;
 using Application.Common.Interfaces.Services;
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.ValueObjects;
+using Domain.UserAggregate;
 using Infrastructure.Payments.Common.DTOs;
+using SharedKernel.ValueObjects;
 
 namespace Infrastructure.Payments;
 
@@ -12,7 +14,12 @@ namespace Infrastructure.Payments;
 public class MockPaymentGateway : IPaymentGateway
 {
     /// <inheritdoc/>
-    public async Task<IAuthorizePaymentResponse> AuthorizePaymentAsync(Payment payment)
+    public async Task<IAuthorizePaymentResponse> AuthorizePaymentAsync(
+        Payment payment,
+        User? payer = null,
+        Address? billingAddress = null,
+        Address? deliveryAddress = null
+    )
     {
         await Task.CompletedTask;
 
