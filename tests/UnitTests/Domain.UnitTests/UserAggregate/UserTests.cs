@@ -105,7 +105,7 @@ public class UserTests
         user.Email.Value.Should().Be(email);
         user.IsActive.Should().BeTrue();
         user.UserRoles.Count.Should().Be(1);
-        user.UserRoles[0].RoleId.Should().Be(Role.Customer.Id);
+        user.UserRoles.Should().ContainSingle(ur => ur.RoleId == Role.Customer.Id);
         user.UserAddresses.Count.Should().Be(0);
     }
 
@@ -145,7 +145,7 @@ public class UserTests
         var user = UserUtils.CreateUser(role: Role.Admin);
 
         user.UserRoles.Count.Should().Be(1);
-        user.UserRoles[0].RoleId.Should().Be(Role.Admin.Id);
+        user.UserRoles.Should().ContainSingle(ur => ur.RoleId == Role.Admin.Id);
     }
 
     /// <summary>

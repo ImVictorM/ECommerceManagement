@@ -176,7 +176,7 @@ public class ProductTests
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available.</param>
     /// <param name="categories">The product categories.</param>
-    /// <param name="productImageUrls">The product image urls.</param>
+    /// <param name="productImageURLs">The product image URLs.</param>
     [Theory]
     [MemberData(nameof(ValidProductParameters))]
     public void Product_WhenCreatingWithValidParameter_ReturnsNewInstance(
@@ -185,18 +185,18 @@ public class ProductTests
         decimal price,
         int quantityAvailable,
         IEnumerable<string> categories,
-        IEnumerable<Uri> productImageUrls
+        IEnumerable<Uri> productImageURLs
     )
     {
         var act = () =>
         {
             var product = ProductUtils.CreateProduct(
-                name,
-                description,
-                price,
-                quantityAvailable,
-                categories,
-                productImageUrls
+               name: name,
+               description: description,
+               price: price,
+               quantityAvailable: quantityAvailable,
+               categories: categories,
+               productImagesUrl: productImageURLs
             );
 
             product.Should().NotBeNull();

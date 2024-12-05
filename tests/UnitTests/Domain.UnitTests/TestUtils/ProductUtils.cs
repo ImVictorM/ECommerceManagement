@@ -1,5 +1,7 @@
+using System.Reflection;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Enumerations;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
 
@@ -13,6 +15,7 @@ public static class ProductUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
+    /// <param name="id">The product id.</param>
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="price">The product price.</param>
@@ -23,6 +26,7 @@ public static class ProductUtils
     /// <param name="active">Defines if the product should be created as an active or inactive product.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product CreateProduct(
+        ProductId? id = null,
         string? name = null,
         string? description = null,
         decimal? price = null,
@@ -42,6 +46,16 @@ public static class ProductUtils
             productImagesUrl ?? CreateProductImagesUrl(),
             initialDiscounts
         );
+
+        if (id != null)
+        {
+            var idProperty = typeof(Product).GetProperty(nameof(Product.Id), BindingFlags.Instance | BindingFlags.Public);
+
+            if (idProperty != null && idProperty.CanWrite)
+            {
+                idProperty.SetValue(product, id);
+            }
+        }
 
         if (!active)
         {
