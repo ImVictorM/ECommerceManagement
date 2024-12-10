@@ -58,15 +58,6 @@ public static partial class DomainConstants
         public static class Validations
         {
             /// <summary>
-            /// Error message for short names.
-            /// </summary>
-            public const string ShortName = "'Name' must be at least 3 characters long.";
-            /// <summary>
-            /// Error message for empty names.
-            /// </summary>
-            public const string EmptyName = "'Name' must not be empty.";
-
-            /// <summary>
             /// Error message for empty passwords.
             /// </summary>
             public const string EmptyPassword = "'Password' must not be empty.";

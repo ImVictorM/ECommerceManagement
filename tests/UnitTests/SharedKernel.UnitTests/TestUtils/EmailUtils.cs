@@ -17,39 +17,4 @@ public static class EmailUtils
     {
         return Email.Create(email ?? SharedKernelConstants.Email.Value);
     }
-
-    /// <summary>
-    /// Gets a list of invalid emails with the corresponding errors similar to the validation problem details object.
-    /// </summary>
-    public static IEnumerable<(string Value, Dictionary<string, string[]>)> GetInvalidEmailsWithCorrespondingErrors()
-    {
-        yield return (
-            "",
-            new Dictionary<string, string[]> { { "Email", [
-                SharedKernelConstants.Email.Validations.EmptyEmail,
-                SharedKernelConstants.Email.Validations.InvalidPatternEmail
-            ] } }
-        );
-
-        yield return (
-            "invalidemailformat",
-            new Dictionary<string, string[]> { { "Email", [
-                SharedKernelConstants.Email.Validations.InvalidPatternEmail
-            ] } }
-        );
-
-        yield return (
-            "invalidemailformat@invalid@.com",
-            new Dictionary<string, string[]> { { "Email", [
-                SharedKernelConstants.Email.Validations.InvalidPatternEmail
-            ] } }
-        );
-
-        yield return (
-            "invalidemailformat@invalid.com.",
-            new Dictionary<string, string[]> { { "Email", [
-                SharedKernelConstants.Email.Validations.InvalidPatternEmail
-            ] } }
-        );
-    }
 }

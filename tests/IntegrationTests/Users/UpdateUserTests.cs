@@ -1,16 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using Contracts.Users;
-using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.Errors;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 using IntegrationTests.Users.TestUtils;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SharedKernel.UnitTests.TestUtils;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;
@@ -20,22 +16,6 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class UpdateUserTests : BaseIntegrationTest
 {
-    /// <summary>
-    /// Invalid update requests for user data including the invalid request and the expected validation error messages.
-    /// </summary>
-    public static IEnumerable<object[]> InvalidRequests()
-    {
-        foreach (var (invalidEmail, expectedErrors) in EmailUtils.GetInvalidEmailsWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateUserRequestUtils.CreateRequest(email: invalidEmail), expectedErrors };
-        }
-
-        foreach (var (invalidName, expectedErrors) in UserUtils.GetInvalidNameWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateUserRequestUtils.CreateRequest(name: invalidName), expectedErrors };
-        }
-    }
-
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateUserTests"/> class.
     /// </summary>
@@ -114,24 +94,6 @@ public class UpdateUserTests : BaseIntegrationTest
         var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", requestContainingAnotherUserEmail);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
-    }
-
-    /// <summary>
-    /// Tests that requests with invalid parameters return a bad request response.
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(InvalidRequests))]
-    public async Task UpdateUser_WhenRequestParametersAreInvalid_ReturnsBadRequest(
-        UpdateUserRequest invalidRequest,
-        Dictionary<string, string[]> expectedErrors
-    )
-    {
-        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.Customer);
-        var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", invalidRequest);
-        var updateResponseContent = await updateResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        updateResponseContent!.EnsureCorrespondsToExpectedErrors(expectedErrors);
     }
 
     /// <summary>

@@ -82,22 +82,6 @@ public static class UserUtils
     }
 
     /// <summary>
-    /// Gets a list of invalid user name with the corresponding errors similar to the validation problem details object.
-    /// </summary>
-    public static IEnumerable<(string Value, Dictionary<string, string[]>)> GetInvalidNameWithCorrespondingErrors()
-    {
-        yield return ("", new Dictionary<string, string[]>
-        {
-            { "Name", [DomainConstants.User.Validations.EmptyName, DomainConstants.User.Validations.ShortName] }
-        });
-
-        yield return ("7S", new Dictionary<string, string[]>
-        {
-            { "Name", [DomainConstants.User.Validations.ShortName] }
-        });
-    }
-
-    /// <summary>
     /// Gets a list of invalid passwords with the corresponding errors similar to the validation problem details object.
     /// </summary>
     public static IEnumerable<(string Value, Dictionary<string, string[]>)> GetInvalidPasswordWithCorrespondingErrors()

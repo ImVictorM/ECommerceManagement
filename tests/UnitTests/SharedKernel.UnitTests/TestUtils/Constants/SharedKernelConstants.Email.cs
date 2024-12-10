@@ -18,20 +18,5 @@ public static partial class SharedKernelConstants
         /// <param name="index">The index to concatenate with.</param>
         /// <returns>A new email with a concatenated index.</returns>
         public static string EmailFromIndex(int index) => $"{index}{Value}";
-
-        /// <summary>
-        /// Defines validation error message constants.
-        /// </summary>
-        public static class Validations
-        {
-            /// <summary>
-            /// Invalid email pattern constant error message.
-            /// </summary>
-            public const string InvalidPatternEmail = "'Email' does not follow the required pattern.";
-            /// <summary>
-            /// Empty email constant error message.
-            /// </summary>
-            public const string EmptyEmail = "'Email' must not be empty.";
-        }
     }
 }
