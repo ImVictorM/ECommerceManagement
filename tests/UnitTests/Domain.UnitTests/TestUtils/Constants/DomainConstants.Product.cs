@@ -1,3 +1,5 @@
+using Domain.ProductAggregate.ValueObjects;
+
 namespace Domain.UnitTests.TestUtils.Constants;
 
 /// <summary>
@@ -13,7 +15,7 @@ public static partial class DomainConstants
         /// <summary>
         /// The product id constant.
         /// </summary>
-        public const long Id = 1L;
+        public static readonly ProductId Id = ProductId.Create(1);
         /// <summary>
         /// The product name constant.
         /// </summary>

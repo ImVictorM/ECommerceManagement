@@ -48,7 +48,7 @@ public static class UserUtils
         {
             foreach (var address in addresses)
             {
-                user.AddAddress(address);
+                user.AssignAddress(address);
             }
         }
 

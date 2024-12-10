@@ -1,3 +1,4 @@
+using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -14,7 +15,7 @@ public static partial class DomainConstants
         /// <summary>
         /// The user identifier constant.
         /// </summary>
-        public const long Id = 1L;
+        public static readonly UserId Id = UserId.Create(1);
         /// <summary>
         /// The user name constant.
         /// </summary>

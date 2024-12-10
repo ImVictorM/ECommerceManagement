@@ -71,9 +71,9 @@ public class OrderTests
 
         var createdOrder = act.Subject;
 
-        createdOrder.UserId.Should().Be(userId);
-        createdOrder.BaseTotal.Should().Be(total);
-        createdOrder.Description.Should().Be("Order pending. Waiting for authorization");
+        createdOrder.OwnerId.Should().Be(userId);
+        createdOrder.Total.Should().Be(total);
+        createdOrder.Description.Should().Be("Order pending. Waiting for payment");
         createdOrder.OrderStatusId.Should().Be(OrderStatus.Pending.Id);
         createdOrder.DomainEvents.Should().HaveCount(1);
         createdOrder.DomainEvents.Should().ContainItemsAssignableTo<OrderCreated>();

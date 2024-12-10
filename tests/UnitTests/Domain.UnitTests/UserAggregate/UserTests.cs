@@ -180,7 +180,7 @@ public class UserTests
     /// Tests if it is possible to get the user role names.
     /// </summary>
     [Fact]
-    public void User_WhenGettingUserRoleNames_RetunsItCorrectly()
+    public void User_WhenGettingUserRoleNames_ReturnsItCorrectly()
     {
         var expectedRoleNames = new string[] { "admin", "customer" };
 
@@ -205,7 +205,7 @@ public class UserTests
         var user = UserUtils.CreateUser();
         var address = AddressUtils.CreateAddress();
 
-        user.AddAddress(address);
+        user.AssignAddress(address);
 
         user.UserAddresses.Count.Should().Be(1);
         user.UserAddresses.Should().Contain(address);

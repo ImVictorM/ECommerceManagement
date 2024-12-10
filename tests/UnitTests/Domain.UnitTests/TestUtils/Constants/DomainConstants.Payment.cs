@@ -1,3 +1,6 @@
+using Domain.OrderAggregate.ValueObjects;
+using Domain.UserAggregate.ValueObjects;
+
 namespace Domain.UnitTests.TestUtils.Constants;
 
 public static partial class DomainConstants
@@ -12,24 +15,20 @@ public static partial class DomainConstants
         /// </summary>
         public const int Installments = 1;
         /// <summary>
-        /// The payment card number constant.
+        /// The payment amount constant.
         /// </summary>
-        public const string CardNumber = "8495-8953-9518-2048";
+        public const decimal Amount = 500m;
         /// <summary>
-        /// The payment card holder constant.
+        /// The payer id constant.
         /// </summary>
-        public const string CardHolder = "Djhonsons Djhones";
+        public static readonly UserId PayerId = User.Id;
         /// <summary>
-        /// The payment card expiration month constant.
+        /// The order id constant.
         /// </summary>
-        public const int CardExpirationMonth = 5;
+        public static readonly OrderId OrderId = Order.Id;
         /// <summary>
-        /// The payment card expiration year constant.
+        /// The tokenized card data constant.
         /// </summary>
-        public const int CardExpirationYear = 27;
-        /// <summary>
-        /// The payment card cryptograms constant.
-        /// </summary>
-        public const string CardCryptograms = "YZF FOZ JUKZH CZNQ";
+        public const string CardToken = "ff8080814c11e237014c1ff593b57b4d";
     }
 }

@@ -37,7 +37,7 @@ public static class OrderUtils
     )
     {
         return Order.Create(
-            userId ?? UserId.Create(DomainConstants.User.Id),
+            userId ?? DomainConstants.User.Id,
             orderProducts ?? Enumerable.Range(0, 5).Select(index => CreateOrderProduct(index.ToString(CultureInfo.InvariantCulture), index)),
             total ?? 120m,
             paymentMethod ?? PaymentUtils.CreateCreditCardPayment(),
