@@ -1,11 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using Contracts.Products;
-using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.Products.TestUtils;
-using IntegrationTests.TestUtils.Extensions.Errors;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Mvc;
@@ -25,37 +23,6 @@ public class UpdateProductTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public UpdateProductTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
-    }
-
-    /// <summary>
-    /// Provides invalid product update requests along with their expected validation error responses.
-    /// </summary>
-    public static IEnumerable<object[]> InvalidRequests()
-    {
-        foreach (var (invalidName, expectedErrors) in ProductUtils.GetInvalidNameWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateProductRequestUtils.CreateRequest(name: invalidName), expectedErrors };
-        }
-
-        foreach (var (invalidDescription, expectedErrors) in ProductUtils.GetInvalidDescriptionWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateProductRequestUtils.CreateRequest(description: invalidDescription), expectedErrors };
-        }
-
-        foreach (var (invalidPrice, expectedErrors) in ProductUtils.GetInvalidBasePriceWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateProductRequestUtils.CreateRequest(basePrice: invalidPrice), expectedErrors };
-        }
-
-        foreach (var (invalidCategories, expectedErrors) in ProductUtils.GetInvalidCategoriesWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateProductRequestUtils.CreateRequest(categories: invalidCategories), expectedErrors };
-        }
-
-        foreach (var (invalidImages, expectedErrors) in ProductUtils.GetInvalidImagesWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateProductRequestUtils.CreateRequest(images: invalidImages), expectedErrors };
-        }
     }
 
     /// <summary>
@@ -101,27 +68,6 @@ public class UpdateProductTests : BaseIntegrationTest
         responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
         responseContent.Detail.Should().Be($"The product with id {notFoundId} could not be updated because it does not exist");
-    }
-
-    /// <summary>
-    /// Tests that when the request is invalid the response is bad request.
-    /// </summary>
-    /// <param name="request">The invalid request.</param>
-    /// <param name="expectedErrors">The expected errors.</param>
-    [Theory]
-    [MemberData(nameof(InvalidRequests))]
-    public async Task UpdateProduct_WhenRequestHasInvalidData_ReturnsBadRequest(
-        UpdateProductRequest request,
-        Dictionary<string, string[]> expectedErrors
-    )
-    {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var httpResponse = await Client.PutAsJsonAsync("/products/1", request);
-
-        var responseContent = await httpResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        responseContent!.EnsureCorrespondsToExpectedErrors(expectedErrors);
     }
 
     /// <summary>

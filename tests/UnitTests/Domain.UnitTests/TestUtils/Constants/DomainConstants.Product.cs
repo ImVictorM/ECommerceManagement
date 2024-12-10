@@ -72,40 +72,5 @@ public static partial class DomainConstants
         {
             return $"{Description}-{index}";
         }
-
-        /// <summary>
-        /// Defines product validation error message constants.
-        /// </summary>
-        public static class Validations
-        {
-            /// <summary>
-            /// Error message for empty names.
-            /// </summary>
-            public const string EmptyName = "'Name' must not be empty.";
-            /// <summary>
-            /// Error message for empty descriptions.
-            /// </summary>
-            public const string EmptyDescription = "'Description' must not be empty.";
-            /// <summary>
-            /// Error message for empty categories.
-            /// </summary>
-            public const string EmptyCategories = "'Categories' must not be empty.";
-            /// <summary>
-            /// Error message for empty images.
-            /// </summary>
-            public const string EmptyImages = "'Images' must not be empty.";
-            /// <summary>
-            /// Error message for less than zero initial quantities.
-            /// </summary>
-            public const string LessThanZeroInitialQuantity = "'Initial Quantity' must be greater than '0'.";
-            /// <summary>
-            /// Error message for less than zero initial prices.
-            /// </summary>
-            public const string LessThanZeroBasePrice = "'Base Price' must be greater than '0'.";
-            /// <summary>
-            /// Error message for less than zero quantity to increment.
-            /// </summary>
-            public const string LessThanZeroQuantityToIncrement = "'Quantity To Increment' must be greater than '0'.";
-        }
     }
 }

@@ -1,8 +1,5 @@
 namespace Application.UnitTests.TestUtils.ValidationData;
 
-/// <summary>
-/// Defines validation test data for common validations.
-/// </summary>
 public static partial class ValidationTestData
 {
     /// <summary>

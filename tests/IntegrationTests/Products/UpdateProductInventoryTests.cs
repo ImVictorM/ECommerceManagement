@@ -2,11 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using Contracts.Products;
 using Domain.ProductAggregate;
-using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.Products.TestUtils;
-using IntegrationTests.TestUtils.Extensions.Errors;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Mvc;
@@ -26,17 +24,6 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public UpdateProductInventoryTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
-    }
-
-    /// <summary>
-    /// Provides invalid requests along with their expected validation error responses.
-    /// </summary>
-    public static IEnumerable<object[]> InvalidRequests()
-    {
-        foreach (var (invalidQuantity, expectedErrors) in ProductUtils.GetInvalidQuantityToIncrementWithCorrespondingErrors())
-        {
-            yield return new object[] { UpdateProductInventoryRequestUtils.CreateRequest(quantityToIncrement: invalidQuantity), expectedErrors };
-        }
     }
 
     /// <summary>
@@ -97,27 +84,6 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
         responseContent.Detail.Should().Be($"It was not possible to increment the inventory of the product with id {notFoundId} because the product does not exist");
-    }
-
-    /// <summary>
-    /// Tests when the request is invalid the response is bad request.
-    /// </summary>
-    /// <param name="request">The invalid request.</param>
-    /// <param name="expectedErrors">The expected errors.</param>
-    [Theory]
-    [MemberData(nameof(InvalidRequests))]
-    public async Task UpdateProductInventory_WhenQuantityToAddIsInvalid_ReturnsBadRequest(
-        UpdateProductInventoryRequest request,
-        Dictionary<string, string[]> expectedErrors
-    )
-    {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var httpResponse = await Client.PutAsJsonAsync("/products/1/inventory", request);
-
-        var responseContent = await httpResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        responseContent!.EnsureCorrespondsToExpectedErrors(expectedErrors);
     }
 
     /// <summary>

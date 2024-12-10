@@ -1,15 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using Contracts.Products;
-using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.Products.TestUtils;
-using IntegrationTests.TestUtils.Extensions.Errors;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Products;
 using IntegrationTests.TestUtils.Seeds;
-using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Products;
@@ -27,42 +24,6 @@ public class CreateProductTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public CreateProductTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
-    }
-
-    /// <summary>
-    /// Provides invalid product creation requests along with their expected validation error responses.
-    /// </summary>
-    public static IEnumerable<object[]> InvalidRequests()
-    {
-        foreach (var (invalidName, expectedErrors) in ProductUtils.GetInvalidNameWithCorrespondingErrors())
-        {
-            yield return new object[] { CreateProductRequestUtils.CreateRequest(name: invalidName), expectedErrors };
-        }
-
-        foreach (var (invalidDescription, expectedErrors) in ProductUtils.GetInvalidDescriptionWithCorrespondingErrors())
-        {
-            yield return new object[] { CreateProductRequestUtils.CreateRequest(description: invalidDescription), expectedErrors };
-        }
-
-        foreach (var (invalidPrice, expectedErrors) in ProductUtils.GetInvalidBasePriceWithCorrespondingErrors())
-        {
-            yield return new object[] { CreateProductRequestUtils.CreateRequest(initialPrice: invalidPrice), expectedErrors };
-        }
-
-        foreach (var (invalidInitialQuantity, expectedErrors) in ProductUtils.GetInvalidInitialQuantityWithCorrespondingErrors())
-        {
-            yield return new object[] { CreateProductRequestUtils.CreateRequest(initialQuantity: invalidInitialQuantity), expectedErrors };
-        }
-
-        foreach (var (invalidCategories, expectedErrors) in ProductUtils.GetInvalidCategoriesWithCorrespondingErrors())
-        {
-            yield return new object[] { CreateProductRequestUtils.CreateRequest(categories: invalidCategories), expectedErrors };
-        }
-
-        foreach (var (invalidImages, expectedErrors) in ProductUtils.GetInvalidImagesWithCorrespondingErrors())
-        {
-            yield return new object[] { CreateProductRequestUtils.CreateRequest(images: invalidImages), expectedErrors };
-        }
     }
 
     /// <summary>
@@ -116,27 +77,5 @@ public class CreateProductTests : BaseIntegrationTest
         postResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         getResponseContent!.EnsureCreatedFrom(request);
-    }
-
-    /// <summary>
-    /// Tests that when an admin user tries to create a product with invalid request parameters, the response
-    /// status is BadRequest and includes the expected validation errors. Ensures the validity of request data.
-    /// </summary>
-    /// <param name="request">The invalid product creation request.</param>
-    /// <param name="expectedErrors">Expected validation errors.</param>
-    [Theory]
-    [MemberData(nameof(InvalidRequests))]
-    public async Task CreateProduct_WhenUserAuthenticatedIsAdminButRequestParametersAreInvalid_ReturnsBadRequest(
-        CreateProductRequest request,
-        Dictionary<string, string[]> expectedErrors
-    )
-    {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var httpResponse = await Client.PostAsJsonAsync("/products", request);
-
-        var responseContent = await httpResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        responseContent!.EnsureCorrespondsToExpectedErrors(expectedErrors);
     }
 }
