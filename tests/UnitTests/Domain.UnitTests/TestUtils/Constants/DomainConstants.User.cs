@@ -51,28 +51,5 @@ public static partial class DomainConstants
         /// <param name="index">The index to concatenate with.</param>
         /// <returns>A new name with a concatenated index.</returns>
         public static string UserNameFromIndex(int index) => $"{Name}-{index}";
-
-        /// <summary>
-        /// Defines user validation error message constants.
-        /// </summary>
-        public static class Validations
-        {
-            /// <summary>
-            /// Error message for empty passwords.
-            /// </summary>
-            public const string EmptyPassword = "'Password' must not be empty.";
-            /// <summary>
-            /// Error message for short passwords.
-            /// </summary>
-            public const string ShortPassword = "'Password' must be at least 6 characters long.";
-            /// <summary>
-            /// Error message for passwords missing a digit.
-            /// </summary>
-            public const string MissingDigitPassword = "'Password' must contain at least one digit.";
-            /// <summary>
-            /// Error message for passwords missing a character.
-            /// </summary>
-            public const string MissingCharacterPassword = "'Password' must contain at least one character.";
-        }
     }
 }

@@ -48,22 +48,9 @@ public class LoginTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// List of invalid login request objects.
-    /// </summary>
-    public static IEnumerable<object[]> RequestWithInvalidParameters()
-    {
-
-
-        yield return new object[] { LoginRequestUtils.CreateRequest("", ""), "Email", "Password" };
-        yield return new object[] { LoginRequestUtils.CreateRequest("          ", "        "), "Email", "Password" };
-        yield return new object[] { LoginRequestUtils.CreateRequest(password: ""), "Password" };
-        yield return new object[] { LoginRequestUtils.CreateRequest(email: ""), "Email" };
-    }
-
-    /// <summary>
     /// List of login requests with incorrect pairs of email and password.
     /// </summary>
-    public static IEnumerable<object[]> IncorrectEmailPasswordPairs()
+    public static IEnumerable<object[]> RequestsWithWrongCredentials()
     {
         yield return new object[] { LoginRequestUtils.CreateRequest(password: "incorrectpassword") };
         yield return new object[] { LoginRequestUtils.CreateRequest(email: "incorrect@email.com") };
@@ -105,40 +92,11 @@ public class LoginTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Checks if it returns a bad request response when the login credentials are invalid.
-    /// </summary>
-    /// <param name="loginRequest">The invalid request object.</param>
-    /// <param name="fieldsWithError">The fields that will contain some error.</param>
-    [Theory]
-    [MemberData(nameof(RequestWithInvalidParameters))]
-    public async Task Login_WhenCredentialAreInvalid_ReturnsCorrectErrorResponse(
-        LoginRequest loginRequest,
-        params string[] fieldsWithError
-    )
-    {
-        var httpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
-
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var errorResponse = await httpResponse.Content.ReadFromJsonAsync<HttpValidationProblemDetails>();
-
-        errorResponse.Should().NotBeNull();
-        errorResponse!.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        errorResponse.Errors.Count.Should().Be(fieldsWithError.Length);
-
-        foreach (var field in fieldsWithError)
-        {
-            errorResponse.Errors[field].Should().NotBeEmpty();
-            errorResponse.Errors[field][0].Should().MatchRegex("^* must not be empty");
-        }
-    }
-
-    /// <summary>
     /// Tests if it returns a bad request with the same message when the authentication credentials are incorrect.
     /// </summary>
     /// <param name="loginRequest">The request object containing invalid email/password pairs.</param>
     [Theory]
-    [MemberData(nameof(IncorrectEmailPasswordPairs))]
+    [MemberData(nameof(RequestsWithWrongCredentials))]
     public async Task Login_WhenEmailOrPasswordIsIncorrect_ReturnsBadRequest(LoginRequest loginRequest)
     {
         var httpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);

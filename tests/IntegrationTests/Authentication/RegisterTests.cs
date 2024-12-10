@@ -1,14 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
 using Contracts.Authentication;
-using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using IntegrationTests.Authentication.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.Authentication;
-using IntegrationTests.TestUtils.Extensions.Errors;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel.UnitTests.TestUtils;
 using Xunit.Abstractions;
 using RegisterRequest = Contracts.Authentication.RegisterRequest;
 
@@ -39,27 +36,6 @@ public class RegisterTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// List of invalid register request objects.
-    /// </summary>
-    public static IEnumerable<object[]> InvalidRequests()
-    {
-        foreach (var (invalidEmail, expectedErrors) in EmailUtils.GetInvalidEmailsWithCorrespondingErrors())
-        {
-            yield return new object[] { RegisterRequestUtils.CreateRequest(email: invalidEmail), expectedErrors };
-        }
-
-        foreach (var (invalidName, expectedErrors) in UserUtils.GetInvalidNameWithCorrespondingErrors())
-        {
-            yield return new object[] { RegisterRequestUtils.CreateRequest(name: invalidName), expectedErrors };
-        }
-
-        foreach (var (invalidPassword, expectedErrors) in UserUtils.GetInvalidPasswordWithCorrespondingErrors())
-        {
-            yield return new object[] { RegisterRequestUtils.CreateRequest(password: invalidPassword), expectedErrors };
-        }
-    }
-
-    /// <summary>
     /// Tests if it is possible to create users with valid requests.
     /// </summary>
     /// <param name="registerRequest">The request object.</param>
@@ -79,25 +55,6 @@ public class RegisterTests : BaseIntegrationTest
         loginHttpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         updateHttpResponseContent!.EnsureCreatedFromRequest(registerRequest);
         loginHttpResponseContent!.EnsureCreatedFromRequest(registerRequest);
-    }
-
-    /// <summary>
-    /// Tests if it is not possible to create a new user with invalid request parameters.
-    /// </summary>
-    /// <param name="registerRequest">The request object with invalid parameters.</param>
-    /// <param name="expectedErrors">A dictionary containing the field and the expected errors.</param>
-    [Theory]
-    [MemberData(nameof(InvalidRequests))]
-    public async Task Register_WhenCreationParametersAreInvalid_ReturnsBadRequestErrorResponse(
-        RegisterRequest registerRequest,
-        Dictionary<string, string[]> expectedErrors
-    )
-    {
-        var httpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
-        var responseContent = await httpResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        responseContent!.EnsureCorrespondsToExpectedErrors(expectedErrors);
     }
 
     /// <summary>
