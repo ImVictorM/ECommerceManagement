@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Users.Commands.DeactivateUser;
 using Domain.UnitTests.TestUtils.Constants;
 
@@ -16,6 +15,6 @@ public static class DeactivateUserCommandUtils
     /// <returns>A new instance of the <see cref="DeactivateUserCommand"/> class.</returns>
     public static DeactivateUserCommand CreateCommand(string? id = null)
     {
-        return new DeactivateUserCommand(id ?? DomainConstants.User.Id.ToString(CultureInfo.InvariantCulture));
+        return new DeactivateUserCommand(id ?? DomainConstants.User.Id.ToString());
     }
 }

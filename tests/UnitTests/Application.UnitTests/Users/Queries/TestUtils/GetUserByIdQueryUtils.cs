@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Users.Queries.GetUserById;
 using Domain.UnitTests.TestUtils.Constants;
 
@@ -16,6 +15,6 @@ public static class GetUserByIdQueryUtils
     /// <returns>A new instance of the <see cref="GetUserByIdQuery"/> query. </returns>
     public static GetUserByIdQuery CreateQuery(string? id = null)
     {
-        return new GetUserByIdQuery(id ?? DomainConstants.User.Id.ToString(CultureInfo.InvariantCulture));
+        return new GetUserByIdQuery(id ?? DomainConstants.User.Id.ToString());
     }
 }

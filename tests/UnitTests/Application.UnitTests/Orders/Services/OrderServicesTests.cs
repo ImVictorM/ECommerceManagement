@@ -51,8 +51,7 @@ public class OrderServicesTests
         await FluentActions
             .Invoking(() => _orderServices.VerifyInventoryAvailabilityAsync(mockInput))
             .Should()
-            .ThrowAsync<InventoryUnavailableException>()
-            .WithMessage($"The {mockProductUnavailable.Name} does not have the quantity required in inventory to proceed with the order");
+            .ThrowAsync<ProductNotAvailableException>();
     }
 
     /// <summary>

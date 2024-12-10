@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Products.Commands.DeactivateProduct;
 using Domain.UnitTests.TestUtils.Constants;
 
@@ -19,7 +18,7 @@ public static class DeactivateProductCommandUtils
     )
     {
         return new DeactivateProductCommand(
-            id ?? DomainConstants.Product.Id.ToString(CultureInfo.InvariantCulture)
+            id ?? DomainConstants.Product.Id.ToString()
         );
     }
 }

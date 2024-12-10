@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Products.Commands.UpdateProduct;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
@@ -30,7 +29,7 @@ public static class UpdateProductCommandUtils
     )
     {
         return new UpdateProductCommand(
-            id ?? DomainConstants.Product.Id.ToString(CultureInfo.InvariantCulture),
+            id ?? DomainConstants.Product.Id.ToString(),
             name ?? DomainConstants.Product.Name,
             description ?? DomainConstants.Product.Description,
             basePrice ?? DomainConstants.Product.Price,

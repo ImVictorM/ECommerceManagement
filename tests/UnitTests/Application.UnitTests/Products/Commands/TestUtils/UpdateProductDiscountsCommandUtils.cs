@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Products.Commands.UpdateProductDiscounts;
 using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.UnitTests.TestUtils;
@@ -23,7 +22,7 @@ public static class UpdateProductDiscountsCommandUtils
     )
     {
         return new UpdateProductDiscountsCommand(
-            id ?? DomainConstants.Product.Id.ToString(CultureInfo.InvariantCulture),
+            id ?? DomainConstants.Product.Id.ToString(),
             discounts ?? [DiscountUtils.CreateDiscount(percentage: 10)]
        );
     }

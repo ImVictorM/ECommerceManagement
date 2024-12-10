@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Products.Queries.GetProductById;
 using Domain.UnitTests.TestUtils.Constants;
 
@@ -16,6 +15,6 @@ public static class GetProductByIdQueryUtils
     /// <returns>A new instance of the <see cref="GetProductByIdQuery"/> query.</returns>
     public static GetProductByIdQuery CreateQuery(string? id = null)
     {
-        return new GetProductByIdQuery(id ?? DomainConstants.Product.Id.ToString(CultureInfo.InvariantCulture));
+        return new GetProductByIdQuery(id ?? DomainConstants.Product.Id.ToString());
     }
 }

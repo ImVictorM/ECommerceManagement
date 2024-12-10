@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Users.Commands.UpdateUser;
 using Domain.UnitTests.TestUtils.Constants;
 
@@ -25,7 +24,7 @@ public static class UpdateUserCommandUtils
     )
     {
         return new UpdateUserCommand(
-            id ?? DomainConstants.User.Id.ToString(CultureInfo.InvariantCulture),
+            id ?? DomainConstants.User.Id.ToString(),
             name ?? DomainConstants.User.Name,
             phone ?? DomainConstants.User.Phone,
             email ?? SharedKernelConstants.Email.Value

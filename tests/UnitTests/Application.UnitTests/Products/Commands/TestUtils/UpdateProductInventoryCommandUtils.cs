@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Products.Commands.UpdateProductInventory;
 using Domain.UnitTests.TestUtils.Constants;
 
@@ -22,7 +21,7 @@ public static class UpdateProductInventoryCommandUtils
     )
     {
         return new UpdateProductInventoryCommand(
-            productId ?? DomainConstants.Product.Id.ToString(CultureInfo.InvariantCulture),
+            productId ?? DomainConstants.Product.Id.ToString(),
             quantityToAdd
         );
     }

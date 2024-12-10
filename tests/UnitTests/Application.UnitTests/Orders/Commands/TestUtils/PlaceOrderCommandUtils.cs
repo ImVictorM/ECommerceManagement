@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Orders.Commands.Common.DTOs;
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.TestUtils.Extensions;
@@ -23,22 +22,24 @@ public static class PlaceOrderCommandUtils
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="paymentMethod">The order payment method.</param>
+    /// <param name="installments">The installments.</param>
     /// <returns>A new instance of the <see cref="PlaceOrderCommand"/> class.</returns>
     public static PlaceOrderCommand CreateCommand(
         string? userId = null,
         IEnumerable<OrderProductInput>? orderProducts = null,
         Address? billingAddress = null,
         Address? deliveryAddress = null,
-        IPaymentMethod? paymentMethod = null
+        IPaymentMethod? paymentMethod = null,
+        int? installments = null
     )
     {
         return new PlaceOrderCommand(
-            userId ?? DomainConstants.User.Id.ToString(CultureInfo.InvariantCulture),
+            userId ?? DomainConstants.User.Id.ToString(),
             orderProducts ?? DomainConstants.Order.OrderProducts.ToOrderProductInput(),
             AddressUtils.CreateAddress(),
             AddressUtils.CreateAddress(),
             PaymentUtils.CreateCreditCardPayment(),
-            1
+            installments
         );
     }
 }
