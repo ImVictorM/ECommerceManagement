@@ -6,8 +6,8 @@ using SharedKernel.Interfaces;
 namespace Infrastructure.Persistence.Interceptors;
 
 /// <summary>
-/// Interceptor used to publish domain events.
-/// Useful to make atomic operations between aggregates.
+/// Interceptor used to publish domain events after changes were save.
+/// Use eventual consistency or transactions to maintain data integrity.
 /// </summary>
 public sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
 {
@@ -23,18 +23,18 @@ public sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
     }
 
     /// <inheritdoc/>
-    public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+    public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
     {
         PublishDomainEvents(eventData.Context).GetAwaiter().GetResult();
 
-        return base.SavingChanges(eventData, result);
+        return base.SavedChanges(eventData, result);
     }
-
+ 
     /// <inheritdoc/>
-    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
     {
         await PublishDomainEvents(eventData.Context);
-        return await base.SavingChangesAsync(eventData, result, cancellationToken);
+        return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 
     private async Task PublishDomainEvents(DbContext? dbContext)

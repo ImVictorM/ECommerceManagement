@@ -3,5 +3,5 @@ namespace Contracts.Orders.Common;
 /// <summary>
 /// Represents a debit card payment method.
 /// </summary>
-/// <param name="Amount">The amount to be paid.</param>
-public record DebitCardPayment(decimal Amount) : PaymentMethod("DebitCard", Amount);
+/// <param name="Token">The tokenized card data.</param>
+public record DebitCardPayment(string Token) : PaymentMethod("DebitCard");

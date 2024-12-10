@@ -31,8 +31,7 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
     /// <inheritdoc/>
     public async Task<CreatedResult> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
     {
-        // 1. Verify inventory availability
-        var userId = UserId.Create(request.UserId);
+        var userId = UserId.Create(request.AuthenticatedUserId);
 
         var orderProducts = request.Products
             .Select(p => OrderProduct.Create(ProductId.Create(p.Id), p.Quantity))
@@ -40,11 +39,7 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
 
         await _orderPricingService.VerifyInventoryAvailabilityAsync(orderProducts);
 
-        // 2. Calculate the order total
-
         var total = await _orderPricingService.CalculateTotalAsync(orderProducts);
-
-        // 3. Create the order
 
         var order = Order.Create(
             userId,
@@ -55,8 +50,6 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
             request.DeliveryAddress,
             request.Installments
         );
-
-        // 4. Save order / Handle order created event
 
         await _unitOfWork.OrderRepository.AddAsync(order);
 

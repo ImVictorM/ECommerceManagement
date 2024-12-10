@@ -14,7 +14,7 @@ public class OrderMappingConfig : IRegister
     {
         config.NewConfig<(string AuthenticatedUserId, PlaceOrderRequest Request), PlaceOrderCommand>()
             .Map(dest => dest, src => src.Request)
-            .Map(dest => dest.UserId, src => src.AuthenticatedUserId)
+            .Map(dest => dest.AuthenticatedUserId, src => src.AuthenticatedUserId)
             .Map(dest => dest.PaymentMethod, src => src.Request.PaymentMethod)
             .Map(dest => dest.Installments, src => src.Request.installments);
     }

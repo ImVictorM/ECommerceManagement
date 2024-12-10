@@ -32,7 +32,7 @@ public sealed class ErrorEndpoints : ICarterModule
 
         var genericProblem = TypedResults.Problem(
             statusCode: StatusCodes.Status500InternalServerError,
-            title: "An unexpected error ocurred.",
+            title: "An unexpected error occurred.",
             detail: exception?.Message
         );
 

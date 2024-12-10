@@ -47,11 +47,11 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
         builder
             .HasOne<User>()
             .WithMany()
-            .HasForeignKey(order => order.UserId)
+            .HasForeignKey(order => order.OwnerId)
             .IsRequired();
 
         builder
-            .Property(order => order.UserId)
+            .Property(order => order.OwnerId)
             .HasConversion(
                 id => id.Value,
                 value => UserId.Create(value)
@@ -65,7 +65,12 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .IsRequired();
 
         builder
-            .Property(order => order.BaseTotal)
+            .Property(order => order.Total)
+            .IsRequired();
+
+        builder
+            .Property(order => order.Description)
+            .HasMaxLength(200)
             .IsRequired();
     }
 

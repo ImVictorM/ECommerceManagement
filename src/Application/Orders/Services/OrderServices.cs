@@ -49,7 +49,7 @@ public class OrderServices : IOrderServices
 
             if (!product.Inventory.HasInventoryAvailable(orderProduct.Quantity))
             {
-                throw new InventoryUnavailableException($"The {product.Name} does not have the quantity required in inventory to proceed with the order");
+                throw new ProductNotAvailableException($"{product.Name} is not available. Current inventory: {product.Inventory.QuantityAvailable}. Order quantity: {orderProduct.Quantity}");
             }
         }
     }

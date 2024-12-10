@@ -11,7 +11,7 @@ namespace Contracts.Common;
 public record Address(
     string PostalCode,
     string Street,
-    string? Neighborhood,
     string State,
-    string City
+    string City,
+    string? Neighborhood = null
 );

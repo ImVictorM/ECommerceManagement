@@ -149,7 +149,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     /// Adds addresses to the user.
     /// </summary>
     /// <param name="addresses">The addresses to be added.</param>
-    public void AddAddress(params Address[] addresses)
+    public void AssignAddress(params Address[] addresses)
     {
         foreach (var address in addresses)
         {
