@@ -1,75 +1,31 @@
 using Domain.PaymentAggregate.Abstracts;
-using SharedKernel.Models;
 
 namespace Domain.PaymentAggregate.ValueObjects;
 
 /// <summary>
 /// Represents a debit card payment method.
 /// </summary>
-public class DebitCardPaymentMethod : ValueObject, INetworkTokenCardPaymentMethod
+public class DebitCardPaymentMethod : CardPaymentMethod
 {
-    /// <inheritdoc/>
-    public string Type => "debit_card";
-    /// <inheritdoc/>
-    public string Cryptograms { get; }
-    /// <inheritdoc/>
-    public string Number { get; }
-    /// <inheritdoc/>
-    public string HolderName { get; }
-    /// <inheritdoc/>
-    public int ExpirationMonth { get; }
-    /// <inheritdoc/>
-    public int ExpirationYear { get; }
-
-    private DebitCardPaymentMethod(
-        string number,
-        string holderName,
-        int expirationMonth,
-        int expirationYear,
-        string cryptograms
-    )
+    private DebitCardPaymentMethod(string token)
+        : base("debit_card", token)
     {
-        Number = number;
-        HolderName = holderName;
-        ExpirationMonth = expirationMonth;
-        ExpirationYear = expirationYear;
-        Cryptograms = cryptograms;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="DebitCardPaymentMethod"/> class.
     /// </summary>
-    /// <param name="number">The card number.</param>
-    /// <param name="holderName">The card holder name.</param>
-    /// <param name="expirationMonth">The card expiration month.</param>
-    /// <param name="expirationYear">The card expiration year.</param>
-    /// <param name="cryptograms">The card network token cryptograms.</param>
+    /// <param name="token">The tokenized card data.</param>
     /// <returns>A new instance of the <see cref="DebitCardPaymentMethod"/> class.</returns>
-    public static DebitCardPaymentMethod Create(
-        string number,
-        string holderName,
-        int expirationMonth,
-        int expirationYear,
-        string cryptograms
-    )
+    public static DebitCardPaymentMethod Create(string token)
     {
-        return new DebitCardPaymentMethod(
-            number,
-            holderName,
-            expirationMonth,
-            expirationYear,
-            cryptograms
-        );
+        return new DebitCardPaymentMethod(token);
     }
 
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Type;
-        yield return Number;
-        yield return HolderName;
-        yield return ExpirationMonth;
-        yield return ExpirationYear;
-        yield return Cryptograms;
+        yield return Token;
     }
 }

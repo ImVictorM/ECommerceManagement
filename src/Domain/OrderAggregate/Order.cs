@@ -21,11 +21,11 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Gets the order total amount without discounts applied.
     /// </summary>
-    public decimal BaseTotal { get; private set; }
+    public decimal Total { get; private set; }
     /// <summary>
     /// Gets the order owner id.
     /// </summary>
-    public UserId UserId { get; private set; } = null!;
+    public UserId OwnerId { get; private set; } = null!;
     /// <summary>
     /// Gets the order description.
     /// </summary>
@@ -56,10 +56,10 @@ public sealed class Order : AggregateRoot<OrderId>
         decimal baseTotal
     )
     {
-        UserId = userId;
+        OwnerId = userId;
         OrderStatusId = orderStatus.Id;
-        BaseTotal = baseTotal;
-        Description = "Order pending. Waiting for authorization";
+        Total = baseTotal;
+        Description = "Order pending. Waiting for payment";
 
         _products.AddRange(products);
         _orderStatusHistories.Add(OrderStatusHistory.Create(orderStatus.Id));
@@ -117,7 +117,7 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <inheritdoc/>
     public decimal CalculateTotalApplyingDiscounts()
     {
-        return DiscountService.ApplyDiscounts(BaseTotal, [.. _discounts]);
+        return DiscountService.ApplyDiscounts(Total, [.. _discounts]);
     }
 
     private void UpdateOrderStatus(OrderStatus status, string description)

@@ -1,8 +1,12 @@
 using Domain.OrderAggregate.ValueObjects;
 using Domain.PaymentAggregate.Enumeration;
+using Domain.PaymentAggregate.Events;
 using Domain.PaymentAggregate.ValueObjects;
+using Domain.UserAggregate.ValueObjects;
+using SharedKernel.Errors;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 namespace Domain.PaymentAggregate;
 
@@ -34,6 +38,10 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// </summary>
     public long PaymentStatusId { get; private set; }
     /// <summary>
+    /// Gest the payment description.
+    /// </summary>
+    public string Description { get; private set; } = null!;
+    /// <summary>
     /// Gets the payment status histories.
     /// </summary>
     public IReadOnlyList<PaymentStatusHistory> PaymentStatusHistories => _paymentStatusHistories.AsReadOnly();
@@ -54,6 +62,7 @@ public sealed class Payment : AggregateRoot<PaymentId>
         PaymentStatusId = paymentStatus.Id;
         Installments = installments ?? 1;
         _paymentStatusHistories.Add(PaymentStatusHistory.Create(paymentStatus.Id));
+        Description = "Payment in progress. Waiting for authorization";
     }
 
     /// <summary>
@@ -61,22 +70,62 @@ public sealed class Payment : AggregateRoot<PaymentId>
     /// </summary>
     /// <param name="amount">The payment amount.</param>
     /// <param name="orderId">The order id.</param>
+    /// <param name="payerId">The payer id.</param>
     /// <param name="paymentMethod">The payment method.</param>
+    /// <param name="billingAddress">The billing address.</param>
+    /// <param name="deliveryAddress">The delivery address.</param>
     /// <param name="installments">The quantity of installments (optional).</param>
     /// <returns>A new instance of the <see cref="Payment"/> class.</returns>
     public static Payment Create(
         decimal amount,
         OrderId orderId,
+        UserId payerId,
         IPaymentMethod paymentMethod,
+        Address billingAddress,
+        Address deliveryAddress,
         int? installments = null
     )
     {
-        return new Payment(
+        var payment = new Payment(
             amount,
             orderId,
             paymentMethod,
             PaymentStatus.InProgress,
             installments
         );
+
+        payment.AddDomainEvent(new PaymentCreated(payment, payerId, billingAddress, deliveryAddress));
+
+        return payment;
+    }
+
+    /// <summary>
+    /// Cancels a payment for a given reason.
+    /// </summary>
+    /// <param name="reason">The reason the payment was canceled.</param>
+    public void CancelPayment(string reason)
+    {
+        if (
+            PaymentStatusId == PaymentStatus.Pending.Id
+            || PaymentStatusId == PaymentStatus.InProgress.Id
+        )
+        {
+            UpdatePaymentStatus(PaymentStatus.Canceled, reason);
+            AddDomainEvent(new PaymentCanceled(this));
+            return;
+        }
+
+        throw new BaseException(
+            "The current payment cannot be canceled. Only payments pending or in progress can be canceled",
+            "Cancel Payment Error",
+            ErrorCode.ValidationError
+        );
+    }
+
+    private void UpdatePaymentStatus(PaymentStatus status, string description)
+    {
+        PaymentStatusId = status.Id;
+        _paymentStatusHistories.Add(PaymentStatusHistory.Create(PaymentStatusId));
+        Description = description;
     }
 }
