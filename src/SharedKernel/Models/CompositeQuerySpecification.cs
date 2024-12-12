@@ -7,7 +7,7 @@ namespace SharedKernel.Models;
 /// Composite query specification to create more complex criterias.
 /// </summary>
 /// <typeparam name="T">The entity type.</typeparam>
-public abstract class CompositeQuerySpecification<T> : ISpecificationQuery<T> where T : class
+public class CompositeQuerySpecification<T> : ISpecificationQuery<T> where T : class
 {
     /// <inheritdoc/>
     public Expression<Func<T, bool>> Criteria { get; private set; }
@@ -25,7 +25,7 @@ public abstract class CompositeQuerySpecification<T> : ISpecificationQuery<T> wh
     /// Chains a specification criteria with the current criteria, creating a composite criteria based on the specifications chained.
     /// </summary>
     /// <param name="otherSpec">The other specification.</param>
-    public void And(ISpecificationQuery<T> otherSpec)
+    public CompositeQuerySpecification<T> And(ISpecificationQuery<T> otherSpec)
     {
         var parameter = Expression.Parameter(typeof(T), "entity");
 
@@ -35,5 +35,7 @@ public abstract class CompositeQuerySpecification<T> : ISpecificationQuery<T> wh
         var combinedExpression = Expression.AndAlso(leftExpression, rightExpression);
 
         Criteria = Expression.Lambda<Func<T, bool>>(combinedExpression, parameter);
+
+        return new CompositeQuerySpecification<T>(Criteria);
     }
 }

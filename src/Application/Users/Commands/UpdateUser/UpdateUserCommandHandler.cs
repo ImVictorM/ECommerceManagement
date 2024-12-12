@@ -1,6 +1,7 @@
 using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Users.Common.Errors;
+using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -35,9 +36,9 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
         var userToUpdateId = UserId.Create(request.Id);
         var inputEmail = Email.Create(request.Email);
 
-        var user = await _unitOfWork.UserRepository.FindByIdAsync(userToUpdateId);
+        var user = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(userToUpdateId));
 
-        if (user == null || !user.IsActive)
+        if (user == null)
         {
             LogUserNotFound();
             throw new UserNotFoundException("The user to be updated does not exist").WithContext("UserId", userToUpdateId.ToString());
@@ -45,7 +46,7 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
             
         if (user.Email != inputEmail)
         {
-            var existingUserWithEmail = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
+            var existingUserWithEmail = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryUserByEmailSpecification(inputEmail));
 
             if (existingUserWithEmail != null)
             {

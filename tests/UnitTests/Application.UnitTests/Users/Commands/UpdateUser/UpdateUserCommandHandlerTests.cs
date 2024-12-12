@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Commands.TestUtils;
@@ -6,6 +5,7 @@ using Application.Users.Commands.UpdateUser;
 using Application.Users.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -47,11 +47,11 @@ public class UpdateUserCommandHandlerTests
         var userToBeUpdated = UserUtils.CreateUser();
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync(userToBeUpdated);
 
         _mockUserRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
             .ReturnsAsync((User?)null);
 
         var command = UpdateUserCommandUtils.CreateCommand(name: "new name", phone: "19958274823");
@@ -72,27 +72,8 @@ public class UpdateUserCommandHandlerTests
     public async Task HandleUpdateUser_WhenUserDoesNotExist_ThrowsException()
     {
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync((User?)null);
-
-        await FluentActions
-            .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))
-            .Should()
-            .ThrowAsync<UserNotFoundException>()
-            .WithMessage("The user to be updated does not exist");
-    }
-
-    /// <summary>
-    /// Tests that when the user being updated is inactive an error is thrown.
-    /// </summary>
-    [Fact]
-    public async Task HandleUpdateUser_WhenUserIsInactive_ThrowsException()
-    {
-        var inactiveUser = UserUtils.CreateUser(active: false);
-
-        _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
-            .ReturnsAsync(inactiveUser);
 
         await FluentActions
             .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))
@@ -114,11 +95,11 @@ public class UpdateUserCommandHandlerTests
         var updateRequest = UpdateUserCommandUtils.CreateCommand(email: userToBeUpdatedNewEmail);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync(userToBeUpdated);
 
         _mockUserRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
             .ReturnsAsync(conflictingUser);
 
         await FluentActions

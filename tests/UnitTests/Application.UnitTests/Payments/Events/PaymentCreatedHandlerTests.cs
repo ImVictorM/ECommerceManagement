@@ -7,6 +7,7 @@ using Domain.PaymentAggregate.Enumeration;
 using Domain.PaymentAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 using Moq;
@@ -42,15 +43,6 @@ public class PaymentCreatedHandlerTests
     }
 
     /// <summary>
-    /// List of not found users.
-    /// </summary>
-    public static IEnumerable<object[]> NotFoundUser()
-    {
-        yield return new object[] { (User?)null! };
-        yield return new object[] { UserUtils.CreateUser(active: false) };
-    }
-
-    /// <summary>
     /// Tests when the event is fired the user addresses is updated and the authorization process for the payment is initiated.
     /// </summary>
     [Fact]
@@ -59,7 +51,7 @@ public class PaymentCreatedHandlerTests
         var payer = UserUtils.CreateUser();
         var paymentCreatedEvent = PaymentCreatedUtils.CreateEvent();
 
-        _mockUserRepository.Setup(r => r.FindByIdAsync(It.IsAny<UserId>())).ReturnsAsync(payer);
+        _mockUserRepository.Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>())).ReturnsAsync(payer);
 
         await _eventHandler.Handle(paymentCreatedEvent, default);
 
@@ -83,12 +75,10 @@ public class PaymentCreatedHandlerTests
     /// Tests when the payer is not found or is inactive the payment is canceled, updating the payment status and description.
     /// Also, verifies if the authorize process is not initiated.
     /// </summary>
-    /// <param name="userNotFound">The inactive or null user.</param>
-    [Theory]
-    [MemberData(nameof(NotFoundUser))]
-    public async Task HandlePaymentCreated_WhenUserCouldNotBeFound_CancelsPayment(User? userNotFound)
+    [Fact]
+    public async Task HandlePaymentCreated_WhenUserCouldNotBeFound_CancelsPayment()
     {
-        _mockUserRepository.Setup(r => r.FindByIdAsync(It.IsAny<UserId>())).ReturnsAsync(userNotFound);
+        _mockUserRepository.Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>())).ReturnsAsync((User?)null);
 
         var paymentCreatedEvent = PaymentCreatedUtils.CreateEvent();
 

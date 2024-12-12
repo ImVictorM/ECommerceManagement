@@ -2,6 +2,7 @@ using Application.Common.Interfaces.Persistence;
 using Application.Common.Interfaces.Services;
 using Domain.PaymentAggregate.Events;
 using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
 using MediatR;
 
 namespace Application.Payments.Events;
@@ -30,9 +31,9 @@ public class PaymentCreatedHandler : INotificationHandler<PaymentCreated>
     /// <inheritdoc/>
     public async Task Handle(PaymentCreated notification, CancellationToken cancellationToken)
     {
-        var payer = await _unitOfWork.UserRepository.FindByIdAsync(notification.PayerId);
+        var payer = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.PayerId));
 
-        if (payer == null || !payer.IsActive)
+        if (payer == null)
         {
             await CancelPayment(notification);
             return;

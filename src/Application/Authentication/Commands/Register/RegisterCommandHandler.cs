@@ -6,6 +6,7 @@ using Application.Common.Interfaces.Persistence;
 using Microsoft.Extensions.Logging;
 using Application.Authentication.Common.DTOs;
 using SharedKernel.ValueObjects;
+using Domain.UserAggregate.Specification;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -46,7 +47,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
 
         var inputEmail = Email.Create(command.Email);
 
-        if (await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail) is not null)
+        if (await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryUserByEmailSpecification(inputEmail)) is not null)
         {
             LogUserAlreadyExists();
 

@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Application.Authentication.Common.Errors;
 using Application.Authentication.Queries.Login;
 using Application.Common.Interfaces.Authentication;
@@ -11,6 +10,7 @@ using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SharedKernel.Models;
 
 namespace Application.UnitTests.Authentication.Queries.Login;
 
@@ -72,7 +72,7 @@ public class LoginQueryHandlerTests
     {
         _mockJwtTokenService.Setup(jwtTokenService => jwtTokenService.GenerateToken(It.IsAny<User>())).Returns(ApplicationConstants.Jwt.Token);
         _mockUserRepository
-            .Setup(repository => repository.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
             .ReturnsAsync(UserUtils.CreateUser(email: query.Email));
         _mockPasswordHasher.Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
 
@@ -95,7 +95,7 @@ public class LoginQueryHandlerTests
     public async Task HandleLoginQuery_WhenEmailIsInvalid_ThrowsAnError()
     {
         _mockUserRepository
-            .Setup(repository => repository.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
             .ReturnsAsync((User?)null);
 
         var query = LoginQueryUtils.CreateQuery();
@@ -115,7 +115,7 @@ public class LoginQueryHandlerTests
     public async Task HandleLoginQuery_WhenPasswordIsInvalid_ThrowsAnError()
     {
         _mockUserRepository
-            .Setup(repository => repository.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
             .ReturnsAsync(UserUtils.CreateUser());
 
         _mockPasswordHasher.Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(false);
@@ -137,10 +137,11 @@ public class LoginQueryHandlerTests
     public async Task HandleLoginQuery_WhenUserIsInactive_ThrowsAnError()
     {
         var mockUser = UserUtils.CreateUser();
+
         mockUser.MakeInactive();
 
         _mockUserRepository
-            .Setup(repository => repository.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
             .ReturnsAsync(mockUser);
 
         var query = LoginQueryUtils.CreateQuery();

@@ -7,6 +7,7 @@ using Application.UnitTests.Authentication.Commands.TestUtils;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -93,7 +94,7 @@ public class RegisterCommandHandlerTests
         var testEmail = "test@email.com";
 
         _mockUserRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
             .ReturnsAsync(UserUtils.CreateUser(email: testEmail));
 
         var registerCommand = RegisterCommandUtils.CreateCommand(email: testEmail);

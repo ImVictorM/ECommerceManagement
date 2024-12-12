@@ -3,6 +3,7 @@ using Application.Authentication.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
 using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SharedKernel.ValueObjects;
@@ -46,13 +47,11 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
 
         LogHandlingLoginQuery(inputEmail.Value);
 
-        User? user = await _unitOfWork.UserRepository.FindOneOrDefaultAsync(user => user.Email == inputEmail);
+        var user = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(
+            new QueryUserByEmailSpecification(inputEmail).And(new QueryActiveUserSpecification())
+        );
 
-        if (
-            user == null ||
-            !user.IsActive ||
-            !_passwordHasher.Verify(query.Password, user.PasswordHash.GetHashPart(), user.PasswordHash.GetSaltPart())
-        )
+        if (user == null || !IsUserPasswordCorrect(query, user))
         {
             LogAuthenticationFailed();
 
@@ -65,5 +64,10 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
         LogTokenGenerated();
 
         return new AuthenticationResult(user, token);
+    }
+
+    private bool IsUserPasswordCorrect(LoginQuery query, User user)
+    {
+        return _passwordHasher.Verify(query.Password, user.PasswordHash.GetHashPart(), user.PasswordHash.GetSaltPart());
     }
 }
