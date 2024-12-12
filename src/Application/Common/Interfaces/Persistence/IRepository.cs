@@ -53,14 +53,6 @@ public interface IRepository<TEntity, TEntityId>
     Task<TEntity?> FindFirstSatisfyingAsync(ISpecificationQuery<TEntity> specification);
 
     /// <summary>
-    /// Retrieves an entity by id that satisfies the specification criteria.
-    /// </summary>
-    /// <param name="id">The entity id.</param>
-    /// <param name="specification">The specification.</param>
-    /// <returns>The entity that has the specified id and satisfies the specification criteria.</returns>
-    Task<TEntity?> FindByIdSatisfyingAsync(TEntityId id, ISpecificationQuery<TEntity> specification);
-
-    /// <summary>
     /// Adds a new record.
     /// </summary>
     /// <param name="entity">The entity to be registered.</param>

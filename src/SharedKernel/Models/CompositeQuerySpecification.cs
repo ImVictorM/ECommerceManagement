@@ -1,12 +1,12 @@
 using System.Linq.Expressions;
 using SharedKernel.Interfaces;
 
-namespace SharedKernel.Abstracts;
+namespace SharedKernel.Models;
 
 /// <summary>
 /// Composite query specification to create more complex criterias.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The entity type.</typeparam>
 public abstract class CompositeQuerySpecification<T> : ISpecificationQuery<T> where T : class
 {
     /// <inheritdoc/>

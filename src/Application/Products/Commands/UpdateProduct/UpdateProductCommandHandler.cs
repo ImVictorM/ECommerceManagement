@@ -32,7 +32,7 @@ public sealed partial class UpdateProductCommandHandler : IRequestHandler<Update
 
         var productId = ProductId.Create(request.Id);
 
-        var productToUpdate = await _unitOfWork.ProductRepository.FindByIdSatisfyingAsync(productId, new QueryProductActiveSpec());
+        var productToUpdate = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
 
         if (productToUpdate == null)
         {

@@ -31,7 +31,7 @@ public sealed partial class UpdateProductDiscountsCommandHandler : IRequestHandl
         LogInitiatingProductDiscountsUpdate(request.Id);
 
         var productId = ProductId.Create(request.Id);
-        var product = await _unitOfWork.ProductRepository.FindByIdSatisfyingAsync(productId, new QueryProductActiveSpec());
+        var product = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
 
         if (product == null)
         {

@@ -33,7 +33,7 @@ public sealed partial class DeactivateProductCommandHandler : IRequestHandler<De
         var productId = ProductId.Create(request.Id);
 
         var product = await _unitOfWork.ProductRepository
-            .FindByIdSatisfyingAsync(productId, new QueryProductActiveSpec());
+            .FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
 
         if (product == null)
         {

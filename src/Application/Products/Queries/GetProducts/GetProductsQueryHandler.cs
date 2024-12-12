@@ -5,7 +5,7 @@ using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.Specifications;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SharedKernel.Abstracts;
+using SharedKernel.Models;
 
 namespace Application.Products.Queries.GetProducts;
 
@@ -34,11 +34,11 @@ public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProduct
         LogInitiatedRetrievingProducts();
         var limit = request.Limit ?? DefaultProductQuantityToTake;
 
-        CompositeQuerySpecification<Product> spec = new QueryProductActiveSpec();
+        CompositeQuerySpecification<Product> spec = new QueryActiveProductsSpecification();
 
         if (request.categories != null && request.categories.Any())
         {
-            spec.And(new QueryProductByCategorySpec(Category.Parse(request.categories)));
+            spec.And(new QueryProductByCategorySpecification(Category.Parse(request.categories)));
         }
 
         var products = await _unitOfWork.ProductRepository.FindSatisfyingAsync(spec, limit: limit);

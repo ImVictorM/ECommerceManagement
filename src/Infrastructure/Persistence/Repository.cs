@@ -78,23 +78,6 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
     }
 
     /// <inheritdoc/>
-    public async Task<TEntity?> FindByIdSatisfyingAsync(TEntityId id, ISpecificationQuery<TEntity> specification)
-    {
-        var parameter = Expression.Parameter(typeof(TEntity), "entity");
-
-        var idProperty = Expression.Property(parameter, nameof(AggregateRoot<TEntityId>.Id));
-        var idValue = Expression.Constant(id);
-        var idFilter = Expression.Equal(idProperty, idValue);
-
-        var specFilter = Expression.Invoke(specification.Criteria, parameter);
-        var combinedFilter = Expression.AndAlso(idFilter, specFilter);
-
-        var combinedExpression = Expression.Lambda<Func<TEntity, bool>>(combinedFilter, parameter);
-
-        return await _dbSet.FirstOrDefaultAsync(combinedExpression);
-    }
-
-    /// <inheritdoc/>
     public async Task RemoveAsync(TEntityId id)
     {
         var entity = await _dbSet.FindAsync(id);

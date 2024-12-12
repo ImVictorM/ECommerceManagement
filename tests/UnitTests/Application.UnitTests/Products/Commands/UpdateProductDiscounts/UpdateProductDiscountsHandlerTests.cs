@@ -3,12 +3,12 @@ using Application.Products.Commands.UpdateProductDiscounts;
 using Application.Products.Queries.Common.Errors;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Domain.ProductAggregate;
+using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
@@ -48,7 +48,7 @@ public class UpdateProductDiscountsHandlerTests
         var command = UpdateProductDiscountsCommandUtils.CreateCommand();
 
         _mockProductRepository
-            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
             .ReturnsAsync((Product?)null);
 
         await FluentActions
@@ -85,7 +85,7 @@ public class UpdateProductDiscountsHandlerTests
         var command = UpdateProductDiscountsCommandUtils.CreateCommand(discounts: discountsToAdd);
 
         _mockProductRepository
-            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
             .ReturnsAsync(product);
 
         await _handler.Handle(command, default);

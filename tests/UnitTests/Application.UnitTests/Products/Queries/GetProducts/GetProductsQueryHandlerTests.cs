@@ -6,7 +6,7 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.Interfaces;
+using SharedKernel.Models;
 
 namespace Application.UnitTests.Products.Queries.GetProducts;
 
@@ -43,12 +43,12 @@ public class GetProductsQueryHandlerTests
     {
 
         _mockProductRepository
-            .Setup(r => r.FindSatisfyingAsync(It.IsAny<ISpecificationQuery<Product>>(), It.IsAny<int>()))
+            .Setup(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), It.IsAny<int>()))
             .ReturnsAsync(ProductUtils.CreateProducts());
 
         await _handler.Handle(GetProductsQueryUtils.CreateQuery(), default);
 
-        _mockProductRepository.Verify(r => r.FindSatisfyingAsync(It.IsAny<ISpecificationQuery<Product>>(), 20));
+        _mockProductRepository.Verify(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), 20));
     }
 
     /// <summary>
@@ -61,11 +61,11 @@ public class GetProductsQueryHandlerTests
         var query = GetProductsQueryUtils.CreateQuery(limit: quantityToFetch);
 
         _mockProductRepository
-            .Setup(r => r.FindSatisfyingAsync(It.IsAny<ISpecificationQuery<Product>>(), It.IsAny<int>()))
+            .Setup(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), It.IsAny<int>()))
             .ReturnsAsync(ProductUtils.CreateProducts());
 
         await _handler.Handle(query, default);
 
-        _mockProductRepository.Verify(r => r.FindSatisfyingAsync(It.IsAny<ISpecificationQuery<Product>>(), quantityToFetch));
+        _mockProductRepository.Verify(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), quantityToFetch));
     }
 }

@@ -1,18 +1,18 @@
 using System.Linq.Expressions;
-using SharedKernel.Abstracts;
+using SharedKernel.Models;
 
 namespace Domain.ProductAggregate.Specifications;
 
 /// <summary>
 /// Specification to get products that contains certain categories.
 /// </summary>
-public class QueryProductByCategorySpec : CompositeQuerySpecification<Product>
+public class QueryProductByCategorySpecification : CompositeQuerySpecification<Product>
 {
     /// <summary>
-    /// Initiates a new instance of the <see cref="QueryProductByCategorySpec"/> class.
+    /// Initiates a new instance of the <see cref="QueryProductByCategorySpecification"/> class.
     /// </summary>
     /// <param name="categoryIds">The categories a product may contain.</param>
-    public QueryProductByCategorySpec(IEnumerable<long> categoryIds) : base(CreateCriteria(categoryIds))
+    public QueryProductByCategorySpecification(IEnumerable<long> categoryIds) : base(CreateCriteria(categoryIds))
     {
     }
 

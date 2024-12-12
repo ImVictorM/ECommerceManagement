@@ -3,12 +3,12 @@ using Application.Products.Queries.Common.Errors;
 using Application.Products.Queries.GetProductById;
 using Application.UnitTests.Products.Queries.TestUtils;
 using Domain.ProductAggregate;
+using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.Interfaces;
 
 namespace Application.UnitTests.Products.Queries.GetProductById;
 
@@ -47,7 +47,7 @@ public class GetProductByIdQueryHandlerTests
         var productToFind = ProductUtils.CreateProduct();
 
         _mockProductRepository
-            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
             .ReturnsAsync(productToFind);
 
         var result = await _handler.Handle(query, default);
@@ -65,7 +65,7 @@ public class GetProductByIdQueryHandlerTests
         var query = GetProductByIdQueryUtils.CreateQuery(id: notFoundId);
 
         _mockProductRepository
-            .Setup(r => r.FindByIdSatisfyingAsync(It.IsAny<ProductId>(), It.IsAny<ISpecificationQuery<Product>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
             .ReturnsAsync((Product?)null!);
 
         await FluentActions

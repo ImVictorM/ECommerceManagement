@@ -32,7 +32,7 @@ public sealed partial class UpdateProductInventoryCommandHandler : IRequestHandl
 
         var productId = ProductId.Create(request.ProductId);
 
-        var product = await _unitOfWork.ProductRepository.FindByIdSatisfyingAsync(productId, new QueryProductActiveSpec());
+        var product = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
 
         if (product == null)
         {
