@@ -44,26 +44,53 @@ public class UpdateUserCommandHandlerTests
     /// </summary>
     public static IEnumerable<object[]> NotAllowedPairs =>
     [
-        [UserUtils.CreateUser(role: Role.Customer, id: UserId.Create(2)), UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1))],
-        [UserUtils.CreateUser(id: UserId.Create(1)), UserUtils.CreateUser(id: UserId.Create(4))],
-        [UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1)), UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(4))]
+        [
+            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Customer),
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Customer),
+            UserUtils.CreateUser(id: UserId.Create(4), role: Role.Customer),
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(4), role: Role.Admin),
+        ]
     ];
 
     /// <summary>
-    /// Tests that when a user exists, the handler correctly updates the user's information.
+    /// List of allowed pairs.
     /// </summary>
-    [Fact]
-    public async Task HandleUpdateUser_WhenUserExists_UpdateTheUserCorrectly()
+    public static IEnumerable<object[]> AllowedPairs =>
+    [
+        [
+            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Customer),
+            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Customer)
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(2) ,role: Role.Customer)
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Admin)
+        ],
+    ];
+
+    /// <summary>
+    /// Tests that when the user to be updated exists and the current user has the right permissions the update is done successfully.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(AllowedPairs))]
+    public async Task HandleUpdateUser_WhenUserExists_UpdateTheUserCorrectly(
+        User currentUser,
+        User userToBeUpdated
+    )
     {
-        var userToBeUpdated = UserUtils.CreateUser();
-
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .ReturnsAsync(currentUser)
             .ReturnsAsync(userToBeUpdated);
-
-        _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
-            .ReturnsAsync((User?)null);
 
         var command = UpdateUserCommandUtils.CreateCommand(name: "new name", phone: "19958274823");
 

@@ -66,27 +66,45 @@ public class DeactivateUserCommandHandlerTests
     };
 
     /// <summary>
-    /// Tests that when a user exists, the command handler deactivates the user and saves the changes.
+    /// List of allowed pairs.
     /// </summary>
-    [Fact]
-    public async Task HandleDeactivateUser_WhenUserExists_DeactivateItAndSave()
+    public static IEnumerable<object[]> AllowedPairs => new List<object[]>()
     {
-        var currentUser = UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1));
-        var userToBeDeactivated = UserUtils.CreateUser(role: Role.Customer, active: true, id: UserId.Create(2));
+        new object[]
+        {
+            UserUtils.CreateUser(id: UserId.Create(1), active: true, role: Role.Customer),
+            UserUtils.CreateUser(id: UserId.Create(1), active: true, role: Role.Customer)
+        },
+        new object[]
+        {
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(2), active: true, role: Role.Customer)
+        }
+    };
 
+    /// <summary>
+    /// Tests that when the user to be deactivated exists and the current user has the right permissions the deactivation occurs.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(AllowedPairs))]
+    public async Task HandleDeactivateUser_WhenUserExists_DeactivateItAndSave(
+        User currentUser,
+        User userToBeDeactivate
+    )
+    {
         _mockUserRepository
             .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync(currentUser)
-            .ReturnsAsync(userToBeDeactivated);
+            .ReturnsAsync(userToBeDeactivate);
 
         await _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default);
 
-        userToBeDeactivated.IsActive.Should().BeFalse();
+        userToBeDeactivate.IsActive.Should().BeFalse();
         _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Once());
     }
 
     /// <summary>
-    /// Tests when a user does not exist, the command handler completes without throwing any exceptions.
+    /// Tests when a user to be deactivated does not exist the command handler completes without throwing any exceptions.
     /// </summary>
     [Fact]
     public async Task HandleDeactivateUser_WhenUserDoesNotExist_ReturnsWithoutThrowing()
