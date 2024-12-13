@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
 
@@ -8,10 +9,6 @@ namespace SharedKernel.Specifications;
 /// </summary>
 public class QueryActiveSpecification<T> : CompositeQuerySpecification<T> where T : class, ISoftDeletable
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="QueryActiveSpecification{T}"/> class.
-    /// </summary>
-    public QueryActiveSpecification() : base(entity => entity.IsActive)
-    {
-    }
+    /// <inheritdoc/>
+    public override Expression<Func<T, bool>> Criteria => entity => entity.IsActive;
 }

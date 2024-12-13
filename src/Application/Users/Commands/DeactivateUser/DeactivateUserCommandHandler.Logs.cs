@@ -9,7 +9,7 @@ public partial class DeactivateUserCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating user deactivation. User id: {Id}."
+        Message = "Initiating user deactivation. User to be deactivated id: {Id}."
     )]
     private partial void LogInitiatingUserDeactivation(string id);
 
@@ -22,6 +22,13 @@ public partial class DeactivateUserCommandHandler
 
     [LoggerMessage(
         EventId = 3,
+        Level = LogLevel.Information,
+        Message = "A user without the right privileges tried to deactivate another user. Current user id: {Id}"
+    )]
+    private partial void LogUserNotAllowed(string id);
+
+    [LoggerMessage(
+        EventId = 4,
         Level = LogLevel.Debug,
         Message = "Deactivation complete. User is no longer available."
     )]

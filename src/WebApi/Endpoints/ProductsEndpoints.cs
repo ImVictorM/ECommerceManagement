@@ -114,7 +114,7 @@ Admin authentication is required."
 
     }
 
-    private async Task<Results<Ok<ProductResponse>, BadRequest>> GetProductById(
+    private async Task<Results<Ok<ProductResponse>, NotFound>> GetProductById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper

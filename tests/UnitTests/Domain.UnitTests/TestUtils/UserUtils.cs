@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
+using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -15,6 +16,7 @@ public static class UserUtils
     /// <summary>
     /// Creates a new instance of the <see cref="User"/> class.
     /// </summary>
+    /// <param name="id">The user id.</param>
     /// <param name="name">The user name.</param>
     /// <param name="passwordHash">The password hash.</param>
     /// <param name="passwordSalt">The password salt.</param>
@@ -25,6 +27,7 @@ public static class UserUtils
     /// <param name="active">Defines if the user should be inactive.</param>
     /// <returns>A new instance of the <see cref="User"/> class.</returns>
     public static User CreateUser(
+        UserId? id = null,
         string? name = null,
         string? passwordHash = null,
         string? passwordSalt = null,
@@ -43,6 +46,16 @@ public static class UserUtils
             role ?? DomainConstants.User.Role,
             phone ?? DomainConstants.User.Phone
         );
+
+        if (id != null)
+        {
+            var idProperty = typeof(User).GetProperty(nameof(User.Id), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+
+            if (idProperty != null && idProperty.CanWrite)
+            {
+                idProperty.SetValue(user, id);
+            }
+        }
 
         if (addresses != null)
         {

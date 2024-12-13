@@ -10,6 +10,7 @@ using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SharedKernel.Authorization;
 
 namespace Application.UnitTests.Users.Commands.UpdateUser;
 
@@ -37,6 +38,16 @@ public class UpdateUserCommandHandlerTests
             new Mock<ILogger<UpdateUserCommandHandler>>().Object
         );
     }
+
+    /// <summary>
+    /// List of not allowed pairs.
+    /// </summary>
+    public static IEnumerable<object[]> NotAllowedPairs =>
+    [
+        [UserUtils.CreateUser(role: Role.Customer, id: UserId.Create(2)), UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1))],
+        [UserUtils.CreateUser(id: UserId.Create(1)), UserUtils.CreateUser(id: UserId.Create(4))],
+        [UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1)), UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(4))]
+    ];
 
     /// <summary>
     /// Tests that when a user exists, the handler correctly updates the user's information.
@@ -72,24 +83,26 @@ public class UpdateUserCommandHandlerTests
     public async Task HandleUpdateUser_WhenUserDoesNotExist_ThrowsException()
     {
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .ReturnsAsync(UserUtils.CreateUser())
             .ReturnsAsync((User?)null);
 
         await FluentActions
             .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))
             .Should()
             .ThrowAsync<UserNotFoundException>()
-            .WithMessage("The user to be updated does not exist");
+            .WithMessage("The user to be updated could not be found");
     }
 
     /// <summary>
-    /// Tests that when trying to update a user's email to an already existing one, 
+    /// Tests that when trying to update a user's email to an already existing one,
     /// the handler throws a <see cref="UserAlreadyExistsException"/>.
     /// </summary>
     [Fact]
     public async Task HandleUpdateUser_WhenTryingToUpdateEmailWithExistingOne_ThrowsException()
     {
         var userToBeUpdatedNewEmail = "existing_email@email.com";
+
         var userToBeUpdated = UserUtils.CreateUser();
         var conflictingUser = UserUtils.CreateUser(email: userToBeUpdatedNewEmail);
         var updateRequest = UpdateUserCommandUtils.CreateCommand(email: userToBeUpdatedNewEmail);
@@ -107,5 +120,29 @@ public class UpdateUserCommandHandlerTests
             .Should()
             .ThrowAsync<UserAlreadyExistsException>()
             .WithMessage("The email you entered is already in use");
+    }
+
+    /// <summary>
+    /// Tests that a user cannot update another user if they do not have the right permissions.
+    /// </summary>
+    /// <param name="currentUser">The current user.</param>
+    /// <param name="toBeUpdated">The user to be updated.</param>
+    [Theory]
+    [MemberData(nameof(NotAllowedPairs))]
+    public async Task HandleUpdateUser_WhenUserTriesToUpdateSomeoneTheyAreNotAllowed_ThrowsException(
+        User currentUser,
+        User toBeUpdated
+    )
+    {
+        _mockUserRepository
+            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .ReturnsAsync(currentUser)
+            .ReturnsAsync(toBeUpdated);
+
+        await FluentActions
+            .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))
+            .Should()
+            .ThrowAsync<UserNotAllowedException>()
+            .WithMessage($"The current user is not allowed to update the user with id {toBeUpdated.Id}");
     }
 }

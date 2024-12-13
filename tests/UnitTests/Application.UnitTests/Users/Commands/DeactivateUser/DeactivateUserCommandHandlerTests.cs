@@ -1,12 +1,15 @@
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.DeactivateUser;
+using Application.Users.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SharedKernel.Authorization;
 
 namespace Application.UnitTests.Users.Commands.DeactivateUser;
 
@@ -36,15 +39,44 @@ public class DeactivateUserCommandHandlerTests
     }
 
     /// <summary>
+    /// Not allowed pairs.
+    /// </summary>
+    public static IEnumerable<object[]> NotAllowedPairs => new List<object[]>
+    {
+        new object[]
+        {
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Customer),
+            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Customer)
+        },
+        new object[]
+        {
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Customer),
+            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Admin)
+        },
+        new object[]
+        {
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Admin)
+        },
+        new object[]
+        {
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin)
+        }
+    };
+
+    /// <summary>
     /// Tests that when a user exists, the command handler deactivates the user and saves the changes.
     /// </summary>
     [Fact]
     public async Task HandleDeactivateUser_WhenUserExists_DeactivateItAndSave()
     {
-        var userToBeDeactivated = UserUtils.CreateUser(active: true);
+        var currentUser = UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1));
+        var userToBeDeactivated = UserUtils.CreateUser(role: Role.Customer, active: true, id: UserId.Create(2));
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .ReturnsAsync(currentUser)
             .ReturnsAsync(userToBeDeactivated);
 
         await _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default);
@@ -59,8 +91,11 @@ public class DeactivateUserCommandHandlerTests
     [Fact]
     public async Task HandleDeactivateUser_WhenUserDoesNotExist_ReturnsWithoutThrowing()
     {
+        var currentUser = UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1));
+
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .ReturnsAsync(currentUser)
             .ReturnsAsync((User?)null);
 
         await FluentActions
@@ -69,5 +104,28 @@ public class DeactivateUserCommandHandlerTests
             .NotThrowAsync();
 
         _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Never());
+    }
+
+    /// <summary>
+    /// Tests a user without the right permissions cannot use the deactivation feature.
+    /// </summary>
+    /// <param name="currentUser">The current user.</param>
+    /// <param name="userToDeactivate">The user to be deactivated.</param>
+    [Theory]
+    [MemberData(nameof(NotAllowedPairs))]
+    public async Task HandleDeactivateUser_WhenCurrentUserDoesNotHaveTheRightPermission_ThrowsException(
+        User currentUser,
+        User userToDeactivate
+    )
+    {
+        _mockUserRepository
+            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .ReturnsAsync(currentUser)
+            .ReturnsAsync(userToDeactivate);
+
+        await FluentActions
+            .Invoking(() => _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default))
+            .Should()
+            .ThrowAsync<UserNotAllowedException>();
     }
 }

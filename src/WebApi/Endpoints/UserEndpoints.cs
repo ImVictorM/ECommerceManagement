@@ -11,8 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Authorization.AdminRequired;
-using WebApi.Authorization.DeactivateUser;
-using WebApi.Authorization.UpdateUser;
+using WebApi.Common.Extensions;
 
 namespace WebApi.Endpoints;
 
@@ -67,7 +66,7 @@ public sealed class UserEndpoints : ICarterModule
                 Summary = "Update User By Id",
                 Description = "Updates a user's details. Users can only update their own details. Administrators can update any other non-administrator user's details. Requires authentication."
             })
-            .RequireAuthorization(UpdateUserPolicy.Name);
+            .RequireAuthorization();
 
         userGroup
             .MapDelete("/{id:long}", DeactivateUser)
@@ -77,7 +76,7 @@ public sealed class UserEndpoints : ICarterModule
                 Summary = "Delete User",
                 Description = "Deactivates a user by setting them as inactive. Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account."
             })
-            .RequireAuthorization(DeactivateUserPolicy.Name);
+            .RequireAuthorization();
     }
 
     private async Task<Results<Ok<UserResponse>, BadRequest, UnauthorizedHttpResult>> GetUserByAuthenticationToken(
@@ -130,10 +129,13 @@ public sealed class UserEndpoints : ICarterModule
         [FromRoute] string id,
         [FromBody] UpdateUserRequest request,
         ISender sender,
-        IMapper mapper
+        IMapper mapper,
+        IHttpContextAccessor contextAccessor
     )
     {
-        var command = mapper.Map<UpdateUserCommand>((request, id));
+        var idAuthenticatedUser = contextAccessor.HttpContext!.User.GetId();
+
+        var command = mapper.Map<UpdateUserCommand>((idAuthenticatedUser, id, request));
 
         await sender.Send(command);
 
@@ -142,10 +144,13 @@ public sealed class UserEndpoints : ICarterModule
 
     private async Task<Results<NoContent, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
         [FromRoute] string id,
-        ISender sender
+        ISender sender,
+        IHttpContextAccessor contextAccessor
     )
     {
-        var command = new DeactivateUserCommand(id);
+        var idUserAuthenticated = contextAccessor.HttpContext!.User.GetId();
+
+        var command = new DeactivateUserCommand(idUserAuthenticated, id);
 
         await sender.Send(command);
 

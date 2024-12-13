@@ -26,8 +26,9 @@ public class UserMappingConfig : IRegister
         config.NewConfig<UserListResult, UserListResponse>()
             .Map(dest => dest.Users, src => src.Users.Select(user => new UserResult(user)));
 
-        config.NewConfig<(UpdateUserRequest Request, string Id), UpdateUserCommand>()
-            .Map(dest => dest.Id, src => src.Id)
+        config.NewConfig<(string IdAuthenticatedUser, string IdUserToUpdate, UpdateUserRequest Request), UpdateUserCommand>()
+            .Map(dest => dest.IdCurrentUser, src => src.IdAuthenticatedUser)
+            .Map(dest => dest.IdUserToUpdate, src => src.IdUserToUpdate)
             .Map(dest => dest, src => src.Request);
     }
 }

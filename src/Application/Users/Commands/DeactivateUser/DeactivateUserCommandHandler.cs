@@ -1,4 +1,6 @@
 using Application.Common.Interfaces.Persistence;
+using Application.Users.Common.Errors;
+using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -26,18 +28,29 @@ public sealed partial class DeactivateUserCommandHandler : IRequestHandler<Deact
     /// <inheritdoc/>
     public async Task<Unit> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
     {
-        LogInitiatingUserDeactivation(request.Id);
+        LogInitiatingUserDeactivation(request.IdUserToDeactivate);
 
-        var user = await _unitOfWork.UserRepository.FindByIdAsync(UserId.Create(request.Id));
+        var idCurrentUser = UserId.Create(request.IdCurrentUser);
+        var idUserToBeDeactivated = UserId.Create(request.IdUserToDeactivate);
 
-        if (user == null)
+        var currentUser = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(idCurrentUser));
+        var userToBeDeactivated = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(idUserToBeDeactivated));
+
+        if (userToBeDeactivated == null)
         {
             LogUserDoesNotExist();
 
             return Unit.Value;
         }
 
-        user.MakeInactive();
+        if (currentUser == null || !new DeactivateUserSpecification(currentUser).IsSatisfiedBy(userToBeDeactivated))
+        {
+            LogUserNotAllowed(request.IdCurrentUser);
+
+            throw new UserNotAllowedException();
+        }
+
+        userToBeDeactivated.MakeInactive();
 
         await _unitOfWork.SaveChangesAsync();
 

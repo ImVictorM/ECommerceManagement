@@ -31,20 +31,26 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
     /// <inheritdoc/>
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        LogInitiatingUserUpdate(request.Id);
+        LogInitiatingUserUpdate(request.IdUserToUpdate);
 
-        var userToUpdateId = UserId.Create(request.Id);
+        var currentUserId = UserId.Create(request.IdCurrentUser);
+        var userToUpdateId = UserId.Create(request.IdUserToUpdate);
         var inputEmail = Email.Create(request.Email);
 
-        var user = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(userToUpdateId));
+        var currentUser =
+            await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(currentUserId))
+            ?? throw new UserNotFoundException("The current user could not be found");
 
-        if (user == null)
+        var userToUpdate = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(userToUpdateId))
+            ?? throw new UserNotFoundException($"The user to be updated could not be found");
+
+        if (!new UpdateUserSpecification(currentUser).IsSatisfiedBy(userToUpdate))
         {
-            LogUserNotFound();
-            throw new UserNotFoundException("The user to be updated does not exist").WithContext("UserId", userToUpdateId.ToString());
+            LogUserNotAllowed();
+            throw new UserNotAllowedException($"The current user is not allowed to update the user with id {userToUpdate.Id}");
         }
-            
-        if (user.Email != inputEmail)
+
+        if (userToUpdate.Email != inputEmail)
         {
             var existingUserWithEmail = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryUserByEmailSpecification(inputEmail));
 
@@ -58,13 +64,13 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
 
         LogUpdatingUser();
 
-        user.Update(
+        userToUpdate.Update(
             name: request.Name,
             email: inputEmail,
             phone: request.Phone
         );
 
-        await _unitOfWork.UserRepository.UpdateAsync(user);
+        await _unitOfWork.UserRepository.UpdateAsync(userToUpdate);
 
         await _unitOfWork.SaveChangesAsync();
 

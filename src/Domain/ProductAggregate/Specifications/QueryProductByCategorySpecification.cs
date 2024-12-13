@@ -8,16 +8,18 @@ namespace Domain.ProductAggregate.Specifications;
 /// </summary>
 public class QueryProductByCategorySpecification : CompositeQuerySpecification<Product>
 {
+    private readonly IEnumerable<long> _categoryIds;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="QueryProductByCategorySpecification"/> class.
     /// </summary>
     /// <param name="categoryIds">The categories a product may contain.</param>
-    public QueryProductByCategorySpecification(IEnumerable<long> categoryIds) : base(CreateCriteria(categoryIds))
+    public QueryProductByCategorySpecification(IEnumerable<long> categoryIds) : base()
     {
+        _categoryIds = categoryIds;
     }
 
-    private static Expression<Func<Product, bool>> CreateCriteria(IEnumerable<long> categoryIds)
-    {
-        return product => product.ProductCategories.Any(pc => categoryIds.Contains(pc.CategoryId));
-    }
+    /// <inheritdoc/>
+    public override Expression<Func<Product, bool>> Criteria => product => product.ProductCategories.Any(pc => _categoryIds.Contains(pc.CategoryId));
+
 }

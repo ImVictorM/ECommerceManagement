@@ -31,6 +31,11 @@ public sealed class ErrorCode
     public static readonly ErrorCode ValidationError = new("VALIDATION_ERROR");
 
     /// <summary>
+    /// Represents an "Not Allowed" error.
+    /// </summary>
+    public static readonly ErrorCode NotAllowed = new("NOT_ALLOWED");
+
+    /// <summary>
     /// Gets the unique code representing the specific error.
     /// </summary>
     public string Code { get; }

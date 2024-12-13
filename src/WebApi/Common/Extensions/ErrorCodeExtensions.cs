@@ -14,7 +14,8 @@ public static class ErrorCodeExtensions
         { ErrorCode.Conflict, HttpStatusCode.Conflict },
         { ErrorCode.InvalidOperation, HttpStatusCode.BadRequest },
         { ErrorCode.InternalError, HttpStatusCode.InternalServerError },
-        { ErrorCode.ValidationError, HttpStatusCode.BadRequest }
+        { ErrorCode.ValidationError, HttpStatusCode.BadRequest },
+        { ErrorCode.NotAllowed, HttpStatusCode.Forbidden }
     };
 
     /// <summary>

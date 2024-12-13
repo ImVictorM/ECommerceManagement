@@ -16,9 +16,9 @@ public partial class UpdateUserCommandHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "User could not be updated because it was not found."
+        Message = "The current user is not allowed to update the other user."
     )]
-    private partial void LogUserNotFound();
+    private partial void LogUserNotAllowed();
 
     [LoggerMessage(
         EventId = 3,

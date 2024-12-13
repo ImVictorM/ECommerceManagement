@@ -1,4 +1,4 @@
-using SharedKernel.Interfaces;
+using SharedKernel.Models;
 
 namespace Domain.ProductAggregate.Specifications;
 
@@ -6,10 +6,10 @@ namespace Domain.ProductAggregate.Specifications;
 /// Specification that defines a threshold for a product object.
 /// Total discount must not exceed 90% of the base price.
 /// </summary>
-public class DiscountThresholdSpecification : ISpecification<Product>
+public class DiscountThresholdSpecification : CompositeSpecification<Product>
 {
     /// <inheritdoc/>
-    public bool IsSatisfiedBy(Product entity)
+    public override bool IsSatisfiedBy(Product entity)
     {
         var minimumPriceAfterDiscount = entity.BasePrice - entity.BasePrice * 0.9m;
 
