@@ -1,7 +1,7 @@
+using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.DeactivateUser;
-using Application.Users.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;

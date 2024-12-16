@@ -114,6 +114,17 @@ public sealed class Order : AggregateRoot<OrderId>
         UpdateOrderStatus(OrderStatus.Canceled, reason);
     }
 
+    /// <summary>
+    /// Retrieves the order status description.
+    /// </summary>
+    /// <returns>The description of the order status.</returns>
+    public string GetStatusDescription()
+    {
+        var status = BaseEnumeration.FromValue<OrderStatus>(OrderStatusId);
+
+        return status.Name;
+    }
+
     /// <inheritdoc/>
     public decimal CalculateTotalApplyingDiscounts()
     {

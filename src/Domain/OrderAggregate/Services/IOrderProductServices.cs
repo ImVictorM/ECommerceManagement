@@ -3,9 +3,9 @@ using Domain.OrderAggregate.ValueObjects;
 namespace Domain.OrderAggregate.Services;
 
 /// <summary>
-/// Represents order services.
+/// Represents order product services.
 /// </summary>
-public interface IOrderServices
+public interface IOrderProductServices
 {
     /// <summary>
     /// Calculates the total amount of the products, applying the necessary discounts.

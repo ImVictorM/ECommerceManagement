@@ -1,6 +1,6 @@
 using SharedKernel.Errors;
 
-namespace Application.Users.Common.Errors;
+namespace Application.Common.Errors;
 
 /// <summary>
 /// Exception thrown when a user tries to do something they are not allowed to do.

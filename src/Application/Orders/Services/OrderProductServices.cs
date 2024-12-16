@@ -6,17 +6,17 @@ using Domain.OrderAggregate.ValueObjects;
 namespace Application.Orders.Services;
 
 /// <summary>
-/// Represents services related to orders.
+/// Represents services related to order products.
 /// </summary>
-public class OrderServices : IOrderServices
+public class OrderProductServices : IOrderProductServices
 {
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderServices"/> class.
+    /// Initiates a new instance of the <see cref="OrderProductServices"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderServices(IUnitOfWork unitOfWork)
+    public OrderProductServices(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

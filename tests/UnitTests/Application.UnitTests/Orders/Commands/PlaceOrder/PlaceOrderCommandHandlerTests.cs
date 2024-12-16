@@ -18,7 +18,7 @@ public class PlaceOrderCommandHandlerTests
 {
     private readonly PlaceOrderCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IOrderServices> _mockOrdersServices;
+    private readonly Mock<IOrderProductServices> _mockOrdersServices;
     private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
 
     /// <summary>
@@ -27,7 +27,7 @@ public class PlaceOrderCommandHandlerTests
     public PlaceOrderCommandHandlerTests()
     {
         _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
-        _mockOrdersServices = new Mock<IOrderServices>();
+        _mockOrdersServices = new Mock<IOrderProductServices>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);

@@ -13,27 +13,27 @@ using SharedKernel.UnitTests.TestUtils;
 namespace Application.UnitTests.Orders.Services;
 
 /// <summary>
-/// Tests the order service implementations.
+/// Tests the order product services implementations.
 /// </summary>
-public class OrderServicesTests
+public class OrderProductServicesTests
 {
-    private readonly OrderServices _orderServices;
+    private readonly OrderProductServices _orderServices;
     private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderServicesTests"/> class.
+    /// Initiates a new instance of the <see cref="OrderProductServicesTests"/> class.
     /// </summary>
-    public OrderServicesTests()
+    public OrderProductServicesTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
         _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
-        _orderServices = new OrderServices(_mockUnitOfWork.Object);
+        _orderServices = new OrderProductServices(_mockUnitOfWork.Object);
     }
 
     /// <summary>
-    /// Tests the <see cref="OrderServices.VerifyInventoryAvailabilityAsync(IEnumerable{OrderProduct})"/> method.
+    /// Tests the <see cref="OrderProductServices.VerifyInventoryAvailabilityAsync(IEnumerable{OrderProduct})"/> method.
     /// Scenario: When some of the products does not have the quantity in inventory needed.
     /// </summary>
     [Fact]
@@ -55,7 +55,7 @@ public class OrderServicesTests
     }
 
     /// <summary>
-    /// Tests the <see cref="OrderServices.CalculateTotalAsync(IEnumerable{OrderProduct})"/> method.
+    /// Tests the <see cref="OrderProductServices.CalculateTotalAsync(IEnumerable{OrderProduct})"/> method.
     /// Tests if it calculates the total correctly.
     /// </summary>
     /// <returns></returns>

@@ -28,7 +28,8 @@ public static class ServicesRegistration
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-        services.AddScoped<IOrderServices, OrderServices>();
+        services.AddScoped<IOrderProductServices, OrderProductServices>();
+        services.AddScoped<IOrderAccessServices, OrderAccessServices>();
 
         services.AddValidatorsFromAssembly(assembly);
 

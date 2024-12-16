@@ -1,4 +1,5 @@
 using Application.Orders.Commands.PlaceOrder;
+using Application.Orders.Queries.GetOrderById;
 using Carter;
 using Contracts.Orders;
 using MapsterMapper;
@@ -37,6 +38,16 @@ public class OrderEndpoints : ICarterModule
                 Description = "Places an order for a customer. Customer authentication required."
             })
             .RequireAuthorization(CustomerRequiredPolicy.Name);
+
+        orderGroup
+            .MapGet("/{id:long}", GetOrderById)
+            .WithName("GetOrderById")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Get Order By Id",
+                Description = "Retrieves an order by identifier. Customers can only retrieve their own orders. Administrators can access any order."
+            })
+            .RequireAuthorization();
     }
 
     private async Task<Results<Created, UnauthorizedHttpResult, BadRequest>> PlaceOrder(
@@ -53,5 +64,21 @@ public class OrderEndpoints : ICarterModule
         var response = await sender.Send(command);
 
         return TypedResults.Created($"/{BaseEndpoint}/{response.Id}");
+    }
+
+    private async Task<Results<Ok<OrderResponse>, ForbidHttpResult, NotFound>> GetOrderById(
+        [FromRoute] string id,
+        ISender sender,
+        IMapper mapper,
+        IHttpContextAccessor contextAccessor
+    )
+    {
+        var authenticatedUserId = contextAccessor.HttpContext!.User.GetId();
+
+        var query = new GetOrderByIdQuery(authenticatedUserId, id);
+
+        var result = await sender.Send(query);
+
+        return TypedResults.Ok(mapper.Map<OrderResponse>(result));
     }
 }
