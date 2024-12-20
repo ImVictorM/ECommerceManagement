@@ -1,3 +1,5 @@
+using Domain.CouponAggregate;
+using Domain.CouponRestrictionAggregate;
 using Domain.OrderAggregate;
 using Domain.PaymentAggregate;
 using Domain.ProductAggregate;
@@ -52,6 +54,15 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the shipment aggregate context.
     /// </summary>
     public DbSet<Shipment> Shipments { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the coupons aggregate context.
+    /// </summary>
+    public DbSet<Coupon> Coupons { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the coupon restrictions aggregate context.
+    /// </summary>
+    public DbSet<CouponRestriction> CouponRestrictions { get; set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.
