@@ -1,6 +1,8 @@
 using Application.Common.DTOs;
 using Application.Common.Interfaces.Persistence;
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
+using Domain.ProductAggregate.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -28,15 +30,15 @@ public sealed partial class CreateProductCommandHandler : IRequestHandler<Create
     public async Task<CreatedResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         LogCreatingProduct(request.Name);
+        var categoryIds = request.CategoryIds.Select(CategoryId.Create);
 
         var newProduct = Product.Create(
             request.Name,
             request.Description,
             request.BasePrice,
             request.InitialQuantity,
-            request.Categories,
-            request.Images,
-            request.InitialDiscounts
+            categoryIds.Select(ProductCategory.Create),
+            request.Images.Select(ProductImage.Create)
         );
 
         LogProductCreatedInitiatingPersistence();

@@ -1,7 +1,6 @@
+using Domain.CategoryAggregate;
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.ValueObjects;
-using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,18 +14,13 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<Product> builder)
     {
-        ConfigureProductTable(builder);
-        ConfigureOwnedProductCategoryTable(builder);
-        ConfigureOwnedInventoryTable(builder);
-        ConfigureOwnedProductDiscountTable(builder);
-        ConfigureOwnedProductImageTable(builder);
+        ConfigureProductsTable(builder);
+        ConfigureOwnedInventoriesTable(builder);
+        ConfigureOwnedProductsCategoriesTable(builder);
+        ConfigureOwnedProductImagesTable(builder);
     }
 
-    /// <summary>
-    /// Configures the products table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureProductTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureProductsTable(EntityTypeBuilder<Product> builder)
     {
         builder.ToTable("products");
 
@@ -59,14 +53,9 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
            .IsRequired();
     }
 
-    /// <summary>
-    /// Configures the many-to-many relationship between products and categories
-    /// creating the products_categories table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedProductCategoryTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureOwnedProductsCategoriesTable(EntityTypeBuilder<Product> builder)
     {
-        builder.OwnsMany(p => p.ProductCategories, productCategoryBuilder =>
+        builder.OwnsMany(product => product.ProductCategories, productCategoryBuilder =>
         {
             productCategoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
@@ -81,7 +70,9 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
 
             productCategoryBuilder.WithOwner().HasForeignKey("id_product");
 
-            productCategoryBuilder.Property("id_product").IsRequired();
+            productCategoryBuilder
+                .Property("id_product")
+                .IsRequired();
 
             productCategoryBuilder
                 .HasOne<Category>()
@@ -91,11 +82,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
         });
     }
 
-    /// <summary>
-    /// Configures the inventories table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedInventoryTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureOwnedInventoriesTable(EntityTypeBuilder<Product> builder)
     {
         builder.OwnsOne(
             product => product.Inventory,
@@ -126,43 +113,7 @@ public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
             });
     }
 
-    /// <summary>
-    /// Configures the product_discounts table.
-    /// </summary>
-    /// <param name="builder">Then entity type builder.</param>
-    private static void ConfigureOwnedProductDiscountTable(EntityTypeBuilder<Product> builder)
-    {
-        builder.OwnsMany(
-            product => product.Discounts,
-            productDiscountBuilder =>
-            {
-                productDiscountBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
-
-                productDiscountBuilder.ToTable("product_discounts");
-
-                productDiscountBuilder
-                    .Property<long>("id")
-                    .ValueGeneratedOnAdd()
-                    .IsRequired();
-
-                productDiscountBuilder.HasKey("id");
-
-
-                productDiscountBuilder.WithOwner().HasForeignKey("id_product");
-
-                productDiscountBuilder
-                    .Property("id_product")
-                    .IsRequired();
-
-                DiscountNavigationBuilderConfigurations.Configure(productDiscountBuilder);
-            });
-    }
-
-    /// <summary>
-    /// Configures the product_images table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedProductImageTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureOwnedProductImagesTable(EntityTypeBuilder<Product> builder)
     {
         builder.OwnsMany(
             product => product.ProductImages,

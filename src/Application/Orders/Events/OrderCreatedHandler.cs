@@ -27,7 +27,7 @@ public class OrderCreatedHandler : INotificationHandler<OrderCreated>
     public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
     {
         var payment = Payment.Create(
-            notification.Order.CalculateTotalApplyingDiscounts(),
+            notification.Order.Total,
             notification.Order.Id,
             notification.Order.OwnerId,
             notification.PaymentMethod,

@@ -1,50 +1,50 @@
-using System.Globalization;
 using SharedKernel.Errors;
 using SharedKernel.Models;
+using System.Globalization;
 
-namespace Domain.ProductAggregate.ValueObjects;
+namespace Domain.CategoryAggregate.ValueObjects;
 
 /// <summary>
-/// Represents an identifier for the <see cref="Product"/> aggregate root.
+/// Represents the identifier for the <see cref="Category"/> aggregate root.
 /// </summary>
-public sealed class ProductId : ValueObject
+public class CategoryId : ValueObject
 {
     /// <summary>
     /// Gets the value of the identifier.
     /// </summary>
     public long Value { get; private set; }
 
-    private ProductId() { }
+    private CategoryId() { }
 
-    private ProductId(long value)
+    private CategoryId(long value)
     {
         Value = value;
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="ProductId"/> class.
+    /// Creates a new instance of the <see cref="CategoryId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="ProductId"/> class with the specified identifier.</returns>
-    public static ProductId Create(long value)
+    /// <returns>A new instance of the <see cref="CategoryId"/> class with the specified identifier.</returns>
+    public static CategoryId Create(long value)
     {
-        return new ProductId(value);
+        return new CategoryId(value);
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="ProductId"/> class.
+    /// Creates a new instance of the <see cref="CategoryId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="ProductId"/> class with the specified identifier.</returns>
-    public static ProductId Create(string value)
+    /// <returns>A new instance of the <see cref="CategoryId"/> class with the specified identifier.</returns>
+    public static CategoryId Create(string value)
     {
         if (long.TryParse(value, out var id))
         {
-            return new ProductId(id);
+            return new CategoryId(id);
         }
 
         throw new BaseException(
-            message: "There was an error when converting a product id.",
+            message: "There was an error when converting a category id.",
             errorCode: ErrorCode.InvalidOperation,
             title: "Domain Error - Invalid Operation"
         );

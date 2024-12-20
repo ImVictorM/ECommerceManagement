@@ -1,3 +1,5 @@
+using Domain.CategoryAggregate.ValueObjects;
+using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils.Constants;
@@ -27,50 +29,27 @@ public static partial class DomainConstants
         /// <summary>
         /// The product price constant.
         /// </summary>
-        public const decimal Price = 1.50m;
+        public const decimal BasePrice = 1.50m;
         /// <summary>
         /// The product quantity available in inventory constant.
         /// </summary>
-        public const int QuantityAvailable = 10;
+        public static readonly Inventory Inventory = Inventory.Create(10);
 
         /// <summary>
         /// The product category constant.
         /// </summary>
-        public static readonly IEnumerable<string> Categories = ["books_stationery"];
+        public static readonly IReadOnlyList<ProductCategory> Categories =
+        [
+            ProductCategory.Create(CategoryId.Create(1)),
+            ProductCategory.Create(CategoryId.Create(2)),
+        ];
 
         /// <summary>
         /// The product image constant.
         /// </summary>
-        public static readonly Uri ProductImage = new("https://img.freepik.com/vetores-gratis/caneta-esferografica-escolar-estacionaria_78370-631.jpg");
-
-        /// <summary>
-        /// Creates a new product image containing the index.
-        /// </summary>
-        /// <param name="index">The index to be concatenated to the image url.</param>
-        /// <returns>A new product image containing the index concatenation.</returns>
-        public static Uri ProductImageFromIndex(int index)
-        {
-            return new Uri($"{ProductImage}-{index}");
-        }
-
-        /// <summary>
-        /// Creates a new product name concatenating the index.
-        /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>A new products name.</returns>
-        public static string ProductNameFromIndex(int index)
-        {
-            return $"{Name}-{index}";
-        }
-
-        /// <summary>
-        /// Creates a new product description concatenating the index.
-        /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>A new product description.</returns>
-        public static string ProductDescriptionFromIndex(int index)
-        {
-            return $"{Description}-{index}";
-        }
+        public static readonly IReadOnlyList<ProductImage> ProductImages =
+        [
+            ProductImage.Create(new Uri("https://img.freepik.com/vetores-gratis/caneta-esferografica-escolar-estacionaria_78370-631.jpg"))
+        ];
     }
 }

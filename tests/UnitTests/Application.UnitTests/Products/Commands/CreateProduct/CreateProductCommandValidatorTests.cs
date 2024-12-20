@@ -61,7 +61,7 @@ public class CreateProductCommandValidatorTests
     [MemberData(nameof(ValidationTestData.NonPositiveNumbers), MemberType = typeof(ValidationTestData))]
     public void ValidateCreateProductCommand_WhenBasePriceIsNotGreaterThanZero_ShouldHaveValidationErrors(int invalidPrice)
     {
-        var command = CreateProductCommandUtils.CreateCommand(initialPrice: invalidPrice);
+        var command = CreateProductCommandUtils.CreateCommand(basePrice: invalidPrice);
 
         var result = _validator.TestValidate(command);
 
@@ -96,7 +96,7 @@ public class CreateProductCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Categories).WithErrorMessage("'Categories' must not be empty.");
+        result.ShouldHaveValidationErrorFor(c => c.CategoryIds).WithErrorMessage("'Categories' must not be empty.");
     }
 
     /// <summary>

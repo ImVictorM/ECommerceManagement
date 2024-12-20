@@ -3,13 +3,11 @@ using Application.Products.Commands.CreateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Behaviors;
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Products.Commands.CreateProduct;
 
@@ -47,12 +45,11 @@ public class CreateProductCommandHandlerTests
     {
         yield return new object[] { CreateProductCommandUtils.CreateCommand() };
         yield return new object[] { CreateProductCommandUtils.CreateCommand(name: "pencil") };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(initialPrice: 15m) };
+        yield return new object[] { CreateProductCommandUtils.CreateCommand(basePrice: 15m) };
         yield return new object[] { CreateProductCommandUtils.CreateCommand(description: "some description") };
         yield return new object[] { CreateProductCommandUtils.CreateCommand(initialQuantity: 2) };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(categories: ProductUtils.GetCategoryNames(Category.Automotive, Category.Beauty)) };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(images: ProductUtils.CreateProductImagesUrl(5)) };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(initialDiscounts: DiscountUtils.CreateDiscounts(2)) };
+        yield return new object[] { CreateProductCommandUtils.CreateCommand(categories: [1, 2]) };
+        yield return new object[] { CreateProductCommandUtils.CreateCommand(images: [ProductUtils.ProductImageUrlFromIndex(1)]) };
     }
 
     /// <summary>

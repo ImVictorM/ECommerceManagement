@@ -22,15 +22,15 @@ public static class UpdateProductRequestUtils
         string? description = null,
         decimal? basePrice = null,
         IEnumerable<Uri>? images = null,
-        IEnumerable<string>? categories = null
+        IEnumerable<long>? categories = null
     )
     {
         return new UpdateProductRequest(
             name ?? DomainConstants.Product.Name,
             description ?? DomainConstants.Product.Description,
-            basePrice ?? DomainConstants.Product.Price,
-            images ?? [DomainConstants.Product.ProductImage],
-            categories ?? DomainConstants.Product.Categories
+            basePrice ?? DomainConstants.Product.BasePrice,
+            images ?? DomainConstants.Product.ProductImages.Select(i => i.Url),
+            categories ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.Value)
         );
     }
 }

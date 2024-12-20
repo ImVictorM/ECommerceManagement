@@ -1,6 +1,7 @@
+using Domain.CategoryAggregate;
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.CouponRestrictionAggregate.Entities;
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -63,6 +64,11 @@ public class CategoryRestrictionConfigurations : IEntityTypeConfiguration<Catego
             categoriesBuilder.HasKey("id");
 
             categoriesBuilder.WithOwner().HasForeignKey("id_restriction_category");
+
+            categoriesBuilder
+                .Property(c => c.CategoryId)
+                .HasConversion(id => id.Value, value => CategoryId.Create(value))
+                .IsRequired();
 
             categoriesBuilder
                 .HasOne<Category>()

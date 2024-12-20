@@ -17,7 +17,7 @@ public record CreateProductRequest(
     string Description,
     int InitialQuantity,
     decimal BasePrice,
-    IEnumerable<string> Categories,
+    IEnumerable<long> Categories,
     IEnumerable<Uri> Images,
     IEnumerable<Discount>? InitialDiscounts = null
 );

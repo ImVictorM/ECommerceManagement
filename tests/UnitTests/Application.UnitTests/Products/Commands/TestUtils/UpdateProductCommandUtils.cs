@@ -1,5 +1,4 @@
 using Application.Products.Commands.UpdateProduct;
-using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 
 namespace Application.UnitTests.Products.Commands.TestUtils;
@@ -25,16 +24,16 @@ public static class UpdateProductCommandUtils
         string? description = null,
         decimal? basePrice = null,
         IEnumerable<Uri>? images = null,
-        IEnumerable<string>? categories = null
+        IEnumerable<long>? categories = null
     )
     {
         return new UpdateProductCommand(
             id ?? DomainConstants.Product.Id.ToString(),
             name ?? DomainConstants.Product.Name,
             description ?? DomainConstants.Product.Description,
-            basePrice ?? DomainConstants.Product.Price,
-            images ?? ProductUtils.CreateProductImagesUrl(),
-            categories ?? DomainConstants.Product.Categories
+            basePrice ?? DomainConstants.Product.BasePrice,
+            images ?? DomainConstants.Product.ProductImages.Select(i => i.Url),
+            categories ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.Value)
         );
     }
 }

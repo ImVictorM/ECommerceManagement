@@ -1,3 +1,5 @@
+using Domain.CouponAggregate;
+using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
@@ -20,7 +22,6 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         ConfigureOrderTable(builder);
-        ConfigureOwnedOrderDiscountTable(builder);
         ConfigureOwnedOrderProductTable(builder);
         ConfigureOwnedOrderStatusHistoryTable(builder);
     }
@@ -72,39 +73,22 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .Property(order => order.Description)
             .HasMaxLength(200)
             .IsRequired();
-    }
 
-    /// <summary>
-    /// Configures the order_discounts table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedOrderDiscountTable(EntityTypeBuilder<Order> builder)
-    {
-        builder.OwnsMany(
-            order => order.Discounts,
-            orderDiscountBuilder =>
-            {
-                orderDiscountBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.OwnsMany(o => o.CouponAppliedIds, ownedBuillder =>
+        {
+            ownedBuillder.ToTable("orders_coupon_ids");
 
-                orderDiscountBuilder.ToTable("order_discounts");
+            ownedBuillder
+                .Property(couponId => couponId.Value)
+                .ValueGeneratedNever()
+                .IsRequired();
 
-                orderDiscountBuilder
-                    .Property<long>("id")
-                    .ValueGeneratedOnAdd()
-                    .IsRequired();
+            ownedBuillder.WithOwner().HasForeignKey("id_order");
 
-                orderDiscountBuilder.HasKey("id");
+            ownedBuillder.Property<long>("id").ValueGeneratedOnAdd().IsRequired();
 
-                orderDiscountBuilder
-                    .WithOwner()
-                    .HasForeignKey("id_order");
-
-                orderDiscountBuilder
-                    .Property("id_order")
-                    .IsRequired();
-
-                DiscountNavigationBuilderConfigurations.Configure(orderDiscountBuilder);
-            });
+            ownedBuillder.HasKey("id");
+        });
     }
 
     /// <summary>

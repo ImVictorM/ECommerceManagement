@@ -11,9 +11,7 @@ using Application.Products.Commands.DeactivateProduct;
 using Application.Products.Commands.UpdateProduct;
 using Application.Products.Commands.UpdateProductInventory;
 using Application.Products.Queries.GetProductById;
-using Application.Products.Queries.GetProductCategories;
 using Application.Products.Queries.GetProducts;
-using Application.Products.Commands.UpdateProductDiscounts;
 
 namespace WebApi.Endpoints;
 
@@ -62,15 +60,6 @@ No authentication is required."
             });
 
         productGroup
-            .MapGet("/categories", GetAllProductCategories)
-            .WithName("GetAllProductCategories")
-            .WithOpenApi(operation => new(operation)
-            {
-                Summary = "Get Product Categories",
-                Description = "Retrieves all available product categories. No authentication is required."
-            });
-
-        productGroup
             .MapPut("/{id:long}", UpdateProduct)
             .WithName("UpdateProduct")
             .WithOpenApi(operation => new(operation)
@@ -97,18 +86,6 @@ No authentication is required."
             {
                 Summary = "Update Product Inventory",
                 Description = "Increments the inventory quantity available for an active product. Admin authentication is required."
-            })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
-
-        productGroup
-            .MapPut("/{id:long}/discounts", UpdateProductDiscounts)
-            .WithName("UpdateProductDiscounts")
-            .WithOpenApi(operation => new(operation)
-            {
-                Summary = "Update Product Discounts",
-                Description = @"Changes the list of discounts related to an active product.
-If you need to remove a product's discounts, send an empty discounts list.
-Admin authentication is required."
             })
             .RequireAuthorization(AdminRequiredPolicy.Name);
 
@@ -154,17 +131,6 @@ Admin authentication is required."
         return TypedResults.Ok(mapper.Map<ProductListResponse>(result));
     }
 
-    private async Task<Ok<ProductCategoriesResponse>> GetAllProductCategories(
-        ISender sender,
-        IMapper mapper
-    )
-    {
-        var query = new GetProductCategoriesQuery();
-
-        var result = await sender.Send(query);
-
-        return TypedResults.Ok(mapper.Map<ProductCategoriesResponse>(result));
-    }
 
     private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProduct(
         [FromRoute] string id,
@@ -201,20 +167,6 @@ Admin authentication is required."
     )
     {
         var command = mapper.Map<UpdateProductInventoryCommand>((id, request));
-
-        await sender.Send(command);
-
-        return TypedResults.NoContent();
-    }
-
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProductDiscounts(
-        [FromRoute] string id,
-        [FromBody] UpdateProductDiscountsRequest request,
-        ISender sender,
-        IMapper mapper
-    )
-    {
-        var command = mapper.Map<UpdateProductDiscountsCommand>((id, request));
 
         await sender.Send(command);
 

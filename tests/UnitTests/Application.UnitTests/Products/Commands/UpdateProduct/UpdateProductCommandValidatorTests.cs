@@ -80,7 +80,7 @@ public class UpdateProductCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Categories).WithErrorMessage("'Categories' must not be empty.");
+        result.ShouldHaveValidationErrorFor(c => c.CategoriesIds).WithErrorMessage("'Category Ids' must not be empty.");
     }
 
     /// <summary>

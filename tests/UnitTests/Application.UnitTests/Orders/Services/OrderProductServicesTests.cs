@@ -8,7 +8,6 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using FluentAssertions;
 using Moq;
-using SharedKernel.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Orders.Services;
 
@@ -70,9 +69,6 @@ public class OrderProductServicesTests
         IEnumerable<Product> products = [
             ProductUtils.CreateProduct(id: ProductId.Create(1), price: 50),
             ProductUtils.CreateProduct(id: ProductId.Create(2), price: 120),
-            ProductUtils.CreateProduct(id: ProductId.Create(3), price: 1000, initialDiscounts: [
-                DiscountUtils.CreateDiscount(percentage: 10)
-            ]),
         ];
 
         var expectedTotal = 2990m;

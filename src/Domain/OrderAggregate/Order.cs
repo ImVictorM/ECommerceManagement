@@ -1,3 +1,4 @@
+using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
@@ -16,7 +17,7 @@ public sealed class Order : AggregateRoot<OrderId>
 {
     private readonly List<OrderProduct> _products = [];
     private readonly List<OrderStatusHistory> _orderStatusHistories = [];
-    private readonly List<Discount> _discounts = [];
+    private readonly List<CouponId> _couponAppliedIds = [];
 
     /// <summary>
     /// Gets the order total amount without discounts applied.
@@ -45,7 +46,7 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Gets the order discounts.
     /// </summary>
-    public IReadOnlyList<Discount> Discounts => _discounts.AsReadOnly();
+    public IReadOnlyList<CouponId> CouponAppliedIds => _couponAppliedIds.AsReadOnly();
 
     private Order() { }
 
@@ -126,10 +127,12 @@ public sealed class Order : AggregateRoot<OrderId>
     }
 
     /// <inheritdoc/>
-    public decimal CalculateTotalApplyingDiscounts()
-    {
-        return DiscountService.ApplyDiscounts(Total, [.. _discounts]);
-    }
+    //public decimal CalculateTotalApplyingDiscounts()
+    //{
+    //    var couponDiscounts = _couponAppliedIds.Select(c => c.Discount);
+
+    //    return DiscountService.ApplyDiscounts(Total, [.. couponDiscounts]);
+    //}
 
     private void UpdateOrderStatus(OrderStatus status, string description)
     {

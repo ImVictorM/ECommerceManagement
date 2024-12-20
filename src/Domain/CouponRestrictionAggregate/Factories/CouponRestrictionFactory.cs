@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.CouponRestrictionAggregate.Entities;
 using Domain.CouponRestrictionAggregate.ValueObjects;
@@ -32,7 +33,7 @@ public static class CouponRestrictionFactory
     /// <returns>A new instance of the <see cref="CouponRestriction"/> class.</returns>
     public static CouponRestriction CreateRestriction(
         CouponId couponId,
-        IEnumerable<long> idCategoriesAllowed,
+        IEnumerable<CategoryId> idCategoriesAllowed,
         IEnumerable<ProductId>? idProductsFromCategoryNotAllowed = null
     )
     {

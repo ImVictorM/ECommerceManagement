@@ -11,13 +11,12 @@ namespace Contracts.Orders;
 /// <param name="Description">The order description.</param>
 /// <param name="Status">The order status.</param>
 /// <param name="TotalWithDiscounts">The order total applyting discounts.</param>
-/// <param name="DiscountsApplied">The discounts applied to the order.</param>
 public record OrderResponse(
     string Id,
     string OwnerId,
     decimal BaseTotal,
     string Description,
     string Status,
-    decimal TotalWithDiscounts,
-    IEnumerable<Discount> DiscountsApplied
+    decimal TotalWithDiscounts
+    //IEnumerable<Discount> DiscountsApplied
 );

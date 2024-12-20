@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 
 namespace Domain.CouponRestrictionAggregate.DTOs;
@@ -7,4 +8,4 @@ namespace Domain.CouponRestrictionAggregate.DTOs;
 /// </summary>
 /// <param name="ProductId">The product id.</param>
 /// <param name="CategoryIds">The product category ids.</param>
-public record ContextProduct(ProductId ProductId, IEnumerable<long> CategoryIds);
+public record ContextProduct(ProductId ProductId, IEnumerable<CategoryId> CategoryIds);

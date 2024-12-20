@@ -3,7 +3,6 @@ using Application.Products.Commands.UpdateProduct;
 using Application.Products.Queries.Common.Errors;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
@@ -69,8 +68,8 @@ public class UpdateProductCommandHandlerTests
             name: "new product name",
             description: "new product description",
             basePrice: 600m,
-            images: ProductUtils.CreateProductImagesUrl(imageCount: 1),
-            categories: [Category.HomeImprovement.Name]
+            images: [new Uri("newimage.png")],
+            categories: [1, 2]
         );
 
         _mockProductRepository
@@ -82,8 +81,8 @@ public class UpdateProductCommandHandlerTests
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
         productToBeUpdated.Name.Should().Be(command.Name);
         productToBeUpdated.Description.Should().Be(command.Description);
-        productToBeUpdated.GetCategoryNames().Should().BeEquivalentTo(command.Categories);
         productToBeUpdated.BasePrice.Should().Be(command.BasePrice);
+        productToBeUpdated.ProductCategories.Select(pc => pc.CategoryId).Should().BeEquivalentTo(command.CategoriesIds);
         productToBeUpdated.ProductImages.Select(pi => pi.Url).Should().BeEquivalentTo(command.Images);
     }
 }

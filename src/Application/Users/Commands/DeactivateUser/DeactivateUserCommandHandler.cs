@@ -1,5 +1,5 @@
+using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
-using Application.Users.Common.Errors;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;

@@ -23,9 +23,9 @@ public class OrderMappingConfig : IRegister
             .Map(dest => dest.Id, src => src.Order.Id)
             .Map(dest => dest.OwnerId, src => src.Order.OwnerId)
             .Map(dest => dest.BaseTotal, src => src.Order.Total)
-            .Map(dest => dest.TotalWithDiscounts, src => src.Order.CalculateTotalApplyingDiscounts())
+            .Map(dest => dest.TotalWithDiscounts, src => src.Order.Total)
             .Map(dest => dest.Description, src => src.Order.Description)
-            .Map(dest => dest.DiscountsApplied, src => src.Order.Discounts)
+            //.Map(dest => dest.DiscountsApplied, src => src.Order.CouponsApplied)
             .Map(dest => dest.Status, src => src.Order.GetStatusDescription());
     }
 }

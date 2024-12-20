@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.Errors;
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using MediatR;
@@ -31,6 +32,7 @@ public sealed partial class UpdateProductCommandHandler : IRequestHandler<Update
         LogInitiatingProductUpdate(request.Id);
 
         var productId = ProductId.Create(request.Id);
+        var productCategoryIds = request.CategoriesIds.Select(CategoryId.Create);
 
         var productToUpdate = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
 
@@ -40,14 +42,13 @@ public sealed partial class UpdateProductCommandHandler : IRequestHandler<Update
 
             throw new ProductNotFoundException($"The product with id {productId} could not be updated because it does not exist");
         }
-            
 
         productToUpdate.UpdateProduct(
             request.Name,
             request.Description,
             request.BasePrice,
-            request.Images,
-            request.Categories
+            request.Images.Select(ProductImage.Create),
+            productCategoryIds.Select(ProductCategory.Create)
         );
 
         LogProductUpdatedSuccessfully();

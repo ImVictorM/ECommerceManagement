@@ -1,6 +1,5 @@
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.UpdateProduct;
-using Application.Products.Commands.UpdateProductDiscounts;
 using Application.Products.Commands.UpdateProductInventory;
 using Application.Products.Queries.Common.DTOs;
 using Contracts.Products;
@@ -23,19 +22,13 @@ public class ProductMappingConfig : IRegister
 
         config.NewConfig<ProductResult, ProductResponse>()
             .Map(dest => dest.OriginalPrice, src => src.Product.BasePrice)
-            .Map(dest => dest.PriceWithDiscount, src => src.Product.GetPriceAfterDiscounts())
             .Map(dest => dest.QuantityAvailable, src => src.Product.Inventory.QuantityAvailable)
             .Map(dest => dest.Images, src => src.Product.ProductImages.Select(pi => pi.Url))
-            .Map(dest => dest.Categories, src => src.Product.GetCategoryNames())
-            .Map(dest => dest.DiscountsApplied, src => src.Product.GetApplicableDiscounts())
             .Map(dest => dest.Id, src => src.Product.Id.Value)
             .Map(dest => dest, src => src.Product);
 
         config.NewConfig<ProductListResult, ProductListResponse>()
             .Map(dest => dest.Products, src => src.Products.Select(p => new ProductResult(p)));
-
-        config.NewConfig<ProductCategoriesResult, ProductCategoriesResponse>()
-            .Map(dest => dest.Categories, src => src.Categories.Select(c => c.Name));
 
         config.NewConfig<(string Id, UpdateProductRequest Request), UpdateProductCommand>()
             .Map(dest => dest, src => src.Request)
@@ -44,9 +37,5 @@ public class ProductMappingConfig : IRegister
         config.NewConfig<(string Id, UpdateProductInventoryRequest Request), UpdateProductInventoryCommand>()
             .Map(dest => dest.ProductId, src => src.Id)
             .Map(dest => dest, src => src.Request);
-
-        config.NewConfig<(string Id, UpdateProductDiscountsRequest Request), UpdateProductDiscountsCommand>()
-            .Map(dest => dest.Id, src => src.Id)
-            .Map(dest => dest.Discounts, src => src.Request.Discounts);
     }
 }

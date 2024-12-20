@@ -13,5 +13,5 @@ public record UpdateProductRequest(
     string Description,
     decimal BasePrice,
     IEnumerable<Uri> Images,
-    IEnumerable<string> Categories
+    IEnumerable<long> Categories
 );

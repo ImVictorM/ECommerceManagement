@@ -1,42 +1,41 @@
 using SharedKernel.Errors;
+using SharedKernel.Interfaces;
 using SharedKernel.Models;
+using SharedKernel.Specifications;
 
 namespace SharedKernel.ValueObjects;
 
 /// <summary>
 /// Represents a discount.
 /// </summary>
-public sealed class Discount : ValueObject
+public class Discount : ValueObject, IDiscount
 {
-    /// <summary>
-    /// Gets the discount percentage.
-    /// </summary>
+    /// <inheritdoc/>
+    public string Description { get; } = null!;
+    /// <inheritdoc/>
     public int Percentage { get; }
-    /// <summary>
-    /// Gets the discount description.
-    /// </summary>
-    public string Description { get; } = string.Empty;
-    /// <summary>
-    /// Gets the discount starting date.
-    /// </summary>
+    /// <inheritdoc/>
     public DateTimeOffset StartingDate { get; }
-    /// <summary>
-    /// Gets the discount ending date.
-    /// </summary>
+    /// <inheritdoc/>
     public DateTimeOffset EndingDate { get; }
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="Discount"/> class.
+    /// Gets a boolean value indicating if the discount is valid to date.
     /// </summary>
+    public bool IsValidToDate
+    {
+        get
+        {
+            var now = DateTimeOffset.UtcNow;
+
+            return now >= StartingDate && now <= EndingDate;
+        }
+    }
+
+    public bool IsActive { get; }
+
     private Discount() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Discount"/> class.
-    /// </summary>
-    /// <param name="percentage">The discount percentage.</param>
-    /// <param name="description">The discount description.</param>
-    /// <param name="startingDate">The discount starting date.</param>
-    /// <param name="endingDate">The discount ending date.</param>
     private Discount(
         int percentage,
         string description,
@@ -48,8 +47,17 @@ public sealed class Discount : ValueObject
         Description = description;
         StartingDate = startingDate;
         EndingDate = endingDate;
+        IsActive = true;
 
-        Validate();
+        if (!new DiscountDateRangeSpecification().IsSatisfiedBy(this))
+        {
+            throw new DomainValidationException("The date range between the starting and ending date is incorrect");
+        }
+
+        if (!new DiscountPercentageRangeSpecification().IsSatisfiedBy(this))
+        {
+            throw new DomainValidationException("Discount percentage must be between 1 and 100");
+        }
     }
 
     /// <summary>
@@ -70,49 +78,6 @@ public sealed class Discount : ValueObject
         return new Discount(percentage, description, startingDate, endingDate);
     }
 
-    /// <summary>
-    /// Checks if a discount is still valid.
-    /// </summary>
-    /// <returns>A bool value indicating if the discount is still valid.</returns>
-    public bool IsDiscountValidToDate()
-    {
-        return IsDiscountValidToDate(this);
-    }
-
-    /// <summary>
-    /// Checks if a discount is still valid.
-    /// </summary>
-    /// <returns>A bool value indicating if the discount is still valid.</returns>
-    public static bool IsDiscountValidToDate(Discount discount)
-    {
-        var now = DateTimeOffset.UtcNow;
-
-        return now >= discount.StartingDate && now <= discount.EndingDate;
-    }
-
-    /// <summary>
-    /// Validate the discount fields.
-    /// </summary>
-    /// <exception cref="DomainValidationException">Exception thrown case any field is invalid.</exception>
-    private void Validate()
-    {
-        if (Percentage <= 0 || Percentage > 100)
-        {
-            throw new DomainValidationException("Discount percentage must be between 1 and 100");
-        }
-
-        var now = DateTimeOffset.UtcNow;
-
-        if (StartingDate < now.AddDays(-1))
-        {
-            throw new DomainValidationException("The starting date for the discount cannot be in the past");
-        }
-        else if (EndingDate < StartingDate.AddHours(1))
-        {
-            throw new DomainValidationException("The ending date and time must be at least one hour after the starting date");
-        }
-    }
-
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
@@ -120,5 +85,6 @@ public sealed class Discount : ValueObject
         yield return Description;
         yield return StartingDate;
         yield return EndingDate;
+        yield return IsActive;
     }
 }

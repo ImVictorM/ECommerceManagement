@@ -1,6 +1,5 @@
 using Application.Common.DTOs;
 using MediatR;
-using SharedKernel.ValueObjects;
 
 namespace Application.Products.Commands.CreateProduct;
 
@@ -11,15 +10,13 @@ namespace Application.Products.Commands.CreateProduct;
 /// <param name="Description">The new product description.</param>
 /// <param name="InitialQuantity">The new product initial quantity to be placed in the product's inventory.</param>
 /// <param name="BasePrice">The new product base price.</param>
-/// <param name="Categories">Categories the new product belongs to.</param>
+/// <param name="CategoryIds">Categories the new product belongs to.</param>
 /// <param name="Images">The new product images.</param>
-/// <param name="InitialDiscounts">The new product initial discounts (optional).</param>
 public record CreateProductCommand(
     string Name,
     string Description,
     int InitialQuantity,
     decimal BasePrice,
-    IEnumerable<string> Categories,
-    IEnumerable<Uri> Images,
-    IEnumerable<Discount>? InitialDiscounts = null
+    IEnumerable<long> CategoryIds,
+    IEnumerable<Uri> Images
 ) : IRequest<CreatedResult>;

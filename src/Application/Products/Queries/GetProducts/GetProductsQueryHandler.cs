@@ -1,7 +1,6 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.DTOs;
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Enumerations;
 using Domain.ProductAggregate.Specifications;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -36,14 +35,15 @@ public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProduct
 
         CompositeQuerySpecification<Product> spec = new QueryActiveProductsSpecification();
 
-        if (request.categories != null && request.categories.Any())
+        if (request.Categories != null && request.Categories.Any())
         {
-            spec.And(new QueryProductByCategorySpecification(Category.Parse(request.categories)));
+            // TODO: fix this
+            //spec.And(new QueryProductByCategorySpecification(Category.Parse(request.Categories)));
         }
 
         var products = await _unitOfWork.ProductRepository.FindSatisfyingAsync(spec, limit: limit);
 
-        LogProductsRetrievedSuccessfully(limit, request.categories != null ? string.Join(',', request.categories) : "none");
+        LogProductsRetrievedSuccessfully(limit, request.Categories != null ? string.Join(',', request.Categories) : "none");
 
         return new ProductListResult(products);
     }

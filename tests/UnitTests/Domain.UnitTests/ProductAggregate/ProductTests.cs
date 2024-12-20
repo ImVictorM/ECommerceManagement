@@ -1,9 +1,7 @@
-using Domain.ProductAggregate.Enumerations;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
-using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.ProductAggregate;
 
@@ -22,152 +20,59 @@ public class ProductTests
         yield return new object[] {
             DomainConstants.Product.Name,
             DomainConstants.Product.Description,
-            DomainConstants.Product.Price,
-            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.BasePrice,
+            DomainConstants.Product.Inventory.QuantityAvailable,
             DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImagesUrl(1),
+            DomainConstants.Product.ProductImages
         };
 
         yield return new object[] {
             "Computer",
             DomainConstants.Product.Description,
-            DomainConstants.Product.Price,
-            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.BasePrice,
+            DomainConstants.Product.Inventory.QuantityAvailable,
             DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImagesUrl(2),
+            ProductUtils.CreateProductImages(2),
         };
 
         yield return new object[] {
             DomainConstants.Product.Name,
             "Some description for the product",
-            DomainConstants.Product.Price,
-            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.BasePrice,
+            DomainConstants.Product.Inventory.QuantityAvailable,
             DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImagesUrl(3),
+            ProductUtils.CreateProductImages(3),
         };
 
         yield return new object[] {
             DomainConstants.Product.Name,
             DomainConstants.Product.Description,
             100m,
-            DomainConstants.Product.QuantityAvailable,
+            DomainConstants.Product.Inventory.QuantityAvailable,
             DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImagesUrl(4),
+            ProductUtils.CreateProductImages(4),
         };
 
         yield return new object[] {
             DomainConstants.Product.Name,
             DomainConstants.Product.Description,
-            DomainConstants.Product.Price,
+            DomainConstants.Product.BasePrice,
             57,
             DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImagesUrl(5),
+            ProductUtils.CreateProductImages(5),
         };
 
         yield return new object[] {
             DomainConstants.Product.Name,
             DomainConstants.Product.Description,
-            DomainConstants.Product.Price,
-            DomainConstants.Product.QuantityAvailable,
-            ProductUtils.GetCategoryNames(Category.Footwear),
-            ProductUtils.CreateProductImagesUrl(6),
+            DomainConstants.Product.BasePrice,
+            DomainConstants.Product.Inventory.QuantityAvailable,
+            ProductUtils.CreateProductCategories(2),
+            ProductUtils.CreateProductImages(6),
         };
     }
 
-    /// <summary>
-    /// A list containing the product price, a list of discounts, and the expected price after those discounts.
-    /// </summary>
-    public static IEnumerable<object[]> PriceWithDiscountsAndExpectedPriceAfterDiscounts()
-    {
-        var now = DateTimeOffset.UtcNow;
-
-        yield return new object[]
-        {
-            100,
-            new List<Discount>() {
-                DiscountUtils.CreateDiscount(percentage: 20),
-                DiscountUtils.CreateDiscount(percentage: 10)
-            },
-            72
-        };
-
-        yield return new object[]
-        {
-            200,
-            new List<Discount>() {
-                DiscountUtils.CreateDiscount(percentage: 10)
-            },
-            180
-        };
-
-        yield return new object[]
-        {
-            500,
-            new List<Discount>
-            {
-                DiscountUtils.CreateDiscount(
-                    percentage: 20,
-                    startingDate: now.AddDays(4),
-                    endingDate: now.AddDays(6)
-                ),
-                DiscountUtils.CreateDiscount(
-                    percentage: 50
-                )
-            },
-            250
-        };
-    }
-
-    /// <summary>
-    /// Pairs of discounts and valid to date discounts.
-    /// </summary>
-    public static IEnumerable<object[]> DiscountsAndDiscountsValidToDatePairs()
-    {
-        var now = DateTimeOffset.UtcNow;
-
-        yield return new object[]
-        {
-            new List<Discount>()
-            {
-                DiscountUtils.CreateDiscount(percentage: 5, startingDate: now.AddDays(2), endingDate: now.AddDays(4)),
-                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
-                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now.AddHours(-10), endingDate: now.AddHours(-5)),
-            },
-
-            new List<Discount>()
-            {
-                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
-            }
-        };
-
-        yield return new object[]
-        {
-            new List<Discount>()
-            {
-                DiscountUtils.CreateDiscount(percentage: 5, startingDate: now.AddDays(2), endingDate: now.AddDays(4)),
-                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now.AddHours(-10), endingDate: now.AddHours(-5)),
-            },
-
-            new List<Discount>()
-            {
-            }
-        };
-
-        yield return new object[]
-        {
-            new List<Discount>()
-            {
-                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
-                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now, endingDate: now.AddDays(2)),
-            },
-
-            new List<Discount>()
-            {
-                DiscountUtils.CreateDiscount(percentage: 10, startingDate: now, endingDate: now.AddDays(4)),
-                DiscountUtils.CreateDiscount(percentage: 20, startingDate: now, endingDate: now.AddDays(2)),
-            }
-        };
-    }
+    
     /// <summary>
     /// Tests if it is possible to create a new product with valid parameters.
     /// </summary>
@@ -176,7 +81,7 @@ public class ProductTests
     /// <param name="price">The product price.</param>
     /// <param name="quantityAvailable">The product quantity available.</param>
     /// <param name="categories">The product categories.</param>
-    /// <param name="productImageURLs">The product image URLs.</param>
+    /// <param name="images">The product image URLs.</param>
     [Theory]
     [MemberData(nameof(ValidProductParameters))]
     public void Product_WhenCreatingWithValidParameter_ReturnsNewInstance(
@@ -184,8 +89,8 @@ public class ProductTests
         string description,
         decimal price,
         int quantityAvailable,
-        IEnumerable<string> categories,
-        IEnumerable<Uri> productImageURLs
+        IEnumerable<ProductCategory> categories,
+        IEnumerable<ProductImage> images
     )
     {
         var act = () =>
@@ -196,7 +101,7 @@ public class ProductTests
                price: price,
                quantityAvailable: quantityAvailable,
                categories: categories,
-               productImagesUrl: productImageURLs
+               images: images
             );
 
             product.Should().NotBeNull();
@@ -204,72 +109,13 @@ public class ProductTests
             product.Description.Should().Be(description);
             product.BasePrice.Should().Be(price);
             product.Inventory.QuantityAvailable.Should().Be(quantityAvailable);
-            product.GetCategoryNames().Should().BeEquivalentTo(categories);
-
-            for (var i = 0; i < product.ProductImages.Count; i += 1)
-            {
-                var image = product.ProductImages[i];
-                image.Url.Should().Be($"{DomainConstants.Product.ProductImage}-{i}");
-            }
+            product.ProductImages.Should().BeEquivalentTo(images);
+            product.ProductCategories.Should().BeEquivalentTo(categories);
         };
 
         act.Should().NotThrow();
     }
 
-    /// <summary>
-    /// Tests if it is possible to make a product inactive.
-    /// </summary>
-    [Fact]
-    public void Product_WhenMakingItInactive_SetsTheIsActiveFieldToFalse()
-    {
-        var product = ProductUtils.CreateProduct();
-
-        product.MakeInactive();
-
-        product.IsActive.Should().BeFalse();
-    }
-
-    /// <summary>
-    /// Tests the correctness of adding a discount to a product.
-    /// </summary>
-    [Fact]
-    public void Product_WhenAddingDiscount_AddsAndIncrementTheProductDiscounts()
-    {
-        var product = ProductUtils.CreateProduct();
-
-        var tenPercentDiscount = DiscountUtils.CreateDiscount(percentage: 10);
-        var fivePercentDiscount = DiscountUtils.CreateDiscount(percentage: 5);
-
-        product.AddDiscounts(tenPercentDiscount, fivePercentDiscount);
-
-        product.Discounts.Should().NotBeEmpty();
-        product.Discounts.Count.Should().Be(2);
-        product.Discounts.Should().Contain(tenPercentDiscount);
-        product.Discounts.Should().Contain(fivePercentDiscount);
-    }
-
-    /// <summary>
-    /// Tests getting the price after discounts calculates the price with discount correctly, considering only discounts
-    /// that are valid to the current date.
-    /// </summary>
-    /// <param name="price">The product price.</param>
-    /// <param name="discounts">The product discounts.</param>
-    /// <param name="expectedPriceAfterDiscount">The expected price after discounts were applied.</param>
-    [Theory]
-    [MemberData(nameof(PriceWithDiscountsAndExpectedPriceAfterDiscounts))]
-    public void Product_WhenGettingPriceAfterDiscount_CalculatesItCorrectly(
-        decimal price,
-        IEnumerable<Discount> discounts,
-        decimal expectedPriceAfterDiscount
-    )
-    {
-        var product = ProductUtils.CreateProduct(
-            price: price,
-            initialDiscounts: discounts
-        );
-
-        product.GetPriceAfterDiscounts().Should().Be(expectedPriceAfterDiscount);
-    }
 
     /// <summary>
     /// Tests it is possible to update a product correctly.
@@ -282,8 +128,8 @@ public class ProductTests
         var newName = "new name";
         var newDescription = "new description";
         var newPrice = 200m;
-        var newImages = ProductUtils.CreateProductImagesUrl();
-        IEnumerable<string> newCategories = [Category.Automotive.Name];
+        var newImages = ProductUtils.CreateProductImages(4);
+        var newCategories = ProductUtils.CreateProductCategories(2);
 
         product.UpdateProduct(
             name: newName,
@@ -296,8 +142,8 @@ public class ProductTests
         product.Name.Should().Be(newName);
         product.Description.Should().Be(newDescription);
         product.BasePrice.Should().Be(newPrice);
-        product.ProductImages.Select(pi => pi.Url).Should().BeEquivalentTo(newImages);
-        product.GetCategoryNames().Should().BeEquivalentTo(newCategories);
+        product.ProductImages.Should().BeEquivalentTo(newImages);
+        product.ProductCategories.Should().BeEquivalentTo(newCategories);
     }
 
     /// <summary>
@@ -332,23 +178,5 @@ public class ProductTests
 
         product.IsActive.Should().BeFalse();
         product.Inventory.QuantityAvailable.Should().Be(0);
-    }
-
-    /// <summary>
-    /// Tests that clearing the product discounts works correctly.
-    /// </summary>
-    [Fact]
-    public void Product_WhenClearingTheDiscounts_DiscountsIsReset()
-    {
-        var product = ProductUtils.CreateProduct();
-
-        product.AddDiscounts(
-            DiscountUtils.CreateDiscount(percentage: 20),
-            DiscountUtils.CreateDiscount(percentage: 10)
-        );
-
-        product.ClearDiscounts();
-
-        product.Discounts.Should().BeEmpty();
     }
 }

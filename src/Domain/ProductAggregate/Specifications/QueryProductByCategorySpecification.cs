@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Domain.CategoryAggregate.ValueObjects;
 using SharedKernel.Models;
 
 namespace Domain.ProductAggregate.Specifications;
@@ -8,13 +9,13 @@ namespace Domain.ProductAggregate.Specifications;
 /// </summary>
 public class QueryProductByCategorySpecification : CompositeQuerySpecification<Product>
 {
-    private readonly IEnumerable<long> _categoryIds;
+    private readonly IEnumerable<CategoryId> _categoryIds;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="QueryProductByCategorySpecification"/> class.
     /// </summary>
     /// <param name="categoryIds">The categories a product may contain.</param>
-    public QueryProductByCategorySpecification(IEnumerable<long> categoryIds) : base()
+    public QueryProductByCategorySpecification(IEnumerable<CategoryId> categoryIds) : base()
     {
         _categoryIds = categoryIds;
     }

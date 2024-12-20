@@ -1,13 +1,14 @@
-using Domain.ProductAggregate.Enumerations;
+using Domain.CategoryAggregate;
+using Domain.CategoryAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Configurations.ProductAggregate;
+namespace Infrastructure.Persistence.Configurations.CategoryAggregate;
 
 /// <summary>
-/// Configures the <see cref="Category"/> value object to its table.
+/// Configures the tables for the <see cref="Category"/> root.
 /// </summary>
-public sealed class CategoryConfigurations : IEntityTypeConfiguration<Category>
+public class CategoryConfigurations : IEntityTypeConfiguration<Category>
 {
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<Category> builder)
@@ -18,7 +19,8 @@ public sealed class CategoryConfigurations : IEntityTypeConfiguration<Category>
 
         builder
             .Property(c => c.Id)
-            .ValueGeneratedNever()
+            .HasConversion(id => id.Value, value => CategoryId.Create(value))
+            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder
@@ -27,7 +29,5 @@ public sealed class CategoryConfigurations : IEntityTypeConfiguration<Category>
             .IsRequired();
 
         builder.HasIndex(c => c.Name).IsUnique();
-
-        builder.HasData(Category.List());
     }
 }

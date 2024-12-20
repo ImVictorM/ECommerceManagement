@@ -1,4 +1,4 @@
-using Domain.ProductAggregate.Enumerations;
+using Domain.CategoryAggregate.ValueObjects;
 using SharedKernel.Models;
 
 namespace Domain.ProductAggregate.ValueObjects;
@@ -12,25 +12,25 @@ public class ProductCategory : ValueObject
     /// <summary>
     /// Gets the category id.
     /// </summary>
-    public long CategoryId { get; }
+    public CategoryId CategoryId { get; } = null!;
 
     private ProductCategory()
     {
     }
 
-    private ProductCategory(Category category)
+    private ProductCategory(CategoryId categoryId)
     {
-        CategoryId = category.Id;
+        CategoryId = categoryId;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="ProductCategory"/> class.
     /// </summary>
-    /// <param name="category">The category of the product.</param>
+    /// <param name="categoryId">The category id.</param>
     /// <returns>A new instance of the <see cref="ProductCategory"/> class.</returns>
-    public static ProductCategory Create(Category category)
+    public static ProductCategory Create(CategoryId categoryId)
     {
-        return new ProductCategory(category);
+        return new ProductCategory(categoryId);
     }
 
     /// <inheritdoc/>

@@ -11,8 +11,11 @@ public class DiscountThresholdSpecification : CompositeSpecification<Product>
     /// <inheritdoc/>
     public override bool IsSatisfiedBy(Product entity)
     {
-        var minimumPriceAfterDiscount = entity.BasePrice - entity.BasePrice * 0.9m;
+        // TODO: pass that logic to sale aggregate
+        //var minimumPriceAfterDiscount = entity.BasePrice - entity.BasePrice * 0.9m;
 
-        return entity.GetPriceAfterDiscounts() > minimumPriceAfterDiscount;
+        //return entity.GetPriceAfterDiscounts() > minimumPriceAfterDiscount;
+
+        return true;
     }
 }

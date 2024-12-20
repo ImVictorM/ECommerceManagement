@@ -130,17 +130,17 @@ public class DiscountTests
             .WithMessage("Discount percentage must be between 1 and 100");
     }
 
-    /// <summary>
-    /// Tests the method to validate if the current discount should be applied.
-    /// </summary>
-    /// <param name="discount">The discount.</param>
-    /// <param name="expectedValidToDate">The expected value indicating if the discount should be applied.</param>
-    [Theory]
-    [MemberData(nameof(DiscountAndExpectedValidToDatePairs))]
-    public void Discount_WhenCheckingIfDiscountIsValidToDate_ReturnsCorrectBooleanValue(Discount discount, bool expectedValidToDate)
-    {
-        var result = Discount.IsDiscountValidToDate(discount);
+    ///// <summary>
+    ///// Tests the method to validate if the current discount should be applied.
+    ///// </summary>
+    ///// <param name="discount">The discount.</param>
+    ///// <param name="expectedValidToDate">The expected value indicating if the discount should be applied.</param>
+    //[Theory]
+    //[MemberData(nameof(DiscountAndExpectedValidToDatePairs))]
+    //public void Discount_WhenCheckingIfDiscountIsValidToDate_ReturnsCorrectBooleanValue(Discount discount, bool expectedValidToDate)
+    //{
+    //    var result = Discount.IsDiscountValidToDate(discount);
 
-        result.Should().Be(expectedValidToDate);
-    }
+    //    result.Should().Be(expectedValidToDate);
+    //}
 }

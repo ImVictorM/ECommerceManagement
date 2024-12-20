@@ -1,7 +1,7 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
-using Domain.ProductAggregate.Enumerations;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
-using SharedKernel.UnitTests.TestUtils;
 
 namespace IntegrationTests.TestUtils.Seeds;
 
@@ -48,29 +48,14 @@ public static class ProductSeed
             price: 3000m,
             quantityAvailable: 50,
             categories: [
-                Category.Electronics.Name,
-                Category.OfficeSupplies.Name
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.TECHNOLOGY).Id),
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.OFFICE_SUPPLIES).Id)
             ],
-            productImagesUrl: [
-                new Uri("computer-thumb.png", UriKind.Relative),
-                new Uri("computer-left-side.png", UriKind.Relative),
-                new Uri("computer-right-side.png", UriKind.Relative)
-            ],
-            initialDiscounts: [
-                DiscountUtils.CreateDiscount(percentage: 20, description: "Black Friday discount"),
-                DiscountUtils.CreateDiscount(percentage: 5, description: "Base discount"),
-                DiscountUtils.CreateDiscount(
-                    percentage: 30,
-                    description: "Future discount",
-                    startingDate: DateTimeOffset.UtcNow.AddDays(2),
-                    endingDate: DateTimeOffset.UtcNow.AddDays(5)
-                ),
-                DiscountUtils.CreateDiscount(
-                    percentage: 10,
-                    description: "Next month discount",
-                    startingDate: DateTimeOffset.UtcNow.AddMonths(1),
-                    endingDate: DateTimeOffset.UtcNow.AddMonths(2)
-                )
+            images: [
+
+                ProductImage.Create(new Uri("computer-thumb.png", UriKind.Relative)),
+                ProductImage.Create(new Uri("computer-left-side.png", UriKind.Relative)),
+                ProductImage.Create(new Uri("computer-right-side.png", UriKind.Relative))
             ]
         ),
         [SeedAvailableProducts.TSHIRT] = ProductUtils.CreateProduct(
@@ -79,11 +64,11 @@ public static class ProductSeed
             price: 22.3m,
             quantityAvailable: 10,
             categories: [
-                Category.Fashion.Name,
-                Category.SportsOutdoor.Name
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION).Id),
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.SPORTS).Id)
             ],
-            productImagesUrl: [
-                new Uri("t-shirt.png", UriKind.Relative)
+            images: [
+                ProductImage.Create(new Uri("t-shirt.png", UriKind.Relative))
             ]
         ),
         [SeedAvailableProducts.CHAIN_BRACELET] = ProductUtils.CreateProduct(
@@ -92,11 +77,11 @@ public static class ProductSeed
             price: 695m,
             quantityAvailable: 2,
             categories: [
-                Category.JewelryWatches.Name,
-                Category.Fashion.Name
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.JEWELRY).Id),
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION).Id)
             ],
-            productImagesUrl: [
-                new Uri("bracelet.png", UriKind.Relative)
+            images: [
+                ProductImage.Create(new Uri("bracelet.png", UriKind.Relative))
             ]
         ),
         [SeedAvailableProducts.PENCIL] = ProductUtils.CreateProduct(
@@ -105,10 +90,10 @@ public static class ProductSeed
             price: 160m,
             quantityAvailable: 150,
             categories: [
-                Category.BooksStationery.Name
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.BOOKS_STATIONERY).Id),
             ],
-            productImagesUrl: [
-                new Uri("pencil.png", UriKind.Relative)
+            images: [
+                ProductImage.Create(new Uri("pencil.png", UriKind.Relative)),
             ]
         ),
         [SeedAvailableProducts.INACTIVE_JACKET] = ProductUtils.CreateProduct(
@@ -116,10 +101,10 @@ public static class ProductSeed
             description: "Great outerwear jackets for Spring/Autumn/Winter, suitable for many occasions.",
             price: 200,
             categories: [
-                Category.Fashion.Name
+                ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION).Id),
             ],
-            productImagesUrl: [
-                new Uri("jacket.png", UriKind.Relative)
+            images: [
+                ProductImage.Create(new Uri("jacket.png", UriKind.Relative))
             ],
             active: false
         )
@@ -147,17 +132,15 @@ public static class ProductSeed
     /// <summary>
     /// Gets the products that contains certain categories.
     /// </summary>
-    /// <param name="categories">The categories the products should contain.</param>
+    /// <param name="categoryIds">The categories the products should contain.</param>
     /// <returns>A list of products that contain certain categories.</returns>
-    public static IEnumerable<Product> GetSeedProductsByCategories(params Category[] categories)
+    public static IEnumerable<Product> GetSeedProductsByCategories(params CategoryId[] categoryIds)
     {
-        var categoriesId = categories.Select(c => c.Id);
-
         return ListProducts()
             .Where(p =>
                 p.ProductCategories
                     .Select(pc => pc.CategoryId)
-                    .Any(id => categoriesId.Contains(id))
+                    .Any(id => categoryIds.Contains(id))
             );
     }
 }

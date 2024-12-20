@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.CouponRestrictionAggregate.DTOs;
 using Domain.CouponRestrictionAggregate.ValueObjects;
@@ -65,7 +66,7 @@ public class CategoryRestriction : CouponRestriction
         return IsProductNotExcluded(product.ProductId) && HasAnyAllowedCategory(product.CategoryIds);
     }
 
-    private bool HasAnyAllowedCategory(IEnumerable<long> categories)
+    private bool HasAnyAllowedCategory(IEnumerable<CategoryId> categories)
     {
         var categoryAllowedIds = CategoriesAllowed.Select(ca => ca.CategoryId);
         return categories.Intersect(categoryAllowedIds).Any();
