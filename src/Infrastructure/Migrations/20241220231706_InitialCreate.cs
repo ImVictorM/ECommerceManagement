@@ -21,8 +21,11 @@ namespace Infrastructure.Migrations
                 name: "categories",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,6 +107,24 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_roles", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "sales",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    percentage = table.Column<int>(type: "integer", nullable: false),
+                    starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ending_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_sales", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,29 +223,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "product_discounts",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    percentage = table.Column<int>(type: "integer", nullable: false),
-                    starting_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ending_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    id_product = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_product_discounts", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_product_discounts_products_id_product",
-                        column: x => x.id_product,
-                        principalTable: "products",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "product_images",
                 columns: table => new
                 {
@@ -266,6 +264,84 @@ namespace Infrastructure.Migrations
                         name: "FK_products_categories_products_id_product",
                         column: x => x.id_product,
                         principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "sale_categories_categories",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id_category = table.Column<long>(type: "bigint", nullable: false),
+                    id_sale = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_sale_categories_categories", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_sale_categories_categories_categories_id_category",
+                        column: x => x.id_category,
+                        principalTable: "categories",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_sale_categories_categories_sales_id_sale",
+                        column: x => x.id_sale,
+                        principalTable: "sales",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "sale_excluded_products_products",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id_product = table.Column<long>(type: "bigint", nullable: false),
+                    id_sale = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_sale_excluded_products_products", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_sale_excluded_products_products_products_id_product",
+                        column: x => x.id_product,
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_sale_excluded_products_products_sales_id_sale",
+                        column: x => x.id_sale,
+                        principalTable: "sales",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "sale_products_products",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id_product = table.Column<long>(type: "bigint", nullable: false),
+                    id_sale = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_sale_products_products", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_sale_products_products_products_id_product",
+                        column: x => x.id_product,
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_sale_products_products_sales_id_sale",
+                        column: x => x.id_sale,
+                        principalTable: "sales",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -407,7 +483,7 @@ namespace Infrastructure.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
-                    id_restriction_product = table.Column<long>(type: "bigint", nullable: false)
+                    id_restriction_product = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -659,32 +735,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "categories",
-                columns: new[] { "id", "name" },
-                values: new object[,]
-                {
-                    { 1L, "electronics" },
-                    { 2L, "home_appliances" },
-                    { 3L, "fashion" },
-                    { 4L, "footwear" },
-                    { 5L, "beauty" },
-                    { 6L, "health_wellness" },
-                    { 7L, "groceries" },
-                    { 8L, "furniture" },
-                    { 9L, "toys_games" },
-                    { 10L, "books_stationery" },
-                    { 11L, "sports_outdoor" },
-                    { 12L, "automotive" },
-                    { 13L, "pet_supplies" },
-                    { 14L, "jewelry_watches" },
-                    { 15L, "office_supplies" },
-                    { 16L, "home_improvement" },
-                    { 17L, "baby_products" },
-                    { 18L, "travel_luggage" },
-                    { 19L, "music_instruments" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "order_statuses",
                 columns: new[] { "id", "name" },
                 values: new object[,]
@@ -723,11 +773,11 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "created_at", "name", "updated_at" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(4289), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(4794), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5122), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5122), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3L, new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5152), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5152), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 4L, new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5168), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5168), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 5L, new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5182), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 12, 20, 2, 15, 16, 138, DateTimeKind.Unspecified).AddTicks(5182), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(7195), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8214), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 2L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8594), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8595), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 3L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 4L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8628), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8629), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { 5L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8639), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8640), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -817,11 +867,6 @@ namespace Infrastructure.Migrations
                 column: "id_payment_status");
 
             migrationBuilder.CreateIndex(
-                name: "IX_product_discounts_id_product",
-                table: "product_discounts",
-                column: "id_product");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_product_feedbacks_id_order",
                 table: "product_feedbacks",
                 column: "id_order",
@@ -899,6 +944,36 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_sale_categories_categories_id_category",
+                table: "sale_categories_categories",
+                column: "id_category");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_sale_categories_categories_id_sale",
+                table: "sale_categories_categories",
+                column: "id_sale");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_sale_excluded_products_products_id_product",
+                table: "sale_excluded_products_products",
+                column: "id_product");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_sale_excluded_products_products_id_sale",
+                table: "sale_excluded_products_products",
+                column: "id_sale");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_sale_products_products_id_product",
+                table: "sale_products_products",
+                column: "id_product");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_sale_products_products_id_sale",
+                table: "sale_products_products",
+                column: "id_sale");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_shipment_status_histories_id_shipment",
                 table: "shipment_status_histories",
                 column: "id_shipment");
@@ -966,9 +1041,6 @@ namespace Infrastructure.Migrations
                 name: "payment_status_histories");
 
             migrationBuilder.DropTable(
-                name: "product_discounts");
-
-            migrationBuilder.DropTable(
                 name: "product_feedbacks");
 
             migrationBuilder.DropTable(
@@ -987,6 +1059,15 @@ namespace Infrastructure.Migrations
                 name: "restriction_products_not_allowed_products");
 
             migrationBuilder.DropTable(
+                name: "sale_categories_categories");
+
+            migrationBuilder.DropTable(
+                name: "sale_excluded_products_products");
+
+            migrationBuilder.DropTable(
+                name: "sale_products_products");
+
+            migrationBuilder.DropTable(
                 name: "shipment_status_histories");
 
             migrationBuilder.DropTable(
@@ -999,16 +1080,19 @@ namespace Infrastructure.Migrations
                 name: "payments");
 
             migrationBuilder.DropTable(
-                name: "categories");
+                name: "restriction_products");
 
             migrationBuilder.DropTable(
-                name: "restriction_products");
+                name: "restriction_categories");
+
+            migrationBuilder.DropTable(
+                name: "categories");
 
             migrationBuilder.DropTable(
                 name: "products");
 
             migrationBuilder.DropTable(
-                name: "restriction_categories");
+                name: "sales");
 
             migrationBuilder.DropTable(
                 name: "shipments");
