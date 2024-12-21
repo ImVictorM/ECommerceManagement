@@ -17,7 +17,7 @@ public interface IRepository<TEntity, TEntityId>
     /// Find all records.
     /// </summary>
     /// <param name="filter">A nullable filter expression.</param>
-    /// <returns>An iterable of type <typeparamref name="TEntity"/>.</returns>
+    /// <returns>An iterator of type <typeparamref name="TEntity"/>.</returns>
     Task<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>>? filter = null);
 
     /// <summary>

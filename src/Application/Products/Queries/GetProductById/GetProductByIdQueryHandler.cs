@@ -1,8 +1,10 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.DTOs;
 using Application.Products.Queries.Common.Errors;
+using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -14,15 +16,22 @@ namespace Application.Products.Queries.GetProductById;
 public sealed partial class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductResult>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductService _productService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetProductByIdQueryHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="productService">The product service.</param>
     /// <param name="logger">The logger.</param>
-    public GetProductByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetProductByIdQueryHandler> logger)
+    public GetProductByIdQueryHandler(
+        IUnitOfWork unitOfWork,
+        IProductService productService,
+        ILogger<GetProductByIdQueryHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _productService = productService;
         _logger = logger;
     }
 
@@ -42,6 +51,17 @@ public sealed partial class GetProductByIdQueryHandler : IRequestHandler<GetProd
         }
 
         LogProductFound();
-        return new ProductResult(product);
+
+        LogCalculatingProductCurrentPrice();
+        var productPrice = await _productService.CalculateProductPriceAfterSaleAsync(product);
+
+        LogGettingProductCategories();
+        var productCategories = await _productService.GetProductCategoryNamesAsync(product);
+
+        return new ProductResult(
+            product,
+            productCategories,
+            productPrice
+        );
     }
 }

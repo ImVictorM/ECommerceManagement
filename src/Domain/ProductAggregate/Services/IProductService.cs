@@ -1,5 +1,3 @@
-using Domain.CategoryAggregate.ValueObjects;
-
 namespace Domain.ProductAggregate.Services;
 
 /// <summary>
@@ -15,16 +13,9 @@ public interface IProductService
     Task<IEnumerable<string>> GetProductCategoryNamesAsync(Product product);
 
     /// <summary>
-    /// Retrieves the product price after sales if it has any.
+    /// Calculates the product price after sales if it has any.
     /// </summary>
     /// <param name="product">The product to calculate the price.</param>
     /// <returns>The product price after sale.</returns>
-    Task<decimal> GetProductPriceAfterSaleAsync(Product product);
-
-    /// <summary>
-    /// Retrieves a list of products by categories.
-    /// </summary>
-    /// <param name="categoryIds">The category ids.</param>
-    /// <returns>A list of products containing the specified categories.</returns>
-    Task<IEnumerable<Product>> GetProductsInCategoriesAsync(IEnumerable<CategoryId> categoryIds);
+    Task<decimal> CalculateProductPriceAfterSaleAsync(Product product);
 }

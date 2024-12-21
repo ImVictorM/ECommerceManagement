@@ -11,4 +11,4 @@ namespace Application.Products.Queries.GetProducts;
 public record GetProductsQuery(
     int? Limit,
     IEnumerable<string>? Categories = null
-) : IRequest<ProductListResult>;
+) : IRequest<IEnumerable<ProductResult>>;
