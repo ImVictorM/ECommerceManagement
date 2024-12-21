@@ -117,7 +117,7 @@ No authentication is required."
         return TypedResults.Created($"/products/{createdResponse.Id}");
     }
 
-    private async Task<Ok<ProductListResponse>> GetAllProducts(
+    private async Task<Ok<IEnumerable<ProductResponse>>> GetAllProducts(
         ISender sender,
         IMapper mapper,
         [FromQuery(Name = "limit")] int? limit = null,
@@ -128,9 +128,8 @@ No authentication is required."
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(mapper.Map<ProductListResponse>(result));
+        return TypedResults.Ok(result.Select(mapper.Map<ProductResponse>));
     }
-
 
     private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProduct(
         [FromRoute] string id,

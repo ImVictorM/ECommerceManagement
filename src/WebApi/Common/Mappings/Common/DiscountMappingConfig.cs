@@ -1,6 +1,7 @@
 using Mapster;
 using DomainDiscount = SharedKernel.ValueObjects.Discount;
 using ContractDiscount = Contracts.Common.Discount;
+using SharedKernel.ValueObjects;
 
 namespace WebApi.Common.Mappings.Common;
 
@@ -14,7 +15,7 @@ public class DiscountMappingConfig : IRegister
     {
         config.NewConfig<ContractDiscount, DomainDiscount>()
             .MapWith(src => DomainDiscount.Create(
-                src.Percentage,
+                Percentage.Create(src.Percentage),
                 src.Description,
                 src.StartingDate,
                 src.EndingDate));
