@@ -68,6 +68,6 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
 
     private bool IsUserPasswordCorrect(LoginQuery query, User user)
     {
-        return _passwordHasher.Verify(query.Password, user.PasswordHash.GetHashPart(), user.PasswordHash.GetSaltPart());
+        return _passwordHasher.Verify(query.Password, user.PasswordHash);
     }
 }

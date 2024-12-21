@@ -54,13 +54,12 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
             throw new UserAlreadyExistsException().WithContext("Email", command.Email);
         }
 
-        var (passwordHash, passwordSalt) = _passwordHasher.Hash(command.Password);
+        var passwordHash = _passwordHasher.Hash(command.Password);
 
         var user = User.Create(
             command.Name,
             inputEmail,
-            passwordHash,
-            passwordSalt
+            passwordHash
         );
 
         LogUserCreatedWithCustomerRole();
