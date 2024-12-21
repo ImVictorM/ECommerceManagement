@@ -15,7 +15,7 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     private readonly List<ShipmentStatusHistory> _shipmentStatusHistories = [];
     /// <summary>
-    /// Gets the accountable for the delivery proccess.
+    /// Gets the accountable for the delivery process.
     /// </summary>
     public string Accountable { get; private set; } = string.Empty;
     /// <summary>
@@ -35,16 +35,8 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     public IReadOnlyList<ShipmentStatusHistory> ShipmentStatusHistories => _shipmentStatusHistories.AsReadOnly();
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Shipment"/> class.
-    /// </summary>
     private Shipment() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="Shipment"/> class.
-    /// </summary>
-    /// <param name="orderId">The order id this shipment is related.</param>
-    /// <param name="accountable">The accountable of the shipment.</param>
     private Shipment(
         OrderId orderId,
         string accountable

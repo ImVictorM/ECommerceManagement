@@ -15,14 +15,14 @@ namespace Application.Orders.Commands.PlaceOrder;
 public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, CreatedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOrderProductServices _orderPricingService;
+    private readonly IOrderProductService _orderPricingService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PlaceOrderCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="orderPricingService">The order service.</param>
-    public PlaceOrderCommandHandler(IUnitOfWork unitOfWork, IOrderProductServices orderPricingService)
+    public PlaceOrderCommandHandler(IUnitOfWork unitOfWork, IOrderProductService orderPricingService)
     {
         _unitOfWork = unitOfWork;
         _orderPricingService = orderPricingService;

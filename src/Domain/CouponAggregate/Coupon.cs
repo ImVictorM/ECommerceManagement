@@ -1,4 +1,5 @@
 using Domain.CouponAggregate.ValueObjects;
+using SharedKernel.Interfaces;
 using SharedKernel.Models;
 using SharedKernel.ValueObjects;
 
@@ -7,7 +8,7 @@ namespace Domain.CouponAggregate;
 /// <summary>
 /// Represents a coupon.
 /// </summary>
-public class Coupon : AggregateRoot<CouponId>
+public class Coupon : AggregateRoot<CouponId>, IActivatable
 {
     /// <summary>
     /// Gets the coupon discount.

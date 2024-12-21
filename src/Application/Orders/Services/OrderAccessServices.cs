@@ -9,12 +9,12 @@ namespace Application.Orders.Services;
 /// <summary>
 /// Services to manage order access.
 /// </summary>
-public class OrderAccessServices : IOrderAccessServices
+public class OrderAccessServices : IOrderAccessService
 {
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
-    /// Initiates a new intance of the <see cref="OrderAccessServices"/> class.
+    /// Initiates a new instance of the <see cref="OrderAccessServices"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
     public OrderAccessServices(IUnitOfWork unitOfWork)

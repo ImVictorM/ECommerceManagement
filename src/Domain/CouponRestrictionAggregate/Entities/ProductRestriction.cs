@@ -22,14 +22,7 @@ public class ProductRestriction : CouponRestriction
         ProductsAllowed = productsAllowed;
     }
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="ProductRestriction"/> class.
-    /// </summary>
-    /// <param name="couponId">The coupon id.</param>
-    /// <param name="productsAllowed">The products allowed.</param>
-    /// <returns>A new instance of the <see cref="ProductRestriction"/> class.</returns>
-    /// <exception cref="DomainValidationException">Thrown when the products allowed is empty.</exception>
-    public static ProductRestriction Create(CouponId couponId, IEnumerable<ProductRestricted> productsAllowed)
+    internal static ProductRestriction Create(CouponId couponId, IEnumerable<ProductRestricted> productsAllowed)
     {
         if (!productsAllowed.Any())
         {

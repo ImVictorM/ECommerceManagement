@@ -32,7 +32,7 @@ public sealed class Inventory : Entity<InventoryId>
     /// </summary>
     /// <param name="quantityAvailable">The available quantity of the related product.</param>
     /// <returns>A new instance of <see cref="Inventory"/>.</returns>
-    public static Inventory Create(int quantityAvailable)
+    internal static Inventory Create(int quantityAvailable)
     {
         return new Inventory(quantityAvailable);
     }

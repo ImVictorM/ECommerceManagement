@@ -5,7 +5,6 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
-using SharedKernel.Services;
 using SharedKernel.ValueObjects;
 
 namespace Domain.OrderAggregate;
@@ -54,33 +53,22 @@ public sealed class Order : AggregateRoot<OrderId>
         UserId userId,
         IEnumerable<OrderProduct> products,
         OrderStatus orderStatus,
-        decimal baseTotal
+        decimal total
     )
     {
         OwnerId = userId;
         OrderStatusId = orderStatus.Id;
-        Total = baseTotal;
+        Total = total;
         Description = "Order pending. Waiting for payment";
 
         _products.AddRange(products);
         _orderStatusHistories.Add(OrderStatusHistory.Create(orderStatus.Id));
     }
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="Order"/> class.
-    /// </summary>
-    /// <param name="userId">The order owner id.</param>
-    /// <param name="products">The order products.</param>
-    /// <param name="baseTotal">The order total without discounts applied.</param>
-    /// <param name="paymentMethod">The order payment method.</param>
-    /// <param name="billingAddress">The order payment billing address.</param>
-    /// <param name="deliveryAddress">The order delivery address.</param>
-    /// <param name="installments">The installments.</param>
-    /// <returns>A new instance of the <see cref="Order"/> class.</returns>
-    public static Order Create(
+    internal static Order Create(
         UserId userId,
         IEnumerable<OrderProduct> products,
-        decimal baseTotal,
+        decimal total,
         IPaymentMethod paymentMethod,
         Address billingAddress,
         Address deliveryAddress,
@@ -91,7 +79,7 @@ public sealed class Order : AggregateRoot<OrderId>
             userId,
             products,
             OrderStatus.Pending,
-            baseTotal
+            total
         );
 
         order.AddDomainEvent(
@@ -125,14 +113,6 @@ public sealed class Order : AggregateRoot<OrderId>
 
         return status.Name;
     }
-
-    /// <inheritdoc/>
-    //public decimal CalculateTotalApplyingDiscounts()
-    //{
-    //    var couponDiscounts = _couponAppliedIds.Select(c => c.Discount);
-
-    //    return DiscountService.ApplyDiscounts(Total, [.. couponDiscounts]);
-    //}
 
     private void UpdateOrderStatus(OrderStatus status, string description)
     {

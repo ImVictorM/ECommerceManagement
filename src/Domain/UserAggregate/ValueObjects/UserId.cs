@@ -13,15 +13,8 @@ public sealed class UserId : ValueObject
     /// </summary>
     public long Value { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UserId"/> class.
-    /// </summary>
     private UserId() { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UserId"/> class with the specified identifier value.
-    /// </summary>
-    /// <param name="value">The identifier value.</param>
     private UserId(long value)
     {
         Value = value;

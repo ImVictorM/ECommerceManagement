@@ -12,7 +12,7 @@ namespace Domain.ProductAggregate;
 public sealed class Product : AggregateRoot<ProductId>, IActivatable
 {
     private readonly List<ProductImage> _productImages = [];
-    private readonly List<ProductCategory> _productCategories = [];
+    private readonly HashSet<ProductCategory> _productCategories = [];
 
     /// <summary>
     /// Gets the name of the product.
@@ -37,7 +37,7 @@ public sealed class Product : AggregateRoot<ProductId>, IActivatable
     /// <summary>
     /// Gets the product categories.
     /// </summary>
-    public IReadOnlyList<ProductCategory> ProductCategories => _productCategories.AsReadOnly();
+    public IReadOnlySet<ProductCategory> ProductCategories => _productCategories;
 
     private Product() { }
 
@@ -55,7 +55,7 @@ public sealed class Product : AggregateRoot<ProductId>, IActivatable
         BasePrice = basePrice;
         Inventory = inventory;
 
-        _productCategories.AddRange(productCategories);
+        _productCategories.UnionWith(productCategories);
         _productImages.AddRange(productImages);
 
         IsActive = true;
@@ -116,7 +116,7 @@ public sealed class Product : AggregateRoot<ProductId>, IActivatable
         _productImages.AddRange(images);
 
         _productCategories.Clear();
-        _productCategories.AddRange(categories);
+        _productCategories.UnionWith(categories);
     }
 
     /// <summary>

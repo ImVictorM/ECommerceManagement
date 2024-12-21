@@ -12,15 +12,8 @@ public sealed class ShipmentId : ValueObject
     /// </summary>
     public long Value { get; }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ShipmentId"/> class.
-    /// </summary>
     private ShipmentId() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ShipmentId"/> class.
-    /// </summary>
-    /// <param name="value">The identifier value.</param>
     private ShipmentId(long value)
     {
         Value = value;

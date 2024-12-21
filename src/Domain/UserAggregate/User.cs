@@ -30,9 +30,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// Gets the user password hash.
     /// </summary>
     public PasswordHash PasswordHash { get; private set; } = null!;
-    /// <summary>
-    /// Gets a boolean value indicating if the user is active in the system.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsActive { get; private set; }
     /// <summary>
     /// Gets the user roles.
@@ -71,22 +69,19 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <param name="phone">The user phone (optional).</param>
     /// <param name="role">The user initial role to be associated.</param>
     /// <param name="passwordHash">The user password hash.</param>
-    /// <param name="passwordSalt">The user password salt.</param>
     public static User Create(
         string name,
         Email email,
-        string passwordHash,
-        string passwordSalt,
+        PasswordHash passwordHash,
         Role? role = null,
         string? phone = null
     )
     {
-        var ph = PasswordHash.Create(passwordHash, passwordSalt);
 
         var user = new User(
             name,
             email,
-            ph,
+            passwordHash,
             role ?? Role.Customer,
             phone
         );

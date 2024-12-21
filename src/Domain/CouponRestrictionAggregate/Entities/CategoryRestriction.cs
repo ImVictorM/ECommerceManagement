@@ -33,15 +33,7 @@ public class CategoryRestriction : CouponRestriction
         ProductsFromCategoryNotAllowed = productsFromNotAllowed ?? [];
     }
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="CategoryRestriction"/> class.
-    /// </summary>
-    /// <param name="couponId">The coupon id.</param>
-    /// <param name="categoriesAllowed">The categories allowed.</param>
-    /// <param name="productsFromCategoryNotAllowed">The products not allowed.</param>
-    /// <returns>A new instance of the <see cref="CategoryRestriction"/> class.</returns>
-    /// <exception cref="DomainValidationException">Thrown when the categories allowed is empty.</exception>
-    public static CategoryRestriction Create(
+    internal static CategoryRestriction Create(
         CouponId couponId,
         IEnumerable<CategoryRestricted> categoriesAllowed,
         IEnumerable<ProductRestricted>? productsFromCategoryNotAllowed = null

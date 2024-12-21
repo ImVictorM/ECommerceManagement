@@ -1,4 +1,3 @@
-using SharedKernel.Errors;
 using SharedKernel.Extensions;
 using SharedKernel.Models;
 
@@ -38,26 +37,6 @@ public sealed class PaymentStatus : BaseEnumeration
 
     private PaymentStatus(long id, string name) : base(id, name)
     {
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="PaymentStatus"/> class.
-    /// </summary>
-    /// <param name="name">The payment status.</param>
-    /// <returns>A new instance of the <see cref="PaymentStatus"/> class.</returns>
-    public static PaymentStatus Create(string name)
-    {
-        return GetPaymentStatusByName(name) ?? throw new DomainValidationException($"The {name} payment status does not exist");
-    }
-
-    /// <summary>
-    /// Gets a payment status by name, or null if not found.
-    /// </summary>
-    /// <param name="name">The payment status name.</param>
-    /// <returns>The payment status or null.</returns>
-    private static PaymentStatus? GetPaymentStatusByName(string name)
-    {
-        return List().FirstOrDefault(paymentStatus => paymentStatus.Name == name);
     }
 
     /// <summary>

@@ -15,14 +15,14 @@ namespace Application.Orders.Queries.GetOrderById;
 public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderResult>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOrderAccessServices _orderAccessServices;
+    private readonly IOrderAccessService _orderAccessServices;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="orderAccessServices">The order access services.</param>
-    public GetOrderByIdQueryHandler(IUnitOfWork unitOfWork, IOrderAccessServices orderAccessServices)
+    public GetOrderByIdQueryHandler(IUnitOfWork unitOfWork, IOrderAccessService orderAccessServices)
     {
         _unitOfWork = unitOfWork;
         _orderAccessServices = orderAccessServices;

@@ -12,18 +12,9 @@ public sealed class UserRole : ValueObject
     /// </summary>
     public long RoleId { get; }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UserRole"/> class.
-    /// </summary>
     private UserRole() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UserRole"/> class.
-    /// </summary>
-    /// <param name="roleId">The user role.</param>
-    private UserRole(
-        long roleId
-    )
+    private UserRole(long roleId)
     {
         RoleId = roleId;
     }

@@ -17,15 +17,9 @@ public sealed class ShipmentStatusHistory : ValueObject
     /// </summary>
     public DateTimeOffset CreatedAt { get; }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.
-    /// </summary>
+
     private ShipmentStatusHistory() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ShipmentStatusHistory"/> class.
-    /// </summary>
-    /// <param name="shipmentStatusId">The shipment status id.</param>
     private ShipmentStatusHistory(ShipmentStatusId shipmentStatusId)
     {
         ShipmentStatusId = shipmentStatusId;

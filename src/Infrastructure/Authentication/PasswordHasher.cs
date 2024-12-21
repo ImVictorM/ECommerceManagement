@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Application.Common.Interfaces.Authentication;
+using SharedKernel.ValueObjects;
 
 namespace Infrastructure.Authentication;
 
@@ -14,7 +15,7 @@ public sealed class PasswordHasher : IPasswordHasher
     private static readonly HashAlgorithmName _hashAlgorithmName = HashAlgorithmName.SHA256;
 
     /// <inheritdoc/>
-    public (string Hash, string Salt) Hash(string password)
+    public PasswordHash Hash(string password)
     {
         var salt = RandomNumberGenerator.GetBytes(SaltSize);
         var hash = Rfc2898DeriveBytes.Pbkdf2(
@@ -25,14 +26,14 @@ public sealed class PasswordHasher : IPasswordHasher
             HashSize
         );
 
-        return (Convert.ToHexString(hash), Convert.ToHexString(salt));
+        return PasswordHash.Create(Convert.ToHexString(hash), Convert.ToHexString(salt));
     }
 
     /// <inheritdoc/>
-    public bool Verify(string inputPassword, string hash, string salt)
+    public bool Verify(string inputPassword, PasswordHash passwordToCompare)
     {
-        var hashToCompare = Convert.FromHexString(hash);
-        var saltBytes = Convert.FromHexString(salt);
+        var hashToCompare = Convert.FromHexString(passwordToCompare.GetHashPart());
+        var saltBytes = Convert.FromHexString(passwordToCompare.GetSaltPart());
 
         var inputPasswordHash = Rfc2898DeriveBytes.Pbkdf2(
             inputPassword,

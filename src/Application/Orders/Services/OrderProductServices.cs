@@ -8,7 +8,7 @@ namespace Application.Orders.Services;
 /// <summary>
 /// Represents services related to order products.
 /// </summary>
-public class OrderProductServices : IOrderProductServices
+public class OrderProductServices : IOrderProductService
 {
     private readonly IUnitOfWork _unitOfWork;
 

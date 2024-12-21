@@ -17,6 +17,7 @@ public static class DiscountNavigationBuilderConfigurations
     {
         builder
             .Property(discount => discount.Percentage)
+            .HasConversion(p => p.Value, value => Percentage.Create(value))
             .IsRequired();
 
         builder

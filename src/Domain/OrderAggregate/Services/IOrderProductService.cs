@@ -5,7 +5,7 @@ namespace Domain.OrderAggregate.Services;
 /// <summary>
 /// Represents order product services.
 /// </summary>
-public interface IOrderProductServices
+public interface IOrderProductService
 {
     /// <summary>
     /// Calculates the total amount of the products, applying the necessary discounts.

@@ -5,7 +5,7 @@ namespace Domain.OrderAggregate.Services;
 /// <summary>
 /// Services to manage order access.
 /// </summary>
-public interface IOrderAccessServices
+public interface IOrderAccessService
 {
     /// <summary>
     /// Indicates if a user can read an order.
