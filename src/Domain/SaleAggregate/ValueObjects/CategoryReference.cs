@@ -6,28 +6,28 @@ namespace Domain.SaleAggregate.ValueObjects;
 /// <summary>
 /// Represents a category in sale.
 /// </summary>
-public class SaleCategory : ValueObject
+public class CategoryReference : ValueObject
 {
     /// <summary>
     /// Gets the category id.
     /// </summary>
     public CategoryId CategoryId { get; } = null!;
 
-    private SaleCategory() { }
+    private CategoryReference() { }
 
-    private SaleCategory(CategoryId categoryId)
+    private CategoryReference(CategoryId categoryId)
     {
         CategoryId = categoryId;
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="SaleCategory"/> class.
+    /// Creates a new instance of the <see cref="CategoryReference"/> class.
     /// </summary>
     /// <param name="categoryId">The category id.</param>
-    /// <returns>A new instance of the <see cref="SaleCategory"/> class.</returns>
-    public static SaleCategory Create(CategoryId categoryId)
+    /// <returns>A new instance of the <see cref="CategoryReference"/> class.</returns>
+    public static CategoryReference Create(CategoryId categoryId)
     {
-        return new SaleCategory(categoryId);
+        return new CategoryReference(categoryId);
     }
 
     /// <inheritdoc/>

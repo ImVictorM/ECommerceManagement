@@ -1,3 +1,4 @@
+using System.Globalization;
 using SharedKernel.Models;
 
 namespace SharedKernel.ValueObjects;
@@ -48,6 +49,12 @@ public class Percentage : ValueObject
     public bool IsWithinRange(int end)
     {
         return IsWithinRange(0, end);
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Value.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <inheritdoc/>

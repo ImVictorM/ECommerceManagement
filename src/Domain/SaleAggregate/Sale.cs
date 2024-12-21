@@ -10,9 +10,9 @@ namespace Domain.SaleAggregate;
 /// </summary>
 public class Sale : AggregateRoot<SaleId>
 {
-    private readonly HashSet<SaleCategory> _categoriesInSale = [];
-    private readonly HashSet<SaleProduct> _productsInSale = [];
-    private readonly HashSet<SaleProduct> _productsExcludeFromSale = [];
+    private readonly HashSet<CategoryReference> _categoriesInSale = [];
+    private readonly HashSet<SaleReference> _productsInSale = [];
+    private readonly HashSet<SaleReference> _productsExcludeFromSale = [];
 
     /// <summary>
     /// Gets the sale discount;
@@ -21,23 +21,23 @@ public class Sale : AggregateRoot<SaleId>
     /// <summary>
     /// Gets the categories in sale.
     /// </summary>
-    public IReadOnlySet<SaleCategory> CategoriesInSale => _categoriesInSale;
+    public IReadOnlySet<CategoryReference> CategoriesInSale => _categoriesInSale;
     /// <summary>
     /// Gets the products in sale.
     /// </summary>
-    public IReadOnlySet<SaleProduct> ProductsInSale => _productsInSale;
+    public IReadOnlySet<SaleReference> ProductsInSale => _productsInSale;
     /// <summary>
     /// Gets the products excluded from sale.
     /// </summary>
-    public IReadOnlySet<SaleProduct> ProductsExcludedFromSale => _productsExcludeFromSale;
+    public IReadOnlySet<SaleReference> ProductsExcludedFromSale => _productsExcludeFromSale;
 
     private Sale() { }
 
     private Sale(
         Discount discount,
-        HashSet<SaleCategory> categoriesInSale,
-        HashSet<SaleProduct> productsInSale,
-        HashSet<SaleProduct> productsExcludeFromSale
+        HashSet<CategoryReference> categoriesInSale,
+        HashSet<SaleReference> productsInSale,
+        HashSet<SaleReference> productsExcludeFromSale
     )
     {
         Discount = discount;
@@ -58,9 +58,9 @@ public class Sale : AggregateRoot<SaleId>
     /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
     public static Sale Create(
         Discount discount,
-        HashSet<SaleCategory> categoriesInSale,
-        HashSet<SaleProduct> productsInSale,
-        HashSet<SaleProduct> productsExcludeFromSale
+        HashSet<CategoryReference> categoriesInSale,
+        HashSet<SaleReference> productsInSale,
+        HashSet<SaleReference> productsExcludeFromSale
     )
     {
         return new Sale(
@@ -69,6 +69,29 @@ public class Sale : AggregateRoot<SaleId>
             productsInSale,
             productsExcludeFromSale
         );
+    }
+
+    /// <summary>
+    /// Checks if the sale is valid to the current date.
+    /// </summary>
+    /// <returns>A boolean value Indicates if the sale is valid to the current date.</returns>
+    public bool IsValidToDate()
+    {
+        return Discount.IsValidToDate;
+    }
+
+    /// <summary>
+    /// Checks if a product is in sale.
+    /// </summary>
+    /// <param name="product">The product to be checked.</param>
+    /// <returns>A boolean value indicating if the product is in sale.</returns>
+    public bool IsProductInSale(SaleProduct product)
+    {
+        var isProductInSaleList = ProductsInSale.Contains(SaleReference.Create(product.ProductId));
+
+        var isAnyProductCategoryInSaleList = product.Categories.Any(c => CategoriesInSale.Contains(CategoryReference.Create(c.CategoryId)));
+
+        return isProductInSaleList || isAnyProductCategoryInSaleList;
     }
 
     private void ValidateSale()

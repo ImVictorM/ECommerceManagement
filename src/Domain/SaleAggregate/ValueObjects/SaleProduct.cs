@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using SharedKernel.Models;
 
@@ -12,27 +13,34 @@ public class SaleProduct : ValueObject
     /// Gets the product id.
     /// </summary>
     public ProductId ProductId { get; } = null!;
+    /// <summary>
+    /// Gets the product categories.
+    /// </summary>
+    public IReadOnlySet<CategoryId> Categories { get; } = null!;
 
     private SaleProduct() { }
 
-    private SaleProduct(ProductId productId)
+    private SaleProduct(ProductId productId, IReadOnlySet<CategoryId> categories)
     {
         ProductId = productId;
+        Categories = categories;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="SaleProduct"/> class.
     /// </summary>
     /// <param name="productId">The product id.</param>
+    /// <param name="categories">The product categories.</param>
     /// <returns>A new instance of the <see cref="SaleProduct"/> class.</returns>
-    public static SaleProduct Create(ProductId productId)
+    public static SaleProduct Create(ProductId productId, IReadOnlySet<CategoryId> categories)
     {
-        return new SaleProduct(productId);
+        return new SaleProduct(productId, categories);
     }
 
-    /// <inheritdoc/>
+    ///<inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return ProductId;
+        yield return Categories;
     }
 }
