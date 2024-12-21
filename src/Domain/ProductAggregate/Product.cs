@@ -9,7 +9,7 @@ namespace Domain.ProductAggregate;
 /// <summary>
 /// Represents a product aggregate.
 /// </summary>
-public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
+public sealed class Product : AggregateRoot<ProductId>, IActivatable
 {
     private readonly List<ProductImage> _productImages = [];
     private readonly List<ProductCategory> _productCategories = [];
@@ -129,7 +129,7 @@ public sealed class Product : AggregateRoot<ProductId>, ISoftDeletable
     }
 
     /// <inheritdoc/>
-    public void MakeInactive()
+    public void Deactivate()
     {
         IsActive = false;
         Inventory.Reset();

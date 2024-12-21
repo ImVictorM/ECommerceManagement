@@ -131,7 +131,7 @@ public class UserTests
     {
         var user = UserUtils.CreateUser();
 
-        user.MakeInactive();
+        user.Deactivate();
 
         user.IsActive.Should().BeFalse();
     }

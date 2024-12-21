@@ -9,7 +9,7 @@ namespace Domain.UserAggregate;
 /// <summary>
 /// Represents an user.
 /// </summary>
-public sealed class User : AggregateRoot<UserId>, ISoftDeletable
+public sealed class User : AggregateRoot<UserId>, IActivatable
 {
     private readonly HashSet<UserRole> _userRoles = [];
     private readonly HashSet<Address> _userAddresses = [];
@@ -131,7 +131,7 @@ public sealed class User : AggregateRoot<UserId>, ISoftDeletable
     }
 
     /// <inheritdoc/>
-    public void MakeInactive()
+    public void Deactivate()
     {
         IsActive = false;
     }

@@ -50,7 +50,7 @@ public sealed partial class DeactivateUserCommandHandler : IRequestHandler<Deact
             throw new UserNotAllowedException();
         }
 
-        userToBeDeactivated.MakeInactive();
+        userToBeDeactivated.Deactivate();
 
         await _unitOfWork.SaveChangesAsync();
 

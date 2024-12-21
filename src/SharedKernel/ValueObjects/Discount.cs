@@ -1,24 +1,29 @@
 using SharedKernel.Errors;
-using SharedKernel.Interfaces;
 using SharedKernel.Models;
-using SharedKernel.Specifications;
 
 namespace SharedKernel.ValueObjects;
 
 /// <summary>
 /// Represents a discount.
 /// </summary>
-public class Discount : ValueObject, IDiscount
+public class Discount : ValueObject
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the discount description;
+    /// </summary>
     public string Description { get; } = null!;
-    /// <inheritdoc/>
-    public int Percentage { get; }
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the discount percentage.
+    /// </summary>
+    public Percentage Percentage { get; } = null!;
+    /// <summary>
+    /// Gets the discount starting date.
+    /// </summary>
     public DateTimeOffset StartingDate { get; }
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the discount ending date.
+    /// </summary>
     public DateTimeOffset EndingDate { get; }
-
     /// <summary>
     /// Gets a boolean value indicating if the discount is valid to date.
     /// </summary>
@@ -32,12 +37,10 @@ public class Discount : ValueObject, IDiscount
         }
     }
 
-    public bool IsActive { get; }
-
     private Discount() { }
 
     private Discount(
-        int percentage,
+        Percentage percentage,
         string description,
         DateTimeOffset startingDate,
         DateTimeOffset endingDate
@@ -47,17 +50,8 @@ public class Discount : ValueObject, IDiscount
         Description = description;
         StartingDate = startingDate;
         EndingDate = endingDate;
-        IsActive = true;
 
-        if (!new DiscountDateRangeSpecification().IsSatisfiedBy(this))
-        {
-            throw new DomainValidationException("The date range between the starting and ending date is incorrect");
-        }
-
-        if (!new DiscountPercentageRangeSpecification().IsSatisfiedBy(this))
-        {
-            throw new DomainValidationException("Discount percentage must be between 1 and 100");
-        }
+        ValidateDiscount();
     }
 
     /// <summary>
@@ -69,13 +63,30 @@ public class Discount : ValueObject, IDiscount
     /// <param name="endingDate">The discount ending date.</param>
     /// <returns>A new instance of the <see cref="Discount"/> class.</returns>
     public static Discount Create(
-        int percentage,
+        Percentage percentage,
         string description,
         DateTimeOffset startingDate,
         DateTimeOffset endingDate
     )
     {
         return new Discount(percentage, description, startingDate, endingDate);
+    }
+
+    private void ValidateDiscount()
+    {
+        var now = DateTimeOffset.UtcNow;
+        var isDateRangeValid = StartingDate > now.AddDays(-1) && EndingDate > StartingDate.AddHours(1);
+        var isPercentageRangeValid = Percentage.IsWithinRange(1, 100);
+
+        if (!isDateRangeValid)
+        {
+            throw new DomainValidationException("The date range between the starting and ending date is incorrect");
+        }
+
+        if (!isPercentageRangeValid)
+        {
+            throw new DomainValidationException("Discount percentage must be between 1 and 100");
+        }
     }
 
     /// <inheritdoc/>
@@ -85,6 +96,5 @@ public class Discount : ValueObject, IDiscount
         yield return Description;
         yield return StartingDate;
         yield return EndingDate;
-        yield return IsActive;
     }
 }

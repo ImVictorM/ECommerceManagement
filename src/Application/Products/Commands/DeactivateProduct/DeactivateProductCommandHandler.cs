@@ -42,7 +42,7 @@ public sealed partial class DeactivateProductCommandHandler : IRequestHandler<De
             throw new ProductNotFoundException($"Product with id {productId} could not be deactivated because it does not exist or is already inactive");
         }
 
-        product.MakeInactive();
+        product.Deactivate();
 
         await _unitOfWork.SaveChangesAsync();
 

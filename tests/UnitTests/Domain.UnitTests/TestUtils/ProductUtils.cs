@@ -55,7 +55,7 @@ public static class ProductUtils
 
         if (!active)
         {
-            product.MakeInactive();
+            product.Deactivate();
         }
 
         return product;

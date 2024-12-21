@@ -87,14 +87,14 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
             return;
         }
 
-        if (entity is ISoftDeletable softDeletable)
+        if (entity is IActivatable softDeletable)
         {
             if (_context.Entry(entity).State == EntityState.Detached)
             {
                 _dbSet.Attach(entity);
             }
 
-            softDeletable.MakeInactive();
+            softDeletable.Deactivate();
 
             _dbSet.Update(entity);
         }

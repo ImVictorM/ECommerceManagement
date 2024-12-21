@@ -27,7 +27,10 @@ public sealed class Email : ValueObject
     /// <exception cref="DomainValidationException">An exception thrown when the email is not valid.</exception>
     public static Email Create(string value)
     {
-        if (!IsValidEmail(value)) throw new DomainValidationException($"The {value} does not correspond to a valid email");
+        if (!IsValidEmail(value))
+        {
+            throw new DomainValidationException($"The {value} does not correspond to a valid email");
+        }
 
         return new Email(value);
     }
@@ -40,13 +43,17 @@ public sealed class Email : ValueObject
     public static bool IsValidEmail(string email)
     {
         var trimmedEmail = email.Trim();
-        if (trimmedEmail.EndsWith('.')) return false;
+
+        if (trimmedEmail.EndsWith('.'))
+        {
+            return false;
+        }
 
         try
         {
-            var addr = new MailAddress(email);
+            var mail = new MailAddress(email);
 
-            return addr.Address == trimmedEmail;
+            return mail.Address == trimmedEmail;
         }
         catch (Exception)
         {

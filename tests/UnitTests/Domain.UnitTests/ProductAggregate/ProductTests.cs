@@ -174,7 +174,7 @@ public class ProductTests
     {
         var product = ProductUtils.CreateProduct(quantityAvailable: 500);
 
-        product.MakeInactive();
+        product.Deactivate();
 
         product.IsActive.Should().BeFalse();
         product.Inventory.QuantityAvailable.Should().Be(0);

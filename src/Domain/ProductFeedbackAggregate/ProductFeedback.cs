@@ -10,7 +10,7 @@ namespace Domain.ProductFeedbackAggregate;
 /// <summary>
 /// Represents a product feedback.
 /// </summary>
-public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, ISoftDeletable
+public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, IActivatable
 {
     /// <summary>
     /// Gets the product feedback subject.
@@ -102,7 +102,7 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, ISoftDel
     }
 
     /// <inheritdoc/>
-    public void MakeInactive()
+    public void Deactivate()
     {
         IsActive = false;
     }

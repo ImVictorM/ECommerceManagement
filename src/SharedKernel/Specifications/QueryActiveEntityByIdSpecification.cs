@@ -8,7 +8,7 @@ namespace SharedKernel.Specifications;
 /// Query specification to retrieve an entity that is active by id.
 /// </summary>
 public class QueryActiveEntityByIdSpecification<TEntity, TEntityId> : CompositeQuerySpecification<TEntity>
-    where TEntity : Entity<TEntityId>, ISoftDeletable
+    where TEntity : Entity<TEntityId>, IActivatable
     where TEntityId : notnull
 {
     private readonly TEntityId _id;

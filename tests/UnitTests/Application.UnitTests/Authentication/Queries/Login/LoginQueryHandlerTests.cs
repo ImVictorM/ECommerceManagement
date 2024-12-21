@@ -138,7 +138,7 @@ public class LoginQueryHandlerTests
     {
         var mockUser = UserUtils.CreateUser();
 
-        mockUser.MakeInactive();
+        mockUser.Deactivate();
 
         _mockUserRepository
             .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))

@@ -17,7 +17,7 @@ public static class DiscountService
     /// <returns>The total applying the discounts.</returns>
     public static decimal ApplyDiscounts(decimal basePrice, params Discount[] discountsToApply)
     {
-        return discountsToApply 
+        return discountsToApply
             .OrderByDescending(a => a.Percentage)
             .Aggregate(basePrice, (total, discount) => CalculateDiscount(total, discount.Percentage));
     }

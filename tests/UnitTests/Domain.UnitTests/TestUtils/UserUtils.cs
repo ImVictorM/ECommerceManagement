@@ -67,7 +67,7 @@ public static class UserUtils
 
         if (!active)
         {
-            user.MakeInactive();
+            user.Deactivate();
         }
 
         return user;
