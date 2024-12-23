@@ -16,7 +16,7 @@ namespace Application.UnitTests.Orders.Services;
 /// </summary>
 public class OrderProductServicesTests
 {
-    private readonly OrderProductServices _orderServices;
+    private readonly OrderService _orderServices;
     private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -28,11 +28,11 @@ public class OrderProductServicesTests
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
         _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
-        _orderServices = new OrderProductServices(_mockUnitOfWork.Object);
+        _orderServices = new OrderService(_mockUnitOfWork.Object);
     }
 
     /// <summary>
-    /// Tests the <see cref="OrderProductServices.VerifyInventoryAvailabilityAsync(IEnumerable{OrderProduct})"/> method.
+    /// Tests the <see cref="OrderService.HasInventoryAvailableAsync(IEnumerable{OrderProduct})"/> method.
     /// Scenario: When some of the products does not have the quantity in inventory needed.
     /// </summary>
     [Fact]
@@ -48,13 +48,13 @@ public class OrderProductServicesTests
             .ReturnsAsync([mockProductUnavailable]);
 
         await FluentActions
-            .Invoking(() => _orderServices.VerifyInventoryAvailabilityAsync(mockInput))
+            .Invoking(() => _orderServices.HasInventoryAvailableAsync(mockInput))
             .Should()
             .ThrowAsync<ProductNotAvailableException>();
     }
 
     /// <summary>
-    /// Tests the <see cref="OrderProductServices.CalculateTotalAsync(IEnumerable{OrderProduct})"/> method.
+    /// Tests the <see cref="OrderService.CalculateTotalAsync(IEnumerable{OrderProduct})"/> method.
     /// Tests if it calculates the total correctly.
     /// </summary>
     /// <returns></returns>

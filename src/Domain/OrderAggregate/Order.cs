@@ -1,8 +1,9 @@
-using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+
+using SharedKernel.Errors;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
 using SharedKernel.ValueObjects;
@@ -14,12 +15,12 @@ namespace Domain.OrderAggregate;
 /// </summary>
 public sealed class Order : AggregateRoot<OrderId>
 {
-    private readonly List<OrderProduct> _products = [];
-    private readonly List<OrderStatusHistory> _orderStatusHistories = [];
-    private readonly List<CouponId> _couponAppliedIds = [];
+    private readonly HashSet<OrderProduct> _products = [];
+    private readonly HashSet<OrderStatusHistory> _orderStatusHistories = [];
+    private readonly HashSet<OrderCoupon> _couponsApplied = [];
 
     /// <summary>
-    /// Gets the order total amount without discounts applied.
+    /// Gets the order total.
     /// </summary>
     public decimal Total { get; private set; }
     /// <summary>
@@ -37,15 +38,15 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Gets the order products.
     /// </summary>
-    public IReadOnlyList<OrderProduct> Products => _products.AsReadOnly();
+    public IReadOnlySet<OrderProduct> Products => _products;
     /// <summary>
     /// Gets the order status history.
     /// </summary>
-    public IReadOnlyList<OrderStatusHistory> OrderStatusHistories => _orderStatusHistories.AsReadOnly();
+    public IReadOnlySet<OrderStatusHistory> OrderStatusHistories => _orderStatusHistories;
     /// <summary>
-    /// Gets the order discounts.
+    /// Gets the order coupons applied.
     /// </summary>
-    public IReadOnlyList<CouponId> CouponAppliedIds => _couponAppliedIds.AsReadOnly();
+    public IReadOnlySet<OrderCoupon> CouponsApplied => _couponsApplied;
 
     private Order() { }
 
@@ -53,7 +54,8 @@ public sealed class Order : AggregateRoot<OrderId>
         UserId userId,
         IEnumerable<OrderProduct> products,
         OrderStatus orderStatus,
-        decimal total
+        decimal total,
+        IEnumerable<OrderCoupon>? couponsApplied
     )
     {
         OwnerId = userId;
@@ -61,8 +63,19 @@ public sealed class Order : AggregateRoot<OrderId>
         Total = total;
         Description = "Order pending. Waiting for payment";
 
-        _products.AddRange(products);
+        _products.UnionWith(products);
+
         _orderStatusHistories.Add(OrderStatusHistory.Create(orderStatus.Id));
+
+        if (couponsApplied != null)
+        {
+            if (couponsApplied.Count() > 2)
+            {
+                throw new DomainValidationException("You cannot apply more than 2 coupons per order");
+            }
+
+            _couponsApplied.UnionWith(couponsApplied);
+        }
     }
 
     internal static Order Create(
@@ -72,14 +85,16 @@ public sealed class Order : AggregateRoot<OrderId>
         IPaymentMethod paymentMethod,
         Address billingAddress,
         Address deliveryAddress,
-        int? installments = null
+        int? installments = null,
+        IEnumerable<OrderCoupon>? couponsApplied = null
     )
     {
         var order = new Order(
             userId,
             products,
             OrderStatus.Pending,
-            total
+            total,
+            couponsApplied
         );
 
         order.AddDomainEvent(

@@ -1,6 +1,14 @@
 using Application.Common.Behaviors;
+using Application.Coupons.Services;
 using Application.Orders.Services;
+using Application.Products.Services;
+using Application.Sales.Services;
+
+using Domain.CouponAggregate.Services;
 using Domain.OrderAggregate.Services;
+using Domain.ProductAggregate.Services;
+using Domain.SaleAggregate.Services;
+
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,11 +35,12 @@ public static class ServicesRegistration
         services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
-        services.AddScoped<IOrderProductService, OrderProductServices>();
-        services.AddScoped<IOrderAccessService, OrderAccessServices>();
-
         services.AddValidatorsFromAssembly(assembly);
+
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<ISaleService, SaleService>();
+        services.AddScoped<ICouponService, CouponService>();
 
         return services;
     }

@@ -1,5 +1,4 @@
 using Domain.CouponAggregate.ValueObjects;
-using Domain.CouponRestrictionAggregate.DTOs;
 using Domain.CouponRestrictionAggregate.ValueObjects;
 using SharedKernel.Models;
 
@@ -30,9 +29,9 @@ public abstract class CouponRestriction : AggregateRoot<CouponRestrictionId>
     }
 
     /// <summary>
-    /// Determines if a certain context passes the restriction constraints.
+    /// Determines if a certain order context passes the restriction constraints.
     /// </summary>
-    /// <param name="context">The given context.</param>
+    /// <param name="order">The given order context.</param>
     /// <returns>A boolean value indicating if the context passes the restriction constraints.</returns>
-    public abstract bool PassRestriction(CouponRestrictionContext context);
+    public abstract bool PassRestriction(CouponRestrictionOrder order);
 }

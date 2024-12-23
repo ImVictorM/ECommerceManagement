@@ -1,5 +1,4 @@
 using Domain.CouponAggregate.ValueObjects;
-using Domain.CouponRestrictionAggregate.DTOs;
 using Domain.CouponRestrictionAggregate.ValueObjects;
 using SharedKernel.Errors;
 
@@ -33,10 +32,10 @@ public class ProductRestriction : CouponRestriction
     }
 
     /// <inheritdoc/>
-    public override bool PassRestriction(CouponRestrictionContext context)
+    public override bool PassRestriction(CouponRestrictionOrder order)
     {
         var productsAllowedIds = ProductsAllowed.Select(pa => pa.ProductId);
-        var productIds = context.Products.Select(pa => pa.ProductId);
+        var productIds = order.Products.Select(pa => pa.ProductId);
 
         return productsAllowedIds.Intersect(productIds).Any();
     }

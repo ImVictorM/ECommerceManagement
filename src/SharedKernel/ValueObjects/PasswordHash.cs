@@ -61,7 +61,7 @@ public sealed class PasswordHash : ValueObject
 
         return parts.Length == 2 ?
             Create(parts[0], parts[1])
-            : throw new DomainValidationException("Invalid hash and salt format.");
+            : throw new DomainValidationException("Invalid hash and salt format");
     }
 
     /// <summary>

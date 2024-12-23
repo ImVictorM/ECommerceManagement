@@ -24,6 +24,7 @@ public class Discount : ValueObject
     /// Gets the discount ending date.
     /// </summary>
     public DateTimeOffset EndingDate { get; }
+
     /// <summary>
     /// Gets a boolean value indicating if the discount is valid to date.
     /// </summary>

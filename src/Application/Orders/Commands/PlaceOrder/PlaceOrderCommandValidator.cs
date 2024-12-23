@@ -13,7 +13,7 @@ public class PlaceOrderCommandValidator : AbstractValidator<PlaceOrderCommand>
     public PlaceOrderCommandValidator()
     {
         RuleFor(x => x.Products).NotEmpty();
-        RuleFor(x => x.AuthenticatedUserId).NotEmpty();
+        RuleFor(x => x.CurrentUserId).NotEmpty();
         RuleFor(x => x.Installments).GreaterThan(0);
     }
 }

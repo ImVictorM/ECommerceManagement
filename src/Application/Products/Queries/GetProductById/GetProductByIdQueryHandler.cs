@@ -1,6 +1,6 @@
+using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Queries.Common.DTOs;
-using Application.Products.Queries.Common.Errors;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
@@ -53,7 +53,7 @@ public sealed partial class GetProductByIdQueryHandler : IRequestHandler<GetProd
         LogProductFound();
 
         LogCalculatingProductCurrentPrice();
-        var productPrice = await _productService.CalculateProductPriceAfterSaleAsync(product);
+        var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);
 
         LogGettingProductCategories();
         var productCategories = await _productService.GetProductCategoryNamesAsync(product);

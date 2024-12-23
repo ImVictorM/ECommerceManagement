@@ -91,6 +91,6 @@ public class UpdateProductTests : BaseIntegrationTest
         getResponseContent.Categories.Should().BeEquivalentTo(request.Categories);
         getResponseContent.Description.Should().Be(request.Description);
         getResponseContent.Images.Should().BeEquivalentTo(request.Images);
-        getResponseContent.OriginalPrice.Should().Be(request.BasePrice);
+        getResponseContent.BasePrice.Should().Be(request.BasePrice);
     }
 }

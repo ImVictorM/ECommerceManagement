@@ -42,7 +42,7 @@ public class PlaceOrderCommandValidatorTests
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(c => c.AuthenticatedUserId).WithErrorMessage("'Authenticated User Id' must not be empty.");
+        result.ShouldHaveValidationErrorFor(c => c.CurrentUserId).WithErrorMessage("'Authenticated User Id' must not be empty.");
     }
 
     /// <summary>

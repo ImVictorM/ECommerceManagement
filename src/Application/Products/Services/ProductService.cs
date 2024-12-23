@@ -9,11 +9,19 @@ using SharedKernel.Services;
 
 namespace Application.Products.Services;
 
-internal class ProductService : IProductService
+/// <summary>
+/// Product services.
+/// </summary>
+public class ProductService : IProductService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ISaleService _saleService;
 
+    /// <summary>
+    /// Initiates a new instance of the <see cref="ProductService"/> class.
+    /// </summary>
+    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="saleService">The sale service.</param>
     public ProductService(IUnitOfWork unitOfWork, ISaleService saleService)
     {
         _unitOfWork = unitOfWork;
@@ -31,7 +39,7 @@ internal class ProductService : IProductService
     }
 
     /// <inheritdoc/>
-    public async Task<decimal> CalculateProductPriceAfterSaleAsync(Product product)
+    public async Task<decimal> CalculateProductPriceApplyingSaleAsync(Product product)
     {
         var productCategoriesIds = product.ProductCategories.Select(c => c.CategoryId).ToHashSet();
 

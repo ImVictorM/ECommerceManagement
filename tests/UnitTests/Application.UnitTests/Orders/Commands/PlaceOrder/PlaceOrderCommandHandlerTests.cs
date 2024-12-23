@@ -18,7 +18,7 @@ public class PlaceOrderCommandHandlerTests
 {
     private readonly PlaceOrderCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IOrderProductService> _mockOrdersServices;
+    private readonly Mock<IOrderService> _mockOrdersServices;
     private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
 
     /// <summary>
@@ -27,7 +27,7 @@ public class PlaceOrderCommandHandlerTests
     public PlaceOrderCommandHandlerTests()
     {
         _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
-        _mockOrdersServices = new Mock<IOrderProductService>();
+        _mockOrdersServices = new Mock<IOrderService>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
@@ -48,7 +48,7 @@ public class PlaceOrderCommandHandlerTests
         var mockCreatedId = OrderId.Create(2);
 
         _mockOrdersServices
-            .Setup(s => s.VerifyInventoryAvailabilityAsync(It.IsAny<IEnumerable<OrderProduct>>()))
+            .Setup(s => s.HasInventoryAvailableAsync(It.IsAny<IEnumerable<OrderProduct>>()))
             .Returns(Task.CompletedTask);
 
         _mockOrdersServices
@@ -63,7 +63,7 @@ public class PlaceOrderCommandHandlerTests
 
         result.Id.Should().Be(mockCreatedId.ToString());
 
-        _mockOrdersServices.Verify(s => s.VerifyInventoryAvailabilityAsync(command.Products.ToOrderProduct()), Times.Once());
+        _mockOrdersServices.Verify(s => s.HasInventoryAvailableAsync(command.Products.ToOrderProduct()), Times.Once());
         _mockOrdersServices.Verify(s => s.CalculateTotalAsync(command.Products.ToOrderProduct()), Times.Once());
 
         _mockOrderRepository.Verify(r => r.AddAsync(It.IsAny<Order>()), Times.Once());

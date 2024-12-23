@@ -89,7 +89,7 @@ public class Sale : AggregateRoot<SaleId>
     {
         var isProductInSaleList = ProductsInSale.Contains(SaleReference.Create(product.ProductId));
 
-        var isAnyProductCategoryInSaleList = product.Categories.Any(c => CategoriesInSale.Contains(CategoryReference.Create(c.CategoryId)));
+        var isAnyProductCategoryInSaleList = CategoriesInSale.Intersect(product.Categories.Select(CategoryReference.Create)).Any();
 
         return isProductInSaleList || isAnyProductCategoryInSaleList;
     }

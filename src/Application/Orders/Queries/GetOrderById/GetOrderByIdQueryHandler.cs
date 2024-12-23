@@ -2,9 +2,11 @@ using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Orders.Common.DTOs;
 using Application.Orders.Common.Errors;
-using Domain.OrderAggregate.Services;
+
 using Domain.OrderAggregate.ValueObjects;
+using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
+
 using MediatR;
 
 namespace Application.Orders.Queries.GetOrderById;
@@ -15,17 +17,14 @@ namespace Application.Orders.Queries.GetOrderById;
 public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderResult>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOrderAccessService _orderAccessServices;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="orderAccessServices">The order access services.</param>
-    public GetOrderByIdQueryHandler(IUnitOfWork unitOfWork, IOrderAccessService orderAccessServices)
+    public GetOrderByIdQueryHandler(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _orderAccessServices = orderAccessServices;
     }
 
     /// <inheritdoc/>
@@ -34,9 +33,13 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
         var orderId = OrderId.Create(request.OrderId);
         var currentUserId = UserId.Create(request.CurrentUserId);
 
-        var order = await _unitOfWork.OrderRepository.FindByIdAsync(orderId) ?? throw new OrderNotFoundException();
+        var order =
+            await _unitOfWork.OrderRepository.FindByIdAsync(orderId)
+            ?? throw new OrderNotFoundException();
 
-        if (!await _orderAccessServices.CanUserReadOrder(order, currentUserId))
+        var currentUser = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(currentUserId));
+
+        if (currentUser == null || !new ReadOrderSpecification(order.OwnerId).IsSatisfiedBy(currentUser))
         {
             throw new UserNotAllowedException($"The current user does not have permission to access the order with id {orderId}");
         }

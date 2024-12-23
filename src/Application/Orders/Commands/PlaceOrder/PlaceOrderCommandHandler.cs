@@ -1,6 +1,7 @@
 using Application.Common.DTOs;
 using Application.Common.Interfaces.Persistence;
-using Domain.OrderAggregate;
+using Domain.CouponAggregate.ValueObjects;
+using Domain.OrderAggregate.Factories;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
@@ -15,40 +16,42 @@ namespace Application.Orders.Commands.PlaceOrder;
 public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, CreatedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOrderProductService _orderPricingService;
+    private readonly IOrderService _orderService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PlaceOrderCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="orderPricingService">The order service.</param>
-    public PlaceOrderCommandHandler(IUnitOfWork unitOfWork, IOrderProductService orderPricingService)
+    /// <param name="orderService">The order service.</param>
+    public PlaceOrderCommandHandler(IUnitOfWork unitOfWork, IOrderService orderService)
     {
         _unitOfWork = unitOfWork;
-        _orderPricingService = orderPricingService;
+        _orderService = orderService;
     }
 
     /// <inheritdoc/>
     public async Task<CreatedResult> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
     {
-        var userId = UserId.Create(request.AuthenticatedUserId);
+        var ownerId = UserId.Create(request.CurrentUserId);
 
         var orderProducts = request.Products
             .Select(p => OrderProduct.Create(ProductId.Create(p.Id), p.Quantity))
             .ToList();
 
-        await _orderPricingService.VerifyInventoryAvailabilityAsync(orderProducts);
+        var orderCouponsApplied = request.CouponAppliedIds?
+                .Select(CouponId.Create)
+                .Select(OrderCoupon.Crete);
 
-        var total = await _orderPricingService.CalculateTotalAsync(orderProducts);
+        var orderFactory = new OrderFactory(_orderService);
 
-        var order = Order.Create(
-            userId,
+        var order = await orderFactory.CreateOrderAsync(
+            ownerId,
             orderProducts,
-            total,
             request.PaymentMethod,
             request.BillingAddress,
             request.DeliveryAddress,
-            request.Installments
+            request.Installments,
+            orderCouponsApplied
         );
 
         await _unitOfWork.OrderRepository.AddAsync(order);

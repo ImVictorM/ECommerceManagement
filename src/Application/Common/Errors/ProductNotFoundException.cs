@@ -1,6 +1,6 @@
 using SharedKernel.Errors;
 
-namespace Application.Products.Queries.Common.Errors;
+namespace Application.Common.Errors;
 
 /// <summary>
 /// The exception that is thrown when a product being retrieved does not exist.

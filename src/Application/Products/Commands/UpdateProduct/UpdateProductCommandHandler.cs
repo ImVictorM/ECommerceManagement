@@ -1,8 +1,9 @@
+using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
-using Application.Products.Queries.Common.Errors;
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
 

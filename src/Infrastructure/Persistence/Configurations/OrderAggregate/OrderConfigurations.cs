@@ -74,7 +74,7 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .HasMaxLength(200)
             .IsRequired();
 
-        builder.OwnsMany(o => o.CouponAppliedIds, ownedBuillder =>
+        builder.OwnsMany(o => o.CouponsApplied, ownedBuillder =>
         {
             ownedBuillder.ToTable("orders_coupon_ids");
 

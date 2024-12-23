@@ -25,7 +25,7 @@ public static class ProductResponseExtensions
         //response.Categories.Should().BeEquivalentTo(product.ProductCategories);
         response.Description.Should().Be(product.Description);
         response.Images.Should().BeEquivalentTo(product.ProductImages.Select(pi => pi.Url));
-        response.OriginalPrice.Should().Be(product.BasePrice);
+        response.BasePrice.Should().Be(product.BasePrice);
         //response.PriceWithDiscount.Should().Be(product.GetPriceAfterDiscounts());
         //response.DiscountsApplied.Should().BeEquivalentTo(product.GetApplicableDiscounts(),
         //    options => options.ComparingByMembers<Discount>().ComparingWithDateTimeOffset()
@@ -57,7 +57,7 @@ public static class ProductResponseExtensions
         response.Id.Should().NotBeNull();
         response.Name.Should().Be(request.Name);
         response.Description.Should().Be(request.Description);
-        response.OriginalPrice.Should().Be(request.BasePrice);
+        response.BasePrice.Should().Be(request.BasePrice);
         response.Categories.Should().BeEquivalentTo(request.Categories);
         response.Images.Should().BeEquivalentTo(request.Images);
     }

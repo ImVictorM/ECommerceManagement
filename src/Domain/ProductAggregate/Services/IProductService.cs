@@ -13,9 +13,9 @@ public interface IProductService
     Task<IEnumerable<string>> GetProductCategoryNamesAsync(Product product);
 
     /// <summary>
-    /// Calculates the product price after sales if it has any.
+    /// Calculates the product price applying sales if it has any.
     /// </summary>
     /// <param name="product">The product to calculate the price.</param>
-    /// <returns>The product price after sale.</returns>
-    Task<decimal> CalculateProductPriceAfterSaleAsync(Product product);
+    /// <returns>The product price applying sale.</returns>
+    Task<decimal> CalculateProductPriceApplyingSaleAsync(Product product);
 }

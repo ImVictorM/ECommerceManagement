@@ -61,7 +61,7 @@ public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProduct
 
         foreach (var product in products)
         {
-            var productPrice = await _productService.CalculateProductPriceAfterSaleAsync(product);
+            var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);
             var productCategories = await _productService.GetProductCategoryNamesAsync(product);
 
             productResults.Add(new ProductResult(product, productCategories, productPrice));

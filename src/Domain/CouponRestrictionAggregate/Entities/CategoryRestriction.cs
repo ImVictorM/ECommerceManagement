@@ -1,6 +1,5 @@
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.CouponAggregate.ValueObjects;
-using Domain.CouponRestrictionAggregate.DTOs;
 using Domain.CouponRestrictionAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using SharedKernel.Errors;
@@ -48,12 +47,12 @@ public class CategoryRestriction : CouponRestriction
     }
 
     /// <inheritdoc/>
-    public override bool PassRestriction(CouponRestrictionContext context)
+    public override bool PassRestriction(CouponRestrictionOrder order)
     {
-        return context.Products.Any(IsProductAllowed);
+        return order.Products.Any(IsProductAllowed);
     }
 
-    private bool IsProductAllowed(ContextProduct product)
+    private bool IsProductAllowed(CouponRestrictionOrderProduct product)
     {
         return IsProductNotExcluded(product.ProductId) && HasAnyAllowedCategory(product.CategoryIds);
     }
