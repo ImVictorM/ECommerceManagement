@@ -4,14 +4,14 @@ using SharedKernel.Models;
 namespace SharedKernel.UnitTests.Specifications.TestUtils;
 
 /// <summary>
-/// Utilities to create activable entities.
+/// Utilities to create activatable entities.
 /// </summary>
-public static class ActivableEntityUtils
+public static class ActivatableEntityUtils
 {
     /// <summary>
     /// Represents an entity that can be activated or deactivated.
     /// </summary>
-    public class ActivableEntity : Entity<Guid>, IActivatable
+    public class ActivatableEntity : Entity<Guid>, IActivatable
     {
         /// <summary>
         /// Bool value indicating if the entity is active.
@@ -19,11 +19,11 @@ public static class ActivableEntityUtils
         public bool IsActive { get; private set; }
 
         /// <summary>
-        /// Initiates a new instance of the <see cref="ActivableEntity"/> class.
+        /// Initiates a new instance of the <see cref="ActivatableEntity"/> class.
         /// </summary>
         /// <param name="id">The entity id.</param>
         /// <param name="isActive">The entity state.</param>
-        public ActivableEntity(Guid id, bool isActive) : base(id)
+        public ActivatableEntity(Guid id, bool isActive) : base(id)
         {
             IsActive = isActive;
         }
@@ -36,16 +36,16 @@ public static class ActivableEntityUtils
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="ActivableEntity"/> class.
+    /// Creates a new instance of the <see cref="ActivatableEntity"/> class.
     /// </summary>
     /// <param name="id">The entity id.</param>
     /// <param name="isActive">The entity state.</param>
-    /// <returns>A new instance of the <see cref="ActivableEntity"/> class.</returns>
-    public static ActivableEntity CreateActivableEntity(
+    /// <returns>A new instance of the <see cref="ActivatableEntity"/> class.</returns>
+    public static ActivatableEntity CreateActivatableEntity(
         Guid? id = null,
         bool isActive = true
     )
     {
-        return new ActivableEntity(id ?? Guid.NewGuid(), isActive);
+        return new ActivatableEntity(id ?? Guid.NewGuid(), isActive);
     }
 }

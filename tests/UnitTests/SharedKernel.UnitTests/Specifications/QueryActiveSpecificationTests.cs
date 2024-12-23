@@ -16,8 +16,8 @@ public class QueryActiveSpecificationTests
     [Fact]
     public void QueryActiveSpecification_WhenEntityIsActive_ReturnsTrue()
     {
-        var entity = ActivableEntityUtils.CreateActivableEntity(isActive: true);
-        var specification = new QueryActiveSpecification<ActivableEntityUtils.ActivableEntity>();
+        var entity = ActivatableEntityUtils.CreateActivatableEntity(isActive: true);
+        var specification = new QueryActiveSpecification<ActivatableEntityUtils.ActivatableEntity>();
         var criteria = specification.Criteria.Compile();
 
         var result = criteria(entity);
@@ -31,8 +31,8 @@ public class QueryActiveSpecificationTests
     [Fact]
     public void QueryActiveSpecification_WhenEntityIsInactive_ReturnsFalse()
     {
-        var entity = ActivableEntityUtils.CreateActivableEntity(isActive: false);
-        var specification = new QueryActiveSpecification<ActivableEntityUtils.ActivableEntity>();
+        var entity = ActivatableEntityUtils.CreateActivatableEntity(isActive: false);
+        var specification = new QueryActiveSpecification<ActivatableEntityUtils.ActivatableEntity>();
         var criteria = specification.Criteria.Compile();
 
         var result = criteria(entity);
@@ -46,11 +46,11 @@ public class QueryActiveSpecificationTests
     [Fact]
     public void QueryActiveSpecification_WhenAppliedToCollection_FiltersActiveEntities()
     {
-        var activeEntity = ActivableEntityUtils.CreateActivableEntity(isActive: true);
-        var inactiveEntity = ActivableEntityUtils.CreateActivableEntity(isActive: false);
-        var collection = new List<ActivableEntityUtils.ActivableEntity> { activeEntity, inactiveEntity };
+        var activeEntity = ActivatableEntityUtils.CreateActivatableEntity(isActive: true);
+        var inactiveEntity = ActivatableEntityUtils.CreateActivatableEntity(isActive: false);
+        var collection = new List<ActivatableEntityUtils.ActivatableEntity> { activeEntity, inactiveEntity };
 
-        var specification = new QueryActiveSpecification<ActivableEntityUtils.ActivableEntity>();
+        var specification = new QueryActiveSpecification<ActivatableEntityUtils.ActivatableEntity>();
         var criteria = specification.Criteria;
 
         var filteredCollection = collection.AsQueryable().Where(criteria).ToList();

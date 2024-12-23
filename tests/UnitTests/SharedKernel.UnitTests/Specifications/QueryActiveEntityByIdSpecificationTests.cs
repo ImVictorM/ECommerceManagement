@@ -17,8 +17,8 @@ public class QueryActiveEntityByIdSpecificationTests
     public void QueryActiveEntityByIdSpecification_WhenEntityIsActiveAndIdMatches_ReturnsTrue()
     {
         var id = Guid.NewGuid();
-        var entity = ActivableEntityUtils.CreateActivableEntity(id, isActive: true);
-        var specification = new QueryActiveEntityByIdSpecification<ActivableEntityUtils.ActivableEntity, Guid>(id);
+        var entity = ActivatableEntityUtils.CreateActivatableEntity(id, isActive: true);
+        var specification = new QueryActiveEntityByIdSpecification<ActivatableEntityUtils.ActivatableEntity, Guid>(id);
         var criteria = specification.Criteria.Compile();
 
         var result = criteria(entity);
@@ -33,8 +33,8 @@ public class QueryActiveEntityByIdSpecificationTests
     public void QueryActiveEntityByIdSpecification_WhenEntityIsInactiveAndIdMatches_ReturnsFalse()
     {
         var id = Guid.NewGuid();
-        var entity = ActivableEntityUtils.CreateActivableEntity(id, isActive: false);
-        var specification = new QueryActiveEntityByIdSpecification<ActivableEntityUtils.ActivableEntity, Guid>(id);
+        var entity = ActivatableEntityUtils.CreateActivatableEntity(id, isActive: false);
+        var specification = new QueryActiveEntityByIdSpecification<ActivatableEntityUtils.ActivatableEntity, Guid>(id);
         var criteria = specification.Criteria.Compile();
 
         var result = criteria(entity);
@@ -50,8 +50,8 @@ public class QueryActiveEntityByIdSpecificationTests
     {
         var id = Guid.NewGuid();
         var differentId = Guid.NewGuid();
-        var entity = ActivableEntityUtils.CreateActivableEntity(differentId, isActive: true);
-        var specification = new QueryActiveEntityByIdSpecification<ActivableEntityUtils.ActivableEntity, Guid>(id);
+        var entity = ActivatableEntityUtils.CreateActivatableEntity(differentId, isActive: true);
+        var specification = new QueryActiveEntityByIdSpecification<ActivatableEntityUtils.ActivatableEntity, Guid>(id);
         var criteria = specification.Criteria.Compile();
 
         var result = criteria(entity);
@@ -66,18 +66,18 @@ public class QueryActiveEntityByIdSpecificationTests
     public void QueryActiveEntityByIdSpecification_WhenAppliedToCollection_FiltersActiveEntityById()
     {
         var id = Guid.NewGuid();
-        var activeMatchingEntity = ActivableEntityUtils.CreateActivableEntity(id, isActive: true);
-        var activeNonMatchingEntity = ActivableEntityUtils.CreateActivableEntity(isActive: true);
-        var inactiveMatchingEntity = ActivableEntityUtils.CreateActivableEntity(id, isActive: false);
+        var activeMatchingEntity = ActivatableEntityUtils.CreateActivatableEntity(id, isActive: true);
+        var activeNonMatchingEntity = ActivatableEntityUtils.CreateActivatableEntity(isActive: true);
+        var inactiveMatchingEntity = ActivatableEntityUtils.CreateActivatableEntity(id, isActive: false);
 
-        var collection = new List<ActivableEntityUtils.ActivableEntity>
+        var collection = new List<ActivatableEntityUtils.ActivatableEntity>
         {
             activeMatchingEntity,
             activeNonMatchingEntity,
             inactiveMatchingEntity
         };
 
-        var specification = new QueryActiveEntityByIdSpecification<ActivableEntityUtils.ActivableEntity, Guid>(id);
+        var specification = new QueryActiveEntityByIdSpecification<ActivatableEntityUtils.ActivatableEntity, Guid>(id);
         var criteria = specification.Criteria;
 
         var filteredCollection = collection.AsQueryable().Where(criteria).ToList();
