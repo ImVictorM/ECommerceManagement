@@ -1,4 +1,4 @@
-using Domain.UnitTests.TestUtils.Constants;
+using SharedKernel.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
 
 namespace SharedKernel.UnitTests.TestUtils;
@@ -17,4 +17,11 @@ public static class EmailUtils
     {
         return Email.Create(email ?? SharedKernelConstants.Email.Value);
     }
+
+    /// <summary>
+    /// Returns an email concatenated with an index.
+    /// </summary>
+    /// <param name="index">The index to concatenate with.</param>
+    /// <returns>A new email with a concatenated index.</returns>
+    public static string EmailFromIndex(int index) => $"{index}{SharedKernelConstants.Email.Value}";
 }

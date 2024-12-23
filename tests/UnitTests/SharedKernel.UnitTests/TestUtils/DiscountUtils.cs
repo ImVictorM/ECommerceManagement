@@ -1,5 +1,5 @@
-using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
+using SharedKernel.UnitTests.TestUtils.Constants;
 
 namespace SharedKernel.UnitTests.TestUtils;
 
@@ -17,14 +17,14 @@ public static class DiscountUtils
     /// <param name="endingDate">The discount ending date.</param>
     /// <returns>A new instance of the <see cref="Discount"/> class.</returns>
     public static Discount CreateDiscount(
-        int? percentage = null,
+        Percentage? percentage = null,
         string? description = null,
         DateTimeOffset? startingDate = null,
         DateTimeOffset? endingDate = null
     )
     {
         return Discount.Create(
-            percentage ?? SharedKernelConstants.Discount.Percentage,
+            percentage ?? PercentageUtils.Create(SharedKernelConstants.Discount.DiscountPercentage),
             description ?? SharedKernelConstants.Discount.Description,
             startingDate ?? SharedKernelConstants.Discount.StartingDate,
             endingDate ?? SharedKernelConstants.Discount.EndingDate
@@ -42,6 +42,16 @@ public static class DiscountUtils
     {
         return Enumerable
             .Range(0, count)
-            .Select(index => CreateDiscount(description: SharedKernelConstants.Discount.CreateDescriptionFromIndex(index)));
+            .Select(index => CreateDiscount(description: CreateDescriptionFromIndex(index)));
+    }
+
+    /// <summary>
+    /// Creates a new unique description based on an index.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>A new unique description.</returns>
+    public static string CreateDescriptionFromIndex(int index)
+    {
+        return $"{SharedKernelConstants.Discount.Description}-{index}";
     }
 }

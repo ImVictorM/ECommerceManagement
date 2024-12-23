@@ -19,7 +19,6 @@ public static class EntityUtils
         /// <param name="id">The entity unique identifier.</param>
         public UserEntity(TId id) : base(id)
         {
-
         }
     }
 
@@ -34,7 +33,28 @@ public static class EntityUtils
         /// <param name="id">The entity unique identifier.</param>
         public ProductEntity(TId id) : base(id)
         {
+        }
+    }
 
+    /// <summary>
+    /// Represents a numeric entity.
+    /// </summary>
+    /// <typeparam name="TId"></typeparam>
+    public class NumericEntity<TId> : Entity<TId> where TId : notnull
+    {
+        /// <summary>
+        /// Gets the numeric entity value.
+        /// </summary>
+        public int Value { get; }
+
+        /// <summary>
+        /// Initiates a new instance of the <see cref="NumericEntity{TId}"/> class.
+        /// </summary>
+        /// <param name="id">The entity id.</param>
+        /// <param name="value">The numeric value.</param>
+        public NumericEntity(TId id, int value) : base(id)
+        {
+            Value = value;
         }
     }
 
@@ -76,6 +96,23 @@ public static class EntityUtils
         public static ProductEntity<T> Create<T>(T id) where T : notnull
         {
             return new ProductEntity<T>(id);
+        }
+    }
+
+    /// <summary>
+    /// Create instances of the generic NumericEntity.
+    /// </summary>
+    public static class NumericEntity
+    {
+        /// <summary>
+        /// Creates a new instance of the <see cref="NumericEntity{TId}"/> class.
+        /// </summary>
+        /// <param name="id">the entity id.</param>
+        /// <param name="value">The entity value.</param>
+        /// <returns>A new instance of the <see cref="NumericEntity{TId}"/> class.</returns>
+        public static NumericEntity<int> Create(int id = 1, int value = 1)
+        {
+            return new NumericEntity<int>(id, value);
         }
     }
 

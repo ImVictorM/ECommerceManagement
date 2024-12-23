@@ -1,7 +1,8 @@
-using FluentAssertions;
 using SharedKernel.Errors;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.ValueObjects;
 
@@ -112,7 +113,7 @@ public class DiscountTests
     }
 
     /// <summary>
-    /// Tests if it throws an error when the percentage of the discount is not betweeen 1 and 100.
+    /// Tests if it throws an error when the percentage of the discount is not between 1 and 100.
     /// </summary>
     /// <param name="percentage">The discount percentage.</param>
     [Theory]
@@ -124,23 +125,21 @@ public class DiscountTests
     public void Discount_WhenCreatingDiscountWithInvalidPercentage_ThrowsAnError(int percentage)
     {
         FluentActions
-            .Invoking(() => DiscountUtils.CreateDiscount(percentage: percentage))
+            .Invoking(() => DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(percentage)))
             .Should()
             .Throw<DomainValidationException>()
             .WithMessage("Discount percentage must be between 1 and 100");
     }
 
-    ///// <summary>
-    ///// Tests the method to validate if the current discount should be applied.
-    ///// </summary>
-    ///// <param name="discount">The discount.</param>
-    ///// <param name="expectedValidToDate">The expected value indicating if the discount should be applied.</param>
-    //[Theory]
-    //[MemberData(nameof(DiscountAndExpectedValidToDatePairs))]
-    //public void Discount_WhenCheckingIfDiscountIsValidToDate_ReturnsCorrectBooleanValue(Discount discount, bool expectedValidToDate)
-    //{
-    //    var result = Discount.IsDiscountValidToDate(discount);
-
-    //    result.Should().Be(expectedValidToDate);
-    //}
+    /// <summary>
+    /// Tests if the discount is valid to date.
+    /// </summary>
+    /// <param name="discount">The discount.</param>
+    /// <param name="expectedValidToDate">The expected value indicating if the discount should be applied.</param>
+    [Theory]
+    [MemberData(nameof(DiscountAndExpectedValidToDatePairs))]
+    public void Discount_WhenCheckingIfDiscountIsValidToDate_ReturnsCorrectBooleanValue(Discount discount, bool expectedValidToDate)
+    {
+        discount.IsValidToDate.Should().Be(expectedValidToDate);
+    }
 }

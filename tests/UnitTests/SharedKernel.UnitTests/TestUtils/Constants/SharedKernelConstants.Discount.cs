@@ -1,4 +1,4 @@
-namespace Domain.UnitTests.TestUtils.Constants;
+namespace SharedKernel.UnitTests.TestUtils.Constants;
 
 public static partial class SharedKernelConstants
 {
@@ -10,7 +10,7 @@ public static partial class SharedKernelConstants
         /// <summary>
         /// The discount percentage constant.
         /// </summary>
-        public const int Percentage = 10;
+        public const int DiscountPercentage = 10;
         /// <summary>
         /// The discount description constant.
         /// </summary>
@@ -23,15 +23,5 @@ public static partial class SharedKernelConstants
         /// The discount ending date constant.
         /// </summary>
         public static readonly DateTimeOffset EndingDate = StartingDate.AddDays(5);
-
-        /// <summary>
-        /// Creates a new unique description based on an index.
-        /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>A new unique description.</returns>
-        public static string CreateDescriptionFromIndex(int index)
-        {
-            return $"{Description}-{index}";
-        }
     }
 }

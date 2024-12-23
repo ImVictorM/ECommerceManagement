@@ -1,5 +1,5 @@
-using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
+using SharedKernel.UnitTests.TestUtils.Constants;
 
 namespace SharedKernel.UnitTests.TestUtils;
 

@@ -20,7 +20,7 @@ public class DiscountServiceTests
             100,
             new List<Discount>()
             {
-                DiscountUtils.CreateDiscount(percentage: 10)
+                DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(10))
             }.ToArray(),
             90,
         };
@@ -30,8 +30,8 @@ public class DiscountServiceTests
             100,
             new List<Discount>()
             {
-                DiscountUtils.CreateDiscount(percentage: 10),
-                DiscountUtils.CreateDiscount(percentage: 10)
+                DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(10)),
+                DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(10))
             }.ToArray(),
             81,
         };
@@ -41,8 +41,8 @@ public class DiscountServiceTests
             300,
             new List<Discount>()
             {
-                DiscountUtils.CreateDiscount(percentage: 10),
-                DiscountUtils.CreateDiscount(percentage: 50)
+                DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(10)),
+                DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(50))
             }.ToArray(),
             135,
         };

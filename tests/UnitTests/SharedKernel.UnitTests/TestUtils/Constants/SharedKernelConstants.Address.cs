@@ -1,4 +1,4 @@
-namespace Domain.UnitTests.TestUtils.Constants;
+namespace SharedKernel.UnitTests.TestUtils.Constants;
 
 /// <summary>
 /// Defines shared kernel constants.

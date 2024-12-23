@@ -18,7 +18,7 @@ public static class ValueObjectUtils
         public string Value { get; }
 
         /// <summary>
-        /// Initiates a new instanc of the <see cref="EmailValueObject"/> class.
+        /// Initiates a new instance of the <see cref="EmailValueObject"/> class.
         /// </summary>
         /// <param name="email">The email.</param>
         private EmailValueObject(string email)
@@ -44,7 +44,7 @@ public static class ValueObjectUtils
     }
 
     /// <summary>
-    /// Represetnts a password implementaion of a value object.
+    /// Represents a password implementation of a value object.
     /// </summary>
     public class PasswordValueObject : ValueObject
     {
@@ -54,7 +54,7 @@ public static class ValueObjectUtils
         public string Value { get; }
 
         /// <summary>
-        /// Initiates a new instanc of the <see cref="PasswordValueObject"/> class.
+        /// Initiates a new instance of the <see cref="PasswordValueObject"/> class.
         /// </summary>
         /// <param name="password">The password.</param>
         private PasswordValueObject(string password)
@@ -80,7 +80,7 @@ public static class ValueObjectUtils
     }
 
     /// <summary>
-    /// Represets an address implementation of a value object.
+    /// Represents an address implementation of a value object.
     /// </summary>
     public class AddressValueObject : ValueObject
     {
@@ -94,7 +94,7 @@ public static class ValueObjectUtils
         public string State { get; }
 
         /// <summary>
-        /// Initiates a new instanc of the <see cref="AddressValueObject"/> class.
+        /// Initiates a new instance of the <see cref="AddressValueObject"/> class.
         /// </summary>
         /// <param name="city">The address city.</param>
         /// <param name="state">The address state.</param>
