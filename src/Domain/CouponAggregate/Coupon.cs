@@ -1,3 +1,4 @@
+using Domain.CouponAggregate.Abstracts;
 using Domain.CouponAggregate.ValueObjects;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
@@ -10,6 +11,7 @@ namespace Domain.CouponAggregate;
 /// </summary>
 public class Coupon : AggregateRoot<CouponId>, IActivatable
 {
+    private readonly HashSet<CouponRestriction> _restrictions = [];
     /// <summary>
     /// Gets the coupon discount.
     /// </summary>
@@ -39,6 +41,11 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     /// Indicates if the coupon is active.
     /// </summary>
     public bool IsActive { get; set; }
+
+    /// <summary>
+    /// Gets the coupon restrictions.
+    /// </summary>
+    public IReadOnlySet<CouponRestriction> Restrictions => _restrictions;
 
     private Coupon() { }
 
@@ -75,6 +82,20 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     )
     {
         return new Coupon(discount, code, usageLimit, minPrice, autoApply);
+    }
+
+    /// <summary>
+    /// Verifies if the coupon can be applied.
+    /// </summary>
+    /// <param name="order">The order context.</param>
+    /// <returns>A boolean value indicating if the coupon can be applied.</returns>
+    public bool CanBeApplied(CouponOrder order)
+    {
+        return IsActive
+            && Discount.IsValidToDate
+            && order.Total >= MinPrice
+            && _restrictions.All(r => r.PassRestriction(order))
+            && UsageLimit > 0;
     }
 
     /// <summary>

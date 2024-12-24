@@ -1,10 +1,9 @@
 using Domain.CategoryAggregate.ValueObjects;
-using Domain.CouponAggregate.ValueObjects;
-using Domain.CouponRestrictionAggregate.ValueObjects;
+using Domain.CouponAggregate.Abstracts;
 using Domain.ProductAggregate.ValueObjects;
 using SharedKernel.Errors;
 
-namespace Domain.CouponRestrictionAggregate.Entities;
+namespace Domain.CouponAggregate.ValueObjects.Restrictions;
 
 /// <summary>
 /// Represents a coupon restriction defined by categories allowed and products excluded.
@@ -14,28 +13,26 @@ public class CategoryRestriction : CouponRestriction
     /// <summary>
     /// Gets the categories the restriction allows.
     /// </summary>
-    public IEnumerable<CategoryRestricted> CategoriesAllowed { get; } = null!;
+    public IEnumerable<CouponCategory> CategoriesAllowed { get; } = null!;
     /// <summary>
     /// Gets the products that are not allowed.
     /// </summary>
-    public IEnumerable<ProductRestricted> ProductsFromCategoryNotAllowed { get; } = null!;
+    public IEnumerable<CouponProduct> ProductsFromCategoryNotAllowed { get; } = null!;
 
     private CategoryRestriction() { }
 
     private CategoryRestriction(
-        CouponId couponId,
-        IEnumerable<CategoryRestricted> categoriesAllowed,
-        IEnumerable<ProductRestricted>? productsFromNotAllowed = null
-    ) : base(couponId)
+        IEnumerable<CouponCategory> categoriesAllowed,
+        IEnumerable<CouponProduct>? productsFromNotAllowed = null
+    )
     {
         CategoriesAllowed = categoriesAllowed;
         ProductsFromCategoryNotAllowed = productsFromNotAllowed ?? [];
     }
 
     internal static CategoryRestriction Create(
-        CouponId couponId,
-        IEnumerable<CategoryRestricted> categoriesAllowed,
-        IEnumerable<ProductRestricted>? productsFromCategoryNotAllowed = null
+        IEnumerable<CouponCategory> categoriesAllowed,
+        IEnumerable<CouponProduct>? productsFromCategoryNotAllowed = null
     )
     {
         if (!categoriesAllowed.Any())
@@ -43,18 +40,18 @@ public class CategoryRestriction : CouponRestriction
             throw new DomainValidationException($"Restriction must contain at least one category");
         }
 
-        return new CategoryRestriction(couponId, categoriesAllowed, productsFromCategoryNotAllowed);
+        return new CategoryRestriction(categoriesAllowed, productsFromCategoryNotAllowed);
     }
 
     /// <inheritdoc/>
-    public override bool PassRestriction(CouponRestrictionOrder order)
+    public override bool PassRestriction(CouponOrder order)
     {
         return order.Products.Any(IsProductAllowed);
     }
 
-    private bool IsProductAllowed(CouponRestrictionOrderProduct product)
+    private bool IsProductAllowed((ProductId ProductId, IEnumerable<CategoryId> ProductCategories) product)
     {
-        return IsProductNotExcluded(product.ProductId) && HasAnyAllowedCategory(product.CategoryIds);
+        return IsProductNotExcluded(product.ProductId) && HasAnyAllowedCategory(product.ProductCategories);
     }
 
     private bool HasAnyAllowedCategory(IEnumerable<CategoryId> categories)
@@ -68,5 +65,12 @@ public class CategoryRestriction : CouponRestriction
         var prohibitedProductIds = ProductsFromCategoryNotAllowed.Select(p => p.ProductId);
 
         return !prohibitedProductIds.Contains(productId);
+    }
+
+    ///<inheritdoc/>
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return CategoriesAllowed;
+        yield return ProductsFromCategoryNotAllowed;
     }
 }
