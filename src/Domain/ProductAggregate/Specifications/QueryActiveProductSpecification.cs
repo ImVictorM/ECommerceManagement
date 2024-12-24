@@ -5,6 +5,6 @@ namespace Domain.ProductAggregate.Specifications;
 /// <summary>
 /// Query to retrieve active products.
 /// </summary>
-public class QueryActiveProductsSpecification : QueryActiveSpecification<Product>
+public class QueryActiveProductSpecification : QueryActiveSpecification<Product>
 {
 }
