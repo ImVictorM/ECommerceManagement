@@ -25,7 +25,7 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// <summary>
     /// Get the shipment status identifier.
     /// </summary>
-    public ShipmentStatusId ShipmentStatusId { get; private set; } = null!;
+    public long ShipmentStatusId { get; private set; }
     /// <summary>
     /// Gets the shipment delivery address.
     /// </summary>

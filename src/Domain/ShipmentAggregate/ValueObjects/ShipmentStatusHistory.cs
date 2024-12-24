@@ -10,7 +10,7 @@ public sealed class ShipmentStatusHistory : ValueObject
     /// <summary>
     /// Gets the shipment status id.
     /// </summary>
-    public ShipmentStatusId ShipmentStatusId { get; } = null!;
+    public long ShipmentStatusId { get; }
 
     /// <summary>
     /// Gets the date the shipment status was created.
@@ -20,7 +20,7 @@ public sealed class ShipmentStatusHistory : ValueObject
 
     private ShipmentStatusHistory() { }
 
-    private ShipmentStatusHistory(ShipmentStatusId shipmentStatusId)
+    private ShipmentStatusHistory(long shipmentStatusId)
     {
         ShipmentStatusId = shipmentStatusId;
 
@@ -32,7 +32,7 @@ public sealed class ShipmentStatusHistory : ValueObject
     /// </summary>
     /// <param name="shipmentStatusId">The shipment status id.</param>
     /// <returns>A new instance of the <see cref="ShipmentStatusHistory"/> class.</returns>
-    public static ShipmentStatusHistory Create(ShipmentStatusId shipmentStatusId)
+    public static ShipmentStatusHistory Create(long shipmentStatusId)
     {
         return new ShipmentStatusHistory(shipmentStatusId);
     }
