@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
@@ -22,23 +23,41 @@ public static partial class DomainConstants
         public static readonly UserId OwnerId = UserId.Create(1);
 
         /// <summary>
-        /// The order constant description.
-        /// </summary>
-        public const string Description = "test description";
-
-        /// <summary>
-        /// The order constant total.
-        /// </summary>
-        public const decimal Total = 120m;
-
-        /// <summary>
         /// The order constant products.
         /// </summary>
         public static readonly IEnumerable<OrderProduct> OrderProducts =
         [
-            OrderProduct.Create(ProductId.Create(1), 1),
-            OrderProduct.Create(ProductId.Create(2), 3),
-            OrderProduct.Create(ProductId.Create(3), 1),
+            OrderProduct.Create(
+                productId: ProductId.Create(1),
+                quantity: 1,
+                basePrice: 15m,
+                purchasedPrice: 15m,
+                productCategories: new HashSet<CategoryId>()
+                {
+                    CategoryId.Create(1),
+                    CategoryId.Create(2),
+                }
+            ),
+           OrderProduct.Create(
+                productId: ProductId.Create(2),
+                quantity: 5,
+                basePrice: 5m,
+                purchasedPrice: 2m,
+                productCategories: new HashSet<CategoryId>()
+                {
+                    CategoryId.Create(2),
+                }
+           ),
+           OrderProduct.Create(
+                productId: ProductId.Create(3),
+                quantity: 2,
+                basePrice: 10m,
+                purchasedPrice: 9.5m,
+                productCategories: new HashSet<CategoryId>()
+                {
+                    CategoryId.Create(5),
+                }
+           ),
         ];
     }
 }

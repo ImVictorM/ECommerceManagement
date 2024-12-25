@@ -1,9 +1,11 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
+
 using SharedKernel.Authorization;
-using FluentAssertions;
-using SharedKernel.Errors;
 using SharedKernel.UnitTests.TestUtils;
+using SharedKernel.ValueObjects;
+
+using FluentAssertions;
 
 namespace Domain.UnitTests.UserAggregate;
 
@@ -20,54 +22,24 @@ public class UserTests
     {
         yield return new object[] {
             DomainConstants.User.Name,
-            DomainConstants.User.PasswordHash,
-            DomainConstants.User.PasswordSalt,
+            EmailUtils.CreateEmail(),
+            PasswordHashUtils.Create(),
             DomainConstants.User.Phone,
-            DomainConstants.User.Email.ToString()
         };
 
         yield return new object[] {
             "Djhon djhones",
-            DomainConstants.User.PasswordHash,
-            DomainConstants.User.PasswordSalt,
+            EmailUtils.CreateEmail(),
+            PasswordHashUtils.Create(),
             DomainConstants.User.Phone,
-            DomainConstants.User.Email.ToString()
         };
 
         yield return new object[] {
             DomainConstants.User.Name,
-            "1847564AEFE",
-            DomainConstants.User.PasswordSalt,
-            DomainConstants.User.Phone,
-            DomainConstants.User.Email.ToString()
-        };
-
-        yield return new object[] {
-            DomainConstants.User.Name,
-            DomainConstants.User.PasswordHash,
-            "ABCDEF123456",
-            DomainConstants.User.Phone,
-            DomainConstants.User.Email.ToString()
-        };
-
-        yield return new object[] {
-            DomainConstants.User.Name,
-            DomainConstants.User.PasswordHash,
-            DomainConstants.User.PasswordSalt,
+            EmailUtils.CreateEmail(),
+            PasswordHashUtils.Create(),
             "19987093231",
-            DomainConstants.User.Email.ToString()
         };
-    }
-    /// <summary>
-    /// List of hash and salt invalid pairs.
-    /// </summary>
-    /// <returns>A list of hash and salt invalid pairs.</returns>
-    public static IEnumerable<object[]> HashSaltInvalidPairs()
-    {
-        yield return new object[] { "invalid_hash", DomainConstants.User.PasswordSalt };
-        yield return new object[] { DomainConstants.User.PasswordHash, "invalid_salt" };
-        yield return new object[] { "invalid_hash", "invalid_salt" };
-        yield return new object[] { "", "" };
     }
 
     /// <summary>
@@ -75,52 +47,33 @@ public class UserTests
     /// </summary>
     /// <param name="name">The user name.</param>
     /// <param name="passwordHash">The user password hash.</param>
-    /// <param name="passwordSalt">The user password salt.</param>
     /// <param name="phone">The user phone.</param>
     /// <param name="email">The user email.</param>
     [Theory]
     [MemberData(nameof(ValidUserParameters))]
     public void User_WhenUserCredentialsAreValid_CreatesNewActiveCustomer(
         string name,
-        string passwordHash,
-        string passwordSalt,
-        string? phone,
-        string email
+        Email email,
+        PasswordHash passwordHash,
+        string? phone
     )
     {
         var user = UserUtils.CreateUser(
             name: name,
             passwordHash: passwordHash,
-            passwordSalt: passwordSalt,
             phone: phone,
             email: email
         );
 
-        var expectedPasswordHash = $"{passwordHash}-{passwordSalt}";
-
         user.Should().NotBeNull();
         user.Name.Should().Be(name);
-        user.PasswordHash.Value.Should().Be(expectedPasswordHash);
+        user.PasswordHash.Should().BeEquivalentTo(passwordHash);
         user.Phone.Should().Be(phone);
-        user.Email.Value.Should().Be(email);
+        user.Email.Should().BeEquivalentTo(email);
         user.IsActive.Should().BeTrue();
         user.UserRoles.Count.Should().Be(1);
         user.UserRoles.Should().ContainSingle(ur => ur.RoleId == Role.Customer.Id);
         user.UserAddresses.Count.Should().Be(0);
-    }
-
-    /// <summary>
-    /// Tests if invalid pairs of hash and salt generates an error.
-    /// </summary>
-    /// <param name="hash">The password hash.</param>
-    /// <param name="salt">The password salt.</param>
-    [Theory]
-    [MemberData(nameof(HashSaltInvalidPairs))]
-    public void User_WhenPasswordHashOrSaltAreNotHexadecimalValues_GeneratesAnError(string hash, string salt)
-    {
-        Action act = () => UserUtils.CreateUser(passwordHash: hash, passwordSalt: salt);
-
-        act.Should().Throw<DomainValidationException>().WithMessage("The hash or salt is not in a valid hexadecimal format");
     }
 
     /// <summary>
@@ -134,18 +87,6 @@ public class UserTests
         user.Deactivate();
 
         user.IsActive.Should().BeFalse();
-    }
-
-    /// <summary>
-    /// It is possible to create a user with a specific role.
-    /// </summary>
-    [Fact]
-    public void User_WhenCreatingWithSpecificRole_AssociateItCorrectly()
-    {
-        var user = UserUtils.CreateUser(role: Role.Admin);
-
-        user.UserRoles.Count.Should().Be(1);
-        user.UserRoles.Should().ContainSingle(ur => ur.RoleId == Role.Admin.Id);
     }
 
     /// <summary>

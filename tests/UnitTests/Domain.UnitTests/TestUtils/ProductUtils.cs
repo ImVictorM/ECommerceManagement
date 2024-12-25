@@ -1,8 +1,8 @@
-using System.Reflection;
-using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
+
+using SharedKernel.UnitTests.TestUtils.Extensions;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -17,18 +17,18 @@ public static class ProductUtils
     /// <param name="id">The product id.</param>
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
-    /// <param name="price">The product price.</param>
-    /// <param name="quantityAvailable">The product quantity available in inventory.</param>
+    /// <param name="basePrice">The product price.</param>
+    /// <param name="initialQuantityInInventory">The product quantity available in inventory.</param>
     /// <param name="categories">The product categories.</param>
-    /// <param name="images">The product image urls.</param>
+    /// <param name="images">The product images.</param>
     /// <param name="active">Defines if the product should be created as an active or inactive product.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product CreateProduct(
         ProductId? id = null,
         string? name = null,
         string? description = null,
-        decimal? price = null,
-        int? quantityAvailable = null,
+        decimal? basePrice = null,
+        int? initialQuantityInInventory = null,
         IEnumerable<ProductCategory>? categories = null,
         IEnumerable<ProductImage>? images = null,
         bool active = true
@@ -37,20 +37,15 @@ public static class ProductUtils
         var product = Product.Create(
             name ?? DomainConstants.Product.Name,
             description ?? DomainConstants.Product.Description,
-            price ?? DomainConstants.Product.BasePrice,
-            quantityAvailable ?? DomainConstants.Product.Inventory.QuantityAvailable,
+            basePrice ?? DomainConstants.Product.BasePrice,
+            initialQuantityInInventory ?? DomainConstants.Product.QuantityInInventory,
             categories ?? DomainConstants.Product.Categories,
             images ?? CreateProductImages()
         );
 
         if (id != null)
         {
-            var idProperty = typeof(Product).GetProperty(nameof(Product.Id), BindingFlags.Instance | BindingFlags.Public);
-
-            if (idProperty != null && idProperty.CanWrite)
-            {
-                idProperty.SetValue(product, id);
-            }
+            product.SetIdUsingReflection(id);
         }
 
         if (!active)
@@ -85,28 +80,16 @@ public static class ProductUtils
     }
 
     /// <summary>
-    /// Creates a list of product image urls.
+    /// Creates a list of product images.
     /// </summary>
     /// <param name="imageCount">The quantity of product images to be created.</param>
-    /// <returns>A list of product image urls.</returns>
+    /// <returns>A list of product images.</returns>
     public static IEnumerable<ProductImage> CreateProductImages(int imageCount = 1)
     {
         return Enumerable
             .Range(0, imageCount)
             .Select(ProductImageUrlFromIndex)
             .Select(ProductImage.Create);
-    }
-
-    /// <summary>
-    /// Creates a list of product categories.
-    /// </summary>
-    /// <param name="count">The quantity of categories to be generated.</param>
-    /// <returns>A list of product categories.</returns>
-    public static IEnumerable<ProductCategory> CreateProductCategories(int count = 1)
-    {
-        return Enumerable
-            .Range(0, count)
-            .Select(ProductCategoryFromIndex);
     }
 
     /// <summary>
@@ -139,15 +122,5 @@ public static class ProductUtils
     public static string ProductDescriptionFromIndex(int index)
     {
         return $"{DomainConstants.Product.Description}-{index}";
-    }
-
-    /// <summary>
-    /// Creates a product category from index.
-    /// </summary>
-    /// <param name="index">The index.</param>
-    /// <returns>A product category.</returns>
-    public static ProductCategory ProductCategoryFromIndex(int index)
-    {
-        return ProductCategory.Create(CategoryId.Create(index + 1));
     }
 }

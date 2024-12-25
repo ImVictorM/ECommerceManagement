@@ -13,9 +13,7 @@ public static class CategoryUtils
     /// </summary>
     /// <param name="name">The category name.</param>
     /// <returns>A new instance of the <see cref="Category"/> class.</returns>
-    public static Category CreateCategory(
-        string? name = null
-    )
+    public static Category CreateCategory(string? name = null)
     {
         return Category.Create(name ?? DomainConstants.Category.Name);
     }

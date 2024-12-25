@@ -1,9 +1,9 @@
-using System.Collections.ObjectModel;
 using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
+using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils;
@@ -18,10 +18,9 @@ public static class UserUtils
     /// </summary>
     /// <param name="id">The user id.</param>
     /// <param name="name">The user name.</param>
-    /// <param name="passwordHash">The password hash.</param>
-    /// <param name="passwordSalt">The password salt.</param>
+    /// <param name="passwordHash">The user password hash.</param>
     /// <param name="phone">The user phone.</param>
-    /// <param name="role">The user role.</param>
+    /// <param name="roles">The user roles.</param>
     /// <param name="email">The user email.</param>
     /// <param name="addresses">The user addresses.</param>
     /// <param name="active">Defines if the user should be inactive.</param>
@@ -29,40 +28,33 @@ public static class UserUtils
     public static User CreateUser(
         UserId? id = null,
         string? name = null,
-        string? passwordHash = null,
-        string? passwordSalt = null,
+        Email? email = null,
+        PasswordHash? passwordHash = null,
         string? phone = null,
-        Role? role = null,
-        string? email = null,
-        ReadOnlyCollection<Address>? addresses = null,
+        IReadOnlySet<Role>? roles = null,
+        IReadOnlySet<Address>? addresses = null,
         bool active = true
     )
     {
         var user = User.Create(
             name ?? DomainConstants.User.Name,
-            email != null ? EmailUtils.CreateEmail(email: email) : DomainConstants.User.Email,
-            passwordHash ?? DomainConstants.User.PasswordHash,
-            passwordSalt ?? DomainConstants.User.PasswordSalt,
-            role ?? DomainConstants.User.Role,
+            email ?? EmailUtils.CreateEmail(DomainConstants.User.Email),
+            passwordHash ?? PasswordHashUtils.Create(
+                DomainConstants.User.PasswordHash,
+                DomainConstants.User.PasswordSalt
+            ),
+            roles ?? DomainConstants.User.UserRoles,
             phone ?? DomainConstants.User.Phone
         );
 
         if (id != null)
         {
-            var idProperty = typeof(User).GetProperty(nameof(User.Id), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-
-            if (idProperty != null && idProperty.CanWrite)
-            {
-                idProperty.SetValue(user, id);
-            }
+            user.SetIdUsingReflection(id);
         }
 
         if (addresses != null)
         {
-            foreach (var address in addresses)
-            {
-                user.AssignAddress(address);
-            }
+            user.AssignAddress([.. addresses]);
         }
 
         if (!active)
@@ -85,12 +77,22 @@ public static class UserUtils
             .Range(0, count)
             .Select(index =>
                 CreateUser(
-                    name: DomainConstants.User.UserNameFromIndex(index),
-                    email: SharedKernelConstants.Email.EmailFromIndex(index),
+                    name: UserNameFromIndex(index),
+                    email: EmailUtils.EmailFromIndex(index),
                     active: active
                 )
             );
 
         return users;
+    }
+
+    /// <summary>
+    /// Returns a name concatenated with an index.
+    /// </summary>
+    /// <param name="index">The index to concatenate with.</param>
+    /// <returns>A new name with a concatenated index.</returns>
+    public static string UserNameFromIndex(int index)
+    {
+        return $"{DomainConstants.User.Name}-{index}";
     }
 }

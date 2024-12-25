@@ -1,5 +1,4 @@
 using Domain.CategoryAggregate.ValueObjects;
-using Domain.ProductAggregate.Entities;
 using Domain.ProductAggregate.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils.Constants;
@@ -33,7 +32,7 @@ public static partial class DomainConstants
         /// <summary>
         /// The product quantity available in inventory constant.
         /// </summary>
-        public static readonly Inventory Inventory = Inventory.Create(10);
+        public const int QuantityInInventory = 10;
 
         /// <summary>
         /// The product category constant.
@@ -45,7 +44,7 @@ public static partial class DomainConstants
         ];
 
         /// <summary>
-        /// The product image constant.
+        /// The product images constant.
         /// </summary>
         public static readonly IReadOnlyList<ProductImage> ProductImages =
         [

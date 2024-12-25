@@ -1,7 +1,6 @@
 using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
-using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.ValueObjects;
+using SharedKernel.UnitTests.TestUtils.Constants;
 
 namespace Domain.UnitTests.TestUtils.Constants;
 
@@ -39,17 +38,13 @@ public static partial class DomainConstants
         /// <summary>
         /// The user email constant.
         /// </summary>
-        public static readonly Email Email = EmailUtils.CreateEmail();
+        public const string Email = SharedKernelConstants.Email.Value;
         /// <summary>
-        /// The user role constant.
+        /// The user roles constant.
         /// </summary>
-        public static readonly Role Role = Role.Customer;
-
-        /// <summary>
-        /// Returns a name concatenated with an index.
-        /// </summary>
-        /// <param name="index">The index to concatenate with.</param>
-        /// <returns>A new name with a concatenated index.</returns>
-        public static string UserNameFromIndex(int index) => $"{Name}-{index}";
+        public static readonly IReadOnlySet<Role> UserRoles = new HashSet<Role>()
+        {
+            Role.Customer
+        };
     }
 }

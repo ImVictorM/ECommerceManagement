@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
@@ -21,7 +22,7 @@ public class ProductTests
             DomainConstants.Product.Name,
             DomainConstants.Product.Description,
             DomainConstants.Product.BasePrice,
-            DomainConstants.Product.Inventory.QuantityAvailable,
+            DomainConstants.Product.QuantityInInventory,
             DomainConstants.Product.Categories,
             DomainConstants.Product.ProductImages
         };
@@ -30,7 +31,7 @@ public class ProductTests
             "Computer",
             DomainConstants.Product.Description,
             DomainConstants.Product.BasePrice,
-            DomainConstants.Product.Inventory.QuantityAvailable,
+            DomainConstants.Product.QuantityInInventory,
             DomainConstants.Product.Categories,
             ProductUtils.CreateProductImages(2),
         };
@@ -39,7 +40,7 @@ public class ProductTests
             DomainConstants.Product.Name,
             "Some description for the product",
             DomainConstants.Product.BasePrice,
-            DomainConstants.Product.Inventory.QuantityAvailable,
+            DomainConstants.Product.QuantityInInventory,
             DomainConstants.Product.Categories,
             ProductUtils.CreateProductImages(3),
         };
@@ -48,7 +49,7 @@ public class ProductTests
             DomainConstants.Product.Name,
             DomainConstants.Product.Description,
             100m,
-            DomainConstants.Product.Inventory.QuantityAvailable,
+            DomainConstants.Product.QuantityInInventory,
             DomainConstants.Product.Categories,
             ProductUtils.CreateProductImages(4),
         };
@@ -66,8 +67,8 @@ public class ProductTests
             DomainConstants.Product.Name,
             DomainConstants.Product.Description,
             DomainConstants.Product.BasePrice,
-            DomainConstants.Product.Inventory.QuantityAvailable,
-            ProductUtils.CreateProductCategories(2),
+            DomainConstants.Product.QuantityInInventory,
+            DomainConstants.Product.Categories,
             ProductUtils.CreateProductImages(6),
         };
     }
@@ -98,8 +99,8 @@ public class ProductTests
             var product = ProductUtils.CreateProduct(
                name: name,
                description: description,
-               price: price,
-               quantityAvailable: quantityAvailable,
+               basePrice: price,
+               initialQuantityInInventory: quantityAvailable,
                categories: categories,
                images: images
             );
@@ -129,7 +130,11 @@ public class ProductTests
         var newDescription = "new description";
         var newPrice = 200m;
         var newImages = ProductUtils.CreateProductImages(4);
-        var newCategories = ProductUtils.CreateProductCategories(2);
+        var newCategories = new List<ProductCategory>()
+        {
+            ProductCategory.Create(CategoryId.Create(1)),
+            ProductCategory.Create(CategoryId.Create(2))
+        };
 
         product.UpdateProduct(
             name: newName,
@@ -159,7 +164,7 @@ public class ProductTests
         int expectedQuantityAvailable
     )
     {
-        var product = ProductUtils.CreateProduct(quantityAvailable: initialQuantity);
+        var product = ProductUtils.CreateProduct(initialQuantityInInventory: initialQuantity);
 
         product.IncrementQuantityInInventory(quantityToAdd);
 
@@ -172,7 +177,7 @@ public class ProductTests
     [Fact]
     public void Product_WhenMakingInactive_DeactivatesAndSetsInventoryToZero()
     {
-        var product = ProductUtils.CreateProduct(quantityAvailable: 500);
+        var product = ProductUtils.CreateProduct(initialQuantityInInventory: 500);
 
         product.Deactivate();
 

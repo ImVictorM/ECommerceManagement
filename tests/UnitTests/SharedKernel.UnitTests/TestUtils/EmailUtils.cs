@@ -23,5 +23,8 @@ public static class EmailUtils
     /// </summary>
     /// <param name="index">The index to concatenate with.</param>
     /// <returns>A new email with a concatenated index.</returns>
-    public static string EmailFromIndex(int index) => $"{index}{SharedKernelConstants.Email.Value}";
+    public static Email EmailFromIndex(int index)
+    {
+        return CreateEmail($"{index}{SharedKernelConstants.Email.Value}");
+    }
 }
