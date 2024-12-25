@@ -1,5 +1,6 @@
 using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
+using SharedKernel.Errors;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
 using SharedKernel.ValueObjects;
@@ -47,7 +48,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
         string name,
         Email email,
         PasswordHash passwordHash,
-        Role role,
+        IReadOnlySet<Role> roles,
         string? phone
     )
     {
@@ -58,7 +59,12 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
 
         IsActive = true;
 
-        AssignRole(role);
+        if (roles.Count == 0)
+        {
+            throw new DomainValidationException("Users must have at least one role");
+        }
+
+        _userRoles.UnionWith(roles.Select(r => UserRole.Create(r.Id)));
     }
 
     /// <summary>
@@ -67,13 +73,13 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="phone">The user phone (optional).</param>
-    /// <param name="role">The user initial role to be associated.</param>
+    /// <param name="roles">The user initial roles to be associated.</param>
     /// <param name="passwordHash">The user password hash.</param>
     public static User Create(
         string name,
         Email email,
         PasswordHash passwordHash,
-        Role? role = null,
+        IReadOnlySet<Role> roles,
         string? phone = null
     )
     {
@@ -82,7 +88,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
             name,
             email,
             passwordHash,
-            role ?? Role.Customer,
+            roles,
             phone
         );
 
@@ -146,9 +152,6 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <param name="addresses">The addresses to be added.</param>
     public void AssignAddress(params Address[] addresses)
     {
-        foreach (var address in addresses)
-        {
-            _userAddresses.Add(address);
-        }
+        _userAddresses.UnionWith(addresses);
     }
 }

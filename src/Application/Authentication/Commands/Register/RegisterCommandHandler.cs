@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Application.Authentication.Common.DTOs;
 using SharedKernel.ValueObjects;
 using Domain.UserAggregate.Specification;
+using SharedKernel.Authorization;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -59,7 +60,8 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
         var user = User.Create(
             command.Name,
             inputEmail,
-            passwordHash
+            passwordHash,
+            new HashSet<Role>() { Role.Customer }
         );
 
         LogUserCreatedWithCustomerRole();
