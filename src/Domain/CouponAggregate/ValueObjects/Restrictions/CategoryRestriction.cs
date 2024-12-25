@@ -49,7 +49,7 @@ public class CategoryRestriction : CouponRestriction
         return order.Products.Any(IsProductAllowed);
     }
 
-    private bool IsProductAllowed((ProductId ProductId, IEnumerable<CategoryId> ProductCategories) product)
+    private bool IsProductAllowed((ProductId ProductId, IReadOnlySet<CategoryId> ProductCategories) product)
     {
         return IsProductNotExcluded(product.ProductId) && HasAnyAllowedCategory(product.ProductCategories);
     }

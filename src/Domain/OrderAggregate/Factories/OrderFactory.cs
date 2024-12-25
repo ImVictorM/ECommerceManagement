@@ -1,7 +1,7 @@
+using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
-using SharedKernel.Errors;
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
@@ -36,7 +36,7 @@ public class OrderFactory
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public async Task<Order> CreateOrderAsync(
         UserId ownerId,
-        IEnumerable<OrderProduct> products,
+        IEnumerable<IOrderProduct> products,
         IPaymentMethod paymentMethod,
         Address billingAddress,
         Address deliveryAddress,
@@ -44,18 +44,13 @@ public class OrderFactory
         IEnumerable<OrderCoupon>? couponsApplied = null
     )
     {
-        var hasInventory = await _orderProductService.HasInventoryAvailableAsync(products);
+        var orderProductsWithPrice = await _orderProductService.PrepareOrderProductsAsync(products);
 
-        if (!hasInventory)
-        {
-            throw new DomainValidationException($"Some of the order products are not available");
-        }
-
-        var total = await _orderProductService.CalculateTotalAsync(products, couponsApplied);
+        var total = await _orderProductService.CalculateTotalAsync(orderProductsWithPrice, couponsApplied);
 
         return Order.Create(
             ownerId,
-            products,
+            orderProductsWithPrice,
             total,
             paymentMethod,
             billingAddress,

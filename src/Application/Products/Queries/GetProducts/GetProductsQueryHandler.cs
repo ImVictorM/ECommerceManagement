@@ -43,7 +43,7 @@ public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProduct
         LogInitiatedRetrievingProducts();
         var limit = request.Limit ?? DefaultProductQuantityToTake;
 
-        CompositeQuerySpecification<Product> spec = new QueryActiveProductsSpecification();
+        CompositeQuerySpecification<Product> spec = new QueryActiveProductSpecification();
 
         if (request.Categories != null && request.Categories.Any())
         {

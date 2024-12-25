@@ -12,8 +12,6 @@ using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
-using Domain.CouponRestrictionAggregate;
-using Domain.CouponRestrictionAggregate.ValueObjects;
 
 namespace Application.Common.Interfaces.Persistence;
 
@@ -50,10 +48,6 @@ public interface IUnitOfWork : IDisposable
     /// Gets the coupon repository.
     /// </summary>
     public IRepository<Coupon, CouponId> CouponRepository { get; }
-    /// <summary>
-    /// Gets the coupon restriction repository.
-    /// </summary>
-    public IRepository<CouponRestriction, CouponRestrictionId> CouponRestrictionRepository { get; }
     /// <summary>
     /// Save all the operations done within the repositories.
     /// </summary>

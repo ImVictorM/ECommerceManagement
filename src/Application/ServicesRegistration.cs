@@ -1,10 +1,8 @@
 using Application.Common.Behaviors;
-using Application.Coupons.Services;
 using Application.Orders.Services;
 using Application.Products.Services;
 using Application.Sales.Services;
 
-using Domain.CouponAggregate.Services;
 using Domain.OrderAggregate.Services;
 using Domain.ProductAggregate.Services;
 using Domain.SaleAggregate.Services;
@@ -40,7 +38,6 @@ public static class ServicesRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISaleService, SaleService>();
-        services.AddScoped<ICouponService, CouponService>();
 
         return services;
     }

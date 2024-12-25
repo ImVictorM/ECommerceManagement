@@ -12,7 +12,7 @@ public class CouponOrder : ValueObject
     /// <summary>
     /// Gets the order products.
     /// </summary>
-    public HashSet<(ProductId ProductId, IEnumerable<CategoryId> ProductCategories)> Products { get; } = null!;
+    public HashSet<(ProductId ProductId, IReadOnlySet<CategoryId> ProductCategories)> Products { get; } = null!;
     /// <summary>
     /// Gets the order total.
     /// </summary>
@@ -21,7 +21,7 @@ public class CouponOrder : ValueObject
     private CouponOrder() { }
 
     private CouponOrder(
-        HashSet<(ProductId ProductId, IEnumerable<CategoryId> ProductCategories)> products,
+        HashSet<(ProductId ProductId, IReadOnlySet<CategoryId> ProductCategories)> products,
         decimal total
     )
     {
@@ -36,7 +36,7 @@ public class CouponOrder : ValueObject
     /// <param name="total">The order total.</param>
     /// <returns>A new instance of the <see cref="CouponOrder"/> class.</returns>
     public static CouponOrder Create(
-        HashSet<(ProductId ProductId, IEnumerable<CategoryId> ProductCategories)> products,
+        HashSet<(ProductId ProductId, IReadOnlySet<CategoryId> ProductCategories)> products,
         decimal total
     )
     {

@@ -1,10 +1,10 @@
 using Application.Common.DTOs;
 using Application.Common.Interfaces.Persistence;
+
 using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Factories;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 
@@ -34,10 +34,6 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
     {
         var ownerId = UserId.Create(request.CurrentUserId);
 
-        var orderProducts = request.Products
-            .Select(p => OrderProduct.Create(ProductId.Create(p.Id), p.Quantity))
-            .ToList();
-
         var orderCouponsApplied = request.CouponAppliedIds?
                 .Select(CouponId.Create)
                 .Select(OrderCoupon.Crete);
@@ -46,7 +42,7 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
 
         var order = await orderFactory.CreateOrderAsync(
             ownerId,
-            orderProducts,
+            request.Products,
             request.PaymentMethod,
             request.BillingAddress,
             request.DeliveryAddress,

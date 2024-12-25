@@ -1,3 +1,4 @@
+using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.ValueObjects;
 
 namespace Domain.OrderAggregate.Services;
@@ -8,17 +9,17 @@ namespace Domain.OrderAggregate.Services;
 public interface IOrderService
 {
     /// <summary>
+    /// Prepares the order products verifying inventory.
+    /// </summary>
+    /// <param name="orderProducts">The order products input.</param>
+    /// <returns>A list of prepared order products.</returns>
+    Task<IEnumerable<OrderProduct>> PrepareOrderProductsAsync(IEnumerable<IOrderProduct> orderProducts);
+
+    /// <summary>
     /// Calculates the total amount of the products, applying the necessary discounts.
     /// </summary>
     /// <param name="orderProducts">The products to calculate the total.</param>
     /// <param name="couponsApplied">The coupons applied to the order.</param>
     /// <returns>The total amount.</returns>
     Task<decimal> CalculateTotalAsync(IEnumerable<OrderProduct> orderProducts, IEnumerable<OrderCoupon>? couponsApplied);
-
-    /// <summary>
-    /// Verifies if all the products have available inventory to make the order.
-    /// </summary>
-    /// <param name="orderProducts">The products to be verified.</param>
-    /// <returns>A boolean value indicating if all products have available inventory.</returns>
-    Task<bool> HasInventoryAvailableAsync(IEnumerable<OrderProduct> orderProducts);
 }
