@@ -6,7 +6,7 @@ namespace Infrastructure.Persistence;
 public class DbConnectionSettings
 {
     /// <summary>
-    /// The appsettings.json section name that it maps.
+    /// The settings section name.
     /// </summary>
     public const string SectionName = "DbConnectionSettings";
 

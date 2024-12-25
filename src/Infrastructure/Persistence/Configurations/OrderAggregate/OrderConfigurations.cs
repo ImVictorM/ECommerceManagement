@@ -7,7 +7,7 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
-using Infrastructure.Persistence.Configurations.Common;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,16 +21,13 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        ConfigureOrderTable(builder);
-        ConfigureOwnedOrderProductTable(builder);
-        ConfigureOwnedOrderStatusHistoryTable(builder);
+        ConfigureOrdersTable(builder);
+        ConfigureOwnedOrdersCouponsTable(builder);
+        ConfigureOwnedOrdersProductsTable(builder);
+        ConfigureOwnedOrderStatusHistoriesTable(builder);
     }
 
-    /// <summary>
-    /// Configures the orders table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOrderTable(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOrdersTable(EntityTypeBuilder<Order> builder)
     {
         builder.ToTable("orders");
 
@@ -73,29 +70,45 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .Property(order => order.Description)
             .HasMaxLength(200)
             .IsRequired();
+    }
 
-        builder.OwnsMany(o => o.CouponsApplied, ownedBuillder =>
+    private static void ConfigureOwnedOrdersCouponsTable(EntityTypeBuilder<Order> builder)
+    {
+        builder.OwnsMany(o => o.CouponsApplied, orderCouponBuilder =>
         {
-            ownedBuillder.ToTable("orders_coupon_ids");
+            orderCouponBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            ownedBuillder
-                .Property(couponId => couponId.Value)
-                .ValueGeneratedNever()
+            orderCouponBuilder.ToTable("orders_coupons");
+
+            orderCouponBuilder
+                .Property<long>("id")
+                .ValueGeneratedOnAdd()
                 .IsRequired();
 
-            ownedBuillder.WithOwner().HasForeignKey("id_order");
+            orderCouponBuilder.HasKey("id");
 
-            ownedBuillder.Property<long>("id").ValueGeneratedOnAdd().IsRequired();
+            orderCouponBuilder
+                .WithOwner()
+                .HasForeignKey("id_order");
 
-            ownedBuillder.HasKey("id");
+            orderCouponBuilder
+                .Property("id_order")
+                .IsRequired();
+
+            orderCouponBuilder
+                .HasOne<Coupon>()
+                .WithMany()
+                .HasForeignKey(orderCoupon => orderCoupon.CouponId)
+                .IsRequired();
+
+            orderCouponBuilder
+                .Property(orderCoupon => orderCoupon.CouponId)
+                .HasConversion(id => id.Value, value => CouponId.Create(value))
+                .IsRequired();
         });
     }
 
-    /// <summary>
-    /// Configures the orders_products table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedOrderProductTable(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOwnedOrdersProductsTable(EntityTypeBuilder<Order> builder)
     {
         builder.OwnsMany(order => order.Products, orderProductsBuilder =>
         {
@@ -138,11 +151,7 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
         });
     }
 
-    /// <summary>
-    /// Configures the order_status_histories table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedOrderStatusHistoryTable(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOwnedOrderStatusHistoriesTable(EntityTypeBuilder<Order> builder)
     {
         builder.OwnsMany(o => o.OrderStatusHistories, orderStatusHistoryBuilder =>
         {

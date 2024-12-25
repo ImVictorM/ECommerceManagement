@@ -16,16 +16,12 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        ConfigureUserTable(builder);
-        ConfigureOwnedUserAddressTable(builder);
-        ConfigureOwnedUserRolesTable(builder);
+        ConfigureUsersTable(builder);
+        ConfigureOwnedUserAddressesTable(builder);
+        ConfigureOwnedUsersRolesTable(builder);
     }
 
-    /// <summary>
-    /// Configure the users table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureUserTable(EntityTypeBuilder<User> builder)
+    private static void ConfigureUsersTable(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users");
 
@@ -74,11 +70,7 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
         builder.HasIndex(user => user.Email).IsUnique();
     }
 
-    /// <summary>
-    /// Configure the user_addresses table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedUserAddressTable(EntityTypeBuilder<User> builder)
+    private static void ConfigureOwnedUserAddressesTable(EntityTypeBuilder<User> builder)
     {
         builder.OwnsMany(user => user.UserAddresses, userAddressBuilder =>
         {
@@ -102,11 +94,7 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
         });
     }
 
-    /// <summary>
-    /// Configure the users_roles table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedUserRolesTable(EntityTypeBuilder<User> builder)
+    private static void ConfigureOwnedUsersRolesTable(EntityTypeBuilder<User> builder)
     {
         builder.OwnsMany(user => user.UserRoles, userRolesBuilder =>
         {

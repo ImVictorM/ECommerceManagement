@@ -6,7 +6,7 @@ namespace Infrastructure.Authentication;
 public class JwtSettings
 {
     /// <summary>
-    /// Gets settings section name.
+    /// The settings section name.
     /// </summary>
     public const string SectionName = "JwtSettings";
     /// <summary>

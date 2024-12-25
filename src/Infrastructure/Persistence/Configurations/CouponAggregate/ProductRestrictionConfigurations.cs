@@ -1,10 +1,10 @@
-using Domain.CouponRestrictionAggregate.Entities;
+using Domain.CouponAggregate.ValueObjects.Restrictions;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Configurations.CouponRestrictionAggregate;
+namespace Infrastructure.Persistence.Configurations.CouponAggregate;
 
 /// <summary>
 /// Configures the <see cref="ProductRestriction"/> restriction tables.

@@ -29,7 +29,7 @@ public sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
 
         return base.SavedChanges(eventData, result);
     }
- 
+
     /// <inheritdoc/>
     public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
     {

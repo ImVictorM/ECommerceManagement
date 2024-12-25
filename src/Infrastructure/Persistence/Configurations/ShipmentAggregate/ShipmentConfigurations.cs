@@ -17,15 +17,11 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<Shipment> builder)
     {
-        ConfigureShipmentTable(builder);
-        ConfigureOwnedShipmentStatusHistoryTable(builder);
+        ConfigureShipmentsTable(builder);
+        ConfigureOwnedShipmentStatusHistoriesTable(builder);
     }
 
-    /// <summary>
-    /// Configures the shipments table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureShipmentTable(EntityTypeBuilder<Shipment> builder)
+    private static void ConfigureShipmentsTable(EntityTypeBuilder<Shipment> builder)
     {
         builder.ToTable("shipments");
 
@@ -62,20 +58,12 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
 
         builder
             .Property(s => s.ShipmentStatusId)
-            .HasConversion(
-                id => id.Value,
-                value => ShipmentStatusId.Create(value)
-            )
             .IsRequired();
 
         builder.OwnsOne(order => order.DeliveryAddress, AddressNavigationBuilderConfigurations.Configure);
     }
 
-    /// <summary>
-    /// Configures the shipment_status_histories table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedShipmentStatusHistoryTable(EntityTypeBuilder<Shipment> builder)
+    private static void ConfigureOwnedShipmentStatusHistoriesTable(EntityTypeBuilder<Shipment> builder)
     {
         builder.OwnsMany(s => s.ShipmentStatusHistories, shipmentStatusHistoryBuilder =>
         {
@@ -100,10 +88,6 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
 
             shipmentStatusHistoryBuilder
                 .Property(ssh => ssh.ShipmentStatusId)
-                .HasConversion(
-                    id => id.Value,
-                    value => ShipmentStatusId.Create(value)
-                )
                 .IsRequired();
 
             shipmentStatusHistoryBuilder

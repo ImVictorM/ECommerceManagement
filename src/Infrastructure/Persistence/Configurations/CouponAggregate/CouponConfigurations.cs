@@ -1,4 +1,5 @@
 using Domain.CouponAggregate;
+using Domain.CouponAggregate.Abstracts;
 using Domain.CouponAggregate.ValueObjects;
 using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
@@ -47,5 +48,13 @@ public class CouponConfigurations : IEntityTypeConfiguration<Coupon>
         builder
             .Property(c => c.IsActive)
             .IsRequired();
+
+        builder
+            .HasMany<CouponRestriction>(c => c.Restrictions)
+            .WithOne()
+            .HasForeignKey("id_coupon")
+            .IsRequired(false);
+
+        builder.Navigation(c => c.Restrictions).UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

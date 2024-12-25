@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20241220231706_InitialCreate")]
+    [Migration("20241224203619_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -56,6 +56,29 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("categories", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.CouponAggregate.Abstracts.CouponRestriction", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("nextval('\"CouponRestrictionSequence\"')");
+
+                    NpgsqlPropertyBuilderExtensions.UseSequence(b.Property<long>("id"));
+
+                    b.Property<long>("id_coupon")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_coupon");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("id_coupon");
+
+                    b.ToTable((string)null);
+
+                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.CouponAggregate.Coupon", b =>
@@ -103,37 +126,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("coupons", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.CouponRestrictionAggregate.CouponRestriction", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("nextval('\"CouponRestrictionSequence\"')");
-
-                    NpgsqlPropertyBuilderExtensions.UseSequence(b.Property<long>("Id"));
-
-                    b.Property<long>("CouponId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_coupon");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CouponId");
-
-                    b.ToTable((string)null);
-
-                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.OrderAggregate.Enumerations.OrderStatus", b =>
@@ -457,19 +449,11 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)")
                         .HasColumnName("name");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -482,37 +466,27 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(7195), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "pending",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8214), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "pending"
                         },
                         new
                         {
                             Id = 2L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8594), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "shipped",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8595), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "shipped"
                         },
                         new
                         {
                             Id = 3L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "in_route",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "in_route"
                         },
                         new
                         {
                             Id = 4L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8628), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "delivered",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8629), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "delivered"
                         },
                         new
                         {
                             Id = 5L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8639), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "canceled",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8640), new TimeSpan(0, 0, 0, 0, 0))
+                            Name = "canceled"
                         });
                 });
 
@@ -640,18 +614,25 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.CouponRestrictionAggregate.Entities.CategoryRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.CategoryRestriction", b =>
                 {
-                    b.HasBaseType("Domain.CouponRestrictionAggregate.CouponRestriction");
+                    b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
                     b.ToTable("restriction_categories", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.CouponRestrictionAggregate.Entities.ProductRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.ProductRestriction", b =>
                 {
-                    b.HasBaseType("Domain.CouponRestrictionAggregate.CouponRestriction");
+                    b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
                     b.ToTable("restriction_products", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.CouponAggregate.Abstracts.CouponRestriction", b =>
+                {
+                    b.HasOne("Domain.CouponAggregate.Coupon", null)
+                        .WithMany("Restrictions")
+                        .HasForeignKey("id_coupon");
                 });
 
             modelBuilder.Entity("Domain.CouponAggregate.Coupon", b =>
@@ -692,15 +673,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.CouponRestrictionAggregate.CouponRestriction", b =>
-                {
-                    b.HasOne("Domain.CouponAggregate.Coupon", null)
-                        .WithMany()
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
                     b.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
@@ -715,7 +687,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.CouponId", "CouponAppliedIds", b1 =>
+                    b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderCoupon", "CouponsApplied", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -724,9 +696,9 @@ namespace Infrastructure.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
 
-                            b1.Property<long>("Value")
+                            b1.Property<long>("CouponId")
                                 .HasColumnType("bigint")
-                                .HasColumnName("value");
+                                .HasColumnName("id_coupon");
 
                             b1.Property<long>("id_order")
                                 .HasColumnType("bigint")
@@ -734,9 +706,17 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("id");
 
+                            b1.HasIndex("CouponId");
+
                             b1.HasIndex("id_order");
 
-                            b1.ToTable("orders_coupon_ids", (string)null);
+                            b1.ToTable("orders_coupons", (string)null);
+
+                            b1.HasOne("Domain.CouponAggregate.Coupon", null)
+                                .WithMany()
+                                .HasForeignKey("CouponId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("id_order");
@@ -820,7 +800,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_order");
                         });
 
-                    b.Navigation("CouponAppliedIds");
+                    b.Navigation("CouponsApplied");
 
                     b.Navigation("OrderStatusHistories");
 
@@ -1047,7 +1027,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("SaleId");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleProduct", "ProductsExcludedFromSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleReference", "ProductsExcludedFromSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1082,7 +1062,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleProduct", "ProductsInSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleReference", "ProductsInSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1117,7 +1097,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleCategory", "CategoriesInSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.CategoryReference", "CategoriesInSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1358,44 +1338,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Domain.CouponRestrictionAggregate.Entities.CategoryRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.CategoryRestriction", b =>
                 {
-                    b.OwnsMany("Domain.CouponRestrictionAggregate.ValueObjects.ProductRestricted", "ProductsFromCategoryNotAllowed", b1 =>
-                        {
-                            b1.Property<long>("id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
-
-                            b1.Property<long>("ProductId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_product");
-
-                            b1.Property<long?>("id_restriction_category")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_restriction_category");
-
-                            b1.HasKey("id");
-
-                            b1.HasIndex("ProductId");
-
-                            b1.HasIndex("id_restriction_category");
-
-                            b1.ToTable("restriction_products_not_allowed_products", (string)null);
-
-                            b1.HasOne("Domain.ProductAggregate.Product", null)
-                                .WithMany()
-                                .HasForeignKey("ProductId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
-
-                            b1.WithOwner()
-                                .HasForeignKey("id_restriction_category");
-                        });
-
-                    b.OwnsMany("Domain.CouponRestrictionAggregate.ValueObjects.CategoryRestricted", "CategoriesAllowed", b1 =>
+                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.CategoryRestricted", "CategoriesAllowed", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1408,7 +1353,7 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_category");
 
-                            b1.Property<long?>("id_restriction_category")
+                            b1.Property<long>("id_restriction_category")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_restriction_category");
 
@@ -1430,14 +1375,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_restriction_category");
                         });
 
-                    b.Navigation("CategoriesAllowed");
-
-                    b.Navigation("ProductsFromCategoryNotAllowed");
-                });
-
-            modelBuilder.Entity("Domain.CouponRestrictionAggregate.Entities.ProductRestriction", b =>
-                {
-                    b.OwnsMany("Domain.CouponRestrictionAggregate.ValueObjects.ProductRestricted", "ProductsAllowed", b1 =>
+                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.ProductRestricted", "ProductsFromCategoryNotAllowed", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1450,7 +1388,49 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_product");
 
-                            b1.Property<long?>("id_restriction_product")
+                            b1.Property<long>("id_restriction_category")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id_restriction_category");
+
+                            b1.HasKey("id");
+
+                            b1.HasIndex("ProductId");
+
+                            b1.HasIndex("id_restriction_category");
+
+                            b1.ToTable("restriction_products_not_allowed_products", (string)null);
+
+                            b1.HasOne("Domain.ProductAggregate.Product", null)
+                                .WithMany()
+                                .HasForeignKey("ProductId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+
+                            b1.WithOwner()
+                                .HasForeignKey("id_restriction_category");
+                        });
+
+                    b.Navigation("CategoriesAllowed");
+
+                    b.Navigation("ProductsFromCategoryNotAllowed");
+                });
+
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.ProductRestriction", b =>
+                {
+                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.ProductRestricted", "ProductsAllowed", b1 =>
+                        {
+                            b1.Property<long>("id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
+
+                            b1.Property<long>("ProductId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id_product");
+
+                            b1.Property<long>("id_restriction_product")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_restriction_product");
 
@@ -1473,6 +1453,11 @@ namespace Infrastructure.Migrations
                         });
 
                     b.Navigation("ProductsAllowed");
+                });
+
+            modelBuilder.Entity("Domain.CouponAggregate.Coupon", b =>
+                {
+                    b.Navigation("Restrictions");
                 });
 #pragma warning restore 612, 618
         }

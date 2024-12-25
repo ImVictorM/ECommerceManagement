@@ -19,14 +19,10 @@ public sealed class ProductFeedbackConfigurations : IEntityTypeConfiguration<Pro
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<ProductFeedback> builder)
     {
-        ConfigureProductFeedbackTable(builder);
+        ConfigureProductFeedbacksTable(builder);
     }
 
-    /// <summary>
-    /// Configure the product_feedbacks table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureProductFeedbackTable(EntityTypeBuilder<ProductFeedback> builder)
+    private static void ConfigureProductFeedbacksTable(EntityTypeBuilder<ProductFeedback> builder)
     {
         builder.ToTable("product_feedbacks");
 

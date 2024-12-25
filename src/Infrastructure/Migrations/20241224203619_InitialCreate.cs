@@ -1,4 +1,3 @@
-﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -132,9 +131,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -165,9 +162,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "nextval('\"CouponRestrictionSequence\"')"),
-                    id_coupon = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id_coupon = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -176,8 +171,7 @@ namespace Infrastructure.Migrations
                         name: "FK_restriction_categories_coupons_id_coupon",
                         column: x => x.id_coupon,
                         principalTable: "coupons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -185,9 +179,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "nextval('\"CouponRestrictionSequence\"')"),
-                    id_coupon = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id_coupon = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -196,8 +188,7 @@ namespace Infrastructure.Migrations
                         name: "FK_restriction_products_coupons_id_coupon",
                         column: x => x.id_coupon,
                         principalTable: "coupons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -433,7 +424,7 @@ namespace Infrastructure.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     id_category = table.Column<long>(type: "bigint", nullable: false),
-                    id_restriction_category = table.Column<long>(type: "bigint", nullable: true)
+                    id_restriction_category = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -448,7 +439,8 @@ namespace Infrastructure.Migrations
                         name: "FK_restriction_categories_allowed_categories_restriction_categ~",
                         column: x => x.id_restriction_category,
                         principalTable: "restriction_categories",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -458,7 +450,7 @@ namespace Infrastructure.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
-                    id_restriction_category = table.Column<long>(type: "bigint", nullable: true)
+                    id_restriction_category = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -473,7 +465,8 @@ namespace Infrastructure.Migrations
                         name: "FK_restriction_products_not_allowed_products_restriction_categ~",
                         column: x => x.id_restriction_category,
                         principalTable: "restriction_categories",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -483,7 +476,7 @@ namespace Infrastructure.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
-                    id_restriction_product = table.Column<long>(type: "bigint", nullable: true)
+                    id_restriction_product = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -530,19 +523,25 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "orders_coupon_ids",
+                name: "orders_coupons",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    value = table.Column<long>(type: "bigint", nullable: false),
+                    id_coupon = table.Column<long>(type: "bigint", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_orders_coupon_ids", x => x.id);
+                    table.PrimaryKey("PK_orders_coupons", x => x.id);
                     table.ForeignKey(
-                        name: "FK_orders_coupon_ids_orders_id_order",
+                        name: "FK_orders_coupons_coupons_id_coupon",
+                        column: x => x.id_coupon,
+                        principalTable: "coupons",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_orders_coupons_orders_id_order",
                         column: x => x.id_order,
                         principalTable: "orders",
                         principalColumn: "id",
@@ -770,14 +769,14 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "shipment_statuses",
-                columns: new[] { "id", "created_at", "name", "updated_at" },
+                columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(7195), new TimeSpan(0, 0, 0, 0, 0)), "pending", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8214), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 2L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8594), new TimeSpan(0, 0, 0, 0, 0)), "shipped", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8595), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 3L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0)), "in_route", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8615), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 4L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8628), new TimeSpan(0, 0, 0, 0, 0)), "delivered", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8629), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { 5L, new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8639), new TimeSpan(0, 0, 0, 0, 0)), "canceled", new DateTimeOffset(new DateTime(2024, 12, 20, 23, 17, 6, 0, DateTimeKind.Unspecified).AddTicks(8640), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { 1L, "pending" },
+                    { 2L, "shipped" },
+                    { 3L, "in_route" },
+                    { 4L, "delivered" },
+                    { 5L, "canceled" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -825,8 +824,13 @@ namespace Infrastructure.Migrations
                 column: "id_owner");
 
             migrationBuilder.CreateIndex(
-                name: "IX_orders_coupon_ids_id_order",
-                table: "orders_coupon_ids",
+                name: "IX_orders_coupons_id_coupon",
+                table: "orders_coupons",
+                column: "id_coupon");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_orders_coupons_id_order",
+                table: "orders_coupons",
                 column: "id_order");
 
             migrationBuilder.CreateIndex(
@@ -1032,7 +1036,7 @@ namespace Infrastructure.Migrations
                 name: "order_status_histories");
 
             migrationBuilder.DropTable(
-                name: "orders_coupon_ids");
+                name: "orders_coupons");
 
             migrationBuilder.DropTable(
                 name: "orders_products");

@@ -16,15 +16,11 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
     /// <inheritdoc/>
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        ConfigurePaymentTable(builder);
-        ConfigureOwnedPaymentStatusHistoryTable(builder);
+        ConfigurePaymentsTable(builder);
+        ConfigureOwnedPaymentStatusHistoriesTable(builder);
     }
 
-    /// <summary>
-    /// Configure the payments table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigurePaymentTable(EntityTypeBuilder<Payment> builder)
+    private static void ConfigurePaymentsTable(EntityTypeBuilder<Payment> builder)
     {
         builder.ToTable("payments");
 
@@ -69,11 +65,7 @@ public sealed class PaymentConfigurations : IEntityTypeConfiguration<Payment>
         builder.Ignore(payment => payment.PaymentMethod);
     }
 
-    /// <summary>
-    /// Configures the payment_status_histories table.
-    /// </summary>
-    /// <param name="builder">The entity type builder.</param>
-    private static void ConfigureOwnedPaymentStatusHistoryTable(EntityTypeBuilder<Payment> builder)
+    private static void ConfigureOwnedPaymentStatusHistoriesTable(EntityTypeBuilder<Payment> builder)
     {
         builder.OwnsMany(p => p.PaymentStatusHistories, paymentStatusHistoryBuilder =>
         {

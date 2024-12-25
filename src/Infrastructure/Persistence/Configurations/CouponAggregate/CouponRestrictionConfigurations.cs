@@ -1,11 +1,9 @@
-using Domain.CouponAggregate;
+using Domain.CouponAggregate.Abstracts;
 using Domain.CouponAggregate.ValueObjects;
-using Domain.CouponRestrictionAggregate;
-using Domain.CouponRestrictionAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Configurations.CouponRestrictionAggregate;
+namespace Infrastructure.Persistence.Configurations.CouponAggregate;
 
 /// <summary>
 /// Configures the <see cref="CouponRestriction"/> using the Type-per-concrete strategy.
@@ -17,21 +15,15 @@ public class CouponRestrictionConfigurations : IEntityTypeConfiguration<CouponRe
     {
         builder.UseTpcMappingStrategy();
 
-        builder.HasKey(cr => cr.Id);
-
         builder
-            .Property(cr => cr.Id)
-            .HasConversion(id => id.Value, value => CouponRestrictionId.Create(value))
+            .Property<long>("id")
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder
-            .HasOne<Coupon>()
-            .WithMany()
-            .HasForeignKey(cr => cr.CouponId);
+        builder.HasKey("id");
 
         builder
-            .Property(cr => cr.CouponId)
+            .Property<CouponId>("id_coupon")
             .HasConversion(id => id.Value, value => CouponId.Create(value))
             .IsRequired();
     }

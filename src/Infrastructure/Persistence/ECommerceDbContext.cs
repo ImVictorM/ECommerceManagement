@@ -1,5 +1,5 @@
 using Domain.CouponAggregate;
-using Domain.CouponRestrictionAggregate;
+using Domain.CouponAggregate.Abstracts;
 using Domain.OrderAggregate;
 using Domain.PaymentAggregate;
 using Domain.ProductAggregate;
@@ -23,12 +23,7 @@ namespace Infrastructure.Persistence;
 /// </summary>
 public class ECommerceDbContext : DbContext
 {
-    /// <summary>
-    /// The prefix used in the database PKs and FKs.
-    /// By convention, all the PKs will have this exactly name.
-    /// </summary>
     private const string KeyPrefix = "id";
-
     private readonly IEnumerable<IInterceptor> _interceptors;
 
     /// <summary>
