@@ -7,7 +7,7 @@ namespace Contracts.Common;
 /// <param name="Description">The discount description.</param>
 /// <param name="StartingDate">The discount starting date.</param>
 /// <param name="EndingDate">The discount ending date.</param>
-public record Discount(
+public record DiscountContract(
     int Percentage,
     string Description,
     DateTimeOffset StartingDate,

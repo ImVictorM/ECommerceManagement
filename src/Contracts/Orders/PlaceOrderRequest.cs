@@ -1,5 +1,6 @@
 using Contracts.Common;
 using Contracts.Orders.Common;
+using Contracts.Payments.Common;
 
 namespace Contracts.Orders;
 
@@ -13,8 +14,8 @@ namespace Contracts.Orders;
 /// <param name="installments">The installments.</param>
 public record PlaceOrderRequest(
     IEnumerable<OrderProduct> Products,
-    Address BillingAddress,
-    Address DeliveryAddress,
+    AddressContract BillingAddress,
+    AddressContract DeliveryAddress,
     PaymentMethod PaymentMethod,
     int? installments = null
 );

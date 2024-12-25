@@ -8,7 +8,7 @@ namespace Contracts.Common;
 /// <param name="Neighborhood">The address neighborhood.</param>
 /// <param name="State">The address state.</param>
 /// <param name="City">The address city.</param>
-public record Address(
+public record AddressContract(
     string PostalCode,
     string Street,
     string State,

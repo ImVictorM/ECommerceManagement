@@ -16,6 +16,6 @@ public record UserResponse(
     string Name,
     string Email,
     string? Phone,
-    IEnumerable<Address> Addresses,
+    IEnumerable<AddressContract> Addresses,
     IEnumerable<string> Roles
 );

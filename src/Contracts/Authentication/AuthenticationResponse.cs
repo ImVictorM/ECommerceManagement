@@ -1,7 +1,7 @@
 namespace Contracts.Authentication;
 
 /// <summary>
-/// The response type for authentication requests.
+/// The response type for authentications.
 /// </summary>
 /// <param name="Id">The user identifier.</param>
 /// <param name="Name">The user name.</param>

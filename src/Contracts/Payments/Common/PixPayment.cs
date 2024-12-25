@@ -1,4 +1,4 @@
-namespace Contracts.Orders.Common;
+namespace Contracts.Payments.Common;
 
 /// <summary>
 /// Represents a PIX payment method.
