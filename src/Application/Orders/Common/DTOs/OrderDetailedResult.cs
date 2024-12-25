@@ -1,4 +1,5 @@
 using Domain.OrderAggregate;
+using Domain.PaymentAggregate;
 
 namespace Application.Orders.Common.DTOs;
 
@@ -6,4 +7,8 @@ namespace Application.Orders.Common.DTOs;
 /// Represents an order result.
 /// </summary>
 /// <param name="Order">The order.</param>
-public record OrderResult(Order Order);
+/// <param name="Payment">The order payment.</param>
+public record OrderDetailedResult(
+    Order Order,
+    Payment? Payment
+);

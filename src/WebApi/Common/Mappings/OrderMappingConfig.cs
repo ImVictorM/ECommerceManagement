@@ -19,13 +19,17 @@ public class OrderMappingConfig : IRegister
             .Map(dest => dest.PaymentMethod, src => src.Request.PaymentMethod)
             .Map(dest => dest.Installments, src => src.Request.installments);
 
-        config.NewConfig<OrderResult, OrderResponse>()
-            .Map(dest => dest.Id, src => src.Order.Id)
-            .Map(dest => dest.OwnerId, src => src.Order.OwnerId)
-            .Map(dest => dest.BaseTotal, src => src.Order.Total)
-            .Map(dest => dest.TotalWithDiscounts, src => src.Order.Total)
+        config.NewConfig<OrderDetailedResult, OrderDetailedResponse>()
+            .Map(dest => dest.Id, src => src.Order.Id.ToString())
+            .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
+            .Map(dest => dest.Total, src => src.Order.Total)
             .Map(dest => dest.Description, src => src.Order.Description)
-            //.Map(dest => dest.DiscountsApplied, src => src.Order.CouponsApplied)
-            .Map(dest => dest.Status, src => src.Order.GetStatusDescription());
+            .Map(dest => dest.Status, src => src.Order.GetStatusDescription())
+            .Map(dest => dest.Products, src => src.Order.Products)
+            .Map(dest => dest.Payment, src => src.Payment)
+            .Map(
+                dest => dest.Payment != null ? dest.Payment.PaymentType : null,
+                src => src.Payment != null ? src.Payment.PaymentMethod.Type : null
+            );
     }
 }

@@ -1,7 +1,6 @@
+using Contracts.Common;
 using Mapster;
-
-using ContractAddress = Contracts.Common.Address;
-using DomainAddress = SharedKernel.ValueObjects.Address;
+using SharedKernel.ValueObjects;
 
 namespace WebApi.Common.Mappings.Common;
 
@@ -13,8 +12,8 @@ public class AddressMappingConfig : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<ContractAddress, DomainAddress>()
-            .MapWith(src => DomainAddress.Create(
+        config.NewConfig<AddressContract, Address>()
+            .MapWith(src => Address.Create(
                 src.PostalCode,
                 src.Street,
                 src.State,

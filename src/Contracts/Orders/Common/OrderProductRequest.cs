@@ -1,8 +1,11 @@
 namespace Contracts.Orders.Common;
 
 /// <summary>
-/// Represents an order product response.
+/// Represents an order product request.
 /// </summary>
 /// <param name="ProductId">The product id.</param>
 /// <param name="Quantity">The product quantity.</param>
-public record OrderProduct(string ProductId, string Quantity);
+public record OrderProductRequest(
+    string ProductId,
+    string Quantity
+);

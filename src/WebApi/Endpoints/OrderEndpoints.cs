@@ -66,7 +66,7 @@ public class OrderEndpoints : ICarterModule
         return TypedResults.Created($"/{BaseEndpoint}/{response.Id}");
     }
 
-    private async Task<Results<Ok<OrderResponse>, ForbidHttpResult, NotFound>> GetOrderById(
+    private async Task<Results<Ok<OrderDetailedResponse>, ForbidHttpResult, NotFound>> GetOrderById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper,
@@ -79,6 +79,6 @@ public class OrderEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(mapper.Map<OrderResponse>(result));
+        return TypedResults.Ok(mapper.Map<OrderDetailedResponse>(result));
     }
 }

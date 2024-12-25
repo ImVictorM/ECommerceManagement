@@ -14,7 +14,7 @@ namespace Application.Orders.Queries.GetOrderById;
 /// <summary>
 /// Query handler for the <see cref="GetOrderByIdQuery"/> query.
 /// </summary>
-public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderResult>
+public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDetailedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -28,7 +28,7 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
     }
 
     /// <inheritdoc/>
-    public async Task<OrderResult> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+    public async Task<OrderDetailedResult> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
         var orderId = OrderId.Create(request.OrderId);
         var currentUserId = UserId.Create(request.CurrentUserId);
@@ -44,6 +44,8 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
             throw new UserNotAllowedException($"The current user does not have permission to access the order with id {orderId}");
         }
 
-        return new OrderResult(order);
+        var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(p => p.OrderId == order.Id);
+
+        return new OrderDetailedResult(order, orderPayment);
     }
 }

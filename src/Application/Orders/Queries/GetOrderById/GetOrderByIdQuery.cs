@@ -8,4 +8,4 @@ namespace Application.Orders.Queries.GetOrderById;
 /// </summary>
 /// <param name="CurrentUserId">The identifier of the current user.</param>
 /// <param name="OrderId">The order id.</param>
-public record GetOrderByIdQuery(string CurrentUserId, string OrderId) : IRequest<OrderResult>;
+public record GetOrderByIdQuery(string CurrentUserId, string OrderId) : IRequest<OrderDetailedResult>;

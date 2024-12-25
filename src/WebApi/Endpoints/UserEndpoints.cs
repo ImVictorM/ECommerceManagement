@@ -1,17 +1,20 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Application.Users.Commands.DeactivateUser;
 using Application.Users.Commands.UpdateUser;
 using Application.Users.Queries.GetAllUsers;
 using Application.Users.Queries.GetUserById;
-using Carter;
+
 using Contracts.Users;
-using MapsterMapper;
-using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+
 using WebApi.Authorization.AdminRequired;
 using WebApi.Common.Extensions;
+
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using MapsterMapper;
+using MediatR;
+using Carter;
 
 namespace WebApi.Endpoints;
 
@@ -112,7 +115,7 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserResponse>(result));
     }
 
-    private async Task<Results<Ok<UserListResponse>, ForbidHttpResult, UnauthorizedHttpResult>> GetAllUsers(
+    private async Task<Results<Ok<IEnumerable<UserResponse>>, ForbidHttpResult, UnauthorizedHttpResult>> GetAllUsers(
         [FromQuery(Name = "active")] bool? IsActive,
         ISender sender,
         IMapper mapper
@@ -122,7 +125,7 @@ public sealed class UserEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(mapper.Map<UserListResponse>(result));
+        return TypedResults.Ok(result.Select(mapper.Map<UserResponse>));
     }
 
     private async Task<Results<NoContent, BadRequest, Conflict, ForbidHttpResult, UnauthorizedHttpResult>> UpdateUser(

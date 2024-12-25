@@ -18,6 +18,6 @@ public record OrderDetailedResponse(
     string Description,
     string Status,
     decimal Total,
-    IEnumerable<OrderProduct> Products,
-    OrderPayment Payment
+    IEnumerable<OrderProductResponse> Products,
+    OrderPayment? Payment
 );

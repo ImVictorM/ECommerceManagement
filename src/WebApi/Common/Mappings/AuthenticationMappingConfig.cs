@@ -11,10 +11,7 @@ namespace WebApi.Common.Mappings;
 /// </summary>
 public class AuthenticationMappingConfig : IRegister
 {
-    /// <summary>
-    /// Register the mapping configurations.
-    /// </summary>
-    /// <param name="config">Global configuration object.</param>
+    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<RegisterRequest, RegisterCommand>();

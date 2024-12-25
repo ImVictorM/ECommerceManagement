@@ -13,7 +13,7 @@ namespace Contracts.Orders;
 /// <param name="PaymentMethod">The order payment method.</param>
 /// <param name="installments">The installments.</param>
 public record PlaceOrderRequest(
-    IEnumerable<OrderProduct> Products,
+    IEnumerable<OrderProductRequest> Products,
     AddressContract BillingAddress,
     AddressContract DeliveryAddress,
     PaymentMethod PaymentMethod,

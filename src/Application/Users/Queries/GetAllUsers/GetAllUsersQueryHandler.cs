@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Users.Common.DTOs;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +9,7 @@ namespace Application.Users.Queries.GetAllUsers;
 /// <summary>
 /// Query handler for the <see cref="GetAllUsersQuery"/> query.
 /// </summary>
-public sealed partial class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, UserListResult>
+public sealed partial class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<UserResult>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -24,7 +25,7 @@ public sealed partial class GetAllUsersQueryHandler : IRequestHandler<GetAllUser
     }
 
     /// <inheritdoc/>
-    public async Task<UserListResult> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<UserResult>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
         LogInitiatingUsersRetrieval();
 
@@ -34,6 +35,6 @@ public sealed partial class GetAllUsersQueryHandler : IRequestHandler<GetAllUser
 
         LogUsersRetrieved(request.IsActive);
 
-        return new UserListResult(users);
+        return users.Select(u => new UserResult(u));
     }
 }
