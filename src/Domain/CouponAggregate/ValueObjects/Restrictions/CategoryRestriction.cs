@@ -30,14 +30,21 @@ public class CategoryRestriction : CouponRestriction
         ProductsFromCategoryNotAllowed = productsFromNotAllowed ?? [];
     }
 
-    internal static CategoryRestriction Create(
+    /// <summary>
+    /// /Creates a new instance of the <see cref="CategoryRestriction"/> class.
+    /// </summary>
+    /// <param name="categoriesAllowed">The categories allowed.</param>
+    /// <param name="productsFromCategoryNotAllowed">The products from the category not allowed.</param>
+    /// <returns>A new instance of the <see cref="CategoryRestriction"/> class.</returns>
+    /// <exception cref="DomainValidationException">Thrown when categories allowed list is empty.</exception>
+    public static CategoryRestriction Create(
         IEnumerable<CouponCategory> categoriesAllowed,
         IEnumerable<CouponProduct>? productsFromCategoryNotAllowed = null
     )
     {
         if (!categoriesAllowed.Any())
         {
-            throw new DomainValidationException($"Restriction must contain at least one category");
+            throw new DomainValidationException("Restriction must contain at least one category");
         }
 
         return new CategoryRestriction(categoriesAllowed, productsFromCategoryNotAllowed);

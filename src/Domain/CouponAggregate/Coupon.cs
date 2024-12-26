@@ -62,6 +62,8 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
         UsageLimit = usageLimit;
         AutoApply = autoApply;
         MinPrice = minPrice;
+
+        IsActive = true;
     }
 
     /// <summary>
@@ -91,11 +93,22 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     /// <returns>A boolean value indicating if the coupon can be applied.</returns>
     public bool CanBeApplied(CouponOrder order)
     {
+        var restrictionsPass = _restrictions.All(r => r.PassRestriction(order));
+
         return IsActive
             && Discount.IsValidToDate
             && order.Total >= MinPrice
-            && _restrictions.All(r => r.PassRestriction(order))
+            && restrictionsPass
             && UsageLimit > 0;
+    }
+
+    /// <summary>
+    /// Assigns a restriction to the coupon.
+    /// </summary>
+    /// <param name="restriction">The restriction.</param>
+    public void AssignRestriction(CouponRestriction restriction)
+    {
+        _restrictions.Add(restriction);
     }
 
     /// <summary>
@@ -104,5 +117,6 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     public void Deactivate()
     {
         IsActive = false;
+        UsageLimit = 0;
     }
 }

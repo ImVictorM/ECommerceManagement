@@ -133,4 +133,15 @@ public class OrderTests
         order.OrderStatusHistories.Count.Should().Be(2);
         order.OrderStatusHistories.Should().Contain(osh => osh.OrderStatusId == OrderStatus.Canceled.Id);
     }
+
+    /// <summary>
+    /// Tests that getting the order status description returns correctly.
+    /// </summary>
+    [Fact]
+    public async Task Order_WhenGettingStatusDescription_ReturnsCorrectly()
+    {
+        var order = await OrderUtils.CreateOrder();
+
+        order.GetStatusDescription().Should().Be(OrderStatus.Pending.Name);
+    }
 }

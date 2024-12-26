@@ -1,6 +1,7 @@
 using Domain.OrderAggregate.ValueObjects;
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.Enumeration;
+using Domain.PaymentAggregate.Events;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate.ValueObjects;
@@ -99,6 +100,7 @@ public class PaymentTests
         payment.Description.Should().Be("Payment in progress. Waiting for authorization");
         payment.PaymentStatusHistories.Count.Should().Be(1);
         payment.PaymentStatusHistories.Should().Contain(psh => psh.PaymentStatusId == PaymentStatus.InProgress.Id);
+        payment.DomainEvents.Should().ContainItemsAssignableTo<PaymentCreated>();
     }
 
     /// <summary>
@@ -127,6 +129,7 @@ public class PaymentTests
         payment.PaymentStatusId.Should().Be(PaymentStatus.Canceled.Id);
         payment.PaymentStatusHistories.Count.Should().Be(2);
         payment.PaymentStatusHistories.Should().Contain(psh => psh.PaymentStatusId == PaymentStatus.Canceled.Id);
+        payment.DomainEvents.Should().ContainItemsAssignableTo<PaymentCanceled>();
     }
 
     /// <summary>

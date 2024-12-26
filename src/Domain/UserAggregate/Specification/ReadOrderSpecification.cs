@@ -13,7 +13,7 @@ public class ReadOrderSpecification : CompositeSpecification<User>
     /// <summary>
     /// Initiates a new instance of the <see cref="ReadOrderSpecification"/> class.
     /// </summary>
-    /// <param name="orderOwnerId"></param>
+    /// <param name="orderOwnerId">The order owner id.</param>
     public ReadOrderSpecification(UserId orderOwnerId)
     {
         _orderOwnerId = orderOwnerId;

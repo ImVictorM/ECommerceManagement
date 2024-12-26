@@ -11,8 +11,8 @@ namespace Domain.SaleAggregate;
 public class Sale : AggregateRoot<SaleId>
 {
     private readonly HashSet<CategoryReference> _categoriesInSale = [];
-    private readonly HashSet<SaleReference> _productsInSale = [];
-    private readonly HashSet<SaleReference> _productsExcludeFromSale = [];
+    private readonly HashSet<ProductReference> _productsInSale = [];
+    private readonly HashSet<ProductReference> _productsExcludeFromSale = [];
 
     /// <summary>
     /// Gets the sale discount;
@@ -25,25 +25,25 @@ public class Sale : AggregateRoot<SaleId>
     /// <summary>
     /// Gets the products in sale.
     /// </summary>
-    public IReadOnlySet<SaleReference> ProductsInSale => _productsInSale;
+    public IReadOnlySet<ProductReference> ProductsInSale => _productsInSale;
     /// <summary>
     /// Gets the products excluded from sale.
     /// </summary>
-    public IReadOnlySet<SaleReference> ProductsExcludedFromSale => _productsExcludeFromSale;
+    public IReadOnlySet<ProductReference> ProductsExcludedFromSale => _productsExcludeFromSale;
 
     private Sale() { }
 
     private Sale(
         Discount discount,
-        HashSet<CategoryReference> categoriesInSale,
-        HashSet<SaleReference> productsInSale,
-        HashSet<SaleReference> productsExcludeFromSale
+        IReadOnlySet<CategoryReference> categoriesInSale,
+        IReadOnlySet<ProductReference> productsInSale,
+        IReadOnlySet<ProductReference> productsExcludeFromSale
     )
     {
         Discount = discount;
-        _categoriesInSale = categoriesInSale;
-        _productsInSale = productsInSale;
-        _productsExcludeFromSale = productsExcludeFromSale;
+        _categoriesInSale.UnionWith(categoriesInSale);
+        _productsInSale.UnionWith(productsInSale);
+        _productsExcludeFromSale.UnionWith(productsExcludeFromSale);
 
         ValidateSale();
     }
@@ -58,9 +58,9 @@ public class Sale : AggregateRoot<SaleId>
     /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
     public static Sale Create(
         Discount discount,
-        HashSet<CategoryReference> categoriesInSale,
-        HashSet<SaleReference> productsInSale,
-        HashSet<SaleReference> productsExcludeFromSale
+        IReadOnlySet<CategoryReference> categoriesInSale,
+        IReadOnlySet<ProductReference> productsInSale,
+        IReadOnlySet<ProductReference> productsExcludeFromSale
     )
     {
         return new Sale(
@@ -87,11 +87,12 @@ public class Sale : AggregateRoot<SaleId>
     /// <returns>A boolean value indicating if the product is in sale.</returns>
     public bool IsProductInSale(SaleProduct product)
     {
-        var isProductInSaleList = ProductsInSale.Contains(SaleReference.Create(product.ProductId));
+        var isProductInSaleList = ProductsInSale.Contains(ProductReference.Create(product.ProductId));
+        var isProductExcludedFromSale = ProductsExcludedFromSale.Contains(ProductReference.Create(product.ProductId));
 
         var isAnyProductCategoryInSaleList = CategoriesInSale.Intersect(product.Categories.Select(CategoryReference.Create)).Any();
 
-        return isProductInSaleList || isAnyProductCategoryInSaleList;
+        return (isProductInSaleList || isAnyProductCategoryInSaleList) && !isProductExcludedFromSale;
     }
 
     private void ValidateSale()
