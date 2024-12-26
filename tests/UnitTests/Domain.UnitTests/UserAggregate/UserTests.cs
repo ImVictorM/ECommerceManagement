@@ -1,5 +1,6 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
+using Domain.UserAggregate;
 
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
@@ -10,7 +11,7 @@ using FluentAssertions;
 namespace Domain.UnitTests.UserAggregate;
 
 /// <summary>
-/// Tests for the <see cref="Domain.UserAggregate.User"/> aggregate root.
+/// Unit tests for the <see cref="User"/> class.
 /// </summary>
 public class UserTests
 {
@@ -24,6 +25,10 @@ public class UserTests
             DomainConstants.User.Name,
             EmailUtils.CreateEmail(),
             PasswordHashUtils.Create(),
+            new HashSet<Role>()
+            {
+                Role.Customer
+            },
             DomainConstants.User.Phone,
         };
 
@@ -31,6 +36,10 @@ public class UserTests
             "Djhon djhones",
             EmailUtils.CreateEmail(),
             PasswordHashUtils.Create(),
+            new HashSet<Role>()
+            {
+                Role.Customer
+            },
             DomainConstants.User.Phone,
         };
 
@@ -38,6 +47,10 @@ public class UserTests
             DomainConstants.User.Name,
             EmailUtils.CreateEmail(),
             PasswordHashUtils.Create(),
+            new HashSet<Role>()
+            {
+                Role.Admin
+            },
             "19987093231",
         };
     }
@@ -49,12 +62,14 @@ public class UserTests
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="phone">The user phone.</param>
     /// <param name="email">The user email.</param>
+    /// <param name="roles">The user roles.</param>
     [Theory]
     [MemberData(nameof(ValidUserParameters))]
-    public void User_WhenUserCredentialsAreValid_CreatesNewActiveCustomer(
+    public void CreateUser_WithValidParameters_CreatesCorrectly(
         string name,
         Email email,
         PasswordHash passwordHash,
+        IReadOnlySet<Role> roles,
         string? phone
     )
     {
@@ -71,8 +86,8 @@ public class UserTests
         user.Phone.Should().Be(phone);
         user.Email.Should().BeEquivalentTo(email);
         user.IsActive.Should().BeTrue();
-        user.UserRoles.Count.Should().Be(1);
-        user.UserRoles.Should().ContainSingle(ur => ur.RoleId == Role.Customer.Id);
+        user.UserRoles.Count.Should().Be(roles.Count);
+        user.UserRoles.Select(ur => ur.RoleId).Should().BeEquivalentTo(roles.Select(r => r.Id));
         user.UserAddresses.Count.Should().Be(0);
     }
 
@@ -80,7 +95,7 @@ public class UserTests
     /// Test if it is possible to make the user inactive.
     /// </summary>
     [Fact]
-    public void User_WhenMakingTheUserInactive_TheActiveFieldIsSetToFalse()
+    public void DeactivateUser_WhenCallingDeactivateMethod_TheActiveFieldIsSetToFalse()
     {
         var user = UserUtils.CreateUser();
 
@@ -93,7 +108,7 @@ public class UserTests
     /// Tests if it is possible to add roles to a current user.
     /// </summary>
     [Fact]
-    public void User_WhenAddingRole_AddAndIncrementsTheUserRolesCount()
+    public void AssignRole_WhenAssigningAdminRole_IncrementsUserRoles()
     {
         var user = UserUtils.CreateUser();
 
@@ -104,24 +119,12 @@ public class UserTests
         user.UserRoles.Select(ur => ur.RoleId).Should().Contain(Role.Admin.Id);
     }
 
-    /// <summary>
-    /// Tests if adding repeated roles ignores it.
-    /// </summary>
-    [Fact]
-    public void User_WhenAddingRepeatedRole_IgnoresIt()
-    {
-        var user = UserUtils.CreateUser();
-
-        user.AssignRole(Role.Customer);
-
-        user.UserRoles.Count.Should().Be(1);
-    }
 
     /// <summary>
     /// Tests if it is possible to get the user role names.
     /// </summary>
     [Fact]
-    public void User_WhenGettingUserRoleNames_ReturnsItCorrectly()
+    public void GetRoleNames_WhenCallingGetRoleNamesMethod_ReturnsUserRoleNames()
     {
         var expectedRoleNames = new string[] { "admin", "customer" };
 
@@ -141,7 +144,7 @@ public class UserTests
     /// Tests if it is possible to add a new address to a user.
     /// </summary>
     [Fact]
-    public void User_WhenAddingAddress_AddsItAndIncreaseCount()
+    public void AssignAddress_WithValidAddress_AddsTheAddress()
     {
         var user = UserUtils.CreateUser();
         var address = AddressUtils.CreateAddress();

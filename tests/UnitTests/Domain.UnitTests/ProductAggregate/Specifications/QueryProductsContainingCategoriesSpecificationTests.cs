@@ -22,11 +22,11 @@ public class QueryProductsContainingCategoriesSpecificationTests
             ProductCategory.Create(CategoryId.Create(2)),
         ]);
 
-        var specification = new QueryProductsContainingCategoriesSpecification(new HashSet<ProductCategory>
-        {
+        var specification = new QueryProductsContainingCategoriesSpecification(
+        [
             ProductCategory.Create(CategoryId.Create(1)),
             ProductCategory.Create(CategoryId.Create(2)),
-        });
+        ]);
 
         var result = specification.Criteria.Compile()(product);
 
@@ -43,11 +43,11 @@ public class QueryProductsContainingCategoriesSpecificationTests
             ProductCategory.Create(CategoryId.Create(1)),
         ]);
 
-        var specification = new QueryProductsContainingCategoriesSpecification(new HashSet<ProductCategory>
-        {
+        var specification = new QueryProductsContainingCategoriesSpecification(
+        [
             ProductCategory.Create(CategoryId.Create(1)),
             ProductCategory.Create(CategoryId.Create(2)),
-        });
+        ]);
 
         var result = specification.Criteria.Compile()(product);
 

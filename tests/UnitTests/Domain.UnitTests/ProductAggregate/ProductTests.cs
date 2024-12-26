@@ -2,12 +2,13 @@ using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
+using Domain.ProductAggregate;
 using FluentAssertions;
 
 namespace Domain.UnitTests.ProductAggregate;
 
 /// <summary>
-/// Tests for the <see cref="Domain.ProductAggregate.Product"/> aggregate root.
+/// Unit tests for the <see cref="Product"/> class.
 /// </summary>
 public class ProductTests
 {
@@ -85,7 +86,7 @@ public class ProductTests
     /// <param name="images">The product image URLs.</param>
     [Theory]
     [MemberData(nameof(ValidProductParameters))]
-    public void Product_WhenCreatingWithValidParameter_ReturnsNewInstance(
+    public void CreateProduct_WithValidParameters_CreatesCorrectly(
         string name,
         string description,
         decimal price,
@@ -117,12 +118,11 @@ public class ProductTests
         act.Should().NotThrow();
     }
 
-
     /// <summary>
     /// Tests it is possible to update a product correctly.
     /// </summary>
     [Fact]
-    public void Product_WhenUpdatingProduct_UpdatesCorrectly()
+    public void UpdateProduct_WithValidParameters_UpdatesCorrectly()
     {
         var product = ProductUtils.CreateProduct();
 
@@ -158,7 +158,7 @@ public class ProductTests
     [InlineData(10, 55, 65)]
     [InlineData(20, 5, 25)]
     [InlineData(12, 1, 13)]
-    public void Product_WhenAddingProductsToInventory_IncrementsInventoryQuantityAvailable(
+    public void IncrementProductInventory_WithPositiveValue_UpdatesInventoryQuantityAvailableCorrectly(
         int initialQuantity,
         int quantityToAdd,
         int expectedQuantityAvailable
@@ -175,7 +175,7 @@ public class ProductTests
     /// Tests that making a product inactivate deactivates it and sets the inventory to 0.
     /// </summary>
     [Fact]
-    public void Product_WhenMakingInactive_DeactivatesAndSetsInventoryToZero()
+    public void DeactivateProduct_WhenCallingDeactivateMethod_UpdatesFieldsCorrectly()
     {
         var product = ProductUtils.CreateProduct(initialQuantityInInventory: 500);
 

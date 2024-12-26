@@ -19,7 +19,7 @@ using Domain.ProductAggregate.ValueObjects;
 namespace Domain.UnitTests.OrderAggregate;
 
 /// <summary>
-/// Tests for the <see cref="Order"/> aggregate root.
+/// Unit tests for the <see cref="Order"/> class.
 /// </summary>
 public class OrderTests
 {
@@ -57,7 +57,7 @@ public class OrderTests
     /// <param name="installments">The order payment installments.</param>
     [Theory]
     [MemberData(nameof(ValidOrderParameters))]
-    public async Task Order_WhenCreatingWithValidParameters_ReturnsInstanceWithCorrectData(
+    public async Task CreateOrder_WithValidParameters_ReturnsInstanceWithCorrectData(
         UserId ownerId,
         IEnumerable<IOrderProduct> orderProducts,
         IPaymentMethod paymentMethod,
@@ -121,7 +121,7 @@ public class OrderTests
     /// Tests that canceling an order sets the order status to canceled, updates the description to match the reason, and increments the order status history.
     /// </summary>
     [Fact]
-    public async Task Order_WhenCancelingAnOrder_SetStatusAndChangeDescription()
+    public async Task CancelOrder_WhenOrderIsPending_UpdateFieldsCorrectly()
     {
         var reasonToCancel = "Important reason";
         var order = await OrderUtils.CreateOrder();
@@ -138,7 +138,7 @@ public class OrderTests
     /// Tests that getting the order status description returns correctly.
     /// </summary>
     [Fact]
-    public async Task Order_WhenGettingStatusDescription_ReturnsCorrectly()
+    public async Task GetOrderStatusDescription_WhenOrderIsPending_ReturnsPendingName()
     {
         var order = await OrderUtils.CreateOrder();
 

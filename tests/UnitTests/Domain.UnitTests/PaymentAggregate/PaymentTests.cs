@@ -14,7 +14,7 @@ using SharedKernel.ValueObjects;
 namespace Domain.UnitTests.PaymentAggregate;
 
 /// <summary>
-/// Tests for the <see cref="Payment"/> aggregate.
+/// Unit tests for the <see cref="Payment"/> class.
 /// </summary>
 public class PaymentTests
 {
@@ -67,7 +67,7 @@ public class PaymentTests
     /// <param name="installments">The quantity of installments.</param>
     [Theory]
     [MemberData(nameof(ValidPaymentCreationParameters))]
-    public void Payment_WhenCreatingNew_ReturnsInstanceWithCorrectConfiguration(
+    public void CreatePayment_WithValidParameters_CreatesCorrectly(
         decimal amount,
         OrderId orderId,
         UserId payerId,
@@ -107,7 +107,7 @@ public class PaymentTests
     /// Tests when creating a payment with null installments it defaults to one.
     /// </summary>
     [Fact]
-    public void Payment_WhenCreatingWithNullInstallments_DefaultsToOne()
+    public void CreatePayment_WithNullInstallments_DefaultsToOne()
     {
         var payment = PaymentUtils.CreatePayment(installments: null);
 
@@ -120,7 +120,7 @@ public class PaymentTests
     /// <param name="validPaymentStatus">The payment initial status.</param>
     [Theory]
     [MemberData(nameof(ValidPaymentStatusToCancelPayment))]
-    public void Payment_WhenCancelingPendingOrInProgressPayment_UpdatesPaymentCorrectly(PaymentStatus validPaymentStatus)
+    public void CancelPayment_WithPendingOrInProgressStatus_CancelsThePayment(PaymentStatus validPaymentStatus)
     {
         var payment = PaymentUtils.CreatePayment(initialPaymentStatus: validPaymentStatus);
 
@@ -138,7 +138,7 @@ public class PaymentTests
     /// <param name="invalidPaymentStatus">The payment initial status.</param>
     [Theory]
     [MemberData(nameof(InvalidPaymentStatusToCancelPayment))]
-    public void Payment_WhenCancelingPaymentThatIsNotPendingOrInProgress_ThrowsError(PaymentStatus invalidPaymentStatus)
+    public void CancelPayment_WithStatusDifferentThanPendingOrInProgress_ThrowsError(PaymentStatus invalidPaymentStatus)
     {
         var payment = PaymentUtils.CreatePayment(initialPaymentStatus: invalidPaymentStatus);
 
