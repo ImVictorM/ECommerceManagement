@@ -15,8 +15,8 @@ public class CategoryTests
     /// <param name="inputName">The category name input.</param>
     /// <param name="expectedName">The expected category name.</param>
     [Theory]
-    [InlineData("CATEGORY_1", "category_1")]
-    [InlineData("Category2", "category_2")]
+    [InlineData("BookingStationery", "booking_stationery")]
+    [InlineData("TECH", "tech")]
     public void CreateCategory_WithDifferentValidNames_ReturnsCategoryWithExpectedName(string inputName, string expectedName)
     {
         var category = CategoryUtils.CreateCategory(inputName);

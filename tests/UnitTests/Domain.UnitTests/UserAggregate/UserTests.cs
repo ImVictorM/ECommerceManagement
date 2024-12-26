@@ -7,6 +7,7 @@ using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
 using FluentAssertions;
+using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UnitTests.UserAggregate;
 
@@ -77,6 +78,7 @@ public class UserTests
             name: name,
             passwordHash: passwordHash,
             phone: phone,
+            roles: roles,
             email: email
         );
 
@@ -87,7 +89,7 @@ public class UserTests
         user.Email.Should().BeEquivalentTo(email);
         user.IsActive.Should().BeTrue();
         user.UserRoles.Count.Should().Be(roles.Count);
-        user.UserRoles.Select(ur => ur.RoleId).Should().BeEquivalentTo(roles.Select(r => r.Id));
+        user.UserRoles.Should().BeEquivalentTo(roles.Select(r => UserRole.Create(r.Id)));
         user.UserAddresses.Count.Should().Be(0);
     }
 
