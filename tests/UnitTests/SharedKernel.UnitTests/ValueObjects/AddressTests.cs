@@ -65,7 +65,7 @@ public class AddressTests
     /// <param name="city">The valid address city.</param>
     [Theory]
     [MemberData(nameof(ValidAddresses))]
-    public void Address_WhenCreatedWithValidParameters_ReturnsNewInstance(
+    public void CreateAddress_WithValidParameters_ReturnsNewInstance(
         string postalCode,
         string street,
         string neighborhood,

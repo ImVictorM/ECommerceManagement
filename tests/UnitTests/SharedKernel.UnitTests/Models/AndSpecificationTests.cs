@@ -16,19 +16,19 @@ public class AndSpecificationTests
     public static readonly IEnumerable<object[]> TestData =
     [
         [
-            EntityUtils.NumericEntity.Create(15),
+            EntityUtils.NumericEntity.Create(value : 15),
             SpecificationUtils.CreateSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             SpecificationUtils.CreateSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             true
         ],
         [
-            EntityUtils.NumericEntity.Create(5),
+            EntityUtils.NumericEntity.Create(value: 5),
             SpecificationUtils.CreateSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             SpecificationUtils.CreateSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false,
         ],
         [
-            EntityUtils.NumericEntity.Create(25),
+            EntityUtils.NumericEntity.Create(value : 25),
             SpecificationUtils.CreateSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             SpecificationUtils.CreateSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false,

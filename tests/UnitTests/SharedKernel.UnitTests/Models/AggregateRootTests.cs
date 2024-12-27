@@ -14,7 +14,7 @@ public class AggregateRootTests
     /// Tests if it is possible to instance an implementation of the <see cref="AggregateRoot{TId}"/> correctly.
     /// </summary>
     [Fact]
-    public void AggregateRoot_WhenImplementedAndCreated_ReturnsNewInstance()
+    public void CreateAggregateRoot_WithValidParameters_ReturnsNewInstance()
     {
         var id = Guid.NewGuid();
 

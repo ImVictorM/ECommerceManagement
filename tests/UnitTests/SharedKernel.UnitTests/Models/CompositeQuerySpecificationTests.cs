@@ -15,21 +15,21 @@ public class CompositeQuerySpecificationTests
     public static readonly IEnumerable<object[]> CompositeQueryTestData =
     [
         [
-            EntityUtils.NumericEntity.Create(15),
+            EntityUtils.NumericEntity.Create(value: 15),
             CompositeQuerySpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             CompositeQuerySpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             true
         ],
 
         [
-            EntityUtils.NumericEntity.Create(5),
+            EntityUtils.NumericEntity.Create(value : 5),
             CompositeQuerySpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             CompositeQuerySpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false
         ],
 
         [
-            EntityUtils.NumericEntity.Create(25),
+            EntityUtils.NumericEntity.Create(value: 25),
             CompositeQuerySpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             CompositeQuerySpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false
@@ -50,8 +50,7 @@ public class CompositeQuerySpecificationTests
     {
         var compositeSpec = leftSpec.And(rightSpec);
 
-        var predicate = compositeSpec.Criteria.Compile();
-        var result = predicate(entity);
+        var result = compositeSpec.Criteria.Compile()(entity);
 
         result.Should().Be(expectedCombinationResult);
     }

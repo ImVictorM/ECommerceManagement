@@ -16,7 +16,7 @@ public class PasswordHashTests
     /// Verifies that a <see cref="PasswordHash"/> is created successfully with a valid hash and salt.
     /// </summary>
     [Fact]
-    public void PasswordHash_WhenCreatingWithValidHashAndSalt_CreatesInstanceCorrectly()
+    public void CreatePasswordHash_WithValidHashAndSalt_CreatesInstanceCorrectly()
     {
         var expectedHash = SharedKernelConstants.PasswordHash.Hash;
         var expectedSalt = SharedKernelConstants.PasswordHash.Salt;
@@ -30,7 +30,7 @@ public class PasswordHashTests
     /// Verifies that a <see cref="PasswordHash"/> is created successfully using a valid combined value.
     /// </summary>
     [Fact]
-    public void PasswordHash_WhenCreatingWithValidValue_CreatesInstanceCorrectly()
+    public void CreatePasswordHash_WithValidValue_CreatesInstanceCorrectly()
     {
         var passwordHash = PasswordHashUtils.CreateUsingDirectValue(SharedKernelConstants.PasswordHash.Value);
 
@@ -39,25 +39,10 @@ public class PasswordHashTests
     }
 
     /// <summary>
-    /// Verifies that the hash and salt parts of a <see cref="PasswordHash"/> can be retrieved individually.
-    /// </summary>
-    [Fact]
-    public void PasswordHash_WhenGettingSaltAndHashPartsIndividually_ReturnsThemCorrectly()
-    {
-        var expectedHash = SharedKernelConstants.PasswordHash.Hash;
-        var expectedSalt = SharedKernelConstants.PasswordHash.Salt;
-
-        var passwordHash = PasswordHashUtils.Create(expectedHash, expectedSalt);
-
-        passwordHash.GetHashPart().Should().Be(expectedHash);
-        passwordHash.GetSaltPart().Should().Be(expectedSalt);
-    }
-
-    /// <summary>
     /// Verifies that creating a <see cref="PasswordHash"/> with invalid hexadecimal input throws a <see cref="DomainValidationException"/>.
     /// </summary>
     [Fact]
-    public void PasswordHash_WhenCreatingWithInvalidHexInput_ThrowsError()
+    public void CreatePasswordHash_WithInvalidHexInput_ThrowsError()
     {
         var invalidHash = "invalidHash";
         var invalidSalt = "invalidSalt";
@@ -73,7 +58,7 @@ public class PasswordHashTests
     /// Verifies that creating a <see cref="PasswordHash"/> with an invalid hash-salt template throws a <see cref="DomainValidationException"/>.
     /// </summary>
     [Fact]
-    public void PasswordHash_WhenCreatingWithInvalidTemplate_ThrowsError()
+    public void CreatePasswordHash_WithInvalidTemplate_ThrowsError()
     {
         var invalidPasswordHash = "invalidHashSaltFormat";
 
@@ -82,5 +67,20 @@ public class PasswordHashTests
             .Should()
             .Throw<DomainValidationException>()
             .WithMessage("Invalid hash and salt format");
+    }
+
+    /// <summary>
+    /// Verifies that the hash and salt parts of a <see cref="PasswordHash"/> can be retrieved individually.
+    /// </summary>
+    [Fact]
+    public void GetParts_WhenGettingSaltAndHashPartsIndividually_ReturnsThemCorrectly()
+    {
+        var expectedHash = SharedKernelConstants.PasswordHash.Hash;
+        var expectedSalt = SharedKernelConstants.PasswordHash.Salt;
+
+        var passwordHash = PasswordHashUtils.Create(expectedHash, expectedSalt);
+
+        passwordHash.GetHashPart().Should().Be(expectedHash);
+        passwordHash.GetSaltPart().Should().Be(expectedSalt);
     }
 }

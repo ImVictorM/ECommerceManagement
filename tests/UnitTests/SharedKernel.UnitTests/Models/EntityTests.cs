@@ -41,7 +41,7 @@ public class EntityTests
     /// <param name="id">The ID used to create both entities.</param>
     [Theory]
     [MemberData(nameof(Ids))]
-    public void Entity_WhenComparedWithSameId_ShouldReturnTrue(object id)
+    public void CompareEntity_WithSameId_ReturnsTrue(object id)
     {
         var entity1 = EntityUtils.UserEntity.Create(id);
         var entity2 = EntityUtils.UserEntity.Create(id);
@@ -57,7 +57,7 @@ public class EntityTests
     /// <param name="id2">The ID of the second entity.</param>
     [Theory]
     [MemberData(nameof(IdsDifferentPairs))]
-    public void Entity_WhenComparedWithDifferentId_ShouldReturnFalse(object id1, object id2)
+    public void CompareEntity_WithDifferentId_ReturnsFalse(object id1, object id2)
     {
         var entity1 = EntityUtils.UserEntity.Create(id1);
         var entity2 = EntityUtils.UserEntity.Create(id2);
@@ -72,7 +72,7 @@ public class EntityTests
     /// <param name="id">The ID used to create the entity.</param>
     [Theory]
     [MemberData(nameof(Ids))]
-    public void Entity_WhenComparedWithDifferentTypeAndSameId_ShouldReturnFalse(object id)
+    public void CompareEntity_WithDifferentTypeAndSameId_ReturnsFalse(object id)
     {
         var userEntity = EntityUtils.UserEntity.Create(id);
         var productEntity = EntityUtils.ProductEntity.Create(id);
@@ -86,7 +86,7 @@ public class EntityTests
     /// <param name="id">The ID used to create both entities.</param>
     [Theory]
     [MemberData(nameof(Ids))]
-    public void Entity_WhenComparedHashCodeWithSameId_ShouldReturnTrue(object id)
+    public void CompareEntity_WhenTheyAreEqual_TheHashCodesAreEqual(object id)
     {
         var entity1 = EntityUtils.UserEntity.Create(id);
         var entity2 = EntityUtils.UserEntity.Create(id);
@@ -101,7 +101,7 @@ public class EntityTests
     /// <param name="id2">The ID of the second entity.</param>
     [Theory]
     [MemberData(nameof(IdsDifferentPairs))]
-    public void Entity_WhenComparedHashCodeWithDifferentId_ShouldReturnFalse(object id1, object id2)
+    public void CompareEntity_WhenTheyAreDifferent_TheHashCodesAreDifferent(object id1, object id2)
     {
         var entity1 = EntityUtils.UserEntity.Create(id1);
         var entity2 = EntityUtils.UserEntity.Create(id2);
@@ -113,7 +113,7 @@ public class EntityTests
     /// Tests that adding a domain event increases the count of domain events in the entity.
     /// </summary>
     [Fact]
-    public void Entity_AddingDomainEvent_IncreasesCount()
+    public void DomainEvent_WhenAdding_IncreasesCount()
     {
         var userEntity = EntityUtils.UserEntity.Create(1);
 
@@ -127,7 +127,7 @@ public class EntityTests
     /// Tests that clearing domain events resets the count of domain events in the entity to zero.
     /// </summary>
     [Fact]
-    public void Entity_ClearingDomainEvents_ShouldResetCount()
+    public void DomainEvent_WhenClearing_Resets()
     {
         var initialDomainEventsCount = 10;
 
@@ -138,5 +138,6 @@ public class EntityTests
         userEntity.ClearDomainEvents();
 
         userEntity.DomainEvents.Count.Should().Be(0);
+        userEntity.DomainEvents.Should().BeEmpty();
     }
 }

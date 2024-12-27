@@ -16,21 +16,21 @@ public class AndQuerySpecificationTests
     public static readonly IEnumerable<object[]> AndQueryTestData =
     [
         [
-        EntityUtils.NumericEntity.Create(15),
+            EntityUtils.NumericEntity.Create(value : 15),
             SpecificationQueryUtils.CreateSpecificationQuery<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             SpecificationQueryUtils.CreateSpecificationQuery<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             true
         ],
 
         [
-            EntityUtils.NumericEntity.Create(5),
+            EntityUtils.NumericEntity.Create(value: 5),
             SpecificationQueryUtils.CreateSpecificationQuery<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             SpecificationQueryUtils.CreateSpecificationQuery<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false
         ],
 
         [
-            EntityUtils.NumericEntity.Create(25),
+            EntityUtils.NumericEntity.Create(value : 25),
             SpecificationQueryUtils.CreateSpecificationQuery<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             SpecificationQueryUtils.CreateSpecificationQuery<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false
@@ -51,8 +51,7 @@ public class AndQuerySpecificationTests
     {
         var combinedSpec = AndQuerySpecificationUtils.CreateSpecification(leftSpec, rightSpec);
 
-        var predicate = combinedSpec.Criteria.Compile();
-        var result = predicate(entity);
+        var result = combinedSpec.Criteria.Compile()(entity);
 
         result.Should().Be(expectedCombinationResult);
     }

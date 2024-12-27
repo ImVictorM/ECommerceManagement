@@ -13,7 +13,7 @@ public class PercentageTests
     /// Verifies that a <see cref="Percentage"/> is created successfully with a valid value.
     /// </summary>
     [Fact]
-    public void Percentage_WhenCreatedWithValidValue_CreatesInstanceCorrectly()
+    public void CreatePercentage_WithValidValue_CreatesInstanceCorrectly()
     {
         var validValue = 50;
 
@@ -24,58 +24,74 @@ public class PercentageTests
     }
 
     /// <summary>
-    /// Verifies that the <see cref="Percentage.IsWithinRange(int, int)"/> method returns true when the value is within the specified range.
+    /// Verifies that the <see cref="Percentage.IsWithinRange(int, int)"/> method the expected result.
     /// </summary>
-    [Fact]
-    public void Percentage_WhenValueIsWithinRange_ReturnsTrue()
+    [Theory]
+    [InlineData(50, true)]
+    [InlineData(101, false)]
+    [InlineData(100, true)]
+    [InlineData(0, true)]
+    [InlineData(-1, false)]
+    public void IsWithinRange_WhenCheckingWithValidValue_ReturnsExpected(int value, bool expected)
     {
-        var value = 50;
         var percentage = Percentage.Create(value);
 
         var result = percentage.IsWithinRange(0, 100);
 
-        result.Should().BeTrue();
+        result.Should().Be(expected);
     }
 
     /// <summary>
-    /// Verifies that the <see cref="Percentage.IsWithinRange(int, int)"/> method returns false when the value is outside the specified range.
+    /// Verifies that the percentage comparison is correct when sorting by descending percentages.
     /// </summary>
     [Fact]
-    public void Percentage_WhenValueIsOutsideRange_ReturnsFalse()
+    public void PercentageComparison_WhenSortingDescending_ReturnsExpected()
     {
-        var value = 150;
-        var percentage = Percentage.Create(value);
+        var percentages = new[]
+        {
+            Percentage.Create(50),
+            Percentage.Create(10),
+            Percentage.Create(90),
+            Percentage.Create(30)
+        };
 
-        var result = percentage.IsWithinRange(0, 100);
+        var expectedAfterSort = new[]
+        {
+            Percentage.Create(90),
+            Percentage.Create(50),
+            Percentage.Create(30),
+            Percentage.Create(10),
+        };
 
-        result.Should().BeFalse();
+        var sorted = percentages.OrderByDescending(p => p).ToArray();
+
+        sorted.Should().Equal(expectedAfterSort);
     }
 
     /// <summary>
-    /// Verifies that the <see cref="Percentage.IsWithinRange(int)"/> method returns true when the value is within the default range (0 to end).
+    /// Verifies that the percentage comparison is correct when sorting by ascending percentages.
     /// </summary>
     [Fact]
-    public void Percentage_WhenValueIsWithinDefaultRange_ReturnsTrue()
+    public void PercentageComparison_WhenSortingAscending_ReturnsExpected()
     {
-        var value = 25;
-        var percentage = Percentage.Create(value);
+        var percentages = new[]
+        {
+            Percentage.Create(50),
+            Percentage.Create(10),
+            Percentage.Create(90),
+            Percentage.Create(30)
+        };
 
-        var result = percentage.IsWithinRange(50);
+        var expectedAfterSort = new[]
+        {
+            Percentage.Create(10),
+            Percentage.Create(30),
+            Percentage.Create(50),
+            Percentage.Create(90),
+        };
 
-        result.Should().BeTrue();
-    }
+        var sorted = percentages.OrderBy(p => p).ToArray();
 
-    /// <summary>
-    /// Verifies that the <see cref="Percentage.IsWithinRange(int)"/> method returns false when the value is outside the default range (0 to end).
-    /// </summary>
-    [Fact]
-    public void Percentage_WhenValueIsOutsideDefaultRange_ReturnsFalse()
-    {
-        var value = 75;
-        var percentage = Percentage.Create(value);
-
-        var result = percentage.IsWithinRange(50);
-
-        result.Should().BeFalse();
+        sorted.Should().Equal(expectedAfterSort);
     }
 }

@@ -15,21 +15,21 @@ public class CompositeSpecificationTests
     public static readonly IEnumerable<object[]> AndMethodTestData =
     [
         [
-            EntityUtils.NumericEntity.Create(15),
+            EntityUtils.NumericEntity.Create(value: 15),
             CompositeSpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             CompositeSpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             true
         ],
 
         [
-            EntityUtils.NumericEntity.Create(5),
+            EntityUtils.NumericEntity.Create(value: 5),
             CompositeSpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             CompositeSpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false
         ],
 
         [
-            EntityUtils.NumericEntity.Create(25),
+            EntityUtils.NumericEntity.Create(value : 25),
             CompositeSpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value > 10),
             CompositeSpecificationUtils.CreateCompositeSpecification<EntityUtils.NumericEntity<int>>(e => e.Value < 20),
             false,

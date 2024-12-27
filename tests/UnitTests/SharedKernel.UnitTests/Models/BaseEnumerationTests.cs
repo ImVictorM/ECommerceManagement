@@ -14,7 +14,7 @@ public class BaseEnumerationTests
     /// Tests that two enumeration instances with the same id and type are considered equal.
     /// </summary>
     [Fact]
-    public void Enumeration_EqualsSameIdAndType_ReturnsTrue()
+    public void EnumerationEquality_WithSameIdAndType_ReturnsTrue()
     {
         var enum1 = new SampleEnumeration(1, "First");
         var enum2 = SampleEnumeration.First;
@@ -26,7 +26,7 @@ public class BaseEnumerationTests
     /// Tests that two enumeration instances with different ids are not considered equal.
     /// </summary>
     [Fact]
-    public void Enumeration_EqualsDifferentId_ReturnsFalse()
+    public void EnumerationEquality_WithDifferentId_ReturnsFalse()
     {
         var enum1 = new SampleEnumeration(1, "First");
         var enum2 = SampleEnumeration.Second;
@@ -38,7 +38,7 @@ public class BaseEnumerationTests
     /// Tests that comparing two enumeration instances with the same id returns zero.
     /// </summary>
     [Fact]
-    public void Enumeration_CompareToSameId_ReturnsZero()
+    public void CompareEnumeration_WithSameId_ReturnsZero()
     {
         var enum1 = new SampleEnumeration(1, "First");
         var enum2 = SampleEnumeration.First;
@@ -50,7 +50,7 @@ public class BaseEnumerationTests
     /// Tests that comparing an enumeration instance with a lower id to one with a higher id returns a positive value.
     /// </summary>
     [Fact]
-    public void Enumeration_CompareToLowerId_ReturnsPositive()
+    public void CompareEnumeration_WithLowerId_ReturnsPositive()
     {
         var enum1 = SampleEnumeration.Second;
         var enum2 = SampleEnumeration.First;
@@ -62,7 +62,7 @@ public class BaseEnumerationTests
     /// Tests that comparing an enumeration instance with a higher id to one with a lower id returns a negative value.
     /// </summary>
     [Fact]
-    public void Enumeration_CompareToHigherId_ReturnsNegative()
+    public void CompareEnumeration_WithHigherId_ReturnsNegative()
     {
         var enum1 = SampleEnumeration.First;
         var enum2 = SampleEnumeration.Second;
@@ -74,7 +74,7 @@ public class BaseEnumerationTests
     /// Tests that <see cref="BaseEnumeration.GetAll{T}"/> retrieves all defined enumeration instances of a type.
     /// </summary>
     [Fact]
-    public void Enumeration_GetAll_ReturnsAllDefinedInstances()
+    public void GetAll_WhenCalledWithType_ReturnsAllDefinedInstances()
     {
         var allInstances = BaseEnumeration.GetAll<SampleEnumeration>().ToList();
 
@@ -87,7 +87,7 @@ public class BaseEnumerationTests
     /// Tests that <see cref="BaseEnumeration.FromValue{T}"/> retrieves the correct enumeration instance for a valid id.
     /// </summary>
     [Fact]
-    public void Enumeration_FromValueValidId_ReturnsCorrectInstance()
+    public void FromValue_WithValidId_ReturnsCorrectInstance()
     {
         var result = BaseEnumeration.FromValue<SampleEnumeration>(1);
 
@@ -98,7 +98,7 @@ public class BaseEnumerationTests
     /// Tests that <see cref="BaseEnumeration.FromValue{T}"/> throws an exception for an invalid id.
     /// </summary>
     [Fact]
-    public void Enumeration_FromValueInvalidId_ThrowsException()
+    public void FromValue_WithInvalidId_ThrowsException()
     {
         FluentActions
             .Invoking(() => BaseEnumeration.FromValue<SampleEnumeration>(3))
@@ -110,7 +110,7 @@ public class BaseEnumerationTests
     /// Tests that <see cref="BaseEnumeration.FromDisplayName{T}"/> retrieves the correct enumeration instance for a valid display name.
     /// </summary>
     [Fact]
-    public void Enumeration_FromDisplayNameValidName_ReturnsCorrectInstance()
+    public void FromDisplayName_WithValidName_ReturnsCorrectInstance()
     {
         var result = BaseEnumeration.FromDisplayName<SampleEnumeration>("Second");
 
@@ -121,7 +121,7 @@ public class BaseEnumerationTests
     /// Tests that <see cref="BaseEnumeration.FromDisplayName{T}"/> throws an exception for an invalid display name.
     /// </summary>
     [Fact]
-    public void Enumeration_FromDisplayNameInvalidName_ThrowsException()
+    public void FromDisplayName_WithInvalidName_ThrowsException()
     {
         FluentActions
             .Invoking(() => BaseEnumeration.FromDisplayName<SampleEnumeration>("Invalid"))
@@ -133,7 +133,7 @@ public class BaseEnumerationTests
     /// Tests that <see cref="BaseEnumeration.AbsoluteDifference"/> calculates the correct absolute difference between two enumeration instances.
     /// </summary>
     [Fact]
-    public void Enumeration_AbsoluteDifference_ReturnsCorrectDifference()
+    public void EnumerationDifference_WhenCalculatingAbsoluteDifference_ReturnsCorrectDifference()
     {
         var result = BaseEnumeration.AbsoluteDifference(SampleEnumeration.First, SampleEnumeration.Second);
 

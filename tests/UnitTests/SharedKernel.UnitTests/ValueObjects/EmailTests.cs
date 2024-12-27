@@ -40,7 +40,7 @@ public class EmailTests
     /// <param name="emailAddress">The email address.</param>
     [Theory]
     [MemberData(nameof(ValidEmails))]
-    public void Email_WhenEmailAddressIsValid_CreatesNewInstance(string emailAddress)
+    public void CreateEmail_WithValidEmailAddress_CreatesNewInstance(string emailAddress)
     {
         var email = EmailUtils.CreateEmail(emailAddress);
 
@@ -54,7 +54,7 @@ public class EmailTests
     /// <param name="emailAddress">The email address.</param>
     [Theory]
     [MemberData(nameof(InvalidEmails))]
-    public void Email_WhenEmailAddressIsNotValid_GeneratesAnError(string emailAddress)
+    public void CreateEmail_WithInvalidEmailAddress_ThrowsError(string emailAddress)
     {
         Action act = () => EmailUtils.CreateEmail(emailAddress);
 

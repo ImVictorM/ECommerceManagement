@@ -37,12 +37,10 @@ public class DiscountTests
         yield return new object[] {
             DateTimeOffset.UtcNow.AddDays(-1).AddHours(-23),
             DateTimeOffset.UtcNow.AddDays(2),
-            "The starting date for the discount cannot be in the past"
         };
         yield return new object[] {
             DateTimeOffset.UtcNow.AddDays(2),
             DateTimeOffset.UtcNow.AddDays(2).AddMinutes(59),
-            "The ending date and time must be at least one hour after the starting date"
         };
     }
 
@@ -86,7 +84,7 @@ public class DiscountTests
     /// <param name="endingDate">The ending date of the discount.</param>
     [Theory]
     [MemberData(nameof(ValidDiscountDates))]
-    public void Discount_WhenCreatingNewDiscountWithValidParameters_ReturnsNewInstance(DateTimeOffset startingDate, DateTimeOffset endingDate)
+    public void CreateDiscount_WithValidStartingAndEndingDate_ReturnsNewInstance(DateTimeOffset startingDate, DateTimeOffset endingDate)
     {
         Action act = () => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate);
 
@@ -101,15 +99,14 @@ public class DiscountTests
     /// <param name="expectedErrorMessage">The expected error message of the exception.</param>
     [Theory]
     [MemberData(nameof(InvalidDiscountDates))]
-    public void Discount_WhenCreatingNewDiscountWithInvalidStartingAndEndDate_ThrowsAnError(
+    public void CreateDiscount_WithInvalidStartingAndEndingDate_ThrowsError(
         DateTimeOffset startingDate,
-        DateTimeOffset endingDate,
-        string expectedErrorMessage
+        DateTimeOffset endingDate
     )
     {
         Action act = () => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate);
 
-        act.Should().Throw<DomainValidationException>().WithMessage(expectedErrorMessage);
+        act.Should().Throw<DomainValidationException>().WithMessage("The date range between the starting and ending date is invalid");
     }
 
     /// <summary>
@@ -122,7 +119,7 @@ public class DiscountTests
     [InlineData(0)]
     [InlineData(101)]
     [InlineData(200)]
-    public void Discount_WhenCreatingDiscountWithInvalidPercentage_ThrowsAnError(int percentage)
+    public void CreateDiscount_WithInvalidPercentage_ThrowsError(int percentage)
     {
         FluentActions
             .Invoking(() => DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(percentage)))
@@ -138,7 +135,7 @@ public class DiscountTests
     /// <param name="expectedValidToDate">The expected value indicating if the discount should be applied.</param>
     [Theory]
     [MemberData(nameof(DiscountAndExpectedValidToDatePairs))]
-    public void Discount_WhenCheckingIfDiscountIsValidToDate_ReturnsCorrectBooleanValue(Discount discount, bool expectedValidToDate)
+    public void IsValidToDate_WhenChecking_ReturnsExpected(Discount discount, bool expectedValidToDate)
     {
         discount.IsValidToDate.Should().Be(expectedValidToDate);
     }

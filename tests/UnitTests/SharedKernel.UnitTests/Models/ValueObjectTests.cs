@@ -14,7 +14,7 @@ public class ValueObjectTests
     [Theory]
     [InlineData("Limeira", "São Paulo")]
     [InlineData("New York", "NY")]
-    public void ValueObject_WhenComparedWithSameProperties_ShouldReturnTrue(string city, string state)
+    public void CompareValueObject_WithSameProperties_ReturnsTrue(string city, string state)
     {
         var obj1 = ValueObjectUtils.AddressValueObject.Create(city, state);
         var obj2 = ValueObjectUtils.AddressValueObject.Create(city, state);
@@ -27,7 +27,7 @@ public class ValueObjectTests
     /// Compare two objects of the same type with different values. They should not be considered equal.
     /// </summary>
     [Fact]
-    public void ValueObject_WhenComparedWithDifferentProperties_ShouldReturnFalse()
+    public void CompareValueObject_WithDifferentProperties_ReturnsFalse()
     {
         var obj1 = ValueObjectUtils.AddressValueObject.Create("Limeira", "São Paulo");
         var obj2 = ValueObjectUtils.AddressValueObject.Create("New York", "NY");
@@ -44,7 +44,7 @@ public class ValueObjectTests
     [Theory]
     [InlineData("Limeira", "São Paulo")]
     [InlineData("New York", "NY")]
-    public void ValueObject_WhenComparedHashCodeOfEqualValueObjects_ShouldReturnTrue(string city, string state)
+    public void CompareValueObject_WhenTheyAreEqual_TheHashCodesAreEqual(string city, string state)
     {
         var obj1 = ValueObjectUtils.AddressValueObject.Create(city, state);
         var obj2 = ValueObjectUtils.AddressValueObject.Create(city, state);
@@ -56,7 +56,7 @@ public class ValueObjectTests
     /// Compare the hash code of two objects of the same type with equal values. The comparison should equal to true.
     /// </summary>
     [Fact]
-    public void ValueObject_WhenComparedHashCodeOfDifferentValueObjects_ShouldReturnFalse()
+    public void CompareValueObject_WhenTheyAreNotEqual_TheHashCodesAreNotEqual()
     {
         var obj1 = ValueObjectUtils.AddressValueObject.Create("Limeira", "São Paulo");
         var obj2 = ValueObjectUtils.AddressValueObject.Create("New York", "NY");
@@ -68,7 +68,7 @@ public class ValueObjectTests
     /// Compare two objects of different types with the same properties and values. The result should be false.
     /// </summary>
     [Fact]
-    public void ValueObject_WhenComparedWithDifferentTypeAndSameValue_ShouldReturnFalse()
+    public void CompareValueObject_WithDifferentTypeAndSameValue_ReturnsFalse()
     {
         var value = "email@email.com";
 
