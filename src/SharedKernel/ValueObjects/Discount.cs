@@ -81,7 +81,7 @@ public class Discount : ValueObject
 
         if (!isDateRangeValid)
         {
-            throw new DomainValidationException("The date range between the starting and ending date is incorrect");
+            throw new DomainValidationException("The date range between the starting and ending date is invalid");
         }
 
         if (!isPercentageRangeValid)

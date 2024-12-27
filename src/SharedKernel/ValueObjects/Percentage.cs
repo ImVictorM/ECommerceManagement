@@ -6,7 +6,7 @@ namespace SharedKernel.ValueObjects;
 /// <summary>
 /// Represents a percentage.
 /// </summary>
-public class Percentage : ValueObject
+public class Percentage : ValueObject, IComparable<Percentage>
 {
     /// <summary>
     /// Gets the percentage value.
@@ -61,5 +61,99 @@ public class Percentage : ValueObject
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Value;
+    }
+
+    /// <inheritdoc/>
+    public int CompareTo(Percentage? other)
+    {
+        return Value.CompareTo(other?.Value);
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Percentage other)
+        {
+            return false;
+        }
+
+        return Value.Equals(other.Value);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return Value.GetHashCode();
+    }
+
+    /// <summary>
+    /// Indicates whether two <see cref="Percentage"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The left percentage.</param>
+    /// <param name="right">The right percentage.</param>
+    /// <returns>true if the instances are equal; otherwise, false.</returns>
+    public static bool operator ==(Percentage left, Percentage right)
+    {
+        if (left is null)
+        {
+            return right is null;
+        }
+
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Indicates whether two <see cref="Percentage"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The left percentage.</param>
+    /// <param name="right">The right percentage.</param>
+    /// <returns>true if the instances are not equal; otherwise, false.</returns>
+    public static bool operator !=(Percentage left, Percentage right)
+    {
+        return !(left == right);
+    }
+
+    /// <summary>
+    /// Compares two <see cref="Percentage"/> instances for less than.
+    /// </summary>
+    /// <param name="left">The left percentage.</param>
+    /// <param name="right">The right percentage.</param>
+    /// <returns>true if the left instance is less than the right; otherwise, false.</returns>
+    public static bool operator <(Percentage left, Percentage right)
+    {
+        return left is null ? right is not null : left.CompareTo(right) < 0;
+    }
+
+    /// <summary>
+    /// Compares two <see cref="Percentage"/> instances for less than or equal to.
+    /// </summary>
+    /// <param name="left">The left percentage.</param>
+    /// <param name="right">The right percentage.</param>
+    /// <returns>true if the left instance is less than or equal to the right; otherwise, false.</returns>
+    public static bool operator <=(Percentage left, Percentage right)
+    {
+        return left is null || left.CompareTo(right) <= 0;
+    }
+
+    /// <summary>
+    /// Compares two <see cref="Percentage"/> instances for greater than.
+    /// </summary>
+    /// <param name="left">The left percentage.</param>
+    /// <param name="right">The right percentage.</param>
+    /// <returns>true if the left instance is greater than the right; otherwise, false.</returns>
+    public static bool operator >(Percentage left, Percentage right)
+    {
+        return left is not null && left.CompareTo(right) > 0;
+    }
+
+    /// <summary>
+    /// Compares two <see cref="Percentage"/> instances for greater than or equal to.
+    /// </summary>
+    /// <param name="left">The left percentage.</param>
+    /// <param name="right">The right percentage.</param>
+    /// <returns>true if the left instance is greater than or equal to the right; otherwise, false.</returns>
+    public static bool operator >=(Percentage left, Percentage right)
+    {
+        return left is null ? right is null : left.CompareTo(right) >= 0;
     }
 }
