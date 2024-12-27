@@ -72,6 +72,7 @@ public static class ProductUtils
         return Enumerable
             .Range(0, count)
             .Select(index => CreateProduct(
+                id: ProductId.Create(index + 1),
                 name: ProductNameFromIndex(index),
                 description: ProductDescriptionFromIndex(index),
                 categories: categories,

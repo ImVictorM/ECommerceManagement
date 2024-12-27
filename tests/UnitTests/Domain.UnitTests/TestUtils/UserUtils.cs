@@ -77,6 +77,7 @@ public static class UserUtils
             .Range(0, count)
             .Select(index =>
                 CreateUser(
+                    id: UserId.Create(index + 1),
                     name: UserNameFromIndex(index),
                     email: EmailUtils.EmailFromIndex(index),
                     active: active

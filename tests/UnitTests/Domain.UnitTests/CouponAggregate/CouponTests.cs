@@ -58,7 +58,13 @@ public class CouponTests
         bool autoApply
     )
     {
-        var coupon = CouponUtils.CreateCoupon(discount, code, usageLimit, minPrice, autoApply);
+        var coupon = CouponUtils.CreateCoupon(
+            discount: discount,
+            code: code,
+            usageLimit: usageLimit,
+            minPrice: minPrice,
+            autoApply: autoApply
+        );
 
         coupon.Discount.Should().BeEquivalentTo(discount);
         coupon.Code.Should().BeEquivalentTo(code);

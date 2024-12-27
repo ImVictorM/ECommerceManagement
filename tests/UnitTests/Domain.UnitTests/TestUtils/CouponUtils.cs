@@ -4,6 +4,7 @@ using Domain.CouponAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 using SharedKernel.UnitTests.TestUtils;
+using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils;
@@ -16,6 +17,7 @@ public static class CouponUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Coupon"/> class.
     /// </summary>
+    /// <param name="id">The coupon id.</param>
     /// <param name="discount">The coupon discount.</param>
     /// <param name="code">The coupon code.</param>
     /// <param name="usageLimit">The coupon usage limit.</param>
@@ -24,6 +26,7 @@ public static class CouponUtils
     /// <param name="active">The initial state of the coupon.</param>
     /// <returns>A new instance of the <see cref="Coupon"/> class.</returns>
     public static Coupon CreateCoupon(
+        CouponId? id = null,
         Discount? discount = null,
         string? code = null,
         int? usageLimit = null,
@@ -39,6 +42,11 @@ public static class CouponUtils
             minPrice ?? DomainConstants.Coupon.MinPrice,
             autoApply ?? DomainConstants.Coupon.AutoApply
         );
+
+        if (id != null)
+        {
+            coupon.SetIdUsingReflection(id);
+        }
 
         if (!active)
         {

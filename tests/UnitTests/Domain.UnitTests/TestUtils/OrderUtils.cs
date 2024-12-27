@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Factories;
 using Domain.OrderAggregate.Interfaces;
@@ -69,6 +70,32 @@ public static class OrderUtils
         }
 
         return order;
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="OrderProduct"/> class.
+    /// </summary>
+    /// <param name="productId">The product id.</param>
+    /// <param name="quantity">The quantity.</param>
+    /// <param name="basePrice">The product base price.</param>
+    /// <param name="purchasedPrice">The product purchased price.</param>
+    /// <param name="productCategories">The product categories.</param>
+    /// <returns>A new instance of the <see cref="OrderProduct"/> class.</returns>
+    public static OrderProduct CreateOrderProduct(
+        ProductId? productId = null,
+        int? quantity = null,
+        decimal? basePrice = null,
+        decimal? purchasedPrice = null,
+        IReadOnlySet<CategoryId>? productCategories = null
+    )
+    {
+        return OrderProduct.Create(
+            productId ?? ProductId.Create(1),
+            quantity ?? 1,
+            basePrice ?? 10m,
+            purchasedPrice ?? 10m,
+            productCategories ?? new HashSet<CategoryId>() { CategoryId.Create(1) }
+        );
     }
 
     /// <summary>

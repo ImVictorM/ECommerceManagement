@@ -59,5 +59,10 @@ public static partial class DomainConstants
                 }
            ),
         ];
+
+        /// <summary>
+        /// The order total constant.
+        /// </summary>
+        public const decimal Total = 26.5m;
     }
 }
