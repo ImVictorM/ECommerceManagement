@@ -2,10 +2,12 @@ using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Commands.DeactivateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
+
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,7 +16,7 @@ using SharedKernel.Interfaces;
 namespace Application.UnitTests.Products.Commands.DeactivateProduct;
 
 /// <summary>
-/// Unit tests for the process of deactivating a product.
+/// Unit tests for the <see cref="DeactivateProductCommandHandler"/> class.
 /// </summary>
 public class DeactivateProductCommandHandlerTests
 {
@@ -42,7 +44,7 @@ public class DeactivateProductCommandHandlerTests
     /// Tests when the product to be deactivate does not exist or is already inactive an error is thrown.
     /// </summary>
     [Fact]
-    public async Task HandleDeactivateProduct_WhenRepositoryReturnsNull_ThrowsException()
+    public async Task HandleDeactivateProduct_WhenProductDoesNotExist_ThrowsError()
     {
         _mockProductRepository
             .Setup(r => r.FindFirstSatisfyingAsync(

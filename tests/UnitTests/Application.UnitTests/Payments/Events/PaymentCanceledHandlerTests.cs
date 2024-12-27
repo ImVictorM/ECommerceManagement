@@ -1,10 +1,12 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Payments.Events;
 using Application.UnitTests.Payments.Events.TestUtils;
+
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+
 using FluentAssertions;
 using Moq;
 
@@ -39,7 +41,7 @@ public class PaymentCanceledHandlerTests
     [Fact]
     public async Task HandlePaymentCanceled_WhenEventIsFired_CancelsTheRelatedOrder()
     {
-        var orderToCancel = OrderUtils.CreateOrder();
+        var orderToCancel = await OrderUtils.CreateOrder();
         var paymentCanceledEvent = PaymentCanceledUtils.CreateEvent();
 
         _mockOrderRepository.Setup(r => r.FindByIdAsync(It.IsAny<OrderId>())).ReturnsAsync(orderToCancel);

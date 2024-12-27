@@ -1,13 +1,14 @@
 using Application.Products.Commands.CreateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Application.UnitTests.TestUtils.ValidationData;
+
 using FluentAssertions;
 using FluentValidation.TestHelper;
 
 namespace Application.UnitTests.Products.Commands.CreateProduct;
 
 /// <summary>
-/// Tests fot the <see cref="CreateProductCommandValidator"/> validator.
+/// Unit tests fot the <see cref="CreateProductCommandValidator"/> validator.
 /// </summary>
 public class CreateProductCommandValidatorTests
 {
@@ -96,7 +97,7 @@ public class CreateProductCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.CategoryIds).WithErrorMessage("'Categories' must not be empty.");
+        result.ShouldHaveValidationErrorFor(c => c.CategoryIds).WithErrorMessage("'Category Ids' must not be empty.");
     }
 
     /// <summary>

@@ -2,10 +2,12 @@ using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Commands.UpdateProductInventory;
 using Application.UnitTests.Products.Commands.TestUtils;
+
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -64,7 +66,7 @@ public class UpdateProductInventoryCommandHandlerTests
     [Fact]
     public async Task HandleUpdateProductInventory_WhenProductExists_UpdatesTheInventoryQuantity()
     {
-        var product = ProductUtils.CreateProduct(quantityAvailable: 10);
+        var product = ProductUtils.CreateProduct(initialQuantityInInventory: 10);
         var command = UpdateProductInventoryCommandUtils.CreateCommand(quantityToAdd: 22);
         var expectedQuantityAfterIncrement = 32;
 

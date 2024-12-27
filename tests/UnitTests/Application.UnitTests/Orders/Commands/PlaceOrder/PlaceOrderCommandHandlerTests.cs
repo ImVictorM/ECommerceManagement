@@ -1,24 +1,25 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.Commands.TestUtils;
-using Application.UnitTests.Orders.TestUtils.Extensions;
 using Application.UnitTests.TestUtils.Behaviors;
+
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.UnitTests.TestUtils.Constants;
 using FluentAssertions;
 using Moq;
 
 namespace Application.UnitTests.Orders.Commands.PlaceOrder;
 
 /// <summary>
-/// Tests for the <see cref="PlaceOrderCommandHandler"/> command handler.
+/// Unit tests for the <see cref="PlaceOrderCommandHandler"/> command handler.
 /// </summary>
 public class PlaceOrderCommandHandlerTests
 {
     private readonly PlaceOrderCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IOrderService> _mockOrdersServices;
+    private readonly Mock<IOrderService> _mockOrdersService;
     private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
 
     /// <summary>
@@ -27,44 +28,43 @@ public class PlaceOrderCommandHandlerTests
     public PlaceOrderCommandHandlerTests()
     {
         _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
-        _mockOrdersServices = new Mock<IOrderService>();
+        _mockOrdersService = new Mock<IOrderService>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
 
         _handler = new PlaceOrderCommandHandler(
             _mockUnitOfWork.Object,
-            _mockOrdersServices.Object
+            _mockOrdersService.Object
         );
     }
 
     /// <summary>
     /// Tests the command handler handles a valid command successfully, creating an order and saving it.
     /// </summary>
-    /// <returns></returns>
     [Fact]
     public async Task HandlePlaceOrder_WhenRequestIsValid_CreatesOrder()
     {
+        var command = PlaceOrderCommandUtils.CreateCommand(
+            orderProducts: PlaceOrderCommandUtils.ToInput(DomainConstants.Order.OrderProducts),
+            couponsAppliedIds: ["1", "2"],
+            installments: 2
+        );
+
+        _mockOrdersService
+            .Setup(s => s.PrepareOrderProductsAsync(command.Products))
+            .ReturnsAsync(DomainConstants.Order.OrderProducts);
+
+        _mockOrdersService
+            .Setup(s => s.CalculateTotalAsync(DomainConstants.Order.OrderProducts, PlaceOrderCommandUtils.ToOrderCoupon(command.CouponAppliedIds)))
+            .ReturnsAsync(DomainConstants.Order.Total);
+
         var mockCreatedId = OrderId.Create(2);
-
-        _mockOrdersServices
-            .Setup(s => s.HasInventoryAvailableAsync(It.IsAny<IEnumerable<OrderProduct>>()))
-            .Returns(Task.CompletedTask);
-
-        _mockOrdersServices
-            .Setup(s => s.CalculateTotalAsync(It.IsAny<IEnumerable<OrderProduct>>()))
-            .ReturnsAsync(120m);
-
         MockEFCoreBehaviors.MockSetEntityIdBehavior(_mockOrderRepository, _mockUnitOfWork, mockCreatedId);
-
-        var command = PlaceOrderCommandUtils.CreateCommand();
 
         var result = await _handler.Handle(command, default);
 
         result.Id.Should().Be(mockCreatedId.ToString());
-
-        _mockOrdersServices.Verify(s => s.HasInventoryAvailableAsync(command.Products.ToOrderProduct()), Times.Once());
-        _mockOrdersServices.Verify(s => s.CalculateTotalAsync(command.Products.ToOrderProduct()), Times.Once());
 
         _mockOrderRepository.Verify(r => r.AddAsync(It.IsAny<Order>()), Times.Once());
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());

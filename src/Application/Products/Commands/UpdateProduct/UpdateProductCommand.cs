@@ -10,12 +10,12 @@ namespace Application.Products.Commands.UpdateProduct;
 /// <param name="Description">The new product description.</param>
 /// <param name="BasePrice">The new product base price.</param>
 /// <param name="Images">The new product images.</param>
-/// <param name="CategoriesIds">The product new categories ids.</param>
+/// <param name="CategoryIds">The product new categories ids.</param>
 public record UpdateProductCommand(
     string Id,
     string Name,
     string Description,
     decimal BasePrice,
     IEnumerable<Uri> Images,
-    IEnumerable<long> CategoriesIds
+    IEnumerable<string> CategoryIds
 ) : IRequest<Unit>;

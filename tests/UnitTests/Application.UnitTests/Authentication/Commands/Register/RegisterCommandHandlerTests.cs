@@ -1,22 +1,26 @@
-using System.Linq.Expressions;
 using Application.Authentication.Commands.Register;
 using Application.Common.Errors;
 using Application.Common.Interfaces.Authentication;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Authentication.Commands.TestUtils;
+using Application.UnitTests.TestUtils.Constants;
+
 using Domain.UnitTests.TestUtils;
-using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
+
+using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SharedKernel.UnitTests.TestUtils;
+using SharedKernel.Authorization;
 
 namespace Application.UnitTests.Authentication.Commands.Register;
 
 /// <summary>
-/// Tests for the registration use case.
+/// Unit tests for the <see cref="RegisterCommandHandler"/> class.
 /// </summary>
 public class RegisterCommandHandlerTests
 {
@@ -47,15 +51,25 @@ public class RegisterCommandHandlerTests
     }
 
     /// <summary>
+    /// List containing valid register commands.
+    /// </summary>
+    public static readonly IEnumerable<object[]> ValidRegisterCommands =
+    [
+        [RegisterCommandUtils.CreateCommand()],
+        [RegisterCommandUtils.CreateCommand(name: "Apparently not jack")],
+        [RegisterCommandUtils.CreateCommand(password: "super-secret123")],
+        [RegisterCommandUtils.CreateCommand(email: "myemail@email.com")],
+    ];
+
+    /// <summary>
     /// Tests if a user is correctly created when the user is valid.
     /// </summary>
     /// <param name="registerCommand">The register command.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(ValidRegisterCommands))]
     public async Task HandleRegisterCommand_WhenUserIsValid_ShouldCreateAndReturnUserPlusAuthenticationToken(RegisterCommand registerCommand)
     {
-        var expectedToken = "jwt-token";
+        var expectedToken = ApplicationConstants.Jwt.Token;
 
         _mockUserRepository
             .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
@@ -67,7 +81,7 @@ public class RegisterCommandHandlerTests
 
         _mockPasswordHasher
             .Setup(r => r.Hash(It.IsAny<string>()))
-            .Returns((DomainConstants.User.PasswordHash, DomainConstants.User.PasswordSalt));
+            .Returns(PasswordHashUtils.Create());
 
         var result = await _handler.Handle(registerCommand, default);
 
@@ -75,8 +89,10 @@ public class RegisterCommandHandlerTests
         result.User.Name.Should().Be(registerCommand.Name);
         result.User.Email.Value.Should().Be(registerCommand.Email);
         result.User.UserRoles.Count.Should().Be(1);
+        result.User.UserRoles.First().RoleId.Should().Be(Role.Customer.Id);
         result.User.UserAddresses.Count.Should().Be(0);
         result.Token.Should().Be(expectedToken);
+        result.User.IsActive.Should().BeTrue();
 
         _mockPasswordHasher.Verify(m => m.Hash(registerCommand.Password), Times.Once);
         _mockJwtTokenService.Verify(m => m.GenerateToken(result.User), Times.Once);
@@ -87,33 +103,20 @@ public class RegisterCommandHandlerTests
     /// <summary>
     /// Tests if it throws an error when a user with the same email already exists.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
-    public async Task HandleRegisterCommand_WhenUserWithEmailAlreadyExists_ThrowsAnError()
+    public async Task HandleRegisterCommand_WhenUserWithEmailAlreadyExists_ThrowsError()
     {
-        var testEmail = "test@email.com";
+        var testEmail = EmailUtils.CreateEmail();
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
             .ReturnsAsync(UserUtils.CreateUser(email: testEmail));
 
-        var registerCommand = RegisterCommandUtils.CreateCommand(email: testEmail);
+        var registerCommand = RegisterCommandUtils.CreateCommand(email: testEmail.ToString());
 
         await FluentActions.Invoking(() => _handler.Handle(registerCommand, default))
            .Should()
            .ThrowAsync<UserAlreadyExistsException>()
            .WithMessage("The user already exists");
-    }
-
-    /// <summary>
-    /// List containing valid register commands.
-    /// </summary>
-    /// <returns></returns>
-    public static IEnumerable<object[]> ValidRegisterCommands()
-    {
-        yield return new object[] { RegisterCommandUtils.CreateCommand() };
-        yield return new object[] { RegisterCommandUtils.CreateCommand(name: "Apparently not jack") };
-        yield return new object[] { RegisterCommandUtils.CreateCommand(password: "super-secret123") };
-        yield return new object[] { RegisterCommandUtils.CreateCommand(email: "myemail@email.com") };
     }
 }

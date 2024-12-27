@@ -1,6 +1,7 @@
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Events;
 using Domain.UnitTests.TestUtils;
+
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -21,7 +22,7 @@ public static class OrderCreatedUtils
     /// <param name="deliveryAddress">The delivery address.</param>
     /// <param name="installments">The installments quantity.</param>
     /// <returns>A new instance of the <see cref="OrderCreated"/> class.</returns>
-    public static OrderCreated CreateEvent(
+    public static async Task<OrderCreated> CreateEvent(
         Order? order = null,
         IPaymentMethod? paymentMethod = null,
         Address? billingAddress = null,
@@ -30,7 +31,7 @@ public static class OrderCreatedUtils
     )
     {
         return new OrderCreated(
-            order ?? OrderUtils.CreateOrder(),
+            order ?? await OrderUtils.CreateOrder(),
             paymentMethod ?? PaymentUtils.CreateCreditCardPayment(),
             billingAddress ?? AddressUtils.CreateAddress(),
             deliveryAddress ?? AddressUtils.CreateAddress(),

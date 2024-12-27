@@ -25,7 +25,7 @@ public class OrderCoupon : ValueObject
     /// </summary>
     /// <param name="couponId">The coupon id.</param>
     /// <returns>A new instance of the <see cref="OrderCoupon"/> class.</returns>
-    public static OrderCoupon Crete(CouponId couponId)
+    public static OrderCoupon Create(CouponId couponId)
     {
         return new OrderCoupon(couponId);
     }

@@ -1,6 +1,7 @@
 using Application.Products.Commands.UpdateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Application.UnitTests.TestUtils.ValidationData;
+
 using FluentAssertions;
 using FluentValidation.TestHelper;
 
@@ -75,12 +76,12 @@ public class UpdateProductCommandValidatorTests
     [Fact]
     public void ValidateUpdateProductCommand_WhenCategoriesAreEmpty_ShouldHaveValidationErrors()
     {
-        var command = UpdateProductCommandUtils.CreateCommand(categories: []);
+        var command = UpdateProductCommandUtils.CreateCommand(categoryIds: []);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.CategoriesIds).WithErrorMessage("'Category Ids' must not be empty.");
+        result.ShouldHaveValidationErrorFor(c => c.CategoryIds).WithErrorMessage("'Category Ids' must not be empty.");
     }
 
     /// <summary>

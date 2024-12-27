@@ -16,6 +16,9 @@ public static class LoginQueryUtils
     /// <returns>A new instance of the <see cref="LoginQuery"/>.</returns>
     public static LoginQuery CreateQuery(string? email = null, string? password = null)
     {
-        return new LoginQuery(email ?? SharedKernelConstants.Email.Value, password ?? DomainConstants.User.Password);
+        return new LoginQuery(
+            email ?? DomainConstants.User.Email,
+            password ?? DomainConstants.User.Password
+        );
     }
 }

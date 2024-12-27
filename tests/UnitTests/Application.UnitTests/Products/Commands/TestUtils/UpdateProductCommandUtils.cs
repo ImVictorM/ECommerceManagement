@@ -16,7 +16,7 @@ public static class UpdateProductCommandUtils
     /// <param name="description">The product description.</param>
     /// <param name="basePrice">The product base price.</param>
     /// <param name="images">The product images.</param>
-    /// <param name="categories">The product categories.</param>
+    /// <param name="categoryIds">The product category ids.</param>
     /// <returns>A new instance of the <see cref="UpdateProductCommand"/> class.</returns>
     public static UpdateProductCommand CreateCommand(
         string? id = null,
@@ -24,7 +24,7 @@ public static class UpdateProductCommandUtils
         string? description = null,
         decimal? basePrice = null,
         IEnumerable<Uri>? images = null,
-        IEnumerable<long>? categories = null
+        IEnumerable<string>? categoryIds = null
     )
     {
         return new UpdateProductCommand(
@@ -33,7 +33,7 @@ public static class UpdateProductCommandUtils
             description ?? DomainConstants.Product.Description,
             basePrice ?? DomainConstants.Product.BasePrice,
             images ?? DomainConstants.Product.ProductImages.Select(i => i.Url),
-            categories ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.Value)
+            categoryIds ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.ToString())
         );
     }
 }

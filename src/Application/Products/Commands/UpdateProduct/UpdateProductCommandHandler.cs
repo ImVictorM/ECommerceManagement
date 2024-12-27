@@ -1,5 +1,6 @@
 using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
+
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Application.Products.Commands.UpdateProduct;
 
 /// <summary>
-/// Handles the <see cref="UpdateProductCommand"/>.
+/// Handles the <see cref="UpdateProductCommand"/> command.
 /// </summary>
 public sealed partial class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
 {
@@ -33,7 +34,7 @@ public sealed partial class UpdateProductCommandHandler : IRequestHandler<Update
         LogInitiatingProductUpdate(request.Id);
 
         var productId = ProductId.Create(request.Id);
-        var productCategoryIds = request.CategoriesIds.Select(CategoryId.Create);
+        var productCategoryIds = request.CategoryIds.Select(CategoryId.Create);
 
         var productToUpdate = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
 

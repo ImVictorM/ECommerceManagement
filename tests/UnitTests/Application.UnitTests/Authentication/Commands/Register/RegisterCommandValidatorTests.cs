@@ -7,7 +7,7 @@ using FluentValidation.TestHelper;
 namespace Application.UnitTests.Authentication.Commands.Register;
 
 /// <summary>
-/// Tests for the <see cref="RegisterCommandValidator"/> validator.
+/// Unit tests for the <see cref="RegisterCommandValidator"/> validator.
 /// </summary>
 public class RegisterCommandValidatorTests
 {

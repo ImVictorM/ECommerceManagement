@@ -1,10 +1,12 @@
-using System.Linq.Expressions;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Queries.TestUtils;
 using Application.Users.Queries.GetAllUsers;
+
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+
+using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -12,7 +14,7 @@ using Moq;
 namespace Application.UnitTests.Users.Queries.GetAllUsers;
 
 /// <summary>
-/// Test the behaviors of the <see cref="GetAllUsersQueryHandler"/> query handler.
+/// Unit tests for the <see cref="GetAllUsersQueryHandler"/> query handler.
 /// </summary>
 public class GetAllUsersQueryHandlerTests
 {
@@ -39,7 +41,6 @@ public class GetAllUsersQueryHandlerTests
     /// <summary>
     /// Tests if it queries the users with the active filter correctly.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task HandleGetAllUsers_WhenFilteringForUsersThatIsActive_QueryOnlyActiveUsers()
     {
@@ -53,14 +54,13 @@ public class GetAllUsersQueryHandlerTests
 
         var response = await _handler.Handle(query, default);
 
-        response.Users.Should().BeEquivalentTo(mockActiveUsers);
+        response.Select(ur => ur.User).Should().BeEquivalentTo(mockActiveUsers);
         _mockUserRepository.Verify(r => r.FindAllAsync(user => user.IsActive == query.IsActive), Times.Once());
     }
 
     /// <summary>
     /// Tests if it queries the users with the inactive filter correctly.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task HandleGetAllUsers_WhenFilteringForUsersThatIsInactive_QueryOnlyInactiveUsers()
     {
@@ -74,14 +74,13 @@ public class GetAllUsersQueryHandlerTests
 
         var response = await _handler.Handle(query, default);
 
-        response.Users.Should().BeEquivalentTo(mockInactiveUsers);
+        response.Select(ur => ur.User).Should().BeEquivalentTo(mockInactiveUsers);
         _mockUserRepository.Verify(r => r.FindAllAsync(user => user.IsActive == query.IsActive), Times.Once());
     }
 
     /// <summary>
     /// Tests if it queries the users without any filters correctly.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task HandleGetAllUsers_WhenGettingAllUsersWithoutFilter_QueryAllTheUsers()
     {
@@ -95,7 +94,7 @@ public class GetAllUsersQueryHandlerTests
 
         var response = await _handler.Handle(query, default);
 
-        response.Users.Should().BeEquivalentTo(mockAllUsers);
+        response.Select(ur => ur.User).Should().BeEquivalentTo(mockAllUsers);
         _mockUserRepository.Verify(r => r.FindAllAsync(null), Times.Once());
     }
 }

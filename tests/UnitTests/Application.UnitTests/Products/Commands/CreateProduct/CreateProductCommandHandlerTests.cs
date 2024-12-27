@@ -2,9 +2,11 @@ using Application.Common.Interfaces.Persistence;
 using Application.Products.Commands.CreateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Behaviors;
+
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -40,17 +42,16 @@ public class CreateProductCommandHandlerTests
     /// Provides valid <see cref="CreateProductCommand"/> requests with various parameter configurations.
     /// Used for testing the command handler's ability to handle different valid inputs.
     /// </summary>
-    /// <returns>A collection of valid <see cref="CreateProductCommand"/> requests.</returns>
-    public static IEnumerable<object[]> ValidRequests()
-    {
-        yield return new object[] { CreateProductCommandUtils.CreateCommand() };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(name: "pencil") };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(basePrice: 15m) };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(description: "some description") };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(initialQuantity: 2) };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(categories: [1, 2]) };
-        yield return new object[] { CreateProductCommandUtils.CreateCommand(images: [ProductUtils.ProductImageUrlFromIndex(1)]) };
-    }
+    public static readonly IEnumerable<object[]> ValidRequests =
+    [
+        [CreateProductCommandUtils.CreateCommand()],
+        [CreateProductCommandUtils.CreateCommand(name: "pencil")],
+        [CreateProductCommandUtils.CreateCommand(basePrice: 15m)],
+        [CreateProductCommandUtils.CreateCommand(description: "some description")],
+        [CreateProductCommandUtils.CreateCommand(initialQuantity: 2)],
+        [CreateProductCommandUtils.CreateCommand(categories: [1, 2])],
+        [CreateProductCommandUtils.CreateCommand(images: [ProductUtils.ProductImageUrlFromIndex(1)])],
+    ];
 
     /// <summary>
     /// Verifies that when a valid <see cref="CreateProductCommand"/> is handled by the <see cref="CreateProductCommandHandler"/>,
@@ -59,7 +60,7 @@ public class CreateProductCommandHandlerTests
     /// <param name="request">The valid <see cref="CreateProductCommand"/> request.</param>
     [Theory]
     [MemberData(nameof(ValidRequests))]
-    public async Task HandleCreateProduct_WhenCommandIsValid_AddsThenSavesThenReturnsTheId(CreateProductCommand request)
+    public async Task HandleCreateProduct_WhenCommandIsValid_CreatesAndReturnsTheId(CreateProductCommand request)
     {
         var mockEntityId = ProductId.Create(5);
 

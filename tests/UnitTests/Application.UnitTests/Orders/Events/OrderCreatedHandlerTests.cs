@@ -2,12 +2,14 @@ using Application.Common.Interfaces.Persistence;
 using Application.Common.Interfaces.Services;
 using Application.Orders.Events;
 using Application.UnitTests.Orders.Events.TestUtils;
+
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+
 using Moq;
 
 namespace Application.UnitTests.Orders.Events;
@@ -48,7 +50,7 @@ public class OrderCreatedHandlerTests
     [Fact]
     public async Task HandleOrderCreated_WhenEventIsFired_CreatesPayment()
     {
-        var orderCreatedEvent = OrderCreatedUtils.CreateEvent();
+        var orderCreatedEvent = await OrderCreatedUtils.CreateEvent();
 
         await _eventHandler.Handle(orderCreatedEvent, default);
 

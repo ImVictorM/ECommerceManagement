@@ -7,7 +7,7 @@ using FluentValidation.TestHelper;
 namespace Application.UnitTests.Users.Commands.UpdateUser;
 
 /// <summary>
-/// Tests for the <see cref="UpdateUserCommandValidator"/> validator.
+/// Unit tests for the <see cref="UpdateUserCommandValidator"/> validator.
 /// </summary>
 public class UpdateUserCommandValidatorTests
 {

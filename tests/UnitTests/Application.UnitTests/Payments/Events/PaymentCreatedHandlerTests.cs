@@ -2,6 +2,7 @@ using Application.Common.Interfaces.Persistence;
 using Application.Common.Interfaces.Services;
 using Application.Payments.Events;
 using Application.UnitTests.Payments.Events.TestUtils;
+
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.Enumeration;
 using Domain.PaymentAggregate.ValueObjects;
@@ -9,6 +10,7 @@ using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
+
 using FluentAssertions;
 using Moq;
 using SharedKernel.ValueObjects;
@@ -76,7 +78,7 @@ public class PaymentCreatedHandlerTests
     /// Also, verifies if the authorize process is not initiated.
     /// </summary>
     [Fact]
-    public async Task HandlePaymentCreated_WhenUserCouldNotBeFound_CancelsPayment()
+    public async Task HandlePaymentCreated_WhenPayerCouldNotBeFound_CancelsPayment()
     {
         _mockUserRepository.Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>())).ReturnsAsync((User?)null);
 

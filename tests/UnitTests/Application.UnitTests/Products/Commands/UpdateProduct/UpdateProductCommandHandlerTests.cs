@@ -2,10 +2,12 @@ using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Products.Commands.UpdateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
+
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -68,8 +70,8 @@ public class UpdateProductCommandHandlerTests
             name: "new product name",
             description: "new product description",
             basePrice: 600m,
-            images: [new Uri("newimage.png")],
-            categories: [1, 2]
+            images: [new Uri("newimage.png", UriKind.Relative)],
+            categoryIds: ["1", "2", "3"]
         );
 
         _mockProductRepository
@@ -82,7 +84,7 @@ public class UpdateProductCommandHandlerTests
         productToBeUpdated.Name.Should().Be(command.Name);
         productToBeUpdated.Description.Should().Be(command.Description);
         productToBeUpdated.BasePrice.Should().Be(command.BasePrice);
-        productToBeUpdated.ProductCategories.Select(pc => pc.CategoryId).Should().BeEquivalentTo(command.CategoriesIds);
+        productToBeUpdated.ProductCategories.Select(pc => pc.CategoryId.ToString()).Should().BeEquivalentTo(command.CategoryIds);
         productToBeUpdated.ProductImages.Select(pi => pi.Url).Should().BeEquivalentTo(command.Images);
     }
 }

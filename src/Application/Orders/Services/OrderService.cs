@@ -10,7 +10,6 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.ValueObjects;
 
-using SharedKernel.Errors;
 using SharedKernel.Services;
 
 namespace Application.Orders.Services;
@@ -95,7 +94,7 @@ public class OrderService : IOrderService
 
             if (!product.Inventory.HasInventoryAvailable(op.Quantity))
             {
-                throw new DomainValidationException($"Product {product.Id} has insufficient inventory");
+                throw new InventoryInsufficientException($"Product {product.Id} has insufficient inventory");
             }
 
             var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);

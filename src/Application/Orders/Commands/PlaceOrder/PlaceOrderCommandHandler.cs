@@ -36,7 +36,7 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
 
         var orderCouponsApplied = request.CouponAppliedIds?
                 .Select(CouponId.Create)
-                .Select(OrderCoupon.Crete);
+                .Select(OrderCoupon.Create);
 
         var orderFactory = new OrderFactory(_orderService);
 

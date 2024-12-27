@@ -30,7 +30,7 @@ public static class UpdateUserCommandUtils
             idUserToUpdate ?? DomainConstants.User.Id.ToString(),
             name ?? DomainConstants.User.Name,
             phone ?? DomainConstants.User.Phone,
-            email ?? SharedKernelConstants.Email.Value
+            email ?? DomainConstants.User.Email
         );
     }
 }

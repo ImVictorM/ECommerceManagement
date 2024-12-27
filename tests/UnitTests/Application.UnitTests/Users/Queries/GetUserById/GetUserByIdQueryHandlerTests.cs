@@ -2,9 +2,11 @@ using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Queries.TestUtils;
 using Application.Users.Common.Errors;
 using Application.Users.Queries.GetUserById;
+
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -12,7 +14,7 @@ using Moq;
 namespace Application.UnitTests.Users.Queries.GetUserById;
 
 /// <summary>
-/// Tests the behaviors of the <see cref="GetUserByIdQueryHandler"/> query handler.
+/// Unit tests for the <see cref="GetUserByIdQueryHandler"/> query handler.
 /// </summary>
 public class GetUserByIdQueryHandlerTests
 {
@@ -39,9 +41,8 @@ public class GetUserByIdQueryHandlerTests
     /// <summary>
     /// Tests if the user is returned when they exists.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
-    public async Task HandleGetUserById_WhenUserExists_ReturnsIt()
+    public async Task HandleGetUserById_WhenUserExists_ReturnsUser()
     {
         var mockUser = UserUtils.CreateUser();
 
@@ -58,9 +59,8 @@ public class GetUserByIdQueryHandlerTests
     /// <summary>
     /// Tests if an error is thrown when the user is not found.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
-    public async Task HandleGetUserById_WhenUserDoesNotExist_ThrowsException()
+    public async Task HandleGetUserById_WhenUserDoesNotExist_ThrowsError()
     {
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))

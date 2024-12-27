@@ -38,11 +38,11 @@ public class PlaceOrderCommandValidatorTests
     [Fact]
     public void ValidatePlaceOrderCommand_WhenAuthenticatedUserIdIsEmpty_ShouldHaveValidationError()
     {
-        var command = PlaceOrderCommandUtils.CreateCommand(userId: "");
+        var command = PlaceOrderCommandUtils.CreateCommand(currentUserId: "");
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(c => c.CurrentUserId).WithErrorMessage("'Authenticated User Id' must not be empty.");
+        result.ShouldHaveValidationErrorFor(c => c.CurrentUserId).WithErrorMessage("'Current User Id' must not be empty.");
     }
 
     /// <summary>

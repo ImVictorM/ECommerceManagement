@@ -2,10 +2,12 @@ using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.DeactivateUser;
+
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,7 +16,7 @@ using SharedKernel.Authorization;
 namespace Application.UnitTests.Users.Commands.DeactivateUser;
 
 /// <summary>
-/// Contains tests for the <see cref="DeactivateUserCommandHandler"/> to validate correct handling of user deactivation.
+/// Unit tests for the <see cref="DeactivateUserCommandHandler"/> handler.
 /// </summary>
 public class DeactivateUserCommandHandlerTests
 {
@@ -41,46 +43,40 @@ public class DeactivateUserCommandHandlerTests
     /// <summary>
     /// Not allowed pairs.
     /// </summary>
-    public static IEnumerable<object[]> NotAllowedPairs => new List<object[]>
-    {
-        new object[]
-        {
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Customer),
-            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Customer)
-        },
-        new object[]
-        {
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Customer),
-            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Admin)
-        },
-        new object[]
-        {
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
-            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Admin)
-        },
-        new object[]
-        {
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin)
-        }
-    };
+    public static IEnumerable<object[]> NotAllowedPairs =>
+    [
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), roles: new HashSet<Role>() { Role.Customer }),
+            UserUtils.CreateUser(id: UserId.Create(2), roles: new HashSet<Role>() { Role.Customer })
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), roles: new HashSet<Role>() { Role.Customer }),
+            UserUtils.CreateUser(id: UserId.Create(2), roles: new HashSet<Role>() { Role.Admin })
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
+            UserUtils.CreateUser(id: UserId.Create(2), roles : new HashSet < Role >() { Role.Admin })
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
+            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin })
+        ]
+    ];
 
     /// <summary>
     /// List of allowed pairs.
     /// </summary>
-    public static IEnumerable<object[]> AllowedPairs => new List<object[]>()
-    {
-        new object[]
-        {
-            UserUtils.CreateUser(id: UserId.Create(1), active: true, role: Role.Customer),
-            UserUtils.CreateUser(id: UserId.Create(1), active: true, role: Role.Customer)
-        },
-        new object[]
-        {
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
-            UserUtils.CreateUser(id: UserId.Create(2), active: true, role: Role.Customer)
-        }
-    };
+    public static IEnumerable<object[]> AllowedPairs =>
+    [
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), active: true, roles: new HashSet<Role>() { Role.Customer }),
+            UserUtils.CreateUser(id: UserId.Create(1), active: true, roles : new HashSet<Role>() { Role.Customer })
+        ],
+        [
+            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
+            UserUtils.CreateUser(id: UserId.Create(2), active: true, roles: new HashSet<Role>() { Role.Customer })
+        ]
+    ];
 
     /// <summary>
     /// Tests that when the user to be deactivated exists and the current user has the right permissions the deactivation occurs.
@@ -109,7 +105,7 @@ public class DeactivateUserCommandHandlerTests
     [Fact]
     public async Task HandleDeactivateUser_WhenUserDoesNotExist_ReturnsWithoutThrowing()
     {
-        var currentUser = UserUtils.CreateUser(role: Role.Admin, id: UserId.Create(1));
+        var currentUser = UserUtils.CreateUser(roles: new HashSet<Role>() { Role.Admin }, id: UserId.Create(1));
 
         _mockUserRepository
             .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))

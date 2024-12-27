@@ -3,19 +3,22 @@ using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.UpdateUser;
 using Application.Users.Common.Errors;
+
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SharedKernel.Authorization;
+using SharedKernel.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Users.Commands.UpdateUser;
 
 /// <summary>
-/// Contains tests for the <see cref="UpdateUserCommandHandler"/> to validate correct handling of user updates.
+/// Unit tests for the <see cref="UpdateUserCommandHandler"/> handler.
 /// </summary>
 public class UpdateUserCommandHandlerTests
 {
@@ -45,16 +48,16 @@ public class UpdateUserCommandHandlerTests
     public static IEnumerable<object[]> NotAllowedPairs =>
     [
         [
-            UserUtils.CreateUser(id: UserId.Create(2), role: Role.Customer),
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(2), roles : new HashSet < Role >() { Role.Customer }),
+            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
         ],
         [
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Customer),
-            UserUtils.CreateUser(id: UserId.Create(4), role: Role.Customer),
+            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Customer }),
+            UserUtils.CreateUser(id: UserId.Create(4), roles : new HashSet < Role >() { Role.Customer }),
         ],
         [
-            UserUtils.CreateUser(id: UserId.Create(1), role: Role.Admin),
-            UserUtils.CreateUser(id: UserId.Create(4), role: Role.Admin),
+            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
+            UserUtils.CreateUser(id: UserId.Create(4), roles : new HashSet < Role >() { Role.Admin }),
         ]
     ];
 
@@ -64,16 +67,16 @@ public class UpdateUserCommandHandlerTests
     public static IEnumerable<object[]> AllowedPairs =>
     [
         [
-            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Customer),
-            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Customer)
+            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Customer }),
+            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Customer })
         ],
         [
-            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Admin),
-            UserUtils.CreateUser(id: UserId.Create(2) ,role: Role.Customer)
+            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Admin }),
+            UserUtils.CreateUser(id: UserId.Create(2) ,roles : new HashSet < Role >() { Role.Customer })
         ],
         [
-            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Admin),
-            UserUtils.CreateUser(id: UserId.Create(1) ,role: Role.Admin)
+            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Admin }),
+            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Admin })
         ],
     ];
 
@@ -128,11 +131,11 @@ public class UpdateUserCommandHandlerTests
     [Fact]
     public async Task HandleUpdateUser_WhenTryingToUpdateEmailWithExistingOne_ThrowsException()
     {
-        var userToBeUpdatedNewEmail = "existing_email@email.com";
+        var userToBeUpdatedNewEmail = EmailUtils.CreateEmail("existing_email@email.com");
 
         var userToBeUpdated = UserUtils.CreateUser();
         var conflictingUser = UserUtils.CreateUser(email: userToBeUpdatedNewEmail);
-        var updateRequest = UpdateUserCommandUtils.CreateCommand(email: userToBeUpdatedNewEmail);
+        var updateRequest = UpdateUserCommandUtils.CreateCommand(email: userToBeUpdatedNewEmail.ToString());
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
