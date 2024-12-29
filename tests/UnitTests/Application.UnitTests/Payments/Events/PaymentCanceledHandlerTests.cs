@@ -41,7 +41,7 @@ public class PaymentCanceledHandlerTests
     [Fact]
     public async Task HandlePaymentCanceled_WhenEventIsFired_CancelsTheRelatedOrder()
     {
-        var orderToCancel = await OrderUtils.CreateOrder();
+        var orderToCancel = await OrderUtils.CreateOrder(withDefaultMockSetup: true);
         var paymentCanceledEvent = PaymentCanceledUtils.CreateEvent();
 
         _mockOrderRepository.Setup(r => r.FindByIdAsync(It.IsAny<OrderId>())).ReturnsAsync(orderToCancel);

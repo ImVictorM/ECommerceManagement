@@ -1,9 +1,11 @@
-using System.Net.Http.Json;
-using Contracts.Users;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Users;
+
+using System.Net.Http.Json;
+using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;
@@ -85,11 +87,11 @@ public class DeactivateUserTests : BaseIntegrationTest
         var responseDeactivate = await Client.DeleteAsync($"/users/{customerToDeactivate.Id}");
         var responseGetInactiveUsers = await Client.GetAsync($"/users?active=false");
 
-        var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<UserListResponse>();
+        var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
 
         responseDeactivate.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         responseGetInactiveUsers.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseGetInactiveUsersContent!.Users.Select(u => u.Id).Should().Contain(customerToDeactivate.Id.ToString());
+        responseGetInactiveUsersContent!.Select(u => u.Id).Should().Contain(customerToDeactivate.Id.ToString());
     }
 
     /// <summary>
@@ -105,10 +107,10 @@ public class DeactivateUserTests : BaseIntegrationTest
         await Client.LoginAs(SeedAvailableUsers.Admin);
         var responseGetInactiveUsers = await Client.GetAsync($"/users?active=false");
 
-        var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<UserListResponse>();
+        var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
 
         responseDeactivate.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         responseGetInactiveUsers.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseGetInactiveUsersContent!.Users.Select(u => u.Id).Should().Contain(customer.Id.ToString());
+        responseGetInactiveUsersContent!.Select(u => u.Id).Should().Contain(customer.Id.ToString());
     }
 }

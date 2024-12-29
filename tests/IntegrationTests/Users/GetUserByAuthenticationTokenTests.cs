@@ -30,7 +30,6 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     /// Tests if when calling the endpoint with a correct authentication token it returns the user data.
     /// </summary>
     /// <param name="userType">The user type to be authenticated and queried.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [InlineData(SeedAvailableUsers.Admin)]
     [InlineData(SeedAvailableUsers.Customer)]
@@ -52,7 +51,6 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     /// <summary>
     /// Tests if when trying to get user data without a token it returns unauthorized.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task GetUserByAuthenticationToken_WhenAuthorizationIsNotGiven_ReturnsUnauthorized()
     {
@@ -64,7 +62,6 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     /// <summary>
     /// Tests if when token is invalid it returns unauthorized response.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task GetUserByAuthenticationToken_WhenTokenIsInvalid_ReturnsUnauthorized()
     {

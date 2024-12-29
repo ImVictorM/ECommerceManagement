@@ -1,11 +1,13 @@
-using System.Net;
-using System.Net.Http.Json;
-using Contracts.Products;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.Products.TestUtils;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Products;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
@@ -74,12 +76,24 @@ public class UpdateProductTests : BaseIntegrationTest
     /// Tests when updating the product with right credentials and request parameters the product is updated successfully returning a no content response.
     /// Also, after updating the product, fetches and tests it to be sure if it was updated.
     /// </summary>
-    /// <returns></returns>
     [Fact]
     public async Task UpdateProduct_WhenUserIsAdminAndRequestIsValid_UpdatesProductAndReturnsNoContent()
     {
+        var productCategories = new[]
+        {
+            CategorySeed.GetSeedCategory(SeedAvailableCategories.BOOKS_STATIONERY),
+            CategorySeed.GetSeedCategory(SeedAvailableCategories.TECHNOLOGY)
+        };
+
         var productToUpdate = ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL);
-        var request = UpdateProductRequestUtils.CreateRequest();
+
+        var request = UpdateProductRequestUtils.CreateRequest(
+            name: "Techy pen",
+            categoryIds: productCategories.Select(c => c.Id.ToString()),
+            description: "New tech pen coming in",
+            basePrice: 150m,
+            images: [new Uri("tech-pencil.png", UriKind.Relative)]
+        );
 
         await Client.LoginAs(SeedAvailableUsers.Admin);
         var putResponse = await Client.PutAsJsonAsync($"/products/{productToUpdate.Id}", request);
@@ -88,9 +102,9 @@ public class UpdateProductTests : BaseIntegrationTest
 
         putResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         getResponseContent!.Name.Should().Be(request.Name);
-        getResponseContent.Categories.Should().BeEquivalentTo(request.Categories);
         getResponseContent.Description.Should().Be(request.Description);
         getResponseContent.Images.Should().BeEquivalentTo(request.Images);
         getResponseContent.BasePrice.Should().Be(request.BasePrice);
+        getResponseContent.Categories.Should().BeEquivalentTo(productCategories.Select(c => c.Name));
     }
 }

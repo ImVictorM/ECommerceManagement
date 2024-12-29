@@ -59,9 +59,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             [
                 "roles",
                 "order_statuses",
-                "payment_methods",
                 "payment_statuses",
-                "categories",
                 "shipment_statuses",
             ],
         });

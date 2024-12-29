@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20241224203619_InitialCreate")]
+    [Migration("20241228170207_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -614,14 +614,14 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.CategoryRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CategoryRestriction", b =>
                 {
                     b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
                     b.ToTable("restriction_categories", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.ProductRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.ProductRestriction", b =>
                 {
                     b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
@@ -731,9 +731,17 @@ namespace Infrastructure.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
 
+                            b1.Property<decimal>("BasePrice")
+                                .HasColumnType("numeric")
+                                .HasColumnName("base_price");
+
                             b1.Property<long>("ProductId")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_product");
+
+                            b1.Property<decimal>("PurchasedPrice")
+                                .HasColumnType("numeric")
+                                .HasColumnName("purchased_price");
 
                             b1.Property<int>("Quantity")
                                 .HasColumnType("integer")
@@ -759,6 +767,35 @@ namespace Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("id_order");
+
+                            b1.OwnsMany("Domain.CategoryAggregate.ValueObjects.CategoryId", "ProductCategories", b2 =>
+                                {
+                                    b2.Property<long>("id")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("id");
+
+                                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<long>("id"));
+
+                                    b2.Property<long>("Value")
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("value");
+
+                                    b2.Property<long>("id_order_product")
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("id_order_product");
+
+                                    b2.HasKey("id");
+
+                                    b2.HasIndex("id_order_product");
+
+                                    b2.ToTable("order_product_category_ids", (string)null);
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("id_order_product");
+                                });
+
+                            b1.Navigation("ProductCategories");
                         });
 
                     b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderStatusHistory", "OrderStatusHistories", b1 =>
@@ -1027,7 +1064,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("SaleId");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleReference", "ProductsExcludedFromSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.ProductReference", "ProductsExcludedFromSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1062,7 +1099,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleReference", "ProductsInSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.ProductReference", "ProductsInSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1338,9 +1375,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.CategoryRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CategoryRestriction", b =>
                 {
-                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.CategoryRestricted", "CategoriesAllowed", b1 =>
+                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.CouponCategory", "CategoriesAllowed", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1375,7 +1412,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_restriction_category");
                         });
 
-                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.ProductRestricted", "ProductsFromCategoryNotAllowed", b1 =>
+                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.CouponProduct", "ProductsFromCategoryNotAllowed", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1415,9 +1452,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("ProductsFromCategoryNotAllowed");
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.ProductRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.ProductRestriction", b =>
                 {
-                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.ProductRestricted", "ProductsAllowed", b1 =>
+                    b.OwnsMany("Domain.CouponAggregate.ValueObjects.CouponProduct", "ProductsAllowed", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()

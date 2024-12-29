@@ -1,11 +1,13 @@
-using System.Net;
-using System.Net.Http.Json;
-using Contracts.Users;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 using IntegrationTests.Users.TestUtils;
+
+using Contracts.Users;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Xunit.Abstractions;
 

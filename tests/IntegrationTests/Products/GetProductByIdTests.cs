@@ -1,9 +1,11 @@
-using System.Net.Http.Json;
-using Contracts.Products;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.Products;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Products;
+
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
@@ -26,11 +28,11 @@ public class GetProductByIdTests : BaseIntegrationTest
     /// <summary>
     /// List of ids that correspond to inactive or products that does not exist.
     /// </summary>
-    public static IEnumerable<object[]> NotFoundProductIds()
-    {
-        yield return new object[] { ProductSeed.GetSeedProduct(SeedAvailableProducts.INACTIVE_JACKET).Id };
-        yield return new object[] { 404 };
-    }
+    public static readonly IEnumerable<object[]> NotFoundProductIds =
+    [
+        [ProductSeed.GetSeedProduct(SeedAvailableProducts.INACTIVE_JACKET).Id],
+        [404],
+    ];
 
     /// <summary>
     /// Tests when the product with the specified id exists the response code is OK and the response content is correct.

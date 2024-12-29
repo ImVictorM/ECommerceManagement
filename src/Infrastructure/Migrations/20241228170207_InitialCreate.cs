@@ -1,3 +1,4 @@
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -556,6 +557,8 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
+                    base_price = table.Column<decimal>(type: "numeric", nullable: false),
+                    purchased_price = table.Column<decimal>(type: "numeric", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -680,6 +683,26 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "order_product_category_ids",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    value = table.Column<long>(type: "bigint", nullable: false),
+                    id_order_product = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_order_product_category_ids", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_order_product_category_ids_orders_products_id_order_product",
+                        column: x => x.id_order_product,
+                        principalTable: "orders_products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "payment_status_histories",
                 columns: table => new
                 {
@@ -796,6 +819,11 @@ namespace Infrastructure.Migrations
                 table: "inventories",
                 column: "id_product",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_order_product_category_ids_id_order_product",
+                table: "order_product_category_ids",
+                column: "id_order_product");
 
             migrationBuilder.CreateIndex(
                 name: "IX_order_status_histories_id_order",
@@ -1033,13 +1061,13 @@ namespace Infrastructure.Migrations
                 name: "inventories");
 
             migrationBuilder.DropTable(
+                name: "order_product_category_ids");
+
+            migrationBuilder.DropTable(
                 name: "order_status_histories");
 
             migrationBuilder.DropTable(
                 name: "orders_coupons");
-
-            migrationBuilder.DropTable(
-                name: "orders_products");
 
             migrationBuilder.DropTable(
                 name: "payment_status_histories");
@@ -1081,6 +1109,9 @@ namespace Infrastructure.Migrations
                 name: "users_roles");
 
             migrationBuilder.DropTable(
+                name: "orders_products");
+
+            migrationBuilder.DropTable(
                 name: "payments");
 
             migrationBuilder.DropTable(
@@ -1093,9 +1124,6 @@ namespace Infrastructure.Migrations
                 name: "categories");
 
             migrationBuilder.DropTable(
-                name: "products");
-
-            migrationBuilder.DropTable(
                 name: "sales");
 
             migrationBuilder.DropTable(
@@ -1103,6 +1131,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "roles");
+
+            migrationBuilder.DropTable(
+                name: "products");
 
             migrationBuilder.DropTable(
                 name: "payment_statuses");

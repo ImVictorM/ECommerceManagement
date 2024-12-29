@@ -45,8 +45,8 @@ public static class ProductSeed
         [SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS] = ProductUtils.CreateProduct(
             name: "Computer",
             description: "Simple computer",
-            price: 3000m,
-            quantityAvailable: 50,
+            basePrice: 3000m,
+            initialQuantityInInventory: 50,
             categories: [
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.TECHNOLOGY).Id),
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.OFFICE_SUPPLIES).Id)
@@ -61,8 +61,8 @@ public static class ProductSeed
         [SeedAvailableProducts.TSHIRT] = ProductUtils.CreateProduct(
             name: "Mens Casual Premium Slim Fit T-Shirts",
             description: "Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing.",
-            price: 22.3m,
-            quantityAvailable: 10,
+            basePrice: 22.3m,
+            initialQuantityInInventory: 10,
             categories: [
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION).Id),
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.SPORTS).Id)
@@ -74,8 +74,8 @@ public static class ProductSeed
         [SeedAvailableProducts.CHAIN_BRACELET] = ProductUtils.CreateProduct(
             name: "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet",
             description: "From our Legends Collection, the Naga was inspired by the mythical water dragon that protects the ocean's pearl.",
-            price: 695m,
-            quantityAvailable: 2,
+            basePrice: 695m,
+            initialQuantityInInventory: 2,
             categories: [
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.JEWELRY).Id),
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION).Id)
@@ -87,8 +87,8 @@ public static class ProductSeed
         [SeedAvailableProducts.PENCIL] = ProductUtils.CreateProduct(
             name: "Holiday Mixed Set - Blackwing Matte - Set of 12",
             description: "Ideal for artists, musicians, woodworkers, and anyone who prefers a soft, dark line.",
-            price: 160m,
-            quantityAvailable: 150,
+            basePrice: 160m,
+            initialQuantityInInventory: 150,
             categories: [
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.BOOKS_STATIONERY).Id),
             ],
@@ -99,7 +99,7 @@ public static class ProductSeed
         [SeedAvailableProducts.INACTIVE_JACKET] = ProductUtils.CreateProduct(
             name: "Mens Cotton Jacket",
             description: "Great outerwear jackets for Spring/Autumn/Winter, suitable for many occasions.",
-            price: 200,
+            basePrice: 200,
             categories: [
                 ProductCategory.Create(CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION).Id),
             ],

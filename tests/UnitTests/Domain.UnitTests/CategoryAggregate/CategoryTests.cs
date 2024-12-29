@@ -19,7 +19,7 @@ public class CategoryTests
     [InlineData("TECH", "tech")]
     public void CreateCategory_WithDifferentValidNames_ReturnsCategoryWithExpectedName(string inputName, string expectedName)
     {
-        var category = CategoryUtils.CreateCategory(inputName);
+        var category = CategoryUtils.CreateCategory(name: inputName);
 
         category.Name.Should().Be(expectedName);
     }

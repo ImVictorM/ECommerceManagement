@@ -84,29 +84,33 @@ public class OrderService : IOrderService
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<OrderProduct>> PrepareOrderProductsAsync(IEnumerable<IOrderProduct> orderProducts)
+    public async IAsyncEnumerable<OrderProduct> PrepareOrderProductsAsync(IEnumerable<IOrderProduct> orderProducts)
     {
         var products = await FetchProductsAsync(orderProducts.Select(p => p.ProductId));
 
-        return await Task.WhenAll(orderProducts.Select(async op =>
+        foreach (var op in orderProducts)
         {
             var product = products[op.ProductId];
 
             if (!product.Inventory.HasInventoryAvailable(op.Quantity))
             {
-                throw new InventoryInsufficientException($"Product {product.Id} has insufficient inventory");
+                throw new InventoryInsufficientException(
+                    $"{product.Name} is not available. " +
+                    $"Current inventory: {product.Inventory.QuantityAvailable}. " +
+                    $"Order quantity: {op.Quantity}"
+                );
             }
 
             var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);
 
-            return OrderProduct.Create(
+            yield return OrderProduct.Create(
                 op.ProductId,
                 op.Quantity,
                 product.BasePrice,
                 productPrice,
                 product.ProductCategories.Select(p => p.CategoryId).ToHashSet()
             );
-        }));
+        }
     }
 
     private async Task<IDictionary<ProductId, Product>> FetchProductsAsync(IEnumerable<ProductId> productIds)

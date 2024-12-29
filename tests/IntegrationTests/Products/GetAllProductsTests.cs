@@ -31,10 +31,10 @@ public class GetAllProductsTests : BaseIntegrationTest
         var activeProduct = ProductSeed.ListProducts(product => product.IsActive);
 
         var response = await Client.GetAsync("/products");
-        var responseContent = await response.Content.ReadFromJsonAsync<ProductListResponse>();
+        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent!.Products.EnsureCorrespondsTo(activeProduct);
+        responseContent!.EnsureCorrespondsTo(activeProduct);
     }
 
     /// <summary>
@@ -45,9 +45,29 @@ public class GetAllProductsTests : BaseIntegrationTest
     {
         var limit = 2;
         var response = await Client.GetAsync($"/products?limit={limit}");
-        var responseContent = await response.Content.ReadFromJsonAsync<ProductListResponse>();
+        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent!.Products.Count().Should().Be(limit);
+        responseContent!.Count().Should().Be(limit);
+    }
+
+    /// <summary>
+    /// Tests that is possible to get the products with a category filter.
+    /// </summary>
+    [Fact]
+    public async Task GetAllProducts_WithCategoryFilter_ReturnsOkContainingCorrectProducts()
+    {
+        var fashionCategory = CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION);
+
+        var response = await Client.GetAsync($"/products?category={fashionCategory.Id}");
+
+        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<ProductResponse>>();
+
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+
+        foreach (var product in responseContent!)
+        {
+            product.Categories.Should().Contain(fashionCategory.Name);
+        }
     }
 }

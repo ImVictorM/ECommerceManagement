@@ -1,7 +1,10 @@
 using Contracts.Common;
 using Contracts.Orders;
 using Contracts.Orders.Common;
+using Contracts.Payments.Common;
+
 using Domain.UnitTests.TestUtils.Constants;
+
 using IntegrationTests.TestUtils.Contracts;
 using IntegrationTests.TestUtils.Seeds;
 
@@ -19,21 +22,24 @@ public static class PlaceOrderRequestUtils
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="paymentMethod">The order payment method.</param>
+    /// <param name="couponAppliedIds">The coupon applied ids.</param>
     /// <param name="installments">The order installments.</param>
     /// <returns>A new place order object.</returns>
     public static PlaceOrderRequest CreateRequest(
-        IEnumerable<OrderProduct>? products = null,
-        Address? billingAddress = null,
-        Address? deliveryAddress = null,
+        IEnumerable<OrderProductRequest>? products = null,
+        AddressContract? billingAddress = null,
+        AddressContract? deliveryAddress = null,
         PaymentMethod? paymentMethod = null,
+        IEnumerable<string>? couponAppliedIds = null,
         int? installments = null
     )
     {
         return new PlaceOrderRequest(
             products ?? [CreateOrderProduct()],
-            billingAddress ?? ContractAddressUtils.CreateAddress(),
-            deliveryAddress ?? ContractAddressUtils.CreateAddress(),
+            billingAddress ?? AddressContractUtils.CreateAddress(),
+            deliveryAddress ?? AddressContractUtils.CreateAddress(),
             paymentMethod ?? CreateCreditCardPaymentMethod(),
+            couponAppliedIds,
             installments
         );
     }
@@ -45,14 +51,14 @@ public static class PlaceOrderRequestUtils
     /// <param name="productType">The product type.</param>
     /// <param name="quantity">The product quantity to buy.</param>
     /// <returns>A new order product.</returns>
-    public static OrderProduct CreateOrderProduct(
+    public static OrderProductRequest CreateOrderProduct(
         SeedAvailableProducts productType = SeedAvailableProducts.PENCIL,
         int quantity = 1
     )
     {
         var product = ProductSeed.GetSeedProduct(productType);
 
-        return new OrderProduct(product.Id.ToString(), quantity);
+        return new OrderProductRequest(product.Id.ToString(), quantity);
     }
 
     /// <summary>

@@ -1,12 +1,15 @@
-using System.Collections.ObjectModel;
-using System.Net.Http.Json;
-using Contracts.Users;
-using Domain.UserAggregate;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Users;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Users;
+
+using Domain.UserAggregate;
+
+using System.Collections.ObjectModel;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Users;
@@ -41,7 +44,6 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// <summary>
     /// Tests if it return a success status code when the requester is admin.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsAdmin_ReturnsSuccess()
     {
@@ -55,7 +57,6 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// <summary>
     /// Tests if it returns a forbidden status code when the requester is not an admin.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsNotAdmin_ReturnsForbidden()
     {
@@ -69,7 +70,6 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// <summary>
     /// Tests if it returns an unauthorized status code when the requester is not authenticated.
     /// </summary>
-    /// <returns>An asynchronous operation.</returns>
     [Fact]
     public async Task GetAllUsers_WhenNotAuthenticated_ReturnsUnauthorized()
     {
@@ -83,7 +83,6 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// </summary>
     /// <param name="endpoint">The uri to be called. May contain parameters.</param>
     /// <param name="expectedUsers">The expected user list.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(RequestUriWithExpectedUsers))]
     public async Task GetAllUsers_WhenAuthorizedAndFilteringTheUsers_ReturnsOkContainingUsersQueried(
@@ -94,12 +93,12 @@ public class GetAllUsersTests : BaseIntegrationTest
         await Client.LoginAs(SeedAvailableUsers.Admin);
 
         var response = await Client.GetAsync(endpoint);
-        var responseContent = await response.Content.ReadFromJsonAsync<UserListResponse>();
+        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent.Should().NotBeNull();
-        responseContent!.Users.Count().Should().Be(expectedUsers.Count);
-        responseContent.Users.Select(u => u.Id).Should().BeEquivalentTo(expectedUsers.Select(eu => eu.Id.ToString()));
-        responseContent.Users.EnsureUsersCorrespondTo(expectedUsers);
+        responseContent!.Count().Should().Be(expectedUsers.Count);
+        responseContent!.Select(u => u.Id).Should().BeEquivalentTo(expectedUsers.Select(eu => eu.Id.ToString()));
+        responseContent!.EnsureUsersCorrespondTo(expectedUsers);
     }
 }

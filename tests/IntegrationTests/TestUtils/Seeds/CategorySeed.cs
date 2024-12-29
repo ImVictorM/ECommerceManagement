@@ -1,4 +1,5 @@
 using Domain.CategoryAggregate;
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 namespace IntegrationTests.TestUtils.Seeds;
@@ -39,14 +40,38 @@ public enum SeedAvailableCategories
 /// </summary>
 public static class CategorySeed
 {
-    private static readonly Dictionary<SeedAvailableCategories, Category> _categories = new Dictionary<SeedAvailableCategories, Category>()
+    private static readonly Dictionary<SeedAvailableCategories, Category> _categories = new()
     {
-        [SeedAvailableCategories.TECHNOLOGY] = CategoryUtils.CreateCategory("technology"),
-        [SeedAvailableCategories.SPORTS] = CategoryUtils.CreateCategory("sports"),
-        [SeedAvailableCategories.BOOKS_STATIONERY] = CategoryUtils.CreateCategory("books_stationery"),
-        [SeedAvailableCategories.FASHION] = CategoryUtils.CreateCategory("fashion"),
-        [SeedAvailableCategories.OFFICE_SUPPLIES] = CategoryUtils.CreateCategory("office_supplies"),
-        [SeedAvailableCategories.JEWELRY] = CategoryUtils.CreateCategory("jewelry"),
+        [SeedAvailableCategories.TECHNOLOGY] = CategoryUtils.CreateCategory
+        (
+            id: CategoryId.Create(1),
+            name: "technology"
+        ),
+        [SeedAvailableCategories.SPORTS] = CategoryUtils.CreateCategory
+        (
+            id: CategoryId.Create(2),
+            name: "sports"
+        ),
+        [SeedAvailableCategories.BOOKS_STATIONERY] = CategoryUtils.CreateCategory
+        (
+            id: CategoryId.Create(3),
+            name: "books_stationery"
+        ),
+        [SeedAvailableCategories.FASHION] = CategoryUtils.CreateCategory
+        (
+            id: CategoryId.Create(4),
+            name: "fashion"
+        ),
+        [SeedAvailableCategories.OFFICE_SUPPLIES] = CategoryUtils.CreateCategory
+        (
+            id: CategoryId.Create(5),
+            name: "office_supplies"
+        ),
+        [SeedAvailableCategories.JEWELRY] = CategoryUtils.CreateCategory
+        (
+            id: CategoryId.Create(6),
+            name: "jewelry"
+        ),
     };
 
     /// <summary>

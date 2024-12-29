@@ -31,7 +31,7 @@ public static class HttpClientExtensions
     /// <summary>
     /// Login as a seed user and returns it.
     /// </summary>
-    /// <returns>the user authenticated.</returns>
+    /// <returns>The user authenticated.</returns>
     public static async Task<User> LoginAs(this System.Net.Http.HttpClient httpClient, SeedAvailableUsers userType)
     {
         var (Email, Password) = UserSeed.GetUserAuthenticationCredentials(userType);

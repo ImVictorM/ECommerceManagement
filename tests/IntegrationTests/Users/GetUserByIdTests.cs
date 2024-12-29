@@ -1,12 +1,15 @@
-using System.Net;
-using System.Net.Http.Json;
-using Contracts.Users;
-using Domain.UserAggregate;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Users;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Users;
+
+using Domain.UserAggregate;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
@@ -20,7 +23,6 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// <summary>
     /// A list of users contained in the test database.
     /// </summary>
-    /// <returns>A list of seed users.</returns>
     public static IEnumerable<object[]> AvailableUsers()
     {
         foreach (var user in UserSeed.ListUsers())
@@ -42,7 +44,6 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// Tests if it is possible to get an user authenticated as administrator.
     /// </summary>
     /// <param name="user">The user to get.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkWithUser(User user)
@@ -60,7 +61,6 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// Tests if a customer cannot use this resource.
     /// </summary>
     /// <param name="user">The user to be queried.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(User user)
@@ -76,7 +76,6 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// Tests if it is not possible to query for an user without authentication.
     /// </summary>
     /// <param name="user">The user to be queried.</param>
-    /// <returns>An asynchronous operation.</returns>
     [Theory]
     [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenAuthenticationTokenIsNotGiven_ReturnsUnauthorized(User user)

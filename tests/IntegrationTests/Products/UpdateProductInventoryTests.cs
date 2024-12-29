@@ -1,12 +1,15 @@
-using System.Net;
-using System.Net.Http.Json;
-using Contracts.Products;
-using Domain.ProductAggregate;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.Products.TestUtils;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Products;
+
+using Domain.ProductAggregate;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 

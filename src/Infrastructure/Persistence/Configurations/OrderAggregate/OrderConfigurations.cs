@@ -148,6 +148,40 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             orderProductsBuilder
                 .Property(OrderProduct => OrderProduct.Quantity)
                 .IsRequired();
+
+            orderProductsBuilder
+                .Property(orderProduct => orderProduct.BasePrice)
+                .IsRequired();
+
+            orderProductsBuilder
+                .Property(orderProduct => orderProduct.PurchasedPrice)
+                .IsRequired();
+
+            orderProductsBuilder
+                .OwnsMany(orderProduct => orderProduct.ProductCategories, categoryBuilder =>
+                {
+                    categoryBuilder.ToTable("order_product_category_ids");
+
+                    categoryBuilder
+                        .Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .IsRequired();
+
+                    categoryBuilder.HasKey("id");
+
+                    categoryBuilder
+                        .Property(categoryId => categoryId.Value)
+                        .HasColumnName("id_category")
+                        .IsRequired();
+
+                    categoryBuilder
+                        .WithOwner()
+                        .HasForeignKey("id_order_product");
+
+                    categoryBuilder
+                        .Property("id_order_product")
+                        .IsRequired();
+                });
         });
     }
 

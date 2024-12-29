@@ -122,6 +122,17 @@ public sealed class Payment : AggregateRoot<PaymentId>
         );
     }
 
+    /// <summary>
+    /// Retrieves the payment status description.
+    /// </summary>
+    /// <returns>The description of the payment status.</returns>
+    public string GetStatusDescription()
+    {
+        var status = BaseEnumeration.FromValue<PaymentStatus>(PaymentStatusId);
+
+        return status.Name;
+    }
+
     private void UpdatePaymentStatus(PaymentStatus status, string description)
     {
         PaymentStatusId = status.Id;

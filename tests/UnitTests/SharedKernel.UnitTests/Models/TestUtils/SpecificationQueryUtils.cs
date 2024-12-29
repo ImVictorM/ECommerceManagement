@@ -8,7 +8,7 @@ namespace SharedKernel.UnitTests.Models.TestUtils;
 /// </summary>
 public static class SpecificationQueryUtils
 {
-    private class TestSpecificationQuery<T> : ISpecificationQuery<T> where T : class
+    private sealed class TestSpecificationQuery<T> : ISpecificationQuery<T> where T : class
     {
         public TestSpecificationQuery(Expression<Func<T, bool>> criteria)
         {

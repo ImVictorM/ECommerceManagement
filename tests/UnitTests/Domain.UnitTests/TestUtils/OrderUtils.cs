@@ -8,11 +8,12 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate.ValueObjects;
 
-using Moq;
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
+
+using Moq;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -37,6 +38,8 @@ public static class OrderUtils
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="installments">The order payment installments.</param>
+    /// <param name="couponsApplied">The order coupons applied.</param>
+    /// <param name="withDefaultMockSetup">Bool value indicating if order should be created with default mock setup.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public static async Task<Order> CreateOrder(
         OrderId? id = null,
@@ -45,23 +48,33 @@ public static class OrderUtils
         IPaymentMethod? paymentMethod = null,
         Address? billingAddress = null,
         Address? deliveryAddress = null,
-        int? installments = null
+        int? installments = null,
+        IEnumerable<OrderCoupon>? couponsApplied = null,
+        bool withDefaultMockSetup = false
     )
     {
+        var products = orderProducts ??
+        [
+            new OrderProductInput
+            {
+                ProductId = ProductId.Create(1),
+                Quantity = 1
+            }
+        ];
+
+        if (withDefaultMockSetup)
+        {
+            SetupMockOrderServices(products, couponsApplied);
+        }
 
         var order = await _factory.CreateOrderAsync(
             ownerId ?? DomainConstants.User.Id,
-            orderProducts ?? [
-                new OrderProductInput
-                {
-                    ProductId = ProductId.Create(1),
-                    Quantity = 1
-                }
-            ],
+            products,
             paymentMethod ?? PaymentUtils.CreateCreditCardPayment(),
             billingAddress ?? AddressUtils.CreateAddress(),
             deliveryAddress ?? AddressUtils.CreateAddress(),
-            installments
+            installments,
+            couponsApplied
         );
 
         if (id != null)
@@ -70,6 +83,18 @@ public static class OrderUtils
         }
 
         return order;
+    }
+
+    private static void SetupMockOrderServices(IEnumerable<IOrderProduct> products, IEnumerable<OrderCoupon>? couponsApplied)
+    {
+        var productsPrepared = products.Select(op => CreateOrderProduct(op.ProductId, op.Quantity));
+        var productsSum = productsPrepared.Sum(p => p.CalculateTransactionPrice());
+
+        MockOrderService
+            .Setup(s => s.PrepareOrderProductsAsync(products))
+            .Returns(productsPrepared.ToAsyncEnumerable());
+
+        MockOrderService.Setup(s => s.CalculateTotalAsync(productsPrepared, couponsApplied)).ReturnsAsync(productsSum);
     }
 
     /// <summary>

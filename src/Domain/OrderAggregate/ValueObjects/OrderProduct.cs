@@ -86,5 +86,11 @@ public sealed class OrderProduct : ValueObject, IOrderProduct
         yield return Quantity;
         yield return ProductId;
         yield return PurchasedPrice;
+        yield return BasePrice;
+
+        foreach (var category in ProductCategories)
+        {
+            yield return category;
+        }
     }
 }

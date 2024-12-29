@@ -24,8 +24,8 @@ public class QueryProductsContainingCategoriesSpecificationTests
 
         var specification = new QueryProductsContainingCategoriesSpecification(
         [
-            ProductCategory.Create(CategoryId.Create(1)),
-            ProductCategory.Create(CategoryId.Create(2)),
+            CategoryId.Create(1),
+            CategoryId.Create(2),
         ]);
 
         var result = specification.Criteria.Compile()(product);
@@ -45,8 +45,8 @@ public class QueryProductsContainingCategoriesSpecificationTests
 
         var specification = new QueryProductsContainingCategoriesSpecification(
         [
-            ProductCategory.Create(CategoryId.Create(1)),
-            ProductCategory.Create(CategoryId.Create(2)),
+            CategoryId.Create(1),
+            CategoryId.Create(2),
         ]);
 
         var result = specification.Criteria.Compile()(product);

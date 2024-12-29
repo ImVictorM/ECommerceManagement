@@ -52,8 +52,8 @@ public class ProductServiceTests
     {
         var categories = new[]
         {
-            CategoryUtils.CreateCategory("category1"),
-            CategoryUtils.CreateCategory("category2"),
+            CategoryUtils.CreateCategory(name: "category1"),
+            CategoryUtils.CreateCategory(name: "category2"),
         };
 
         var product = ProductUtils.CreateProduct(

@@ -53,7 +53,7 @@ public class PlaceOrderCommandHandlerTests
 
         _mockOrdersService
             .Setup(s => s.PrepareOrderProductsAsync(command.Products))
-            .ReturnsAsync(DomainConstants.Order.OrderProducts);
+            .Returns(DomainConstants.Order.OrderProducts.ToAsyncEnumerable());
 
         _mockOrdersService
             .Setup(s => s.CalculateTotalAsync(DomainConstants.Order.OrderProducts, PlaceOrderCommandUtils.ToOrderCoupon(command.CouponAppliedIds)))

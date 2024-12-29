@@ -24,6 +24,9 @@ public class SaleService : ISaleService
     /// <inheritdoc/>
     public async Task<IEnumerable<Sale>> GetProductSalesAsync(SaleProduct product)
     {
-        return await _unitOfWork.SaleRepository.FindAllAsync(sale => sale.IsProductInSale(product));
+        return await _unitOfWork.SaleRepository.FindAllAsync(sale =>
+            sale.ProductsInSale.Any(p => p.ProductId == product.ProductId) ||
+            (sale.CategoriesInSale.Any(c => product.Categories.Contains(c.CategoryId)) && !sale.ProductsExcludedFromSale.Any(p => p.ProductId == product.ProductId))
+         );
     }
 }

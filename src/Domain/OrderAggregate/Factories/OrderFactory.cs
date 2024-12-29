@@ -2,6 +2,7 @@ using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
@@ -12,15 +13,15 @@ namespace Domain.OrderAggregate.Factories;
 /// </summary>
 public class OrderFactory
 {
-    private readonly IOrderService _orderProductService;
+    private readonly IOrderService _orderService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderFactory"/> class.
     /// </summary>
-    /// <param name="orderProductService"></param>
-    public OrderFactory(IOrderService orderProductService)
+    /// <param name="orderService">The order service.</param>
+    public OrderFactory(IOrderService orderService)
     {
-        _orderProductService = orderProductService;
+        _orderService = orderService;
     }
 
     /// <summary>
@@ -44,9 +45,9 @@ public class OrderFactory
         IEnumerable<OrderCoupon>? couponsApplied = null
     )
     {
-        var orderProductsWithPrice = await _orderProductService.PrepareOrderProductsAsync(products);
+        var orderProductsWithPrice = await _orderService.PrepareOrderProductsAsync(products).ToListAsync();
 
-        var total = await _orderProductService.CalculateTotalAsync(orderProductsWithPrice, couponsApplied);
+        var total = await _orderService.CalculateTotalAsync(orderProductsWithPrice, couponsApplied);
 
         return Order.Create(
             ownerId,

@@ -96,7 +96,6 @@ public class DiscountTests
     /// </summary>
     /// <param name="startingDate">The starting date of the discount.</param>
     /// <param name="endingDate">The ending date of the discount.</param>
-    /// <param name="expectedErrorMessage">The expected error message of the exception.</param>
     [Theory]
     [MemberData(nameof(InvalidDiscountDates))]
     public void CreateDiscount_WithInvalidStartingAndEndingDate_ThrowsError(

@@ -1,13 +1,16 @@
-using System.Net;
-using System.Net.Http.Json;
-using Contracts.Authentication;
-using FluentAssertions;
 using IntegrationTests.Authentication.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.Authentication;
+
+using Contracts.Authentication;
+using RegisterRequest = Contracts.Authentication.RegisterRequest;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
-using RegisterRequest = Contracts.Authentication.RegisterRequest;
+using IntegrationTests.TestUtils.Seeds;
 
 namespace IntegrationTests.Authentication;
 
@@ -28,42 +31,45 @@ public class RegisterTests : BaseIntegrationTest
     /// <summary>
     /// List of valid register request objects with unique emails.
     /// </summary>
-    public static IEnumerable<object[]> ValidRequests()
-    {
-        yield return new object[] { RegisterRequestUtils.CreateRequest(email: "testing1@email.com") };
-        yield return new object[] { RegisterRequestUtils.CreateRequest(email: "testing2@email.com", name: "Testing name") };
-        yield return new object[] { RegisterRequestUtils.CreateRequest(email: "testing3@email.com", password: "Supersecretpass123") };
-    }
+    public static readonly IEnumerable<object[]> ValidRequests =
+    [
+        [RegisterRequestUtils.CreateRequest(email: "testing1@email.com")],
+        [RegisterRequestUtils.CreateRequest(email: "testing2@email.com", name: "Testing name")],
+        [RegisterRequestUtils.CreateRequest(email: "testing3@email.com", password: "Supersecretpass123")],
+    ];
 
     /// <summary>
     /// Tests if it is possible to create users with valid requests.
+    /// Also tests it is possible to authenticate using the login endpoint after register.
     /// </summary>
     /// <param name="registerRequest">The request object.</param>
     [Theory]
     [MemberData(nameof(ValidRequests))]
-    public async Task Register_WhenCreationParametersAreValid_CreatesNewAndReturnWithAuthenticationToken(RegisterRequest registerRequest)
+    public async Task Register_WithValidParameters_CreatesNewUserAndAuthenticateThem(RegisterRequest registerRequest)
     {
         var loginRequest = LoginRequestUtils.CreateRequest(registerRequest.Email, registerRequest.Password);
 
-        var updateHttpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
+        var registerHttpResponse = await Client.PostAsJsonAsync("/auth/register", registerRequest);
         var loginHttpResponse = await Client.PostAsJsonAsync("/auth/login", loginRequest);
 
         var loginHttpResponseContent = await loginHttpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
-        var updateHttpResponseContent = await updateHttpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
+        var registerHttpResponseContent = await registerHttpResponse.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
-        updateHttpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        registerHttpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         loginHttpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        updateHttpResponseContent!.EnsureCreatedFromRequest(registerRequest);
+        registerHttpResponseContent!.EnsureCreatedFromRequest(registerRequest);
         loginHttpResponseContent!.EnsureCreatedFromRequest(registerRequest);
     }
 
     /// <summary>
-    /// Tests if creating a duplicated user returns a conflict error.
+    /// Tests creating a user with duplicated email returns a conflict error.
     /// </summary>
     [Fact]
-    public async Task Register_WhenEmailIsAlreadyRegistered_ReturnsConflictErrorResponse()
+    public async Task Register_WithDuplicatedEmail_ReturnsConflictErrorResponse()
     {
-        var registerRequest = RegisterRequestUtils.CreateRequest();
+        var existingUser = UserSeed.GetSeedUser(SeedAvailableUsers.Customer);
+
+        var registerRequest = RegisterRequestUtils.CreateRequest(email: existingUser.Email.ToString());
 
         await Client.PostAsJsonAsync("/auth/register", registerRequest);
 

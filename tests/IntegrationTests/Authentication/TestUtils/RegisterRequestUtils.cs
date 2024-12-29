@@ -23,7 +23,7 @@ public static class RegisterRequestUtils
     {
         return new RegisterRequest(
             name ?? DomainConstants.User.Name,
-            email ?? SharedKernelConstants.Email.Value,
+            email ?? DomainConstants.User.Email,
             password ?? DomainConstants.User.Password
         );
     }

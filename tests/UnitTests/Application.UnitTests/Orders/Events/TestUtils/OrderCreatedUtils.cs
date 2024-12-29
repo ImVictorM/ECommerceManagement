@@ -31,7 +31,7 @@ public static class OrderCreatedUtils
     )
     {
         return new OrderCreated(
-            order ?? await OrderUtils.CreateOrder(),
+            order ?? await OrderUtils.CreateOrder(withDefaultMockSetup: true),
             paymentMethod ?? PaymentUtils.CreateCreditCardPayment(),
             billingAddress ?? AddressUtils.CreateAddress(),
             deliveryAddress ?? AddressUtils.CreateAddress(),

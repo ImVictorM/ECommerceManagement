@@ -1,12 +1,14 @@
-using System.Net;
-using System.Net.Http.Json;
-using Contracts.Products;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.Products.TestUtils;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Products;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Products;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Products;
@@ -65,7 +67,15 @@ public class CreateProductTests : BaseIntegrationTest
     [Fact]
     public async Task CreateProduct_WhenUserAuthenticatedIsAdmin_CreatesProductAndReturnsCreated()
     {
-        var request = CreateProductRequestUtils.CreateRequest();
+        var productCategories = new[]
+        {
+            CategorySeed.GetSeedCategory(SeedAvailableCategories.BOOKS_STATIONERY),
+            CategorySeed.GetSeedCategory(SeedAvailableCategories.TECHNOLOGY)
+        };
+
+        var request = CreateProductRequestUtils.CreateRequest(
+            categoryIds: productCategories.Select(c => c.Id.ToString())
+         );
 
         await Client.LoginAs(SeedAvailableUsers.Admin);
 
@@ -76,6 +86,7 @@ public class CreateProductTests : BaseIntegrationTest
 
         postResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        getResponseContent!.EnsureCreatedFrom(request);
+        getResponseContent!.EnsureCreatedFromRequest(request);
+        getResponseContent!.Categories.Should().BeEquivalentTo(productCategories.Select(c => c.Name));
     }
 }

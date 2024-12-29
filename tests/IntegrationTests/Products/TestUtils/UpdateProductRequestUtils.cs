@@ -15,14 +15,14 @@ public static class UpdateProductRequestUtils
     /// <param name="description">The product description.</param>
     /// <param name="basePrice">The product base price.</param>
     /// <param name="images">The product images.</param>
-    /// <param name="categories">The product categories.</param>
+    /// <param name="categoryIds">The product categories.</param>
     /// <returns>A new instance of the <see cref="UpdateProductRequest"/> class.</returns>
     public static UpdateProductRequest CreateRequest(
         string? name = null,
         string? description = null,
         decimal? basePrice = null,
         IEnumerable<Uri>? images = null,
-        IEnumerable<long>? categories = null
+        IEnumerable<string>? categoryIds = null
     )
     {
         return new UpdateProductRequest(
@@ -30,7 +30,7 @@ public static class UpdateProductRequestUtils
             description ?? DomainConstants.Product.Description,
             basePrice ?? DomainConstants.Product.BasePrice,
             images ?? DomainConstants.Product.ProductImages.Select(i => i.Url),
-            categories ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.Value)
+            categoryIds ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.ToString())
         );
     }
 }

@@ -1,12 +1,14 @@
-using System.Net;
-using System.Net.Http.Json;
-using FluentAssertions;
 using IntegrationTests.Common;
 using IntegrationTests.Orders.TestUtils;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
-using Microsoft.AspNetCore.Mvc;
+
 using WebApi.Endpoints;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Orders;
@@ -45,7 +47,7 @@ public class PlaceOrderTests : BaseIntegrationTest
     [Theory]
     [InlineData(SeedAvailableUsers.Admin)]
     [InlineData(SeedAvailableUsers.OtherAdmin)]
-    public async Task PlaceOrder_WhenUserDoesNotHaveCustomerRoles_ReturnsForbidden(SeedAvailableUsers userWithoutCustomerRoleType)
+    public async Task PlaceOrder_WhenUserDoesNotHaveCustomerRole_ReturnsForbidden(SeedAvailableUsers userWithoutCustomerRoleType)
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
 
@@ -100,6 +102,6 @@ public class PlaceOrderTests : BaseIntegrationTest
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         responseContent!.Status.Should().Be((int)HttpStatusCode.BadRequest);
         responseContent.Detail.Should().Be($"{pencil.Name} is not available. Current inventory: {pencil.Inventory.QuantityAvailable}. Order quantity: {quantityToBuy}");
-        responseContent.Title.Should().Be("Product Not Available");
+        responseContent.Title.Should().Be("Inventory Insufficient");
     }
 }

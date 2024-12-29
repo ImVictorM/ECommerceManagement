@@ -5,7 +5,6 @@ using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;
-using Domain.ProductAggregate.ValueObjects;
 
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -50,9 +49,8 @@ public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProduct
         if (request.Categories != null && request.Categories.Any())
         {
             var categoryIds = request.Categories.Select(CategoryId.Create);
-            var productCategories = categoryIds.Select(ProductCategory.Create).ToHashSet();
 
-            spec.And(new QueryProductsContainingCategoriesSpecification(productCategories));
+            spec = spec.And(new QueryProductsContainingCategoriesSpecification(categoryIds));
         }
 
         var products = await _unitOfWork.ProductRepository.FindSatisfyingAsync(spec, limit: limit);

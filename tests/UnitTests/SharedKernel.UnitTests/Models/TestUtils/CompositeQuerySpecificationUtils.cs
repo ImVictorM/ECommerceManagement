@@ -8,7 +8,7 @@ namespace SharedKernel.UnitTests.Models.TestUtils;
 /// </summary>
 public static class CompositeQuerySpecificationUtils
 {
-    private class TestCompositeQuerySpecification<T> : CompositeQuerySpecification<T> where T : class
+    private sealed class TestCompositeQuerySpecification<T> : CompositeQuerySpecification<T> where T : class
     {
         public TestCompositeQuerySpecification(Expression<Func<T, bool>> criteria)
         {

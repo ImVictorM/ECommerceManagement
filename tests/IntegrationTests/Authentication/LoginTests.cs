@@ -1,10 +1,12 @@
-using System.Net;
-using System.Net.Http.Json;
-using Contracts.Authentication;
-using FluentAssertions;
 using IntegrationTests.Authentication.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Seeds;
+
+using Contracts.Authentication;
+
+using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
@@ -50,11 +52,11 @@ public class LoginTests : BaseIntegrationTest
     /// <summary>
     /// List of login requests with incorrect pairs of email and password.
     /// </summary>
-    public static IEnumerable<object[]> RequestsWithWrongCredentials()
-    {
-        yield return new object[] { LoginRequestUtils.CreateRequest(password: "incorrectpassword") };
-        yield return new object[] { LoginRequestUtils.CreateRequest(email: "incorrect@email.com") };
-    }
+    public static readonly IEnumerable<object[]> RequestsWithWrongCredentials =
+    [
+        [LoginRequestUtils.CreateRequest(password: "incorrect_password")],
+        [LoginRequestUtils.CreateRequest(email: "incorrect@email.com")],
+    ];
 
     /// <summary>
     /// Checks if it is possible to login active users with valid credentials.

@@ -12,10 +12,12 @@ namespace Contracts.Orders;
 /// <param name="DeliveryAddress">The order delivery address.</param>
 /// <param name="PaymentMethod">The order payment method.</param>
 /// <param name="installments">The installments.</param>
+/// <param name="CouponAppliedIds">The coupon applied ids.</param>
 public record PlaceOrderRequest(
     IEnumerable<OrderProductRequest> Products,
     AddressContract BillingAddress,
     AddressContract DeliveryAddress,
     PaymentMethod PaymentMethod,
+    IEnumerable<string>? CouponAppliedIds = null,
     int? installments = null
 );

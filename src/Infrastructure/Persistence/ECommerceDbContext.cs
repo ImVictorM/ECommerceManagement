@@ -1,3 +1,4 @@
+using Domain.CategoryAggregate;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.Abstracts;
 using Domain.OrderAggregate;
@@ -26,6 +27,10 @@ public class ECommerceDbContext : DbContext
     private const string KeyPrefix = "id";
     private readonly IEnumerable<IInterceptor> _interceptors;
 
+    /// <summary>
+    /// Gets or sets the category aggregate context.
+    /// </summary>
+    public DbSet<Category> Categories { get; set; } = null!;
     /// <summary>
     /// Gets or sets the user aggregate context.
     /// </summary>

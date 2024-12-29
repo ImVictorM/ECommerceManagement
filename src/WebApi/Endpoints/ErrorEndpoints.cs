@@ -17,7 +17,6 @@ public sealed class ErrorEndpoints : ICarterModule
     /// </summary>
     public const string BaseEndpoint = "/error";
 
-
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
     {

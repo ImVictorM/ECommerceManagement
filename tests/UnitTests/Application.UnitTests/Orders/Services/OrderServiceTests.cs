@@ -168,7 +168,7 @@ public class OrderServiceTests
                 second.BasePrice,
                 second.ProductCategories.Select(pc => pc.CategoryId).ToHashSet()
             )
-        );
+        ).ToList();
 
         _mockUnitOfWork
             .Setup(uow => uow.ProductRepository.FindAllAsync(It.IsAny<Expression<Func<Product, bool>>>()))
@@ -178,7 +178,7 @@ public class OrderServiceTests
             .Setup(ps => ps.CalculateProductPriceApplyingSaleAsync(It.IsAny<Product>()))
             .ReturnsAsync((Product p) => p.BasePrice);
 
-        var result = await _service.PrepareOrderProductsAsync(orderProductsInput);
+        var result = await _service.PrepareOrderProductsAsync(orderProductsInput).ToListAsync();
 
         result.Should().HaveCount(2);
 
@@ -210,7 +210,7 @@ public class OrderServiceTests
             .ReturnsAsync((Product p) => p.BasePrice);
 
         await FluentActions
-            .Invoking(() => _service.PrepareOrderProductsAsync(orderProductsInput))
+            .Invoking(async () => await _service.PrepareOrderProductsAsync(orderProductsInput).ToListAsync())
             .Should()
             .ThrowAsync<InventoryInsufficientException>();
     }

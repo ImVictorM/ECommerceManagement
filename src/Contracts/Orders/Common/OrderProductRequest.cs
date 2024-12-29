@@ -7,5 +7,5 @@ namespace Contracts.Orders.Common;
 /// <param name="Quantity">The product quantity.</param>
 public record OrderProductRequest(
     string ProductId,
-    string Quantity
+    int Quantity
 );

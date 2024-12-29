@@ -7,7 +7,7 @@ namespace SharedKernel.UnitTests.Models.TestUtils;
 /// </summary>
 public static class SpecificationUtils
 {
-    private class TestSpecification<T> : ISpecification<T> where T : class
+    private sealed class TestSpecification<T> : ISpecification<T> where T : class
     {
         private readonly Func<T, bool> _predicate;
 

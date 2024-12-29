@@ -1,8 +1,10 @@
 using Application.Common.DTOs;
 using Application.Common.Interfaces.Persistence;
+
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +20,7 @@ public sealed partial class CreateProductCommandHandler : IRequestHandler<Create
     /// <summary>
     /// Initiates a new instance of the <see cref="CreateProductCommandHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unity of work.</param>
+    /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="logger">The logger.</param>
     public CreateProductCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateProductCommandHandler> logger)
     {

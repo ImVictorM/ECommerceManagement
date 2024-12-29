@@ -79,7 +79,7 @@ public class OrderTests
                     CategoryId.Create(1)
                 }
             );
-        });
+        }).ToHashSet();
 
         OrderUtils.MockOrderService.Setup(s => s.CalculateTotalAsync(
             It.IsAny<IEnumerable<OrderProduct>>(),
@@ -88,7 +88,7 @@ public class OrderTests
 
         OrderUtils.MockOrderService.Setup(s => s.PrepareOrderProductsAsync(
             It.IsAny<IEnumerable<IOrderProduct>>())
-        ).ReturnsAsync(mockOrderProducts);
+        ).Returns(mockOrderProducts.ToAsyncEnumerable());
 
         var act = await FluentActions
             .Invoking(() => OrderUtils.CreateOrder(
@@ -113,7 +113,6 @@ public class OrderTests
         createdOrder.OrderStatusHistories.Should().HaveCount(1);
         createdOrder.OrderStatusHistories.First().OrderStatusId.Should().Be(OrderStatus.Pending.Id);
 
-        createdOrder.Products.Count.Should().Be(orderProducts.Count());
         createdOrder.Products.Should().BeEquivalentTo(mockOrderProducts);
     }
 

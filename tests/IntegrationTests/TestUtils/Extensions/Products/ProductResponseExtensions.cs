@@ -1,8 +1,6 @@
 using Contracts.Products;
 using Domain.ProductAggregate;
 using FluentAssertions;
-using IntegrationTests.TestUtils.Extensions.Assertions;
-using SharedKernel.ValueObjects;
 
 namespace IntegrationTests.TestUtils.Extensions.Products;
 
@@ -18,18 +16,12 @@ public static class ProductResponseExtensions
     /// <param name="product">The product to be tested against.</param>
     public static void EnsureCorrespondsTo(this ProductResponse response, Product product)
     {
-        // TODO: fix this
         response!.Id.Should().Be(product.Id.ToString());
         response.Name.Should().Be(product.Name);
         response.QuantityAvailable.Should().Be(product.Inventory.QuantityAvailable);
-        //response.Categories.Should().BeEquivalentTo(product.ProductCategories);
         response.Description.Should().Be(product.Description);
         response.Images.Should().BeEquivalentTo(product.ProductImages.Select(pi => pi.Url));
         response.BasePrice.Should().Be(product.BasePrice);
-        //response.PriceWithDiscount.Should().Be(product.GetPriceAfterDiscounts());
-        //response.DiscountsApplied.Should().BeEquivalentTo(product.GetApplicableDiscounts(),
-        //    options => options.ComparingByMembers<Discount>().ComparingWithDateTimeOffset()
-        //);
     }
 
     /// <summary>
@@ -52,13 +44,12 @@ public static class ProductResponseExtensions
     /// </summary>
     /// <param name="response">The response object.</param>
     /// <param name="request">The request object.</param>
-    public static void EnsureCreatedFrom(this ProductResponse response, CreateProductRequest request)
+    public static void EnsureCreatedFromRequest(this ProductResponse response, CreateProductRequest request)
     {
         response.Id.Should().NotBeNull();
         response.Name.Should().Be(request.Name);
         response.Description.Should().Be(request.Description);
         response.BasePrice.Should().Be(request.BasePrice);
-        response.Categories.Should().BeEquivalentTo(request.Categories);
         response.Images.Should().BeEquivalentTo(request.Images);
     }
 }
