@@ -4,8 +4,6 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.ValueObjects;
 using Domain.CategoryAggregate;
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.SaleAggregate;
@@ -32,10 +30,6 @@ public interface IUnitOfWork : IDisposable
     /// Gets the order repository.
     /// </summary>
     public IRepository<Order, OrderId> OrderRepository { get; }
-    /// <summary>
-    /// Gets the payment repository.
-    /// </summary>
-    public IRepository<Payment, PaymentId> PaymentRepository { get; }
     /// <summary>
     /// Gets the category repository.
     /// </summary>

@@ -6,8 +6,6 @@ using Application.UnitTests.Orders.Queries.TestUtils;
 
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
@@ -15,9 +13,9 @@ using Domain.UserAggregate.ValueObjects;
 
 using SharedKernel.Authorization;
 
-using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using Application.Common.Interfaces.Payments;
 
 namespace Application.UnitTests.Orders.Queries.GetOrderById;
 
@@ -30,7 +28,7 @@ public class GetOrderByIdQueryHandlerTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
     private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
-    private readonly Mock<IRepository<Payment, PaymentId>> _mockPaymentRepository;
+    private readonly Mock<IPaymentGateway> _mockPaymentGateway;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandlerTests"/> class.
@@ -39,15 +37,14 @@ public class GetOrderByIdQueryHandlerTests
     {
         _mockUserRepository = new Mock<IRepository<User, UserId>>();
         _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
-        _mockPaymentRepository = new Mock<IRepository<Payment, PaymentId>>();
+        _mockPaymentGateway = new Mock<IPaymentGateway>();
 
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
         _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
-        _mockUnitOfWork.Setup(uow => uow.PaymentRepository).Returns(_mockPaymentRepository.Object);
 
-        _handler = new GetOrderByIdQueryHandler(_mockUnitOfWork.Object);
+        _handler = new GetOrderByIdQueryHandler(_mockUnitOfWork.Object, _mockPaymentGateway.Object);
     }
 
     /// <summary>
@@ -63,7 +60,7 @@ public class GetOrderByIdQueryHandlerTests
 
         var order = await OrderUtils.CreateOrder(id: orderId, ownerId: orderOwnerId, withDefaultMockSetup: true);
         var orderOwner = UserUtils.CreateUser(id: orderOwnerId);
-        var orderPayment = PaymentUtils.CreatePayment(orderId: orderId);
+        var mockOrderPayment = new Mock<IPaymentResponse>();
 
         _mockOrderRepository
             .Setup(r => r.FindByIdAsync(orderId))
@@ -73,15 +70,15 @@ public class GetOrderByIdQueryHandlerTests
             .Setup(repo => repo.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync(orderOwner);
 
-        _mockPaymentRepository
-            .Setup(repo => repo.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Payment, bool>>>()))
-            .ReturnsAsync(orderPayment);
+        _mockPaymentGateway
+            .Setup(p => p.GetPaymentByIdAsync(It.IsAny<OrderPaymentId>()))
+            .ReturnsAsync(mockOrderPayment.Object);
 
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
         result.Order.Should().BeEquivalentTo(order);
-        result.Payment.Should().BeEquivalentTo(orderPayment);
+        result.Payment.Should().BeEquivalentTo(mockOrderPayment.Object);
     }
 
     /// <summary>
@@ -177,9 +174,9 @@ public class GetOrderByIdQueryHandlerTests
             .Setup(repo => repo.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync(user);
 
-        _mockPaymentRepository
-            .Setup(repo => repo.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Payment, bool>>>()))
-            .ReturnsAsync((Payment)null!);
+        _mockPaymentGateway
+            .Setup(p => p.GetPaymentByIdAsync(It.IsAny<OrderPaymentId>()))
+            .ReturnsAsync((IPaymentResponse)null!);
 
         var result = await _handler.Handle(query, default);
 

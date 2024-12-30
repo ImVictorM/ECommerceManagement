@@ -30,7 +30,7 @@ public class GetProductByIdTests : BaseIntegrationTest
     /// </summary>
     public static readonly IEnumerable<object[]> NotFoundProductIds =
     [
-        [ProductSeed.GetSeedProduct(SeedAvailableProducts.INACTIVE_JACKET).Id],
+        [ProductSeed.GetSeedProduct(SeedAvailableProducts.INACTIVE_JACKET).Id.Value],
         [404],
     ];
 

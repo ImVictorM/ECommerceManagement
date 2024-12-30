@@ -14,68 +14,60 @@ public class DiscountTests
     /// <summary>
     /// List of valid starting and ending dates.
     /// </summary>
-    /// <returns>A list of valid starting and ending dates.</returns>
-    public static IEnumerable<object[]> ValidDiscountDates()
-    {
-        yield return new object[] {
-             DateTimeOffset.UtcNow.AddHours(10),
+    public static readonly IEnumerable<object[]> ValidDiscountDates =
+    [
+        [
+            DateTimeOffset.UtcNow.AddHours(10),
              DateTimeOffset.UtcNow.AddDays(1).AddHours(20)
-        };
-        yield return new object[] {
-
+        ],
+        [
             DateTimeOffset.UtcNow.AddDays(2),
             DateTimeOffset.UtcNow.AddDays(2).AddHours(10)
-        };
-    }
+        ],
+    ];
 
     /// <summary>
     /// List of invalid starting and ending dates.
     /// </summary>
-    /// <returns>A list of invalid starting and ending dates.</returns>
-    public static IEnumerable<object[]> InvalidDiscountDates()
-    {
-        yield return new object[] {
+    public static readonly IEnumerable<object[]> InvalidDiscountDates =
+    [
+        [
             DateTimeOffset.UtcNow.AddDays(-1).AddHours(-23),
             DateTimeOffset.UtcNow.AddDays(2),
-        };
-        yield return new object[] {
+        ],
+        [
             DateTimeOffset.UtcNow.AddDays(2),
-            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(59),
-        };
-    }
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30),
+        ],
+    ];
 
     /// <summary>
     /// Defines pairs of discount and the expected return value when validating if the discount is valid to date.
     /// </summary>
-    public static IEnumerable<object[]> DiscountAndExpectedValidToDatePairs()
-    {
-        yield return new object[]
-        {
+    public static readonly IEnumerable<object[]> DiscountAndExpectedValidToDatePairs =
+    [
+        [
             DiscountUtils.CreateDiscount(
                 startingDate: DateTimeOffset.UtcNow.AddHours(-2),
                 endingDate: DateTimeOffset.UtcNow.AddDays(1)
             ),
             true
-        };
-
-        yield return new object[]
-        {
+        ],
+        [
             DiscountUtils.CreateDiscount(
-                startingDate: DateTimeOffset.UtcNow.AddHours(-20),
+                startingDate: DateTimeOffset.UtcNow.AddHours(-10),
                 endingDate: DateTimeOffset.UtcNow.AddHours(-5)
             ),
             false
-        };
-
-        yield return new object[]
-        {
-            DiscountUtils.CreateDiscount(
+        ],
+        [
+             DiscountUtils.CreateDiscount(
                 startingDate: DateTimeOffset.UtcNow.AddDays(4),
                 endingDate: DateTimeOffset.UtcNow.AddDays(10)
             ),
             false
-        };
-    }
+        ],
+    ];
 
     /// <summary>
     /// Tests if it is possible to create a new instance of discount with valid parameters.

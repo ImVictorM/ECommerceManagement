@@ -69,7 +69,7 @@ public class OrderService : IOrderService
             throw new InvalidOrderCouponAppliedException("Some of the applied coupons does not exist anymore");
         }
 
-        var products = orderProducts.Select(p => (p.ProductId, p.ProductCategories)).ToHashSet();
+        var products = orderProducts.Select(p => (p.ProductId, p.ProductCategoryIds)).ToHashSet();
 
         var couponsCanBeApplied = coupons.All(c => c.CanBeApplied(CouponOrder.Create(products, total)));
 

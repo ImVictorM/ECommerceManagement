@@ -32,7 +32,7 @@ public static partial class DomainConstants
                 quantity: 1,
                 basePrice: 15m,
                 purchasedPrice: 15m,
-                productCategories: new HashSet<CategoryId>()
+                productCategoryIds: new HashSet<CategoryId>()
                 {
                     CategoryId.Create(1),
                     CategoryId.Create(2),
@@ -43,7 +43,7 @@ public static partial class DomainConstants
                 quantity: 5,
                 basePrice: 5m,
                 purchasedPrice: 2m,
-                productCategories: new HashSet<CategoryId>()
+                productCategoryIds: new HashSet<CategoryId>()
                 {
                     CategoryId.Create(2),
                 }
@@ -53,7 +53,7 @@ public static partial class DomainConstants
                 quantity: 2,
                 basePrice: 10m,
                 purchasedPrice: 9.5m,
-                productCategories: new HashSet<CategoryId>()
+                productCategoryIds: new HashSet<CategoryId>()
                 {
                     CategoryId.Create(5),
                 }

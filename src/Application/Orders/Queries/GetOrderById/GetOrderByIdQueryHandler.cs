@@ -1,4 +1,5 @@
 using Application.Common.Errors;
+using Application.Common.Interfaces.Payments;
 using Application.Common.Interfaces.Persistence;
 using Application.Orders.Common.DTOs;
 using Application.Orders.Common.Errors;
@@ -17,14 +18,17 @@ namespace Application.Orders.Queries.GetOrderById;
 public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDetailedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPaymentGateway _paymentGateway;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public GetOrderByIdQueryHandler(IUnitOfWork unitOfWork)
+    /// <param name="paymentGateway">The payment gateway.</param>
+    public GetOrderByIdQueryHandler(IUnitOfWork unitOfWork, IPaymentGateway paymentGateway)
     {
         _unitOfWork = unitOfWork;
+        _paymentGateway = paymentGateway;
     }
 
     /// <inheritdoc/>
@@ -44,7 +48,7 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
             throw new UserNotAllowedException($"The current user does not have permission to access the order with id {orderId}");
         }
 
-        var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(p => p.OrderId == order.Id);
+        var orderPayment = order.PaymentId != null ? await _paymentGateway.GetPaymentByIdAsync(order.PaymentId) : null;
 
         return new OrderDetailedResult(order, orderPayment);
     }

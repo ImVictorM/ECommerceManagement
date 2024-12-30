@@ -53,14 +53,7 @@ public static class OrderUtils
         bool withDefaultMockSetup = false
     )
     {
-        var products = orderProducts ??
-        [
-            new OrderProductInput
-            {
-                ProductId = ProductId.Create(1),
-                Quantity = 1
-            }
-        ];
+        var products = orderProducts ?? new Mock<IEnumerable<IOrderProduct>>().Object;
 
         if (withDefaultMockSetup)
         {
@@ -70,7 +63,7 @@ public static class OrderUtils
         var order = await _factory.CreateOrderAsync(
             ownerId ?? DomainConstants.User.Id,
             products,
-            paymentMethod ?? PaymentUtils.CreateCreditCardPayment(),
+            paymentMethod ?? new Mock<IPaymentMethod>().Object,
             billingAddress ?? AddressUtils.CreateAddress(),
             deliveryAddress ?? AddressUtils.CreateAddress(),
             installments,
@@ -121,21 +114,5 @@ public static class OrderUtils
             purchasedPrice ?? 10m,
             productCategories ?? new HashSet<CategoryId>() { CategoryId.Create(1) }
         );
-    }
-
-    /// <summary>
-    /// Represents an order product input used to create orders.
-    /// </summary>
-    public class OrderProductInput : IOrderProduct
-    {
-        /// <summary>
-        /// The product quantity.
-        /// </summary>
-        public int Quantity { get; set; }
-
-        /// <summary>
-        /// The product id.
-        /// </summary>
-        public ProductId ProductId { get; set; } = null!;
     }
 }

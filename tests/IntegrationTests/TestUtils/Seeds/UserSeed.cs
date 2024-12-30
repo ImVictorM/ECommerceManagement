@@ -1,5 +1,6 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
+using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -44,6 +45,7 @@ public static class UserSeed
     private static readonly Dictionary<SeedAvailableUsers, (User User, string Password)> _users = new()
     {
         [SeedAvailableUsers.Admin] = (UserUtils.CreateUser(
+            id: UserId.Create(-1),
             name: "admin",
             roles: new HashSet<Role>() { Role.Admin },
             email: EmailUtils.CreateEmail("system_admin@email.com"),
@@ -51,6 +53,7 @@ public static class UserSeed
         ), AdminPassword),
 
         [SeedAvailableUsers.OtherAdmin] = (UserUtils.CreateUser(
+            id: UserId.Create(-2),
             name: "other admin",
             roles: new HashSet<Role>() { Role.Admin },
             email: EmailUtils.CreateEmail("other_admin@email.com"),
@@ -58,12 +61,14 @@ public static class UserSeed
         ), AdminPassword),
 
         [SeedAvailableUsers.Customer] = (UserUtils.CreateUser(
+            id: UserId.Create(-3),
             name: "normal user",
             email: EmailUtils.CreateEmail("user_normal@email.com"),
             roles: new HashSet<Role>() { Role.Customer }
         ), UserPassword),
 
         [SeedAvailableUsers.CustomerWithAddress] = (UserUtils.CreateUser(
+            id: UserId.Create(-4),
             name: "user with address",
             email: EmailUtils.CreateEmail("user_address@email.com"),
             roles: new HashSet<Role>() { Role.Customer },
@@ -71,6 +76,7 @@ public static class UserSeed
         ), UserPassword),
 
         [SeedAvailableUsers.InactiveCustomer] = (UserUtils.CreateUser(
+            id: UserId.Create(-5),
             name: "inactive user",
             email: EmailUtils.CreateEmail("user_inactive@email.com"),
             roles: new HashSet<Role>() { Role.Customer },

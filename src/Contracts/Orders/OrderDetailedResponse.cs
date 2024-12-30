@@ -1,5 +1,3 @@
-using Contracts.Orders.Common;
-
 namespace Contracts.Orders;
 
 /// <summary>
@@ -19,5 +17,5 @@ public record OrderDetailedResponse(
     string Status,
     decimal Total,
     IEnumerable<OrderProductResponse> Products,
-    OrderPayment? Payment
+    OrderPaymentResponse? Payment
 );

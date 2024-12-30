@@ -158,8 +158,10 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
                 .IsRequired();
 
             orderProductsBuilder
-                .OwnsMany(orderProduct => orderProduct.ProductCategories, categoryBuilder =>
+                .OwnsMany(orderProduct => orderProduct.ProductCategoryIds, categoryBuilder =>
                 {
+                    categoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
                     categoryBuilder.ToTable("order_product_category_ids");
 
                     categoryBuilder

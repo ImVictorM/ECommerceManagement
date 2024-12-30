@@ -36,6 +36,10 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public long OrderStatusId { get; private set; }
     /// <summary>
+    /// Gets the order payment id.
+    /// </summary>
+    public OrderPaymentId? PaymentId { get; private set; }
+    /// <summary>
     /// Gets the order products.
     /// </summary>
     public IReadOnlySet<OrderProduct> Products => _products;

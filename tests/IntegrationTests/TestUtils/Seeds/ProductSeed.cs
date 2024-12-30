@@ -43,6 +43,7 @@ public static class ProductSeed
     private static readonly Dictionary<SeedAvailableProducts, Product> _products = new Dictionary<SeedAvailableProducts, Product>()
     {
         [SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS] = ProductUtils.CreateProduct(
+            id: ProductId.Create(-1),
             name: "Computer",
             description: "Simple computer",
             basePrice: 3000m,
@@ -59,6 +60,7 @@ public static class ProductSeed
             ]
         ),
         [SeedAvailableProducts.TSHIRT] = ProductUtils.CreateProduct(
+            id: ProductId.Create(-2),
             name: "Mens Casual Premium Slim Fit T-Shirts",
             description: "Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing.",
             basePrice: 22.3m,
@@ -72,6 +74,7 @@ public static class ProductSeed
             ]
         ),
         [SeedAvailableProducts.CHAIN_BRACELET] = ProductUtils.CreateProduct(
+            id: ProductId.Create(-3),
             name: "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet",
             description: "From our Legends Collection, the Naga was inspired by the mythical water dragon that protects the ocean's pearl.",
             basePrice: 695m,
@@ -85,6 +88,7 @@ public static class ProductSeed
             ]
         ),
         [SeedAvailableProducts.PENCIL] = ProductUtils.CreateProduct(
+            id: ProductId.Create(-4),
             name: "Holiday Mixed Set - Blackwing Matte - Set of 12",
             description: "Ideal for artists, musicians, woodworkers, and anyone who prefers a soft, dark line.",
             basePrice: 160m,
@@ -97,6 +101,7 @@ public static class ProductSeed
             ]
         ),
         [SeedAvailableProducts.INACTIVE_JACKET] = ProductUtils.CreateProduct(
+            id: ProductId.Create(-5),
             name: "Mens Cotton Jacket",
             description: "Great outerwear jackets for Spring/Autumn/Winter, suitable for many occasions.",
             basePrice: 200,

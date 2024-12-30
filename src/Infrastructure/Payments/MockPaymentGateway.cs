@@ -1,9 +1,9 @@
 using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Services;
-using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.ValueObjects;
+using Domain.OrderAggregate;
+using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Infrastructure.Payments.Common.DTOs;
+using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
 namespace Infrastructure.Payments;
@@ -13,26 +13,22 @@ namespace Infrastructure.Payments;
 /// </summary>
 public class MockPaymentGateway : IPaymentGateway
 {
+
     /// <inheritdoc/>
-    public async Task<IAuthorizePaymentResponse> AuthorizePaymentAsync(
-        Payment payment,
+    public Task AuthorizePaymentAsync(
+        Order order,
+        IPaymentMethod paymentMethod,
         User? payer = null,
         Address? billingAddress = null,
-        Address? deliveryAddress = null
+        Address? deliveryAddress = null,
+        int? installments = null
     )
     {
-        await Task.CompletedTask;
-
-        return new AuthorizePaymentResponse(
-            payment.Id.ToString(),
-            "authorized",
-            "pending capture",
-            false
-        );
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc/>
-    public async Task<IPaymentStatusResponse> CapturePaymentAsync(PaymentId paymentId)
+    public async Task<IPaymentStatusResponse> CapturePaymentAsync(OrderPaymentId paymentId)
     {
         await Task.CompletedTask;
 
@@ -40,7 +36,7 @@ public class MockPaymentGateway : IPaymentGateway
     }
 
     /// <inheritdoc/>
-    public async Task<IPaymentStatusResponse> CancelAuthorizationAsync(PaymentId paymentId)
+    public async Task<IPaymentStatusResponse> CancelAuthorizationAsync(OrderPaymentId paymentId)
     {
         await Task.CompletedTask;
 
@@ -48,7 +44,7 @@ public class MockPaymentGateway : IPaymentGateway
     }
 
     /// <inheritdoc/>
-    public async Task<IPaymentRefundResponse> RefundPaymentAsync(PaymentId paymentId, decimal amount)
+    public async Task<IPaymentRefundResponse> RefundPaymentAsync(OrderPaymentId paymentId, decimal amount)
     {
         await Task.CompletedTask;
 
@@ -59,6 +55,22 @@ public class MockPaymentGateway : IPaymentGateway
             "approved",
             "does not matter",
             "standard"
+        );
+    }
+
+    /// <inheritdoc/>
+    public async Task<IPaymentResponse> GetPaymentByIdAsync(OrderPaymentId paymentId)
+    {
+        await Task.CompletedTask;
+
+        return new PaymentResponse(
+            Guid.NewGuid().ToString(),
+            "credit_card",
+            120m,
+            1,
+            "Pending",
+            "does not matter",
+            true
         );
     }
 }

@@ -11,8 +11,8 @@ using Infrastructure.Persistence.Interceptors;
 using Application.Common.Interfaces.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using Application.Common.Interfaces.Services;
 using Infrastructure.Payments;
+using Application.Common.Interfaces.Payments;
 
 namespace Infrastructure;
 

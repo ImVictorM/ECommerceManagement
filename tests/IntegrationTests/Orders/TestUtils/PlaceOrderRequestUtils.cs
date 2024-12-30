@@ -1,9 +1,6 @@
 using Contracts.Common;
 using Contracts.Orders;
 using Contracts.Orders.Common;
-using Contracts.Payments.Common;
-
-using Domain.UnitTests.TestUtils.Constants;
 
 using IntegrationTests.TestUtils.Contracts;
 using IntegrationTests.TestUtils.Seeds;
@@ -68,6 +65,6 @@ public static class PlaceOrderRequestUtils
     /// <returns>A new credit card payment object.</returns>
     public static CreditCardPayment CreateCreditCardPaymentMethod(string? token = null)
     {
-        return new CreditCardPayment(token ?? DomainConstants.Payment.CardToken);
+        return new CreditCardPayment(token ?? "token");
     }
 }

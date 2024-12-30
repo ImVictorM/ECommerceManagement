@@ -75,7 +75,7 @@ public class CreateProductTests : BaseIntegrationTest
 
         var request = CreateProductRequestUtils.CreateRequest(
             categoryIds: productCategories.Select(c => c.Id.ToString())
-         );
+        );
 
         await Client.LoginAs(SeedAvailableUsers.Admin);
 

@@ -2,7 +2,6 @@ using Domain.CategoryAggregate;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.Abstracts;
 using Domain.OrderAggregate;
-using Domain.PaymentAggregate;
 using Domain.ProductAggregate;
 using Domain.ProductFeedbackAggregate;
 using Domain.SaleAggregate;
@@ -39,10 +38,6 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the order aggregate context.
     /// </summary>
     public DbSet<Order> Orders { get; set; } = null!;
-    /// <summary>
-    /// Gets or sets the payment aggregate context.
-    /// </summary>
-    public DbSet<Payment> Payments { get; set; } = null!;
     /// <summary>
     /// Gets or sets the product aggregate context.
     /// </summary>

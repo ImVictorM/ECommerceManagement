@@ -2,9 +2,8 @@ using Application.Orders.Commands.Common.DTOs;
 using Application.Orders.Commands.PlaceOrder;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
-
+using Moq;
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -42,7 +41,7 @@ public static class PlaceOrderCommandUtils
             orderProducts ?? ToInput(DomainConstants.Order.OrderProducts),
             AddressUtils.CreateAddress(),
             AddressUtils.CreateAddress(),
-            PaymentUtils.CreateCreditCardPayment(),
+            new Mock<IPaymentMethod>().Object,
             couponsAppliedIds,
             installments
         );

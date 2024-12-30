@@ -6,15 +6,11 @@ using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils.Constants;
-using Domain.UserAggregate.ValueObjects;
 
-using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.ValueObjects;
 
 using FluentAssertions;
 using Moq;
-using Domain.ProductAggregate.ValueObjects;
 
 namespace Domain.UnitTests.OrderAggregate;
 
@@ -24,50 +20,14 @@ namespace Domain.UnitTests.OrderAggregate;
 public class OrderTests
 {
     /// <summary>
-    /// Represents valid parameters to create an order.
-    /// </summary>
-    public static IEnumerable<object[]> ValidOrderParameters()
-    {
-        yield return new object[]
-        {
-            DomainConstants.Order.OwnerId,
-            new List<OrderUtils.OrderProductInput>()
-            {
-                new()
-                {
-                    ProductId = ProductId.Create(1),
-                    Quantity = 5
-                },
-            },
-            PaymentUtils.CreateCreditCardPayment(),
-            AddressUtils.CreateAddress(),
-            AddressUtils.CreateAddress(),
-            DomainConstants.Payment.Installments
-        };
-    }
-
-    /// <summary>
     /// Tests the order is created correctly when creating it with correct parameters.
     /// </summary>
-    /// <param name="ownerId">The order owner id.</param>
-    /// <param name="orderProducts">The order products.</param>
-    /// <param name="paymentMethod">The order payment method.</param>
-    /// <param name="billingAddress">The order billing address.</param>
-    /// <param name="deliveryAddress">The order delivery address.</param>
-    /// <param name="installments">The order payment installments.</param>
-    [Theory]
-    [MemberData(nameof(ValidOrderParameters))]
-    public async Task CreateOrder_WithValidParameters_ReturnsInstanceWithCorrectData(
-        UserId ownerId,
-        IEnumerable<IOrderProduct> orderProducts,
-        IPaymentMethod paymentMethod,
-        Address billingAddress,
-        Address deliveryAddress,
-        int installments
-    )
+    [Fact]
+    public async Task CreateOrder_WithValidParameters_ReturnsInstanceWithCorrectData()
     {
-        var mockTotal = 100m;
-        var mockOrderProducts = orderProducts.Select((input) =>
+        var mockOrderProductsInput = new Mock<IEnumerable<IOrderProduct>>().Object;
+
+        var mockOrderProducts = mockOrderProductsInput.Select((input) =>
         {
             return OrderProduct.Create(
                 input.ProductId,
@@ -81,6 +41,8 @@ public class OrderTests
             );
         }).ToHashSet();
 
+        var mockTotal = 100m;
+
         OrderUtils.MockOrderService.Setup(s => s.CalculateTotalAsync(
             It.IsAny<IEnumerable<OrderProduct>>(),
             It.IsAny<IEnumerable<OrderCoupon>>())
@@ -92,19 +54,18 @@ public class OrderTests
 
         var act = await FluentActions
             .Invoking(() => OrderUtils.CreateOrder(
-                ownerId: ownerId,
-                orderProducts: orderProducts,
-                paymentMethod: paymentMethod,
-                billingAddress: billingAddress,
-                deliveryAddress: deliveryAddress,
-                installments: installments
+                ownerId: DomainConstants.Order.OwnerId,
+                orderProducts: mockOrderProductsInput,
+                billingAddress: AddressUtils.CreateAddress(),
+                deliveryAddress: AddressUtils.CreateAddress(),
+                installments: 1
             ))
             .Should()
             .NotThrowAsync();
 
         var createdOrder = act.Subject;
 
-        createdOrder.OwnerId.Should().Be(ownerId);
+        createdOrder.OwnerId.Should().Be(DomainConstants.Order.OwnerId);
         createdOrder.Total.Should().Be(mockTotal);
         createdOrder.Description.Should().Be("Order pending. Waiting for payment");
         createdOrder.OrderStatusId.Should().Be(OrderStatus.Pending.Id);

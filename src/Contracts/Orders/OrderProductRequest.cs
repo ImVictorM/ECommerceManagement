@@ -1,4 +1,4 @@
-namespace Contracts.Orders.Common;
+namespace Contracts.Orders;
 
 /// <summary>
 /// Represents an order product request.

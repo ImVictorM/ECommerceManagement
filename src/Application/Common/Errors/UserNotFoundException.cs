@@ -1,6 +1,6 @@
 using SharedKernel.Errors;
 
-namespace Application.Users.Common.Errors;
+namespace Application.Common.Errors;
 
 /// <summary>
 /// The exception that is thrown when a user being retrieved does not exist.

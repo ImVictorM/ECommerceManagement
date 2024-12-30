@@ -32,14 +32,14 @@ public class OrderMappingConfig : IRegister
             .Map(dest => dest.Description, src => src.Order.Description)
             .Map(dest => dest.Status, src => src.Order.GetStatusDescription())
             .Map(dest => dest.Products, src => src.Order.Products)
-            .Map(dest => dest.Payment, src => src.Payment == null ? null : new
-            {
-                PaymentId = src.Payment.Id.ToString(),
-                Amount = src.Payment.Amount,
-                Installments = src.Payment.Installments,
-                Status = src.Payment.GetStatusDescription(),
-                Description = src.Payment.Description,
-                PaymentType = src.Payment.PaymentMethod.Type
-            });
+            .Map(dest => dest.Payment, src => src.Payment == null ? null : new OrderPaymentResponse(
+                src.Payment.PaymentId,
+                src.Payment.Amount,
+                src.Payment.Installments,
+                src.Payment.Status,
+                src.Payment.Details,
+                src.Payment.PaymentMethod
+            ))
+            .IgnoreNullValues(true);
     }
 }

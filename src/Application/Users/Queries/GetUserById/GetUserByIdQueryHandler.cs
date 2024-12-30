@@ -1,6 +1,6 @@
+using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 using Application.Users.Common.DTOs;
-using Application.Users.Common.Errors;
 using Domain.UserAggregate.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;

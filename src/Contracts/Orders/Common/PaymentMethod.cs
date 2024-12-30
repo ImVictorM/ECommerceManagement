@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Contracts.Payments.Common;
+namespace Contracts.Orders.Common;
 
 /// <summary>
 /// Represents a polymorphic payment method.

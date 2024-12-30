@@ -44,32 +44,32 @@ public static class CategorySeed
     {
         [SeedAvailableCategories.TECHNOLOGY] = CategoryUtils.CreateCategory
         (
-            id: CategoryId.Create(1),
+            id: CategoryId.Create(-1),
             name: "technology"
         ),
         [SeedAvailableCategories.SPORTS] = CategoryUtils.CreateCategory
         (
-            id: CategoryId.Create(2),
+            id: CategoryId.Create(-2),
             name: "sports"
         ),
         [SeedAvailableCategories.BOOKS_STATIONERY] = CategoryUtils.CreateCategory
         (
-            id: CategoryId.Create(3),
+            id: CategoryId.Create(-3),
             name: "books_stationery"
         ),
         [SeedAvailableCategories.FASHION] = CategoryUtils.CreateCategory
         (
-            id: CategoryId.Create(4),
+            id: CategoryId.Create(-4),
             name: "fashion"
         ),
         [SeedAvailableCategories.OFFICE_SUPPLIES] = CategoryUtils.CreateCategory
         (
-            id: CategoryId.Create(5),
+            id: CategoryId.Create(-5),
             name: "office_supplies"
         ),
         [SeedAvailableCategories.JEWELRY] = CategoryUtils.CreateCategory
         (
-            id: CategoryId.Create(6),
+            id: CategoryId.Create(-6),
             name: "jewelry"
         ),
     };

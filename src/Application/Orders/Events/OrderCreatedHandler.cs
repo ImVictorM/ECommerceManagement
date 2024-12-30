@@ -1,17 +1,22 @@
+using Application.Common.Errors;
+using Application.Common.Interfaces.Payments;
 using Application.Common.Interfaces.Persistence;
-using Application.Common.Interfaces.Services;
+
 using Domain.OrderAggregate.Events;
-using Domain.PaymentAggregate;
+using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
+
 using MediatR;
 
 namespace Application.Orders.Events;
 
 /// <summary>
-/// Handles the <see cref="OrderCreated"/> event generating a payment for the order.
+/// Handles the <see cref="OrderCreated"/> event authorizing the order payment.
 /// </summary>
 public class OrderCreatedHandler : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPaymentGateway _paymentGateway;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderCreatedHandler"/> class.
@@ -21,22 +26,33 @@ public class OrderCreatedHandler : INotificationHandler<OrderCreated>
     public OrderCreatedHandler(IPaymentGateway paymentGateway, IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
+        _paymentGateway = paymentGateway;
     }
 
     /// <inheritdoc/>
     public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
     {
-        var payment = Payment.Create(
-            notification.Order.Total,
-            notification.Order.Id,
-            notification.Order.OwnerId,
-            notification.PaymentMethod,
-            notification.BillingAddress,
-            notification.DeliveryAddress,
-            notification.Installments
-        );
+        var payer = await _unitOfWork.UserRepository
+            .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.Order.OwnerId))
+            ?? throw new UserNotFoundException($"The order payer with id {notification.Order.OwnerId} could not be found");
 
-        await _unitOfWork.PaymentRepository.AddAsync(payment);
+        await UpdatePayerAddresses(notification, payer);
+
+        _ = _paymentGateway.AuthorizePaymentAsync(
+            order: notification.Order,
+            paymentMethod: notification.PaymentMethod,
+            payer: payer,
+            deliveryAddress: notification.DeliveryAddress,
+            billingAddress: notification.BillingAddress,
+            installments: notification.Installments
+        );
+    }
+
+    private async Task UpdatePayerAddresses(OrderCreated notification, User payer)
+    {
+        payer.AssignAddress(notification.DeliveryAddress, notification.BillingAddress);
+
+        await _unitOfWork.UserRepository.UpdateAsync(payer);
 
         await _unitOfWork.SaveChangesAsync();
     }

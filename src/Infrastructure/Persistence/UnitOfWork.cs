@@ -6,8 +6,6 @@ using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
@@ -33,8 +31,6 @@ public sealed class UnitOfWork : IUnitOfWork
     /// <inheritdoc/>
     public IRepository<Order, OrderId> OrderRepository { get; }
 
-    /// <inheritdoc/>
-    public IRepository<Payment, PaymentId> PaymentRepository { get; }
 
     /// <inheritdoc/>
     public IRepository<Category, CategoryId> CategoryRepository { get; }
@@ -53,7 +49,6 @@ public sealed class UnitOfWork : IUnitOfWork
     /// <param name="userRepository">The user repository.</param>
     /// <param name="productRepository">The product repository.</param>
     /// <param name="orderRepository">The order repository.</param>
-    /// <param name="paymentRepository">The payment repository.</param>
     /// <param name="categoryRepository">The category repository.</param>
     /// <param name="saleRepository">The sale repository.</param>
     /// <param name="couponRepository">The coupon repository.</param>
@@ -62,7 +57,6 @@ public sealed class UnitOfWork : IUnitOfWork
         IRepository<User, UserId> userRepository,
         IRepository<Product, ProductId> productRepository,
         IRepository<Order, OrderId> orderRepository,
-        IRepository<Payment, PaymentId> paymentRepository,
         IRepository<Category, CategoryId> categoryRepository,
         IRepository<Sale, SaleId> saleRepository,
         IRepository<Coupon, CouponId> couponRepository
@@ -73,7 +67,6 @@ public sealed class UnitOfWork : IUnitOfWork
         UserRepository = userRepository;
         ProductRepository = productRepository;
         OrderRepository = orderRepository;
-        PaymentRepository = paymentRepository;
         CategoryRepository = categoryRepository;
         SaleRepository = saleRepository;
         CouponRepository = couponRepository;

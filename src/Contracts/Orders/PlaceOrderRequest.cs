@@ -1,6 +1,5 @@
 using Contracts.Common;
 using Contracts.Orders.Common;
-using Contracts.Payments.Common;
 
 namespace Contracts.Orders;
 
@@ -11,7 +10,7 @@ namespace Contracts.Orders;
 /// <param name="BillingAddress">The order billing address.</param>
 /// <param name="DeliveryAddress">The order delivery address.</param>
 /// <param name="PaymentMethod">The order payment method.</param>
-/// <param name="installments">The installments.</param>
+/// <param name="installments">The order installments.</param>
 /// <param name="CouponAppliedIds">The coupon applied ids.</param>
 public record PlaceOrderRequest(
     IEnumerable<OrderProductRequest> Products,

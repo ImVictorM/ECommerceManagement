@@ -10,6 +10,8 @@ namespace Domain.OrderAggregate.ValueObjects;
 /// </summary>
 public sealed class OrderProduct : ValueObject, IOrderProduct
 {
+    private readonly HashSet<CategoryId> _productCategoryIds = [];
+
     /// <inheritdoc/>
     public int Quantity { get; }
     /// <inheritdoc/>
@@ -26,7 +28,7 @@ public sealed class OrderProduct : ValueObject, IOrderProduct
     /// <summary>
     /// Gets the product categories.
     /// </summary>
-    public IReadOnlySet<CategoryId> ProductCategories { get; } = null!;
+    public IReadOnlySet<CategoryId> ProductCategoryIds => _productCategoryIds;
 
     private OrderProduct() { }
 
@@ -35,14 +37,14 @@ public sealed class OrderProduct : ValueObject, IOrderProduct
         int quantity,
         decimal basePrice,
         decimal purchasedPrice,
-        IReadOnlySet<CategoryId> productCategories
+        IReadOnlySet<CategoryId> productCategoryIds
     )
     {
         ProductId = productId;
         Quantity = quantity;
         PurchasedPrice = purchasedPrice;
         BasePrice = basePrice;
-        ProductCategories = productCategories;
+        _productCategoryIds.UnionWith(productCategoryIds);
     }
 
     /// <summary>
@@ -52,14 +54,14 @@ public sealed class OrderProduct : ValueObject, IOrderProduct
     /// <param name="quantity">The quantity of products ordered.</param>
     /// <param name="basePrice">The product base price.</param>
     /// <param name="purchasedPrice">The product price at purchase.</param>
-    /// <param name="productCategories">The product categories.</param>
+    /// <param name="productCategoryIds">The product categories.</param>
     /// <returns>A new instance of the <see cref="OrderProduct"/> class.</returns>
     public static OrderProduct Create(
         ProductId productId,
         int quantity,
         decimal basePrice,
         decimal purchasedPrice,
-        IReadOnlySet<CategoryId> productCategories
+        IReadOnlySet<CategoryId> productCategoryIds
     )
     {
         return new OrderProduct(
@@ -67,7 +69,7 @@ public sealed class OrderProduct : ValueObject, IOrderProduct
             quantity,
             basePrice,
             purchasedPrice,
-            productCategories
+            productCategoryIds
         );
     }
 
@@ -88,7 +90,7 @@ public sealed class OrderProduct : ValueObject, IOrderProduct
         yield return PurchasedPrice;
         yield return BasePrice;
 
-        foreach (var category in ProductCategories)
+        foreach (var category in _productCategoryIds)
         {
             yield return category;
         }
