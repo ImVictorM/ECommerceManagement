@@ -1,4 +1,5 @@
 using System.Globalization;
+using SharedKernel.Extensions;
 using SharedKernel.Models;
 
 namespace Domain.UserAggregate.ValueObjects;
@@ -37,7 +38,7 @@ public sealed class UserId : ValueObject
     /// <returns>A new instance of the <see cref="UserId"/> class with the specified value.</returns>
     public static UserId Create(string value)
     {
-        return new UserId(long.Parse(value, NumberStyles.None, NumberFormatInfo.InvariantInfo));
+        return new UserId(value.ToLongId());
     }
 
     /// <inheritdoc/>

@@ -1,4 +1,4 @@
-using SharedKernel.Errors;
+using SharedKernel.Extensions;
 using SharedKernel.Models;
 using System.Globalization;
 
@@ -38,16 +38,7 @@ public class CategoryId : ValueObject
     /// <returns>A new instance of the <see cref="CategoryId"/> class with the specified identifier.</returns>
     public static CategoryId Create(string value)
     {
-        if (long.TryParse(value, out var id))
-        {
-            return new CategoryId(id);
-        }
-
-        throw new BaseException(
-            message: "There was an error when converting a category id.",
-            errorCode: ErrorCode.InvalidOperation,
-            title: "Domain Error - Invalid Operation"
-        );
+        return new CategoryId(value.ToLongId());
     }
 
     /// <inheritdoc/>

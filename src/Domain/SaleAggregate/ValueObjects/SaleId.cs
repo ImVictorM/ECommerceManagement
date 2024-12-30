@@ -1,6 +1,6 @@
-using SharedKernel.Errors;
 using System.Globalization;
 using SharedKernel.Models;
+using SharedKernel.Extensions;
 
 namespace Domain.SaleAggregate.ValueObjects;
 
@@ -38,16 +38,7 @@ public class SaleId : ValueObject
     /// <returns>A new instance of the <see cref="SaleId"/> class with the specified identifier.</returns>
     public static SaleId Create(string value)
     {
-        if (long.TryParse(value, out var id))
-        {
-            return new SaleId(id);
-        }
-
-        throw new BaseException(
-            message: "There was an error when converting a sale id.",
-            errorCode: ErrorCode.InvalidOperation,
-            title: "Domain Error - Invalid Operation"
-        );
+        return new SaleId(value.ToLongId());
     }
 
     /// <inheritdoc/>

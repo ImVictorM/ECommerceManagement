@@ -1,5 +1,5 @@
 using System.Globalization;
-using SharedKernel.Errors;
+using SharedKernel.Extensions;
 using SharedKernel.Models;
 
 namespace Domain.CouponAggregate.ValueObjects;
@@ -45,16 +45,7 @@ public sealed class CouponId : ValueObject
     /// <returns>A new instance of <see cref="CouponId"/> class with the specified identifier.</returns>
     public static CouponId Create(string value)
     {
-        if (long.TryParse(value, out var id))
-        {
-            return new CouponId(id);
-        }
-
-        throw new BaseException(
-            message: "There was an error when converting the coupon id.",
-            errorCode: ErrorCode.InvalidOperation,
-            title: "Domain Error - Invalid Operation"
-        );
+        return new CouponId(value.ToLongId());
     }
 
     /// <inheritdoc/>

@@ -1,3 +1,5 @@
+using SharedKernel.Errors;
+
 namespace SharedKernel.Extensions;
 
 /// <summary>
@@ -5,6 +7,26 @@ namespace SharedKernel.Extensions;
 /// </summary>
 public static class StringExtensions
 {
+    /// <summary>
+    /// Converts an string identifier to a long representation.
+    /// </summary>
+    /// <param name="str">The current identifier.</param>
+    /// <returns>A long representation of the current string identifier.</returns>
+    public static long ToLongId(this string str)
+    {
+        if (long.TryParse(str, out var id))
+        {
+            return id;
+        }
+
+        throw new
+            BaseException(
+            message: "There was an error when converting the identifier",
+            errorCode: ErrorCode.InvalidOperation,
+            title: "Domain Error - Invalid Operation"
+            ).WithContext("IdValue", str);
+    }
+
     /// <summary>
     /// Converts a string to snake_case and lowercase using invariant culture
     /// </summary>

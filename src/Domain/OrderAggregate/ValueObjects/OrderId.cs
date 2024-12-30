@@ -1,5 +1,5 @@
 using System.Globalization;
-using SharedKernel.Errors;
+using SharedKernel.Extensions;
 using SharedKernel.Models;
 
 namespace Domain.OrderAggregate.ValueObjects;
@@ -45,16 +45,7 @@ public sealed class OrderId : ValueObject
     /// <returns>A new instance of <see cref="OrderId"/> class with the specified identifier.</returns>
     public static OrderId Create(string value)
     {
-        if (long.TryParse(value, out var id))
-        {
-            return new OrderId(id);
-        }
-
-        throw new BaseException(
-            message: "There was an error when converting the order id.",
-            errorCode: ErrorCode.InvalidOperation,
-            title: "Domain Error - Invalid Operation"
-        );
+        return new OrderId(value.ToLongId());
     }
 
     /// <inheritdoc/>
