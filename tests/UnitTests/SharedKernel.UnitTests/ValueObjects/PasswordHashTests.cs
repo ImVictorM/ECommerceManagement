@@ -1,6 +1,5 @@
 using SharedKernel.Errors;
 using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
 
 using FluentAssertions;
@@ -18,24 +17,37 @@ public class PasswordHashTests
     [Fact]
     public void CreatePasswordHash_WithValidHashAndSalt_CreatesInstanceCorrectly()
     {
-        var expectedHash = SharedKernelConstants.PasswordHash.Hash;
-        var expectedSalt = SharedKernelConstants.PasswordHash.Salt;
-        var passwordHash = PasswordHashUtils.Create(expectedHash, expectedSalt);
+        var hashPart = PasswordHashUtils.GenerateRandomHash();
+        var saltPart = PasswordHashUtils.GenerateRandomSalt();
+
+        var actionResult = FluentActions
+            .Invoking(() => PasswordHashUtils.Create(hashPart, saltPart))
+            .Should()
+            .NotThrow();
+
+        var passwordHash = actionResult.Subject;
 
         passwordHash.Should().NotBeNull();
-        passwordHash.Value.Should().Be($"{expectedHash}-{expectedSalt}");
+        passwordHash.Value.Should().Be($"{hashPart}-{saltPart}");
     }
 
     /// <summary>
     /// Verifies that a <see cref="PasswordHash"/> is created successfully using a valid combined value.
     /// </summary>
     [Fact]
-    public void CreatePasswordHash_WithValidValue_CreatesInstanceCorrectly()
+    public void CreatePasswordHash_WithValidCombinedValue_CreatesInstanceCorrectly()
     {
-        var passwordHash = PasswordHashUtils.CreateUsingDirectValue(SharedKernelConstants.PasswordHash.Value);
+        var combinedValue = $"{PasswordHashUtils.GenerateRandomHash()}-{PasswordHashUtils.GenerateRandomSalt()}";
+
+        var actionResult = FluentActions
+            .Invoking(() => PasswordHashUtils.CreateUsingDirectValue(combinedValue))
+            .Should()
+            .NotThrow();
+
+        var passwordHash = actionResult.Subject;
 
         passwordHash.Should().NotBeNull();
-        passwordHash.Value.Should().Be(SharedKernelConstants.PasswordHash.Value);
+        passwordHash.Value.Should().Be(combinedValue);
     }
 
     /// <summary>
@@ -75,12 +87,12 @@ public class PasswordHashTests
     [Fact]
     public void GetParts_WhenGettingSaltAndHashPartsIndividually_ReturnsThemCorrectly()
     {
-        var expectedHash = SharedKernelConstants.PasswordHash.Hash;
-        var expectedSalt = SharedKernelConstants.PasswordHash.Salt;
+        var hashPart = PasswordHashUtils.GenerateRandomHash();
+        var saltPart = PasswordHashUtils.GenerateRandomSalt();
 
-        var passwordHash = PasswordHashUtils.Create(expectedHash, expectedSalt);
+        var passwordHash = PasswordHashUtils.Create(hashPart, saltPart);
 
-        passwordHash.GetHashPart().Should().Be(expectedHash);
-        passwordHash.GetSaltPart().Should().Be(expectedSalt);
+        passwordHash.GetHashPart().Should().Be(hashPart);
+        passwordHash.GetSaltPart().Should().Be(saltPart);
     }
 }

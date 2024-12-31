@@ -5,7 +5,7 @@ namespace Domain.OrderAggregate.Interfaces;
 /// <summary>
 /// Represents an order product contract.
 /// </summary>
-public interface IOrderProduct
+public interface IOrderProductReserved
 {
     /// <summary>
     /// Gets the quantity of products ordered.

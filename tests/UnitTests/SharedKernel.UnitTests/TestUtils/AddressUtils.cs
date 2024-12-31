@@ -1,13 +1,16 @@
 using SharedKernel.ValueObjects;
-using SharedKernel.UnitTests.TestUtils.Constants;
+
+using Bogus;
 
 namespace SharedKernel.UnitTests.TestUtils;
 
 /// <summary>
-/// The address utilities for testing purposes.
+/// Utilities for the <see cref="Address"/> class.
 /// </summary>
 public static class AddressUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="Address"/> class.
     /// </summary>
@@ -26,11 +29,11 @@ public static class AddressUtils
     )
     {
         return Address.Create(
-            postalCode ?? SharedKernelConstants.Address.PostalCode,
-            street ?? SharedKernelConstants.Address.Street,
-            neighborhood ?? SharedKernelConstants.Address.Neighborhood,
-            state ?? SharedKernelConstants.Address.State,
-            city ?? SharedKernelConstants.Address.City
+            postalCode ?? _faker.Address.ZipCode(),
+            street ?? _faker.Address.StreetAddress(),
+            neighborhood ?? _faker.Lorem.Word(),
+            state ?? _faker.Address.StateAbbr(),
+            city ?? _faker.Address.City()
         );
     }
 }

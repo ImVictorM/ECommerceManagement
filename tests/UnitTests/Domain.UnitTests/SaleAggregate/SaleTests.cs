@@ -1,13 +1,14 @@
 using Domain.SaleAggregate.ValueObjects;
-using FluentAssertions;
-using SharedKernel.Errors;
-using SharedKernel.UnitTests.TestUtils;
 using Domain.UnitTests.TestUtils;
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils.Constants;
 using Domain.SaleAggregate;
+
+using SharedKernel.Errors;
+using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
+
+using FluentAssertions;
 
 namespace Domain.UnitTests.SaleAggregate;
 
@@ -66,10 +67,11 @@ public class SaleTests
         var emptyCategories = new HashSet<CategoryReference>();
         var emptyProducts = new HashSet<ProductReference>();
 
-        var act = () => SaleUtils.CreateSale(categoriesInSale: emptyCategories, productsInSale: emptyProducts);
-
-        act.Should().Throw<DomainValidationException>()
-           .WithMessage("A sale must contain at least one category or one product.");
+        FluentActions
+            .Invoking(() => SaleUtils.CreateSale(categoriesInSale: emptyCategories, productsInSale: emptyProducts))
+            .Should()
+            .Throw<DomainValidationException>()
+            .WithMessage("A sale must contain at least one category or one product.");
     }
 
     /// <summary>
@@ -90,52 +92,63 @@ public class SaleTests
             ProductReference.Create(ProductId.Create(2)),
         };
 
-        var act = () => SaleUtils.CreateSale(
-            categoriesInSale: emptyCategories,
-            productsInSale: productsIncluded,
-            productsExcludeFromSale: productsExcluded
-        );
-
-        act.Should().Throw<DomainValidationException>()
-           .WithMessage("A sale must contain at least one category or one product.");
+        FluentActions
+            .Invoking(() => SaleUtils.CreateSale(
+                categoriesInSale: emptyCategories,
+                productsInSale: productsIncluded,
+                productsExcludeFromSale: productsExcluded
+            ))
+            .Should()
+            .Throw<DomainValidationException>()
+            .WithMessage("A sale must contain at least one category or one product.");
     }
 
     /// <summary>
-    /// Ensures that a sale with a valid discount is considered valid for the current date.
+    /// List of discounts and expected value when calling the <see cref="Sale.IsValidToDate"/> method.
     /// </summary>
-    [Fact]
-    public void IsValidToDate_WithFutureValidDiscount_ShouldReturnTrue()
-    {
-        var discount = DiscountUtils.CreateDiscount(
-            PercentageUtils.Create(DomainConstants.Sale.DiscountPercentage),
-            startingDate: DateTimeOffset.UtcNow.AddSeconds(-200),
-            endingDate: DateTimeOffset.UtcNow.AddDays(2)
-        );
-
-        var sale = SaleUtils.CreateSale(discount);
-
-        var isValid = sale.IsValidToDate();
-
-        isValid.Should().BeTrue();
-    }
+    public static readonly IEnumerable<object[]> IsValidToDateDiscountInputs =
+    [
+        [
+            DiscountUtils.CreateDiscount
+            (
+                startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                endingDate: DateTimeOffset.UtcNow.AddDays(2)
+            ),
+            true,
+        ],
+        [
+            DiscountUtils.CreateDiscount
+            (
+                startingDate: DateTimeOffset.UtcNow.AddDays(2),
+                endingDate: DateTimeOffset.UtcNow.AddDays(5)
+            ),
+            false
+        ],
+        [
+            DiscountUtils.CreateDiscount
+            (
+                startingDate: DateTimeOffset.UtcNow.AddHours(-15),
+                endingDate: DateTimeOffset.UtcNow.AddHours(-5)
+            ),
+            false
+        ]
+    ];
 
     /// <summary>
-    /// Ensures that a sale with an expired discount is considered invalid for the current date.
+    /// Ensures the <see cref="Sale.IsValidToDate"/> method returns the correct value.
     /// </summary>
-    [Fact]
-    public void IsValidToDate_WithExpiredDiscount_ShouldReturnFalse()
+    [Theory]
+    [MemberData(nameof(IsValidToDateDiscountInputs))]
+    public void IsValidToDate_WhenVerifiedWithSpecificDiscount_ReturnsExpectedValue(
+        Discount discount,
+        bool expected
+    )
     {
-        // Arrange
-        var discount = DiscountUtils.CreateDiscount(
-            PercentageUtils.Create(DomainConstants.Sale.DiscountPercentage),
-            startingDate: DateTimeOffset.UtcNow.AddDays(2),
-            endingDate: DateTimeOffset.UtcNow.AddDays(5)
-        );
-        var sale = SaleUtils.CreateSale(discount);
+        var sale = SaleUtils.CreateSale(discount: discount);
 
         var isValid = sale.IsValidToDate();
 
-        isValid.Should().BeFalse();
+        isValid.Should().Be(expected);
     }
 
     /// <summary>

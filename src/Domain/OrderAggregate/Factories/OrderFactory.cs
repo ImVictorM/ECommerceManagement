@@ -37,7 +37,7 @@ public class OrderFactory
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public async Task<Order> CreateOrderAsync(
         UserId ownerId,
-        IEnumerable<IOrderProduct> products,
+        IEnumerable<IOrderProductReserved> products,
         IPaymentMethod paymentMethod,
         Address billingAddress,
         Address deliveryAddress,

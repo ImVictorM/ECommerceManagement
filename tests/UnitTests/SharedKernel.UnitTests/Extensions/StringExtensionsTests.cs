@@ -1,5 +1,6 @@
-using FluentAssertions;
 using SharedKernel.Extensions;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.Extensions;
 
@@ -22,5 +23,23 @@ public class StringExtensionsTests
     public void StringExtensions_WhenConvertingToLowerAndSnakeCase_ConvertsCorrectlyAndReturnsIt(string input, string expectedOutput)
     {
         input.ToLowerSnakeCase().Should().Be(expectedOutput);
+    }
+
+    /// <summary>
+    /// Tests if the <see cref="StringExtensions.ToUpperSnakeCase(string)"/> extension method
+    /// converts a string to snake and upper case correctly.
+    /// </summary>
+    /// <param name="input">The string to be converted.</param>
+    /// <param name="expectedOutput">The expected string output.</param>
+    [Theory]
+    [InlineData("camelCase", "CAMEL_CASE")]
+    [InlineData("PascalCase", "PASCAL_CASE")]
+    [InlineData("kebab-case", "KEBAB_CASE")]
+    [InlineData("lower", "LOWER")]
+    [InlineData("UPPER", "UPPER")]
+    [InlineData("UPPER-CASE", "UPPER_CASE")]
+    public void StringExtensions_WhenConvertingToUpperAndSnakeCase_ConvertsCorrectlyAndReturnsIt(string input, string expectedOutput)
+    {
+        input.ToUpperSnakeCase().Should().Be(expectedOutput);
     }
 }

@@ -49,8 +49,8 @@ public class CreateProductCommandHandlerTests
         [CreateProductCommandUtils.CreateCommand(basePrice: 15m)],
         [CreateProductCommandUtils.CreateCommand(description: "some description")],
         [CreateProductCommandUtils.CreateCommand(initialQuantity: 2)],
-        [CreateProductCommandUtils.CreateCommand(categories: [1, 2])],
-        [CreateProductCommandUtils.CreateCommand(images: [ProductUtils.ProductImageUrlFromIndex(1)])],
+        [CreateProductCommandUtils.CreateCommand(categoryIds: NumberUtils.CreateNumberSequenceAsString(2))],
+        [CreateProductCommandUtils.CreateCommand(images: ProductUtils.CreateImageURIs(2))],
     ];
 
     /// <summary>

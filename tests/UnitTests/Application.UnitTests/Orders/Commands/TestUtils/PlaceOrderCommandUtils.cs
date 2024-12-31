@@ -1,9 +1,8 @@
+using Domain.UnitTests.TestUtils;
+
 using Application.Orders.Commands.Common.DTOs;
 using Application.Orders.Commands.PlaceOrder;
-using Domain.CouponAggregate.ValueObjects;
-using Domain.OrderAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils.Constants;
-using Moq;
+
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -37,38 +36,25 @@ public static class PlaceOrderCommandUtils
     )
     {
         return new PlaceOrderCommand(
-            currentUserId ?? DomainConstants.Order.OwnerId.ToString(),
-            orderProducts ?? ToInput(DomainConstants.Order.OrderProducts),
+            currentUserId ?? NumberUtils.CreateRandomLongAsString(),
+            orderProducts ?? CreateOrderProductInputs(1),
             AddressUtils.CreateAddress(),
             AddressUtils.CreateAddress(),
-            new Mock<IPaymentMethod>().Object,
+            OrderUtils.CreateMockPaymentMethod(),
             couponsAppliedIds,
             installments
         );
     }
 
     /// <summary>
-    /// Parses a list of order products to an input type.
+    /// Generates a list of <see cref="OrderProductInput"/> objects.
     /// </summary>
-    /// <param name="orderProducts">The order products.</param>
-    /// <returns>A list of order product input.</returns>
-    public static IEnumerable<OrderProductInput> ToInput(IEnumerable<OrderProduct> orderProducts)
+    /// <param name="count">The quantity of items to be generated.</param>
+    /// <returns>A list of <see cref="OrderProductInput"/> objects.</returns>
+    public static IEnumerable<OrderProductInput> CreateOrderProductInputs(int count = 1)
     {
-        return orderProducts.Select(op => new OrderProductInput(op.ProductId.ToString(), op.Quantity));
-    }
+        var reservedProducts = OrderUtils.CreateReservedProducts(count);
 
-    /// <summary>
-    /// Parses a list of string coupon applied ids to order coupon.
-    /// </summary>
-    /// <param name="couponsAppliedIds">The ids.</param>
-    /// <returns>A list of order coupon.</returns>
-    public static IEnumerable<OrderCoupon> ToOrderCoupon(IEnumerable<string>? couponsAppliedIds)
-    {
-        if (couponsAppliedIds == null)
-        {
-            return [];
-        }
-
-        return couponsAppliedIds.Select(id => OrderCoupon.Create(CouponId.Create(id)));
+        return reservedProducts.Select(rp => new OrderProductInput(rp.ProductId.ToString(), rp.Quantity));
     }
 }

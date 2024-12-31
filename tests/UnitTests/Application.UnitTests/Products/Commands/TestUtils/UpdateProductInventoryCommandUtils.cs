@@ -1,5 +1,5 @@
 using Application.Products.Commands.UpdateProductInventory;
-using Domain.UnitTests.TestUtils.Constants;
+using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Products.Commands.TestUtils;
 
@@ -21,7 +21,7 @@ public static class UpdateProductInventoryCommandUtils
     )
     {
         return new UpdateProductInventoryCommand(
-            productId ?? DomainConstants.Product.Id.ToString(),
+            productId ?? NumberUtils.CreateRandomLongAsString(),
             quantityToAdd
         );
     }

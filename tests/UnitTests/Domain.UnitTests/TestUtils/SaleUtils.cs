@@ -1,6 +1,8 @@
+using Domain.CategoryAggregate.ValueObjects;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils.Constants;
+
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
@@ -27,10 +29,19 @@ public static class SaleUtils
     )
     {
         return Sale.Create(
-            discount ?? DiscountUtils.CreateDiscount(PercentageUtils.Create(DomainConstants.Sale.DiscountPercentage)),
-            categoriesInSale ?? DomainConstants.Sale.CategoriesInSale,
-            productsInSale ?? DomainConstants.Sale.ProductsInSale,
-            productsExcludeFromSale ?? DomainConstants.Sale.ProductsExcludedFromSale
+            discount ?? DiscountUtils.CreateDiscount(),
+            categoriesInSale ?? new HashSet<CategoryReference>()
+            {
+                CategoryReference.Create(CategoryId.Create(1))
+            },
+            productsInSale ?? new HashSet<ProductReference>()
+            {
+                ProductReference.Create(ProductId.Create(1))
+            },
+            productsExcludeFromSale ?? new HashSet<ProductReference>()
+            {
+                ProductReference.Create(ProductId.Create(2))
+            }
         );
     }
 }

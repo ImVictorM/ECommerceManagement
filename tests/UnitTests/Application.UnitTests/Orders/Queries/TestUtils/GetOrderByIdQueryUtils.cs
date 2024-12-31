@@ -1,5 +1,6 @@
 using Application.Orders.Queries.GetOrderById;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Orders.Queries.TestUtils;
 
@@ -20,8 +21,8 @@ public static class GetOrderByIdQueryUtils
     )
     {
         return new GetOrderByIdQuery(
-            currentUserId ?? DomainConstants.Order.OwnerId.ToString(),
-            orderId ?? DomainConstants.Order.Id.ToString()
+            currentUserId ?? NumberUtils.CreateRandomLongAsString(),
+            orderId ?? NumberUtils.CreateRandomLongAsString()
         );
     }
 }

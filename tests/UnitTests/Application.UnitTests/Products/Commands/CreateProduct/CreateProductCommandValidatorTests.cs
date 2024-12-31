@@ -92,7 +92,7 @@ public class CreateProductCommandValidatorTests
     [Fact]
     public void ValidateCreateProductCommand_WhenCategoriesAreEmpty_ShouldHaveValidationErrors()
     {
-        var command = CreateProductCommandUtils.CreateCommand(categories: []);
+        var command = CreateProductCommandUtils.CreateCommand(categoryIds: []);
 
         var result = _validator.TestValidate(command);
 

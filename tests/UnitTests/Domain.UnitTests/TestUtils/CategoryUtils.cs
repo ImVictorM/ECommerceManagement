@@ -1,7 +1,9 @@
 using Domain.CategoryAggregate;
 using Domain.CategoryAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils.Constants;
+
 using SharedKernel.UnitTests.TestUtils.Extensions;
+
+using Bogus;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -10,6 +12,8 @@ namespace Domain.UnitTests.TestUtils;
 /// </summary>
 public static class CategoryUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="Category"/> class.
     /// </summary>
@@ -21,7 +25,9 @@ public static class CategoryUtils
         string? name = null
     )
     {
-        var category = Category.Create(name ?? DomainConstants.Category.Name);
+        var category = Category.Create(
+            name ?? _faker.Commerce.Categories(1).First()
+        );
 
         if (id != null)
         {

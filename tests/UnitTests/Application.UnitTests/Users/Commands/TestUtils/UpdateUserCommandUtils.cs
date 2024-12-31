@@ -1,5 +1,10 @@
 using Application.Users.Commands.UpdateUser;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
+
+using SharedKernel.UnitTests.TestUtils;
+
+using Bogus;
 
 namespace Application.UnitTests.Users.Commands.TestUtils;
 
@@ -8,6 +13,8 @@ namespace Application.UnitTests.Users.Commands.TestUtils;
 /// </summary>
 public static class UpdateUserCommandUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="UpdateUserCommand"/> class.
     /// </summary>
@@ -26,11 +33,11 @@ public static class UpdateUserCommandUtils
     )
     {
         return new UpdateUserCommand(
-            idCurrentUser ?? DomainConstants.User.Id.ToString(),
-            idUserToUpdate ?? DomainConstants.User.Id.ToString(),
-            name ?? DomainConstants.User.Name,
-            phone ?? DomainConstants.User.Phone,
-            email ?? DomainConstants.User.Email
+            idCurrentUser ?? NumberUtils.CreateRandomLongAsString(),
+            idUserToUpdate ?? NumberUtils.CreateRandomLongAsString(),
+            name ?? _faker.Name.FullName(),
+            email ?? EmailUtils.CreateEmailAddress(),
+            phone
         );
     }
 }

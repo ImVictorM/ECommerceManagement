@@ -6,8 +6,6 @@ using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
-using Moq;
-
 namespace Application.UnitTests.Orders.Events.TestUtils;
 
 /// <summary>
@@ -33,8 +31,8 @@ public static class OrderCreatedUtils
     )
     {
         return new OrderCreated(
-            order ?? await OrderUtils.CreateOrder(withDefaultMockSetup: true),
-            paymentMethod ?? new Mock<IPaymentMethod>().Object,
+            order ?? await OrderUtils.CreateOrderAsync(),
+            paymentMethod ?? OrderUtils.CreateMockPaymentMethod(),
             billingAddress ?? AddressUtils.CreateAddress(),
             deliveryAddress ?? AddressUtils.CreateAddress(),
             installments

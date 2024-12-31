@@ -1,6 +1,7 @@
 using Application.Products.Commands.UpdateProductInventory;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Application.UnitTests.TestUtils.ValidationData;
+
 using FluentAssertions;
 using FluentValidation.TestHelper;
 

@@ -17,6 +17,6 @@ public record CreateProductCommand(
     string Description,
     int InitialQuantity,
     decimal BasePrice,
-    IEnumerable<long> CategoryIds,
+    IEnumerable<string> CategoryIds,
     IEnumerable<Uri> Images
 ) : IRequest<CreatedResult>;

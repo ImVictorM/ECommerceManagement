@@ -13,7 +13,7 @@ public interface IOrderService
     /// </summary>
     /// <param name="orderProducts">The order products input.</param>
     /// <returns>A list of prepared order products.</returns>
-    IAsyncEnumerable<OrderProduct> PrepareOrderProductsAsync(IEnumerable<IOrderProduct> orderProducts);
+    IAsyncEnumerable<OrderProduct> PrepareOrderProductsAsync(IEnumerable<IOrderProductReserved> orderProducts);
 
     /// <summary>
     /// Calculates the total amount of the products, applying the necessary discounts.

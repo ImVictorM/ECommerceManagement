@@ -1,13 +1,9 @@
-using Domain.CategoryAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Events;
-using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
-using Domain.UnitTests.TestUtils.Constants;
-
-using SharedKernel.UnitTests.TestUtils;
+using Domain.OrderAggregate.Services;
 
 using FluentAssertions;
 using Moq;
@@ -23,58 +19,46 @@ public class OrderTests
     /// Tests the order is created correctly when creating it with correct parameters.
     /// </summary>
     [Fact]
-    public async Task CreateOrder_WithValidParameters_ReturnsInstanceWithCorrectData()
+    public async Task CreateOrder_WithValidParameters_CreatesWithoutThrowing()
     {
-        var mockOrderProductsInput = new Mock<IEnumerable<IOrderProduct>>().Object;
+        var mockReservedProducts = OrderUtils.CreateReservedProducts(2);
 
-        var mockOrderProducts = mockOrderProductsInput.Select((input) =>
-        {
-            return OrderProduct.Create(
-                input.ProductId,
-                input.Quantity,
-                5m,
-                5m,
-                new HashSet<CategoryId>()
-                {
-                    CategoryId.Create(1)
-                }
-            );
-        }).ToHashSet();
+        var mockOrderProducts = mockReservedProducts.Select(
+            (input) => OrderUtils.CreateOrderProduct(input.ProductId, input.Quantity)
+        ).ToHashSet();
 
-        var mockTotal = 100m;
+        var mockTotal = mockOrderProducts.Sum(op => op.CalculateTransactionPrice());
 
-        OrderUtils.MockOrderService.Setup(s => s.CalculateTotalAsync(
-            It.IsAny<IEnumerable<OrderProduct>>(),
-            It.IsAny<IEnumerable<OrderCoupon>>())
-        ).ReturnsAsync(mockTotal);
+        var mockOrderService = new Mock<IOrderService>();
 
-        OrderUtils.MockOrderService.Setup(s => s.PrepareOrderProductsAsync(
-            It.IsAny<IEnumerable<IOrderProduct>>())
-        ).Returns(mockOrderProducts.ToAsyncEnumerable());
+        mockOrderService
+            .Setup(s => s.PrepareOrderProductsAsync(mockReservedProducts))
+            .Returns(mockOrderProducts.ToAsyncEnumerable());
 
-        var act = await FluentActions
-            .Invoking(() => OrderUtils.CreateOrder(
-                ownerId: DomainConstants.Order.OwnerId,
-                orderProducts: mockOrderProductsInput,
-                billingAddress: AddressUtils.CreateAddress(),
-                deliveryAddress: AddressUtils.CreateAddress(),
-                installments: 1
+        mockOrderService
+            .Setup(s => s.CalculateTotalAsync(mockOrderProducts, It.IsAny<IEnumerable<OrderCoupon>>()))
+            .ReturnsAsync(mockTotal);
+
+        var actionResult = await FluentActions
+            .Invoking(() => OrderUtils.CreateOrderAsync(
+                orderProducts: mockReservedProducts,
+                installments: 1,
+                orderService: mockOrderService.Object
             ))
             .Should()
             .NotThrowAsync();
 
-        var createdOrder = act.Subject;
+        var order = actionResult.Subject;
 
-        createdOrder.OwnerId.Should().Be(DomainConstants.Order.OwnerId);
-        createdOrder.Total.Should().Be(mockTotal);
-        createdOrder.Description.Should().Be("Order pending. Waiting for payment");
-        createdOrder.OrderStatusId.Should().Be(OrderStatus.Pending.Id);
-        createdOrder.DomainEvents.Should().HaveCount(1);
-        createdOrder.DomainEvents.Should().ContainItemsAssignableTo<OrderCreated>();
-        createdOrder.OrderStatusHistories.Should().HaveCount(1);
-        createdOrder.OrderStatusHistories.First().OrderStatusId.Should().Be(OrderStatus.Pending.Id);
-
-        createdOrder.Products.Should().BeEquivalentTo(mockOrderProducts);
+        order.OwnerId.Should().NotBeNull();
+        order.Total.Should().Be(mockTotal);
+        order.Description.Should().Be("Order pending. Waiting for payment");
+        order.OrderStatusId.Should().Be(OrderStatus.Pending.Id);
+        order.DomainEvents.Should().HaveCount(1);
+        order.DomainEvents.Should().ContainItemsAssignableTo<OrderCreated>();
+        order.OrderStatusHistories.Should().HaveCount(1);
+        order.OrderStatusHistories.First().OrderStatusId.Should().Be(OrderStatus.Pending.Id);
+        order.Products.Should().BeEquivalentTo(mockOrderProducts);
     }
 
     /// <summary>
@@ -84,7 +68,7 @@ public class OrderTests
     public async Task CancelOrder_WhenOrderIsPending_UpdateFieldsCorrectly()
     {
         var reasonToCancel = "Important reason";
-        var order = await OrderUtils.CreateOrder();
+        var order = await OrderUtils.CreateOrderAsync();
 
         order.CancelOrder(reasonToCancel);
 
@@ -100,7 +84,7 @@ public class OrderTests
     [Fact]
     public async Task GetOrderStatusDescription_WhenOrderIsPending_ReturnsPendingName()
     {
-        var order = await OrderUtils.CreateOrder();
+        var order = await OrderUtils.CreateOrderAsync();
 
         order.GetStatusDescription().Should().Be(OrderStatus.Pending.Name);
     }

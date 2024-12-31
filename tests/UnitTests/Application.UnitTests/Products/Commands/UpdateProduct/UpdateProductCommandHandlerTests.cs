@@ -70,7 +70,7 @@ public class UpdateProductCommandHandlerTests
             name: "new product name",
             description: "new product description",
             basePrice: 600m,
-            images: [new Uri("newimage.png", UriKind.Relative)],
+            images: [new Uri("new-image.png", UriKind.Relative)],
             categoryIds: ["1", "2", "3"]
         );
 

@@ -57,10 +57,11 @@ public class GetOrderByIdQueryHandlerTests
 
         var orderOwnerId = UserId.Create(query.CurrentUserId);
         var orderId = OrderId.Create(query.OrderId);
+        var paymentId = OrderPaymentId.Create(Guid.NewGuid().ToString());
 
-        var order = await OrderUtils.CreateOrder(id: orderId, ownerId: orderOwnerId, withDefaultMockSetup: true);
+        var order = await OrderUtils.CreateOrderAsync(id: orderId, ownerId: orderOwnerId, paymentId: paymentId);
         var orderOwner = UserUtils.CreateUser(id: orderOwnerId);
-        var mockOrderPayment = new Mock<IPaymentResponse>();
+        var mockPaymentResponse = new Mock<IPaymentResponse>().Object;
 
         _mockOrderRepository
             .Setup(r => r.FindByIdAsync(orderId))
@@ -72,13 +73,13 @@ public class GetOrderByIdQueryHandlerTests
 
         _mockPaymentGateway
             .Setup(p => p.GetPaymentByIdAsync(It.IsAny<OrderPaymentId>()))
-            .ReturnsAsync(mockOrderPayment.Object);
+            .ReturnsAsync(mockPaymentResponse);
 
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
         result.Order.Should().BeEquivalentTo(order);
-        result.Payment.Should().BeEquivalentTo(mockOrderPayment.Object);
+        result.Payment.Should().BeEquivalentTo(mockPaymentResponse);
     }
 
     /// <summary>
@@ -110,7 +111,7 @@ public class GetOrderByIdQueryHandlerTests
         var orderId = OrderId.Create(query.OrderId);
         var currentUserId = UserId.Create(query.CurrentUserId);
 
-        var order = await OrderUtils.CreateOrder(id: orderId, ownerId: currentUserId, withDefaultMockSetup: true);
+        var order = await OrderUtils.CreateOrderAsync(id: orderId, ownerId: currentUserId);
 
         _mockOrderRepository
             .Setup(repo => repo.FindByIdAsync(orderId))
@@ -137,7 +138,7 @@ public class GetOrderByIdQueryHandlerTests
         var currentUserId = UserId.Create(query.CurrentUserId);
 
         var user = UserUtils.CreateUser(currentUserId, roles: new HashSet<Role>() { Role.Customer });
-        var order = await OrderUtils.CreateOrder(orderId, UserId.Create(999), withDefaultMockSetup: true);
+        var order = await OrderUtils.CreateOrderAsync(orderId, UserId.Create(999));
 
         _mockOrderRepository
             .Setup(repo => repo.FindByIdAsync(orderId))
@@ -163,7 +164,7 @@ public class GetOrderByIdQueryHandlerTests
         var orderId = OrderId.Create(query.OrderId);
         var currentUserId = UserId.Create(query.CurrentUserId);
 
-        var order = await OrderUtils.CreateOrder(id: orderId, ownerId: currentUserId, withDefaultMockSetup: true);
+        var order = await OrderUtils.CreateOrderAsync(id: orderId, ownerId: currentUserId);
         var user = UserUtils.CreateUser(id: currentUserId);
 
         _mockOrderRepository

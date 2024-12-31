@@ -1,5 +1,6 @@
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.Commands.TestUtils;
+
 using FluentValidation.TestHelper;
 
 namespace Application.UnitTests.Orders.Commands.PlaceOrder;

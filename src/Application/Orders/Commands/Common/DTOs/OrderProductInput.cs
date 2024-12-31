@@ -6,7 +6,7 @@ namespace Application.Orders.Commands.Common.DTOs;
 /// <summary>
 /// Represents a product input DTO.
 /// </summary>
-public class OrderProductInput : IOrderProduct
+public class OrderProductInput : IOrderProductReserved
 {
     /// <summary>
     /// Gets the quantity.

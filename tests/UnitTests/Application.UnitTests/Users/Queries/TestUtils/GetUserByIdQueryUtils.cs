@@ -1,5 +1,5 @@
 using Application.Users.Queries.GetUserById;
-using Domain.UnitTests.TestUtils.Constants;
+using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Users.Queries.TestUtils;
 
@@ -15,6 +15,6 @@ public static class GetUserByIdQueryUtils
     /// <returns>A new instance of the <see cref="GetUserByIdQuery"/> query. </returns>
     public static GetUserByIdQuery CreateQuery(string? id = null)
     {
-        return new GetUserByIdQuery(id ?? DomainConstants.User.Id.ToString());
+        return new GetUserByIdQuery(id ?? NumberUtils.CreateRandomLongAsString());
     }
 }

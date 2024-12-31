@@ -1,5 +1,7 @@
 using Domain.CouponAggregate.Abstracts;
 using Domain.CouponAggregate.ValueObjects;
+
+using SharedKernel.Extensions;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
 using SharedKernel.ValueObjects;
@@ -58,7 +60,7 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     )
     {
         Discount = discount;
-        Code = code;
+        Code = code.ToUpperSnakeCase();
         UsageLimit = usageLimit;
         AutoApply = autoApply;
         MinPrice = minPrice;

@@ -84,7 +84,7 @@ public class OrderService : IOrderService
     }
 
     /// <inheritdoc/>
-    public async IAsyncEnumerable<OrderProduct> PrepareOrderProductsAsync(IEnumerable<IOrderProduct> orderProducts)
+    public async IAsyncEnumerable<OrderProduct> PrepareOrderProductsAsync(IEnumerable<IOrderProductReserved> orderProducts)
     {
         var products = await FetchProductsAsync(orderProducts.Select(p => p.ProductId));
 

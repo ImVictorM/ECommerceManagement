@@ -14,6 +14,6 @@ public record UpdateUserCommand(
     string IdCurrentUser,
     string IdUserToUpdate,
     string Name,
-    string? Phone,
-    string Email
+    string Email,
+    string? Phone = null
 ) : IRequest<Unit>;

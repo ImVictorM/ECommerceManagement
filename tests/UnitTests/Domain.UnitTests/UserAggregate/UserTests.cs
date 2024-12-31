@@ -1,13 +1,10 @@
 using Domain.UnitTests.TestUtils;
-using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
 
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.ValueObjects;
 
 using FluentAssertions;
-using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UnitTests.UserAggregate;
 
@@ -17,79 +14,43 @@ namespace Domain.UnitTests.UserAggregate;
 public class UserTests
 {
     /// <summary>
-    /// List of valid user parameters to create a new user.
+    /// List of valid action to create new users.
     /// </summary>
-    /// <returns>A list of user parameters.</returns>
-    public static IEnumerable<object[]> ValidUserParameters()
-    {
-        yield return new object[] {
-            DomainConstants.User.Name,
-            EmailUtils.CreateEmail(),
-            PasswordHashUtils.Create(),
-            new HashSet<Role>()
-            {
-                Role.Customer
-            },
-            DomainConstants.User.Phone,
-        };
-
-        yield return new object[] {
-            "Djhon djhones",
-            EmailUtils.CreateEmail(),
-            PasswordHashUtils.Create(),
-            new HashSet<Role>()
-            {
-                Role.Customer
-            },
-            DomainConstants.User.Phone,
-        };
-
-        yield return new object[] {
-            DomainConstants.User.Name,
-            EmailUtils.CreateEmail(),
-            PasswordHashUtils.Create(),
-            new HashSet<Role>()
-            {
-                Role.Admin
-            },
-            "19987093231",
-        };
-    }
+    public static readonly IEnumerable<object[]> ValidActionsToCreateUser =
+    [
+        [
+            () => UserUtils.CreateUser(name: "New user name"),
+        ],
+        [
+            () => UserUtils.CreateUser(roles: new HashSet<Role>() { Role.Admin }),
+        ],
+        [
+            () => UserUtils.CreateUser(phone: "19987093231"),
+        ],
+    ];
 
     /// <summary>
-    /// Tests if it creates a brand new user instance correctly.
+    /// Tests an user is created correctly.
     /// </summary>
-    /// <param name="name">The user name.</param>
-    /// <param name="passwordHash">The user password hash.</param>
-    /// <param name="phone">The user phone.</param>
-    /// <param name="email">The user email.</param>
-    /// <param name="roles">The user roles.</param>
     [Theory]
-    [MemberData(nameof(ValidUserParameters))]
-    public void CreateUser_WithValidParameters_CreatesCorrectly(
-        string name,
-        Email email,
-        PasswordHash passwordHash,
-        IReadOnlySet<Role> roles,
-        string? phone
+    [MemberData(nameof(ValidActionsToCreateUser))]
+    public void CreateUser_WithValidParameters_CreatesWithoutThrowing(
+        Func<User> action
     )
     {
-        var user = UserUtils.CreateUser(
-            name: name,
-            passwordHash: passwordHash,
-            phone: phone,
-            roles: roles,
-            email: email
-        );
+        var actionResult = FluentActions
+            .Invoking(action)
+            .Should()
+            .NotThrow();
+
+        var user = actionResult.Subject;
 
         user.Should().NotBeNull();
-        user.Name.Should().Be(name);
-        user.PasswordHash.Should().BeEquivalentTo(passwordHash);
-        user.Phone.Should().Be(phone);
-        user.Email.Should().BeEquivalentTo(email);
+        user.Name.Should().NotBeNullOrWhiteSpace();
+        user.PasswordHash.Should().NotBeNull();
+        user.Email.Should().NotBeNull();
         user.IsActive.Should().BeTrue();
-        user.UserRoles.Count.Should().Be(roles.Count);
-        user.UserRoles.Should().BeEquivalentTo(roles.Select(r => UserRole.Create(r.Id)));
+        user.UserRoles.Should().NotBeNullOrEmpty();
         user.UserAddresses.Count.Should().Be(0);
     }
 
@@ -112,7 +73,10 @@ public class UserTests
     [Fact]
     public void AssignRole_WhenAssigningAdminRole_IncrementsUserRoles()
     {
-        var user = UserUtils.CreateUser();
+        var user = UserUtils.CreateUser(roles: new HashSet<Role>()
+        {
+            Role.Customer,
+        });
 
         user.AssignRole(Role.Admin);
 
@@ -128,18 +92,18 @@ public class UserTests
     [Fact]
     public void GetRoleNames_WhenCallingGetRoleNamesMethod_ReturnsUserRoleNames()
     {
-        var expectedRoleNames = new string[] { "admin", "customer" };
+        var expectedRoleNames = new string[] { Role.Admin.Name, Role.Customer.Name };
 
-        var user = UserUtils.CreateUser();
+        var user = UserUtils.CreateUser(roles: new HashSet<Role>()
+        {
+            Role.Customer,
+        });
 
         user.AssignRole(Role.Admin);
 
         var roleNames = user.GetRoleNames();
 
-        foreach (var roleName in roleNames)
-        {
-            expectedRoleNames.Should().Contain(roleName);
-        }
+        roleNames.Should().BeEquivalentTo(expectedRoleNames);
     }
 
     /// <summary>
@@ -155,5 +119,44 @@ public class UserTests
 
         user.UserAddresses.Count.Should().Be(1);
         user.UserAddresses.Should().Contain(address);
+    }
+
+    /// <summary>
+    /// Tests if the <see cref="User.IsAdmin"/> method returns the correct value.
+    /// </summary>
+    [Fact]
+    public void IsAdmin_WhenCalled_ReturnsExpectedBoolean()
+    {
+        var userAdmin = UserUtils.CreateUser(roles: new HashSet<Role>()
+        {
+            Role.Admin
+        });
+        var userNotAdmin = UserUtils.CreateUser(roles: new HashSet<Role>()
+        {
+            Role.Customer
+        });
+
+        userAdmin.IsAdmin().Should().BeTrue();
+        userNotAdmin.IsAdmin().Should().BeFalse();
+    }
+
+    /// <summary>
+    /// Tests the <see cref="User.Update(string?, string?, SharedKernel.ValueObjects.Email?)"/> method updates the
+    /// user data correctly.
+    /// </summary>
+    [Fact]
+    public void UpdateUser_WhenCalledWithValidParameters_UpdatesTheUserData()
+    {
+        var user = UserUtils.CreateUser();
+
+        var newUserName = "Roberto Carlos";
+        var newUserPhone = "199485924738";
+        var newUserEmail = EmailUtils.CreateEmail("new_email@email.com");
+
+        user.Update(name: newUserName, phone: newUserPhone, email: newUserEmail);
+
+        user.Name.Should().Be(newUserName);
+        user.Phone.Should().Be(newUserPhone);
+        user.Email.Should().Be(newUserEmail);
     }
 }

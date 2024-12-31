@@ -1,7 +1,9 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate.Specification;
-using FluentAssertions;
+
 using SharedKernel.UnitTests.TestUtils;
+
+using FluentAssertions;
 
 namespace Domain.UnitTests.UserAggregate.Specifications;
 

@@ -123,6 +123,15 @@ public sealed class Order : AggregateRoot<OrderId>
     }
 
     /// <summary>
+    /// Sets the order payment id.
+    /// </summary>
+    /// <param name="paymentId">The order payment id.</param>
+    public void SetPaymentId(OrderPaymentId paymentId)
+    {
+        PaymentId = paymentId;
+    }
+
+    /// <summary>
     /// Retrieves the order status description.
     /// </summary>
     /// <returns>The description of the order status.</returns>

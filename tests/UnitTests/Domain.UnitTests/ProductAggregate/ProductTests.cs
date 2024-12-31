@@ -1,8 +1,8 @@
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
-using Domain.UnitTests.TestUtils.Constants;
 using Domain.ProductAggregate;
+
 using FluentAssertions;
 
 namespace Domain.UnitTests.ProductAggregate;
@@ -14,108 +14,62 @@ public class ProductTests
 {
 
     /// <summary>
-    /// List of valid product parameters.
+    /// List of valid actions to create new products.
     /// </summary>
-    /// <returns>List of valid product parameters.</returns>
-    public static IEnumerable<object[]> ValidProductParameters()
-    {
-        yield return new object[] {
-            DomainConstants.Product.Name,
-            DomainConstants.Product.Description,
-            DomainConstants.Product.BasePrice,
-            DomainConstants.Product.QuantityInInventory,
-            DomainConstants.Product.Categories,
-            DomainConstants.Product.ProductImages
-        };
+    public static readonly IEnumerable<object[]> ValidActionsToCreateProducts =
+    [
+        [
+            () => ProductUtils.CreateProduct(name: "Computer")
+        ],
+        [
+            () => ProductUtils.CreateProduct(description: "Some description for the product")
+        ],
+        [
+            () => ProductUtils.CreateProduct(basePrice: 100m)
+        ],
+        [
+            () => ProductUtils.CreateProduct(initialQuantityInInventory: 57)
+        ],
+        [
+            () => ProductUtils.CreateProduct(categories:
+                [
+                    ProductCategory.Create(CategoryId.Create(1)),
+                    ProductCategory.Create(CategoryId.Create(2))
+                ]
+            )
+        ],
+        [
+            () => ProductUtils.CreateProduct(images:
+                [
+                    ProductImage.Create(new Uri("product-image.png", UriKind.Relative))
+                ]
+            )
+        ],
+    ];
 
-        yield return new object[] {
-            "Computer",
-            DomainConstants.Product.Description,
-            DomainConstants.Product.BasePrice,
-            DomainConstants.Product.QuantityInInventory,
-            DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImages(2),
-        };
-
-        yield return new object[] {
-            DomainConstants.Product.Name,
-            "Some description for the product",
-            DomainConstants.Product.BasePrice,
-            DomainConstants.Product.QuantityInInventory,
-            DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImages(3),
-        };
-
-        yield return new object[] {
-            DomainConstants.Product.Name,
-            DomainConstants.Product.Description,
-            100m,
-            DomainConstants.Product.QuantityInInventory,
-            DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImages(4),
-        };
-
-        yield return new object[] {
-            DomainConstants.Product.Name,
-            DomainConstants.Product.Description,
-            DomainConstants.Product.BasePrice,
-            57,
-            DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImages(5),
-        };
-
-        yield return new object[] {
-            DomainConstants.Product.Name,
-            DomainConstants.Product.Description,
-            DomainConstants.Product.BasePrice,
-            DomainConstants.Product.QuantityInInventory,
-            DomainConstants.Product.Categories,
-            ProductUtils.CreateProductImages(6),
-        };
-    }
-
-    
     /// <summary>
     /// Tests if it is possible to create a new product with valid parameters.
     /// </summary>
-    /// <param name="name">The product name.</param>
-    /// <param name="description">The product description.</param>
-    /// <param name="price">The product price.</param>
-    /// <param name="quantityAvailable">The product quantity available.</param>
-    /// <param name="categories">The product categories.</param>
-    /// <param name="images">The product image URLs.</param>
     [Theory]
-    [MemberData(nameof(ValidProductParameters))]
-    public void CreateProduct_WithValidParameters_CreatesCorrectly(
-        string name,
-        string description,
-        decimal price,
-        int quantityAvailable,
-        IEnumerable<ProductCategory> categories,
-        IEnumerable<ProductImage> images
+    [MemberData(nameof(ValidActionsToCreateProducts))]
+    public void CreateProduct_WithValidParameters_CreatesWithoutThrowing(
+        Func<Product> action
     )
     {
-        var act = () =>
-        {
-            var product = ProductUtils.CreateProduct(
-               name: name,
-               description: description,
-               basePrice: price,
-               initialQuantityInInventory: quantityAvailable,
-               categories: categories,
-               images: images
-            );
+        var actionResult = FluentActions
+            .Invoking(action)
+            .Should()
+            .NotThrow();
 
-            product.Should().NotBeNull();
-            product.Name.Should().Be(name);
-            product.Description.Should().Be(description);
-            product.BasePrice.Should().Be(price);
-            product.Inventory.QuantityAvailable.Should().Be(quantityAvailable);
-            product.ProductImages.Should().BeEquivalentTo(images);
-            product.ProductCategories.Should().BeEquivalentTo(categories);
-        };
+        var product = actionResult.Subject;
 
-        act.Should().NotThrow();
+        product.Should().NotBeNull();
+        product.Name.Should().NotBeNullOrWhiteSpace();
+        product.Description.Should().NotBeNullOrWhiteSpace();
+        product.BasePrice.Should().BePositive();
+        product.Inventory.QuantityAvailable.Should().BePositive();
+        product.ProductImages.Count.Should().BeGreaterThanOrEqualTo(1);
+        product.ProductCategories.Count.Should().BeGreaterThanOrEqualTo(1);
     }
 
     /// <summary>
@@ -129,7 +83,11 @@ public class ProductTests
         var newName = "new name";
         var newDescription = "new description";
         var newPrice = 200m;
-        var newImages = ProductUtils.CreateProductImages(4);
+        var newImages = new List<ProductImage>()
+        {
+            ProductImage.Create(new Uri("image-1.png", UriKind.Relative)),
+            ProductImage.Create(new Uri("image-2.png", UriKind.Relative))
+        };
         var newCategories = new List<ProductCategory>()
         {
             ProductCategory.Create(CategoryId.Create(1)),

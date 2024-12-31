@@ -1,13 +1,17 @@
-using SharedKernel.UnitTests.TestUtils.Constants;
 using SharedKernel.ValueObjects;
+
+using Bogus;
+using System.Globalization;
 
 namespace SharedKernel.UnitTests.TestUtils;
 
 /// <summary>
-/// Email utilities.
+/// Utilities for the <see cref="Email"/> class.
 /// </summary>
 public static class EmailUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="Email"/> class.
     /// </summary>
@@ -15,16 +19,20 @@ public static class EmailUtils
     /// <returns>A new instance of the <see cref="Email"/> class.</returns>
     public static Email CreateEmail(string? email = null)
     {
-        return Email.Create(email ?? SharedKernelConstants.Email.Value);
+        return Email.Create(email ?? CreateEmailAddress());
     }
 
     /// <summary>
-    /// Returns an email concatenated with an index.
+    /// Creates a new unique email address.
     /// </summary>
-    /// <param name="index">The index to concatenate with.</param>
-    /// <returns>A new email with a concatenated index.</returns>
-    public static Email EmailFromIndex(int index)
+    /// <returns>A new email address.</returns>
+    public static string CreateEmailAddress()
     {
-        return CreateEmail($"{index}{SharedKernelConstants.Email.Value}");
+        return _faker.Internet.Email(
+            firstName: _faker.Name.FirstName(),
+            lastName: _faker.Name.LastName(),
+            provider: "email",
+            uniqueSuffix: _faker.UniqueIndex.ToString(CultureInfo.InvariantCulture)
+        );
     }
 }

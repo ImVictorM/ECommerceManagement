@@ -2,8 +2,10 @@ using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
-using FluentAssertions;
+
 using SharedKernel.Authorization;
+
+using FluentAssertions;
 
 namespace Domain.UnitTests.UserAggregate.Specifications;
 

@@ -1,5 +1,6 @@
-using FluentAssertions;
 using SharedKernel.UnitTests.Models.TestUtils;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.Models;
 

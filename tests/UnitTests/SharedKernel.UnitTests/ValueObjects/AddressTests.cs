@@ -1,6 +1,5 @@
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
-using SharedKernel.UnitTests.TestUtils.Constants;
 
 using FluentAssertions;
 
@@ -12,75 +11,39 @@ namespace SharedKernel.UnitTests.ValueObjects;
 public class AddressTests
 {
     /// <summary>
-    /// List of valid address parameters.
+    /// List of actions that create addresses with valid parameters.
     /// </summary>
-    /// <returns>A list of valid addresses</returns>
-    public static IEnumerable<object[]> ValidAddresses()
-    {
-
-        yield return new object[] {
-            "66845",
-            SharedKernelConstants.Address.Street,
-            SharedKernelConstants.Address.Neighborhood,
-            SharedKernelConstants.Address.State,
-            SharedKernelConstants.Address.City
-        };
-        yield return new object[] {
-            SharedKernelConstants.Address.PostalCode,
-            "401 Mill",
-            SharedKernelConstants.Address.Neighborhood,
-            SharedKernelConstants.Address.State,
-            SharedKernelConstants.Address.City
-        };
-        yield return new object[] {
-            SharedKernelConstants.Address.PostalCode,
-            SharedKernelConstants.Address.Street,
-            "Borderlands",
-            SharedKernelConstants.Address.State,
-            SharedKernelConstants.Address.City
-        };
-        yield return new object[] {
-            SharedKernelConstants.Address.PostalCode,
-            SharedKernelConstants.Address.Street,
-            SharedKernelConstants.Address.Neighborhood,
-            "Kansas",
-            SharedKernelConstants.Address.City
-        };
-        yield return new object[] {
-            SharedKernelConstants.Address.PostalCode,
-            SharedKernelConstants.Address.Street,
-            SharedKernelConstants.Address.Neighborhood,
-            SharedKernelConstants.Address.State,
-            "Cottonwood Falls"
-        };
-    }
+    public static readonly IEnumerable<object[]> ActionsWithValidAddressParameters =
+    [
+        [
+            () => AddressUtils.CreateAddress(postalCode: "66845"),
+        ],
+        [
+            () => AddressUtils.CreateAddress(street: "401 Mill" ),
+        ],
+        [
+            () => AddressUtils.CreateAddress(neighborhood: "Borderlands"),
+        ],
+        [
+            () => AddressUtils.CreateAddress(state: "Kansas"),
+        ],
+        [
+            () => AddressUtils.CreateAddress(city: "Cottonwood Falls"),
+        ],
+    ];
 
     /// <summary>
     /// Tests if the address can be instantiated correctly with valid parameters.
     /// </summary>
-    /// <param name="postalCode">The valid address postal code.</param>
-    /// <param name="street">The valid address street.</param>
-    /// <param name="neighborhood">The valid address neighborhood.</param>
-    /// <param name="state">The valid address state.</param>
-    /// <param name="city">The valid address city.</param>
     [Theory]
-    [MemberData(nameof(ValidAddresses))]
-    public void CreateAddress_WithValidParameters_ReturnsNewInstance(
-        string postalCode,
-        string street,
-        string neighborhood,
-        string state,
-        string city
-    )
+    [MemberData(nameof(ActionsWithValidAddressParameters))]
+    public void CreateAddress_WithValidParameters_CreatesWithoutThrowing(Func<Address> action)
     {
-        var act = () => AddressUtils.CreateAddress(
-            postalCode: postalCode,
-            street: street,
-            neighborhood: neighborhood,
-            state: state,
-            city: city
-        );
+        var actionResult = FluentActions
+            .Invoking(action)
+            .Should()
+            .NotThrow();
 
-        act.Should().NotThrow();
+        actionResult.Subject.Should().NotBeNull();
     }
 }

@@ -2,10 +2,12 @@ using Domain.CategoryAggregate.ValueObjects;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils.Constants;
+
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
+
+using Bogus;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -14,6 +16,8 @@ namespace Domain.UnitTests.TestUtils;
 /// </summary>
 public static class CouponUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="Coupon"/> class.
     /// </summary>
@@ -36,11 +40,11 @@ public static class CouponUtils
     )
     {
         var coupon = Coupon.Create(
-            discount ?? DiscountUtils.CreateDiscount(PercentageUtils.Create(DomainConstants.Coupon.DiscountPercentage)),
-            code ?? DomainConstants.Coupon.Code,
-            usageLimit ?? DomainConstants.Coupon.UsageLimit,
-            minPrice ?? DomainConstants.Coupon.MinPrice,
-            autoApply ?? DomainConstants.Coupon.AutoApply
+            discount ?? DiscountUtils.CreateDiscount(),
+            code ?? _faker.Lorem.Word(),
+            usageLimit ?? _faker.Random.Int(0, 100),
+            minPrice ?? _faker.Finance.Amount(0, 1000),
+            autoApply ?? _faker.Random.Bool()
         );
 
         if (id != null)
@@ -67,12 +71,20 @@ public static class CouponUtils
         decimal? total = null
     )
     {
+        HashSet<(ProductId ProductId, IReadOnlySet<CategoryId> Categories)> productsDefault =
+        [
+            (
+                ProductId.Create(_faker.Random.Int(1, 100)),
+                new HashSet<CategoryId>
+                {
+                    CategoryId.Create(2)
+                }
+            )
+        ];
+
         return CouponOrder.Create(
-            products ??
-                [
-                    (ProductId.Create(1), new HashSet<CategoryId> { CategoryId.Create(2) })
-                ],
-            total ?? 1000m
+            products ?? productsDefault,
+            total ?? _faker.Finance.Amount(50, 5000)
         );
     }
 }

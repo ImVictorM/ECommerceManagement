@@ -1,5 +1,8 @@
 using Application.Products.Commands.UpdateProduct;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
+
+using Bogus;
 
 namespace Application.UnitTests.Products.Commands.TestUtils;
 
@@ -8,6 +11,8 @@ namespace Application.UnitTests.Products.Commands.TestUtils;
 /// </summary>
 public static class UpdateProductCommandUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="UpdateProductCommand"/> class.
     /// </summary>
@@ -28,12 +33,12 @@ public static class UpdateProductCommandUtils
     )
     {
         return new UpdateProductCommand(
-            id ?? DomainConstants.Product.Id.ToString(),
-            name ?? DomainConstants.Product.Name,
-            description ?? DomainConstants.Product.Description,
-            basePrice ?? DomainConstants.Product.BasePrice,
-            images ?? DomainConstants.Product.ProductImages.Select(i => i.Url),
-            categoryIds ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.ToString())
+            id ?? NumberUtils.CreateRandomLongAsString(),
+            name ?? _faker.Commerce.ProductName(),
+            description ?? _faker.Commerce.ProductDescription(),
+            basePrice ?? _faker.Random.Decimal(10m, 1000m),
+            images ?? ProductUtils.CreateImageURIs(2),
+            categoryIds ?? NumberUtils.CreateNumberSequenceAsString(2)
         );
     }
 }

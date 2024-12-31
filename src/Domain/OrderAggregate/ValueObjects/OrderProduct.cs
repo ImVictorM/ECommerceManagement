@@ -8,7 +8,7 @@ namespace Domain.OrderAggregate.ValueObjects;
 /// <summary>
 /// Represents an order product.
 /// </summary>
-public sealed class OrderProduct : ValueObject, IOrderProduct
+public sealed class OrderProduct : ValueObject, IOrderProductReserved
 {
     private readonly HashSet<CategoryId> _productCategoryIds = [];
 

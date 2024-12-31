@@ -1,18 +1,22 @@
-using Domain.UnitTests.TestUtils.Constants;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
 
+using Bogus;
+
 namespace Domain.UnitTests.TestUtils;
 
 /// <summary>
-/// User utilities.
+/// Utilities for the <see cref="User"/> class.
 /// </summary>
 public static class UserUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="User"/> class.
     /// </summary>
@@ -37,14 +41,14 @@ public static class UserUtils
     )
     {
         var user = User.Create(
-            name ?? DomainConstants.User.Name,
-            email ?? EmailUtils.CreateEmail(DomainConstants.User.Email),
-            passwordHash ?? PasswordHashUtils.Create(
-                DomainConstants.User.PasswordHash,
-                DomainConstants.User.PasswordSalt
-            ),
-            roles ?? DomainConstants.User.UserRoles,
-            phone ?? DomainConstants.User.Phone
+            name ?? _faker.Name.FullName(),
+            email ?? EmailUtils.CreateEmail(),
+            passwordHash ?? PasswordHashUtils.Create(),
+            roles ?? new HashSet<Role>()
+            {
+                Role.Customer,
+            },
+            phone
         );
 
         if (id != null)
@@ -78,22 +82,10 @@ public static class UserUtils
             .Select(index =>
                 CreateUser(
                     id: UserId.Create(index + 1),
-                    name: UserNameFromIndex(index),
-                    email: EmailUtils.EmailFromIndex(index),
                     active: active
                 )
             );
 
         return users;
-    }
-
-    /// <summary>
-    /// Returns a name concatenated with an index.
-    /// </summary>
-    /// <param name="index">The index to concatenate with.</param>
-    /// <returns>A new name with a concatenated index.</returns>
-    public static string UserNameFromIndex(int index)
-    {
-        return $"{DomainConstants.User.Name}-{index}";
     }
 }

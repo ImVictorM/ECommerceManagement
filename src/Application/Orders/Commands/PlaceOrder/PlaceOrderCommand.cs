@@ -1,8 +1,10 @@
 using Application.Common.DTOs;
 using Application.Orders.Commands.Common.DTOs;
-using MediatR;
+
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
+
+using MediatR;
 
 namespace Application.Orders.Commands.PlaceOrder;
 

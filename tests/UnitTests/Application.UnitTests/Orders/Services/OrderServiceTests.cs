@@ -88,11 +88,23 @@ public class OrderServiceTests
         {
             CouponUtils.CreateCoupon(
                 CouponId.Create(1),
-                discount: DiscountUtils.CreateDiscount(PercentageUtils.Create(2))
+                discount: DiscountUtils.CreateDiscount(
+                    PercentageUtils.Create(2),
+                    startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                    endingDate: DateTimeOffset.UtcNow.AddHours(5)
+                ),
+                usageLimit: 100,
+                minPrice: 0m
             ),
             CouponUtils.CreateCoupon(
                 CouponId.Create(2),
-                discount: DiscountUtils.CreateDiscount(PercentageUtils.Create(5))
+                discount: DiscountUtils.CreateDiscount(
+                    PercentageUtils.Create(5),
+                    startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                    endingDate: DateTimeOffset.UtcNow.AddHours(5)
+                ),
+                usageLimit: 100,
+                minPrice: 0m
             )
         };
 

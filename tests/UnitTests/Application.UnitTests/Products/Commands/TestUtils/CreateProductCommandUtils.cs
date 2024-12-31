@@ -1,5 +1,8 @@
 using Application.Products.Commands.CreateProduct;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
+
+using Bogus;
 
 namespace Application.UnitTests.Products.Commands.TestUtils;
 
@@ -9,7 +12,7 @@ namespace Application.UnitTests.Products.Commands.TestUtils;
 /// </summary>
 public static class CreateProductCommandUtils
 {
-
+    private static readonly Faker _faker = new();
     /// <summary>
     /// Creates a new instance of the <see cref="CreateProductCommand"/> class.
     /// </summary>
@@ -17,7 +20,7 @@ public static class CreateProductCommandUtils
     /// <param name="description">The product description.</param>
     /// <param name="initialQuantity">The product initial quantity.</param>
     /// <param name="basePrice">The product base price.</param>
-    /// <param name="categories">The product categories.</param>
+    /// <param name="categoryIds">The product categories.</param>
     /// <param name="images">The product images.</param>
     /// <returns>A new instance of the <see cref="CreateProductCommand"/> class.</returns>
     public static CreateProductCommand CreateCommand(
@@ -25,17 +28,17 @@ public static class CreateProductCommandUtils
         string? description = null,
         int? initialQuantity = null,
         decimal? basePrice = null,
-        IEnumerable<long>? categories = null,
+        IEnumerable<string>? categoryIds = null,
         IEnumerable<Uri>? images = null
     )
     {
         return new CreateProductCommand(
-            name ?? DomainConstants.Product.Name,
-            description ?? DomainConstants.Product.Description,
-            initialQuantity ?? DomainConstants.Product.QuantityInInventory,
-            basePrice ?? DomainConstants.Product.BasePrice,
-            categories ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.Value),
-            images ?? DomainConstants.Product.ProductImages.Select(i => i.Url)
+            name ?? _faker.Commerce.ProductName(),
+            description ?? _faker.Commerce.ProductDescription(),
+            initialQuantity ?? _faker.Random.Int(1, 100),
+            basePrice ?? _faker.Random.Decimal(10m, 2000m),
+            categoryIds ?? NumberUtils.CreateNumberSequenceAsString(2),
+            images ?? ProductUtils.CreateImageURIs()
         );
     }
 }

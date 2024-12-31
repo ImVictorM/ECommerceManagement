@@ -1,5 +1,6 @@
 using Application.Users.Commands.DeactivateUser;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Users.Commands.TestUtils;
 
@@ -20,8 +21,8 @@ public static class DeactivateUserCommandUtils
     )
     {
         return new DeactivateUserCommand(
-            idCurrentUser ?? DomainConstants.User.Id.ToString(),
-            idUserToDeactivate ?? DomainConstants.User.Id.ToString()
+            idCurrentUser ?? NumberUtils.CreateRandomLongAsString(),
+            idUserToDeactivate ?? NumberUtils.CreateRandomLongAsString()
         );
     }
 }

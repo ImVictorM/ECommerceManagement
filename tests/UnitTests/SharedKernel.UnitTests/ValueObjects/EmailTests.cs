@@ -12,27 +12,25 @@ public class EmailTests
     /// <summary>
     /// List of considered valid emails.
     /// </summary>
-    /// <returns></returns>
-    public static IEnumerable<object[]> ValidEmails()
-    {
-        yield return new[] { "valid@email.com" };
-        yield return new[] { "valid_email@email.com" };
-        yield return new[] { "valid@email" };
-        yield return new[] { "123@$.xyz" };
-        yield return new[] { "\"valid yet strange\"@email.com" };
-    }
+    public static readonly IEnumerable<object[]> ValidEmails =
+    [
+        ["valid@email.com"],
+        ["valid_email@email.com"],
+        ["valid@email"],
+        ["123@$.xyz"],
+        ["\"valid yet strange\"@email.com"],
+    ];
 
     /// <summary>
     /// List of considered invalid emails.
     /// </summary>
-    /// <returns></returns>
-    public static IEnumerable<object[]> InvalidEmails()
-    {
-        yield return new[] { "invalid" };
-        yield return new[] { "someinvalidEmail.com" };
-        yield return new[] { "email@invalid.com." };
-        yield return new[] { "email@email@invalid.com" };
-    }
+    public static readonly IEnumerable<object[]> InvalidEmails =
+    [
+        ["invalid"],
+        ["some_invalid_Email.com"],
+        ["email@invalid.com."],
+        ["email@email@invalid.com"],
+    ];
 
     /// <summary>
     /// Tests if it is possible to create email value objects with valid email addresses.
@@ -42,7 +40,12 @@ public class EmailTests
     [MemberData(nameof(ValidEmails))]
     public void CreateEmail_WithValidEmailAddress_CreatesNewInstance(string emailAddress)
     {
-        var email = EmailUtils.CreateEmail(emailAddress);
+        var actionResult = FluentActions
+            .Invoking(() => EmailUtils.CreateEmail(emailAddress))
+            .Should()
+            .NotThrow();
+
+        var email = actionResult.Subject;
 
         email.Should().NotBeNull();
         email.Value.Should().Be(emailAddress);
@@ -56,8 +59,10 @@ public class EmailTests
     [MemberData(nameof(InvalidEmails))]
     public void CreateEmail_WithInvalidEmailAddress_ThrowsError(string emailAddress)
     {
-        Action act = () => EmailUtils.CreateEmail(emailAddress);
-
-        act.Should().Throw<DomainValidationException>().WithMessage($"The {emailAddress} does not correspond to a valid email");
+        FluentActions
+            .Invoking(() => EmailUtils.CreateEmail(emailAddress))
+            .Should()
+            .Throw<DomainValidationException>()
+            .WithMessage($"The {emailAddress} does not correspond to a valid email");
     }
 }

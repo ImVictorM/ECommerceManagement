@@ -1,7 +1,9 @@
 using Application.Common.Interfaces.Persistence;
-using Application.UnitTests.TestUtils.Extensions;
-using Moq;
+
 using SharedKernel.Models;
+using SharedKernel.UnitTests.TestUtils.Extensions;
+
+using Moq;
 
 namespace Application.UnitTests.TestUtils.Behaviors;
 
@@ -36,7 +38,7 @@ public static class MockEFCoreBehaviors
            .Setup(u => u.SaveChangesAsync())
            .Callback(() =>
            {
-               capturedEntity!.SimulateEFSetIdBehavior(idToSet);
+               capturedEntity!.SetIdUsingReflection(idToSet);
            });
     }
 }

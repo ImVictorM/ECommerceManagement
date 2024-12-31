@@ -1,13 +1,16 @@
 using SharedKernel.ValueObjects;
-using SharedKernel.UnitTests.TestUtils.Constants;
+
+using Bogus;
 
 namespace SharedKernel.UnitTests.TestUtils;
 
 /// <summary>
-/// Discount utilities.
+/// Utilities for the <see cref="Discount"/> class.
 /// </summary>
 public static class DiscountUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="Discount"/> class.
     /// </summary>
@@ -23,35 +26,33 @@ public static class DiscountUtils
         DateTimeOffset? endingDate = null
     )
     {
+        var startingDateDiscount = startingDate ?? _faker.Date.BetweenOffset(
+            DateTimeOffset.UtcNow.AddHours(-5),
+            DateTimeOffset.UtcNow.AddMonths(1)
+        );
+
+        var endingDateDiscount = endingDate ?? _faker.Date.BetweenOffset(
+            startingDateDiscount.AddHours(2),
+            startingDateDiscount.AddMonths(1)
+        );
+
         return Discount.Create(
-            percentage ?? PercentageUtils.Create(SharedKernelConstants.Discount.DiscountPercentage),
-            description ?? SharedKernelConstants.Discount.Description,
-            startingDate ?? SharedKernelConstants.Discount.StartingDate,
-            endingDate ?? SharedKernelConstants.Discount.EndingDate
+            percentage ?? PercentageUtils.Create(),
+            description ?? _faker.Commerce.ProductName(),
+            startingDateDiscount,
+            endingDateDiscount
         );
     }
 
     /// <summary>
     /// Creates a list of discounts.
     /// </summary>
-    /// <param name="count">The discounts number to be created.</param>
-    /// <returns>A list of discounts</returns>
-    public static IEnumerable<Discount> CreateDiscounts(
-        int count = 1
-    )
+    /// <param name="count">The number of discounts to be created.</param>
+    /// <returns>A list of discounts.</returns>
+    public static IEnumerable<Discount> CreateDiscounts(int count = 1)
     {
         return Enumerable
             .Range(0, count)
-            .Select(index => CreateDiscount(description: CreateDescriptionFromIndex(index)));
-    }
-
-    /// <summary>
-    /// Creates a new unique description based on an index.
-    /// </summary>
-    /// <param name="index">The index.</param>
-    /// <returns>A new unique description.</returns>
-    public static string CreateDescriptionFromIndex(int index)
-    {
-        return $"{SharedKernelConstants.Discount.Description}-{index}";
+            .Select(index => CreateDiscount());
     }
 }

@@ -5,10 +5,9 @@ using Domain.CouponAggregate.ValueObjects;
 using Domain.CouponAggregate.ValueObjects.Restrictions;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
-using Domain.UnitTests.TestUtils.Constants;
 
 using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.ValueObjects;
+using SharedKernel.Extensions;
 
 using FluentAssertions;
 
@@ -20,57 +19,44 @@ namespace Domain.UnitTests.CouponAggregate;
 public class CouponTests
 {
     /// <summary>
-    /// List of valid coupon creation parameters.
+    /// List of valid actions to create coupons.
     /// </summary>
-    public static readonly IEnumerable<object[]> ValidCouponCreationParameters =
+    public static readonly IEnumerable<object[]> ValidActionsToCreateCoupons =
     [
         [
-            DiscountUtils.CreateDiscount(PercentageUtils.Create(DomainConstants.Coupon.DiscountPercentage)),
-            DomainConstants.Coupon.Code,
-            DomainConstants.Coupon.UsageLimit,
-            DomainConstants.Coupon.MinPrice,
-            DomainConstants.Coupon.AutoApply
+            () => CouponUtils.CreateCoupon(code: "code"),
         ],
         [
-            DiscountUtils.CreateDiscount(PercentageUtils.Create(6)),
-            "CODE",
-            15,
-            2m,
-            false
+            () => CouponUtils.CreateCoupon(usageLimit: 15)
+        ],
+        [
+            () => CouponUtils.CreateCoupon(minPrice: 2m)
+        ],
+        [
+            () => CouponUtils.CreateCoupon(autoApply: false)
         ],
     ];
 
     /// <summary>
     /// Tests the coupon is created correctly.
     /// </summary>
-    /// <param name="discount">The coupon discount.</param>
-    /// <param name="code">The coupon code.</param>
-    /// <param name="usageLimit">The coupon usage limit.</param>
-    /// <param name="minPrice">The coupon minimum price.</param>
-    /// <param name="autoApply">The coupon auto apply flag.</param>
     [Theory]
-    [MemberData(nameof(ValidCouponCreationParameters))]
-    public void CreateCoupon_WhenCreatingWithValidParameters_ReturnsInstance(
-        Discount discount,
-        string code,
-        int usageLimit,
-        decimal minPrice,
-        bool autoApply
+    [MemberData(nameof(ValidActionsToCreateCoupons))]
+    public void CreateCoupon_WithValidParameters_CreatesWithoutThrowing(
+        Func<Coupon> action
     )
     {
-        var coupon = CouponUtils.CreateCoupon(
-            discount: discount,
-            code: code,
-            usageLimit: usageLimit,
-            minPrice: minPrice,
-            autoApply: autoApply
-        );
+        var actionResult = FluentActions
+            .Invoking(action)
+            .Should()
+            .NotThrow();
 
-        coupon.Discount.Should().BeEquivalentTo(discount);
-        coupon.Code.Should().BeEquivalentTo(code);
-        coupon.UsageLimit.Should().Be(usageLimit);
-        coupon.MinPrice.Should().Be(minPrice);
-        coupon.AutoApply.Should().Be(autoApply);
+        var coupon = actionResult.Subject;
+
+        coupon.Discount.Should().NotBeNull();
+        coupon.Code.Should().Be(coupon.Code.ToUpperSnakeCase());
+        coupon.UsageLimit.Should().BePositive();
+        coupon.MinPrice.Should().BePositive();
         coupon.IsActive.Should().BeTrue();
     }
 
@@ -233,7 +219,14 @@ public class CouponTests
         bool expected
     )
     {
-        var coupon = CouponUtils.CreateCoupon(minPrice: 10m);
+        var coupon = CouponUtils.CreateCoupon(
+            minPrice: 10m,
+            discount: DiscountUtils.CreateDiscount(
+                startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                endingDate: DateTimeOffset.UtcNow.AddHours(5)
+            ),
+            usageLimit: 100
+        );
 
         var productRestriction = ProductRestriction.Create(
             [

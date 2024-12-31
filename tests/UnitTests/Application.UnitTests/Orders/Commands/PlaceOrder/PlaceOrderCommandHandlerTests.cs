@@ -1,12 +1,14 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.Commands.TestUtils;
+using Application.UnitTests.Orders.TestUtils.Extensions;
 using Application.UnitTests.TestUtils.Behaviors;
 
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils.Constants;
+using Domain.UnitTests.TestUtils;
+
 using FluentAssertions;
 using Moq;
 
@@ -45,19 +47,24 @@ public class PlaceOrderCommandHandlerTests
     [Fact]
     public async Task HandlePlaceOrder_WhenRequestIsValid_CreatesOrder()
     {
+        var reservedProducts = OrderUtils.CreateReservedProducts(3);
+        var orderProducts = reservedProducts
+            .Select(rp => OrderUtils.CreateOrderProduct(productId: rp.ProductId, quantity: rp.Quantity));
+        var mockTotal = orderProducts.Sum(op => op.CalculateTransactionPrice());
+
         var command = PlaceOrderCommandUtils.CreateCommand(
-            orderProducts: PlaceOrderCommandUtils.ToInput(DomainConstants.Order.OrderProducts),
+            orderProducts: reservedProducts.ParseToInput(),
             couponsAppliedIds: ["1", "2"],
             installments: 2
         );
 
         _mockOrdersService
             .Setup(s => s.PrepareOrderProductsAsync(command.Products))
-            .Returns(DomainConstants.Order.OrderProducts.ToAsyncEnumerable());
+            .Returns(orderProducts.ToAsyncEnumerable());
 
         _mockOrdersService
-            .Setup(s => s.CalculateTotalAsync(DomainConstants.Order.OrderProducts, PlaceOrderCommandUtils.ToOrderCoupon(command.CouponAppliedIds)))
-            .ReturnsAsync(DomainConstants.Order.Total);
+            .Setup(s => s.CalculateTotalAsync(orderProducts, It.IsAny<IEnumerable<OrderCoupon>>()))
+            .ReturnsAsync(mockTotal);
 
         var mockCreatedId = OrderId.Create(2);
         MockEFCoreBehaviors.MockSetEntityIdBehavior(_mockOrderRepository, _mockUnitOfWork, mockCreatedId);

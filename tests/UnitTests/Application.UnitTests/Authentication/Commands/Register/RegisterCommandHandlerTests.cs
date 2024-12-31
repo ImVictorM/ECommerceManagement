@@ -58,7 +58,7 @@ public class RegisterCommandHandlerTests
         [RegisterCommandUtils.CreateCommand()],
         [RegisterCommandUtils.CreateCommand(name: "Apparently not jack")],
         [RegisterCommandUtils.CreateCommand(password: "super-secret123")],
-        [RegisterCommandUtils.CreateCommand(email: "myemail@email.com")],
+        [RegisterCommandUtils.CreateCommand(email: "my_email@email.com")],
     ];
 
     /// <summary>

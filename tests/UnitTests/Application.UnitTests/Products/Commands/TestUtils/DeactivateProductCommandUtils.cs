@@ -1,5 +1,6 @@
 using Application.Products.Commands.DeactivateProduct;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Products.Commands.TestUtils;
 
@@ -18,7 +19,7 @@ public static class DeactivateProductCommandUtils
     )
     {
         return new DeactivateProductCommand(
-            id ?? DomainConstants.Product.Id.ToString()
+            id ?? NumberUtils.CreateRandomLongAsString()
         );
     }
 }

@@ -51,18 +51,26 @@ public class OrderCreatedHandlerTests
     [Fact]
     public async Task HandleOrderCreated_WhenEventIsFired_InitializePaymentAuthorization()
     {
-        var orderCreatedEvent = await OrderCreatedUtils.CreateEvent();
+        var payerId = UserId.Create(1);
+        var payer = UserUtils.CreateUser(id: payerId);
+        var order = await OrderUtils.CreateOrderAsync(ownerId: payerId);
+
+        var orderCreatedEvent = await OrderCreatedUtils.CreateEvent(order: order);
+
+        _mockUserRepository
+            .Setup(repo => repo.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<User>>()))
+            .ReturnsAsync(payer);
 
         await _eventHandler.Handle(orderCreatedEvent, default);
 
         _mockPaymentGateway.Verify(
             g => g.AuthorizePaymentAsync(
-                It.IsAny<Order>(),
-                It.IsAny<IPaymentMethod>(),
-                It.IsAny<User>(),
-                It.IsAny<Address>(),
-                It.IsAny<Address>(),
-                It.IsAny<int>()
+                It.Is<Order>(o => o == order),
+                It.Is<IPaymentMethod>(pm => pm.Type == orderCreatedEvent.PaymentMethod.Type),
+                It.Is<User>(u => u == payer),
+                It.Is<Address>(address => address == orderCreatedEvent.BillingAddress),
+                It.Is<Address>(address => address == orderCreatedEvent.DeliveryAddress),
+                It.Is<int?>(i => i == orderCreatedEvent.Installments)
             ),
             Times.Once()
         );
@@ -104,8 +112,11 @@ public class OrderCreatedHandlerTests
     [Fact]
     public async Task HandleOrderCreated_WhenEventIsFired_UpdatesPayerAddresses()
     {
-        var orderCreatedEvent = await OrderCreatedUtils.CreateEvent();
-        var payer = UserUtils.CreateUser();
+        var payerId = UserId.Create(1);
+        var payer = UserUtils.CreateUser(id: payerId);
+        var order = await OrderUtils.CreateOrderAsync(ownerId: payerId);
+
+        var orderCreatedEvent = await OrderCreatedUtils.CreateEvent(order: order);
 
         _mockUserRepository
             .Setup(repo => repo.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<User>>()))

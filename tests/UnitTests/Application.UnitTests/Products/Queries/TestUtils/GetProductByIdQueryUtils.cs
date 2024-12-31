@@ -1,5 +1,6 @@
 using Application.Products.Queries.GetProductById;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Products.Queries.TestUtils;
 
@@ -15,6 +16,6 @@ public static class GetProductByIdQueryUtils
     /// <returns>A new instance of the <see cref="GetProductByIdQuery"/> query.</returns>
     public static GetProductByIdQuery CreateQuery(string? id = null)
     {
-        return new GetProductByIdQuery(id ?? DomainConstants.Product.Id.ToString());
+        return new GetProductByIdQuery(id ?? NumberUtils.CreateRandomLongAsString());
     }
 }

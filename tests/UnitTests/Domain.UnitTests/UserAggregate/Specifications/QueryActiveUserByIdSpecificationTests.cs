@@ -1,6 +1,7 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
+
 using FluentAssertions;
 
 namespace Domain.UnitTests.UserAggregate.Specifications;

@@ -76,11 +76,14 @@ public class DiscountTests
     /// <param name="endingDate">The ending date of the discount.</param>
     [Theory]
     [MemberData(nameof(ValidDiscountDates))]
-    public void CreateDiscount_WithValidStartingAndEndingDate_ReturnsNewInstance(DateTimeOffset startingDate, DateTimeOffset endingDate)
+    public void CreateDiscount_WithValidStartingAndEndingDate_CreatesWithoutThrowing(DateTimeOffset startingDate, DateTimeOffset endingDate)
     {
-        Action act = () => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate);
+        var actionResult = FluentActions
+            .Invoking(() => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate))
+            .Should()
+            .NotThrow();
 
-        act.Should().NotThrow();
+        actionResult.Subject.Should().NotBeNull();
     }
 
     /// <summary>
@@ -95,9 +98,11 @@ public class DiscountTests
         DateTimeOffset endingDate
     )
     {
-        Action act = () => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate);
-
-        act.Should().Throw<DomainValidationException>().WithMessage("The date range between the starting and ending date is invalid");
+        FluentActions
+            .Invoking(() => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate))
+            .Should()
+            .Throw<DomainValidationException>()
+            .WithMessage("The date range between the starting and ending date is invalid");
     }
 
     /// <summary>
