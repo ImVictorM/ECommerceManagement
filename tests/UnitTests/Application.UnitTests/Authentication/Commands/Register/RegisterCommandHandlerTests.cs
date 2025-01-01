@@ -53,7 +53,7 @@ public class RegisterCommandHandlerTests
     /// <summary>
     /// List containing valid register commands.
     /// </summary>
-    public static readonly IEnumerable<object[]> ValidRegisterCommands =
+    public static IEnumerable<object[]> ValidRegisterCommands =>
     [
         [RegisterCommandUtils.CreateCommand()],
         [RegisterCommandUtils.CreateCommand(name: "Apparently not jack")],

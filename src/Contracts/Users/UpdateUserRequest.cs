@@ -8,6 +8,6 @@ namespace Contracts.Users;
 /// <param name="Email">The user email address.</param>
 public record UpdateUserRequest(
     string Name,
-    string? Phone,
-    string Email
+    string Email,
+    string? Phone = null
 );

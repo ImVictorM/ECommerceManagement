@@ -5,6 +5,8 @@ using IntegrationTests.TestUtils.Seeds;
 
 using WebApi.Endpoints;
 
+using Contracts.Orders;
+
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
@@ -66,10 +68,13 @@ public class PlaceOrderTests : BaseIntegrationTest
     [InlineData(SeedAvailableUsers.CustomerWithAddress)]
     public async Task PlaceOrder_WhenParametersAreCorrectAndUserIsAuthorized_CreatesOrderAndReturnsCreated(SeedAvailableUsers userWithCustomerRoleType)
     {
+        var pencil = ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL);
+        var computer = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS);
+
         var request = PlaceOrderRequestUtils.CreateRequest(
             products: [
-                PlaceOrderRequestUtils.CreateOrderProduct(SeedAvailableProducts.PENCIL, 2),
-                PlaceOrderRequestUtils.CreateOrderProduct(SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS, 1)
+                new OrderProductRequest(pencil.Id.ToString(), 1),
+                new OrderProductRequest(computer.Id.ToString(), 2),
             ]
         );
 
@@ -90,8 +95,7 @@ public class PlaceOrderTests : BaseIntegrationTest
 
         var request = PlaceOrderRequestUtils.CreateRequest(
             products: [
-                PlaceOrderRequestUtils.CreateOrderProduct(SeedAvailableProducts.PENCIL, quantityToBuy),
-                PlaceOrderRequestUtils.CreateOrderProduct(SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS, 1)
+                new OrderProductRequest(pencil.Id.ToString(), quantityToBuy),
             ]
         );
 

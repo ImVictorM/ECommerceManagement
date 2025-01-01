@@ -1,6 +1,7 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+using Infrastructure.Authentication;
 using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -41,6 +42,7 @@ public static class UserSeed
 {
     private const string AdminPassword = "admin123";
     private const string UserPassword = "user123";
+    private static readonly PasswordHasher _hasher = new PasswordHasher();
 
     private static readonly Dictionary<SeedAvailableUsers, (User User, string Password)> _users = new()
     {
@@ -49,7 +51,7 @@ public static class UserSeed
             name: "admin",
             roles: new HashSet<Role>() { Role.Admin },
             email: EmailUtils.CreateEmail("system_admin@email.com"),
-            passwordHash: PasswordHashUtils.Create(hash: "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9", salt: "4FDE231393F2C8AECC2B26F356E3D89E")
+            passwordHash: _hasher.Hash(AdminPassword)
         ), AdminPassword),
 
         [SeedAvailableUsers.OtherAdmin] = (UserUtils.CreateUser(
@@ -57,14 +59,15 @@ public static class UserSeed
             name: "other admin",
             roles: new HashSet<Role>() { Role.Admin },
             email: EmailUtils.CreateEmail("other_admin@email.com"),
-            passwordHash: PasswordHashUtils.Create(hash: "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9", salt: "4FDE231393F2C8AECC2B26F356E3D89E")
+            passwordHash: _hasher.Hash(AdminPassword)
         ), AdminPassword),
 
         [SeedAvailableUsers.Customer] = (UserUtils.CreateUser(
             id: UserId.Create(-3),
             name: "normal user",
             email: EmailUtils.CreateEmail("user_normal@email.com"),
-            roles: new HashSet<Role>() { Role.Customer }
+            roles: new HashSet<Role>() { Role.Customer },
+            passwordHash: _hasher.Hash(UserPassword)
         ), UserPassword),
 
         [SeedAvailableUsers.CustomerWithAddress] = (UserUtils.CreateUser(
@@ -72,7 +75,8 @@ public static class UserSeed
             name: "user with address",
             email: EmailUtils.CreateEmail("user_address@email.com"),
             roles: new HashSet<Role>() { Role.Customer },
-            addresses: new HashSet<Address>() { AddressUtils.CreateAddress() }
+            addresses: new HashSet<Address>() { AddressUtils.CreateAddress() },
+            passwordHash: _hasher.Hash(UserPassword)
         ), UserPassword),
 
         [SeedAvailableUsers.InactiveCustomer] = (UserUtils.CreateUser(
@@ -80,6 +84,7 @@ public static class UserSeed
             name: "inactive user",
             email: EmailUtils.CreateEmail("user_inactive@email.com"),
             roles: new HashSet<Role>() { Role.Customer },
+            passwordHash: _hasher.Hash(UserPassword),
             active: false
         ), UserPassword),
     };

@@ -1,5 +1,8 @@
 using Contracts.Products;
-using Domain.UnitTests.TestUtils.Constants;
+
+using Domain.UnitTests.TestUtils;
+
+using Bogus;
 
 namespace IntegrationTests.Products.TestUtils;
 
@@ -8,6 +11,8 @@ namespace IntegrationTests.Products.TestUtils;
 /// </summary>
 public static class UpdateProductRequestUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="UpdateProductRequest"/> class.
     /// </summary>
@@ -25,12 +30,13 @@ public static class UpdateProductRequestUtils
         IEnumerable<string>? categoryIds = null
     )
     {
+
         return new UpdateProductRequest(
-            name ?? DomainConstants.Product.Name,
-            description ?? DomainConstants.Product.Description,
-            basePrice ?? DomainConstants.Product.BasePrice,
-            images ?? DomainConstants.Product.ProductImages.Select(i => i.Url),
-            categoryIds ?? DomainConstants.Product.Categories.Select(c => c.CategoryId.ToString())
+            name ?? _faker.Commerce.ProductName(),
+            description ?? _faker.Commerce.ProductDescription(),
+            basePrice ?? _faker.Random.Decimal(10m, 2500m),
+            images ?? ProductUtils.CreateImageURIs(3),
+            categoryIds ?? NumberUtils.CreateNumberSequenceAsString(2)
         );
     }
 }

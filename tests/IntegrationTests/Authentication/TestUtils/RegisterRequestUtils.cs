@@ -1,5 +1,8 @@
 using Contracts.Authentication;
-using Domain.UnitTests.TestUtils.Constants;
+
+using SharedKernel.UnitTests.TestUtils;
+
+using Bogus;
 
 namespace IntegrationTests.Authentication.TestUtils;
 
@@ -8,6 +11,8 @@ namespace IntegrationTests.Authentication.TestUtils;
 /// </summary>
 public static class RegisterRequestUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="RegisterRequest"/> class.
     /// </summary>
@@ -22,9 +27,12 @@ public static class RegisterRequestUtils
     )
     {
         return new RegisterRequest(
-            name ?? DomainConstants.User.Name,
-            email ?? DomainConstants.User.Email,
-            password ?? DomainConstants.User.Password
+            name ?? _faker.Name.FullName(),
+            email ?? EmailUtils.CreateEmailAddress(),
+            password ?? string.Concat(
+                _faker.Random.AlphaNumeric(6),
+                _faker.Random.Number(0, 9)
+            )
         );
     }
 }

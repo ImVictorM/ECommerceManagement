@@ -74,7 +74,15 @@ public class CreateProductTests : BaseIntegrationTest
         };
 
         var request = CreateProductRequestUtils.CreateRequest(
-            categoryIds: productCategories.Select(c => c.Id.ToString())
+            name: "Techy pen",
+            description: "very cool, you should buy it",
+            initialQuantity: 10,
+            basePrice: 2000m,
+            categoryIds: productCategories.Select(c => c.Id.ToString()),
+            images:
+            [
+                new Uri("pen-photo.png", UriKind.Relative)
+            ]
         );
 
         await Client.LoginAs(SeedAvailableUsers.Admin);

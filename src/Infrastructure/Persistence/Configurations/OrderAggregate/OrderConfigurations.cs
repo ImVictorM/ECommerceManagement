@@ -70,6 +70,14 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .Property(order => order.Description)
             .HasMaxLength(200)
             .IsRequired();
+
+        builder
+            .Property(order => order.PaymentId)
+            .HasConversion(
+                id => id != null ? id.Value : null,
+                value => value != null ? OrderPaymentId.Create(value) : null
+            )
+            .IsRequired(false);
     }
 
     private static void ConfigureOwnedOrdersCouponsTable(EntityTypeBuilder<Order> builder)

@@ -1,12 +1,15 @@
 using Contracts.Common;
 
+using Bogus;
+
 namespace IntegrationTests.TestUtils.Contracts;
 
 /// <summary>
 /// Utilities for the <see cref="DiscountContract"/> contract object.
 /// </summary>
-public static class DiscounContracttUtils
+public static class DiscountContractUtils
 {
+    private static readonly Faker _faker = new();
 
     /// <summary>
     /// Creates a new instance of the <see cref="DiscountContract"/> class.
@@ -17,19 +20,28 @@ public static class DiscounContracttUtils
     /// <param name="endingDate">The discount ending date.</param>
     /// <returns>A new instance of the <see cref="DiscountContract"/> class.</returns>
     public static DiscountContract CreateDiscount(
-        int percentage = 10,
+        int? percentage = null,
         string description = "Ten percent discount",
         DateTimeOffset? startingDate = null,
         DateTimeOffset? endingDate = null
     )
     {
-        var now = DateTimeOffset.UtcNow;
+        var startingDateDiscount = startingDate ?? _faker.Date.BetweenOffset(
+            DateTimeOffset.UtcNow.AddHours(-5),
+            DateTimeOffset.UtcNow.AddMonths(1)
+        );
+
+        var endingDateDiscount = endingDate ?? _faker.Date.BetweenOffset(
+            startingDateDiscount.AddHours(2),
+            startingDateDiscount.AddMonths(1)
+        );
 
         return new DiscountContract(
-            percentage,
-            description,
-            startingDate ?? now,
-            endingDate ?? now.AddDays(1)
+            percentage ?? _faker.Random.Int(5, 10),
+            description ?? _faker.Lorem.Sentence(),
+            startingDate ?? startingDateDiscount,
+            endingDate ?? endingDateDiscount
         );
+
     }
 }

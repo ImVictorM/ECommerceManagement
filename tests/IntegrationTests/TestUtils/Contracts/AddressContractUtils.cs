@@ -1,12 +1,15 @@
+using Bogus;
 using Contracts.Common;
 
 namespace IntegrationTests.TestUtils.Contracts;
 
 /// <summary>
-/// Utilities for the address request object.
+/// Utilities for the <see cref="AddressContract"/> request.
 /// </summary>
 public static class AddressContractUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="AddressContract"/> class.
     /// </summary>
@@ -17,19 +20,19 @@ public static class AddressContractUtils
     /// <param name="neighborhood">The address neighborhood.</param>
     /// <returns>A new instance of the <see cref="AddressContract"/> class.</returns>
     public static AddressContract CreateAddress(
-        string postalCode = "30033",
-        string street = "1275 McConnell Dr",
-        string state = "Georgia",
-        string city = "Decatur",
+        string? postalCode = null,
+        string? street = null,
+        string? state = null,
+        string? city = null,
         string? neighborhood = null
     )
     {
         return new AddressContract(
-            postalCode,
-            street,
-            state,
-            city,
-            neighborhood
+            postalCode ?? _faker.Address.ZipCode(),
+            street ?? _faker.Address.StreetAddress(),
+            state ?? _faker.Address.StateAbbr(),
+            city ?? _faker.Address.City(),
+            neighborhood ?? _faker.Lorem.Word()
         );
     }
 }

@@ -86,7 +86,11 @@ public class ProductServiceTests
         var productSales = new[]
         {
             SaleUtils.CreateSale(
-                discount: DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(10)),
+                discount: DiscountUtils.CreateDiscount(
+                    percentage: PercentageUtils.Create(10),
+                    startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                    endingDate: DateTimeOffset.UtcNow.AddHours(5)
+                ),
                 productsInSale: new HashSet<ProductReference>()
                 {
                     ProductReference.Create(product.Id)

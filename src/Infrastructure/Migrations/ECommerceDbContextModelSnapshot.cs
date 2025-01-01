@@ -199,6 +199,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_owner");
 
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("text")
+                        .HasColumnName("id_payment");
+
                     b.Property<decimal>("Total")
                         .HasColumnType("numeric")
                         .HasColumnName("total");
@@ -214,106 +218,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("orders", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.PaymentAggregate.Enumeration.PaymentStatus", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("payment_statuses", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Name = "in_progress"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            Name = "pending"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            Name = "approved"
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            Name = "rejected"
-                        },
-                        new
-                        {
-                            Id = 5L,
-                            Name = "canceled"
-                        },
-                        new
-                        {
-                            Id = 6L,
-                            Name = "refunded"
-                        });
-                });
-
-            modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("amount");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<int>("Installments")
-                        .HasColumnType("integer")
-                        .HasColumnName("installments");
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_order");
-
-                    b.Property<long>("PaymentStatusId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_payment_status");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
-                    b.HasIndex("PaymentStatusId");
-
-                    b.ToTable("payments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>
@@ -765,7 +669,7 @@ namespace Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("id_order");
 
-                            b1.OwnsMany("Domain.CategoryAggregate.ValueObjects.CategoryId", "ProductCategories", b2 =>
+                            b1.OwnsMany("Domain.CategoryAggregate.ValueObjects.CategoryId", "ProductCategoryIds", b2 =>
                                 {
                                     b2.Property<long>("id")
                                         .ValueGeneratedOnAdd()
@@ -792,7 +696,7 @@ namespace Infrastructure.Migrations
                                         .HasForeignKey("id_order_product");
                                 });
 
-                            b1.Navigation("ProductCategories");
+                            b1.Navigation("ProductCategoryIds");
                         });
 
                     b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderStatusHistory", "OrderStatusHistories", b1 =>
@@ -839,62 +743,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("OrderStatusHistories");
 
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
-                {
-                    b.HasOne("Domain.OrderAggregate.Order", null)
-                        .WithOne()
-                        .HasForeignKey("Domain.PaymentAggregate.Payment", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.PaymentAggregate.Enumeration.PaymentStatus", null)
-                        .WithMany()
-                        .HasForeignKey("PaymentStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsMany("Domain.PaymentAggregate.ValueObjects.PaymentStatusHistory", "PaymentStatusHistories", b1 =>
-                        {
-                            b1.Property<long>("id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
-
-                            b1.Property<DateTimeOffset>("CreatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("created_at");
-
-                            b1.Property<long>("PaymentStatusId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_payment_status");
-
-                            b1.Property<long>("id_payment")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id_payment");
-
-                            b1.HasKey("id");
-
-                            b1.HasIndex("PaymentStatusId");
-
-                            b1.HasIndex("id_payment");
-
-                            b1.ToTable("payment_status_histories", (string)null);
-
-                            b1.HasOne("Domain.PaymentAggregate.Enumeration.PaymentStatus", null)
-                                .WithMany()
-                                .HasForeignKey("PaymentStatusId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
-
-                            b1.WithOwner()
-                                .HasForeignKey("id_payment");
-                        });
-
-                    b.Navigation("PaymentStatusHistories");
                 });
 
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>

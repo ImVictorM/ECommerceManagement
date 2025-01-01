@@ -21,14 +21,13 @@ public static class OrderSeed
     {
         _orders = new Dictionary<SeedAvailableOrders, Order>
         {
-            [SeedAvailableOrders.CUSTOMER_ORDER_PENDING] = await OrderUtils.CreateOrder(
+            [SeedAvailableOrders.CUSTOMER_ORDER_PENDING] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-1),
                 ownerId: UserSeed.GetSeedUser(SeedAvailableUsers.Customer).Id,
                 orderProducts: [
                     new OrderProductInput(ProductSeed.GetSeedProduct(SeedAvailableProducts.TSHIRT).Id.ToString(), 1)
                 ],
-                installments: 1,
-                withDefaultMockSetup: true
+                installments: 1
             )
         };
     }

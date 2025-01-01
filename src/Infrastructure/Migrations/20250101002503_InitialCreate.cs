@@ -67,18 +67,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "payment_statuses",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_payment_statuses", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "products",
                 columns: table => new
                 {
@@ -347,6 +335,7 @@ namespace Infrastructure.Migrations
                     id_owner = table.Column<long>(type: "bigint", nullable: false),
                     description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     id_order_status = table.Column<long>(type: "bigint", nullable: false),
+                    id_payment = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -578,37 +567,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "payments",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    installments = table.Column<int>(type: "integer", nullable: false),
-                    id_order = table.Column<long>(type: "bigint", nullable: false),
-                    id_payment_status = table.Column<long>(type: "bigint", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_payments", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_payments_orders_id_order",
-                        column: x => x.id_order,
-                        principalTable: "orders",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_payments_payment_statuses_id_payment_status",
-                        column: x => x.id_payment_status,
-                        principalTable: "payment_statuses",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "product_feedbacks",
                 columns: table => new
                 {
@@ -702,33 +660,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "payment_status_histories",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_payment_status = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    id_payment = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_payment_status_histories", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_payment_status_histories_payment_statuses_id_payment_status",
-                        column: x => x.id_payment_status,
-                        principalTable: "payment_statuses",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_payment_status_histories_payments_id_payment",
-                        column: x => x.id_payment,
-                        principalTable: "payments",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "shipment_status_histories",
                 columns: table => new
                 {
@@ -765,19 +696,6 @@ namespace Infrastructure.Migrations
                     { 3L, "shipped" },
                     { 4L, "delivered" },
                     { 5L, "canceled" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "payment_statuses",
-                columns: new[] { "id", "name" },
-                values: new object[,]
-                {
-                    { 1L, "in_progress" },
-                    { 2L, "pending" },
-                    { 3L, "approved" },
-                    { 4L, "rejected" },
-                    { 5L, "canceled" },
-                    { 6L, "refunded" }
                 });
 
             migrationBuilder.InsertData(
@@ -869,33 +787,6 @@ namespace Infrastructure.Migrations
                 name: "IX_orders_products_id_product",
                 table: "orders_products",
                 column: "id_product");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_payment_status_histories_id_payment",
-                table: "payment_status_histories",
-                column: "id_payment");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_payment_status_histories_id_payment_status",
-                table: "payment_status_histories",
-                column: "id_payment_status");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_payment_statuses_name",
-                table: "payment_statuses",
-                column: "name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_payments_id_order",
-                table: "payments",
-                column: "id_order",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_payments_id_payment_status",
-                table: "payments",
-                column: "id_payment_status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_product_feedbacks_id_order",
@@ -1069,9 +960,6 @@ namespace Infrastructure.Migrations
                 name: "orders_coupons");
 
             migrationBuilder.DropTable(
-                name: "payment_status_histories");
-
-            migrationBuilder.DropTable(
                 name: "product_feedbacks");
 
             migrationBuilder.DropTable(
@@ -1111,9 +999,6 @@ namespace Infrastructure.Migrations
                 name: "orders_products");
 
             migrationBuilder.DropTable(
-                name: "payments");
-
-            migrationBuilder.DropTable(
                 name: "restriction_products");
 
             migrationBuilder.DropTable(
@@ -1133,9 +1018,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "products");
-
-            migrationBuilder.DropTable(
-                name: "payment_statuses");
 
             migrationBuilder.DropTable(
                 name: "coupons");

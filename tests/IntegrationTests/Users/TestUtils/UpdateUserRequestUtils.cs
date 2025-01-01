@@ -1,5 +1,6 @@
+using Bogus;
 using Contracts.Users;
-using Domain.UnitTests.TestUtils.Constants;
+using SharedKernel.UnitTests.TestUtils;
 
 namespace IntegrationTests.Users.TestUtils;
 
@@ -8,6 +9,8 @@ namespace IntegrationTests.Users.TestUtils;
 /// </summary>
 public static class UpdateUserRequestUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="UpdateUserRequest"/> class.
     /// </summary>
@@ -17,14 +20,14 @@ public static class UpdateUserRequestUtils
     /// <returns>A new instance of the <see cref="UpdateUserRequest"/> class.</returns>
     public static UpdateUserRequest CreateRequest(
         string? name = null,
-        string? phone = null,
-        string? email = null
+        string? email = null,
+        string? phone = null
     )
     {
         return new UpdateUserRequest(
-            name ?? DomainConstants.User.Name,
-            phone,
-            email ?? DomainConstants.User.Email
+            name ?? _faker.Name.FullName(),
+            email ?? EmailUtils.CreateEmailAddress(),
+            phone
         );
     }
 }

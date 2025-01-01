@@ -27,9 +27,9 @@ public static class RegisterCommandUtils
         return new RegisterCommand(
             name ?? _faker.Name.FullName(),
             email ?? EmailUtils.CreateEmailAddress(),
-            password ?? _faker.Internet.Password(
-                length: _faker.Random.Int(6, 10),
-                regexPattern: @"^(?=.*[a-z])(?=.*[0-9]).{6,}$"
+            password ?? string.Concat(
+                _faker.Random.AlphaNumeric(6),
+                _faker.Random.Number(0, 9)
             )
         );
     }
