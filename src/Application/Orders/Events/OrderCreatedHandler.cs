@@ -52,8 +52,6 @@ public class OrderCreatedHandler : INotificationHandler<OrderCreated>
     {
         payer.AssignAddress(notification.DeliveryAddress, notification.BillingAddress);
 
-        await _unitOfWork.UserRepository.UpdateAsync(payer);
-
         await _unitOfWork.SaveChangesAsync();
     }
 }

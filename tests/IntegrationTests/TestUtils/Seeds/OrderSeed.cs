@@ -5,11 +5,20 @@ using Domain.UnitTests.TestUtils;
 
 namespace IntegrationTests.TestUtils.Seeds;
 
+/// <summary>
+/// The available order types in the database seed.
+/// </summary>
 public enum SeedAvailableOrders
 {
+    /// <summary>
+    /// Represents a pending order.
+    /// </summary>
     CUSTOMER_ORDER_PENDING
 }
 
+/// <summary>
+/// Contain order seed data.
+/// </summary>
 public static class OrderSeed
 {
     private static Dictionary<SeedAvailableOrders, Order> _orders = [];

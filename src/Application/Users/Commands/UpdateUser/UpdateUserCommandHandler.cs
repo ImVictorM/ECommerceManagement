@@ -69,8 +69,6 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
             phone: request.Phone
         );
 
-        await _unitOfWork.UserRepository.UpdateAsync(userToUpdate);
-
         await _unitOfWork.SaveChangesAsync();
 
         LogUpdateComplete();

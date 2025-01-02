@@ -127,7 +127,6 @@ public class OrderCreatedHandlerTests
         payer.UserAddresses.Should().Contain(orderCreatedEvent.BillingAddress);
         payer.UserAddresses.Should().Contain(orderCreatedEvent.DeliveryAddress);
 
-        _mockUserRepository.Verify(repo => repo.UpdateAsync(payer), Times.Once());
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 }

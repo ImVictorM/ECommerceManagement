@@ -101,7 +101,6 @@ public class UpdateUserCommandHandlerTests
         userToBeUpdated.Name.Should().Be(command.Name);
         userToBeUpdated.Phone.Should().Be(command.Phone);
 
-        _mockUserRepository.Verify(r => r.UpdateAsync(userToBeUpdated), Times.Once());
         _mockUnityOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 

@@ -43,6 +43,6 @@ public partial class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryBy
         }
 
         LogCategoryRetrieved();
-        return new CategoryResult(category.Id.ToString(), category.Name));
+        return new CategoryResult(category.Id.ToString(), category.Name);
     }
 }
