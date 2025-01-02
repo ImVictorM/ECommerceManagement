@@ -36,4 +36,16 @@ public static class CategoryUtils
 
         return category;
     }
+
+    /// <summary>
+    /// Creates a list containing random unique categories.
+    /// </summary>
+    /// <param name="count">The quantity of categories to be generated.</param>
+    /// <returns>A list containing random unique categories.</returns>
+    public static IEnumerable<Category> CreateCategories(int count = 1)
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(index => CreateCategory(id: CategoryId.Create(index + 1)));
+    }
 }

@@ -1,5 +1,6 @@
 using Domain.UnitTests.TestUtils;
 using Domain.CategoryAggregate;
+
 using FluentAssertions;
 
 namespace Domain.UnitTests.CategoryAggregate;
@@ -22,5 +23,20 @@ public class CategoryTests
         var category = CategoryUtils.CreateCategory(name: inputName);
 
         category.Name.Should().Be(expectedName);
+    }
+
+    /// <summary>
+    /// Tests it is possible to update the category name.
+    /// </summary>
+    [Fact]
+    public void UpdateCategory_WithValidInput_UpdatesCategoryName()
+    {
+        var newCategoryName = "TECHNOLOGY";
+
+        var category = CategoryUtils.CreateCategory(name: "OLD_TECH_CATEGORY");
+
+        category.Update(newCategoryName);
+
+        category.Name.Should().Be(newCategoryName);
     }
 }
