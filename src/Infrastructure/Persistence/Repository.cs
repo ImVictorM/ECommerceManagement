@@ -78,15 +78,8 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
     }
 
     /// <inheritdoc/>
-    public async Task RemoveAsync(TEntityId id)
+    public void RemoveOrDeactivate(TEntity entity)
     {
-        var entity = await _dbSet.FindAsync(id);
-
-        if (entity == null)
-        {
-            return;
-        }
-
         if (entity is IActivatable activatable)
         {
             if (_context.Entry(entity).State == EntityState.Detached)
@@ -102,18 +95,5 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
         {
             _dbSet.Remove(entity);
         }
-    }
-
-    /// <inheritdoc/>
-    public async Task UpdateAsync(TEntity entity)
-    {
-        var existingEntity = await _dbSet.FindAsync(entity.Id);
-
-        if (existingEntity == null)
-        {
-            return;
-        }
-
-        _context.Entry(existingEntity).CurrentValues.SetValues(entity);
     }
 }

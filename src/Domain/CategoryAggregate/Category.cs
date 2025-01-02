@@ -30,4 +30,13 @@ public class Category : AggregateRoot<CategoryId>
     {
         return new Category(name);
     }
+
+    /// <summary>
+    /// Updates the current category.
+    /// </summary>
+    /// <param name="name">The new category name.</param>
+    public void Update(string name)
+    {
+        Name = name;
+    }
 }

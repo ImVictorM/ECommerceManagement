@@ -56,20 +56,11 @@ public interface IRepository<TEntity, TEntityId>
     /// Adds a new record.
     /// </summary>
     /// <param name="entity">The entity to be registered.</param>
-    /// <returns>An asynchronous operation.</returns>
     Task AddAsync(TEntity entity);
 
     /// <summary>
-    /// Removes or deactivate a record.
+    /// Marks an entity as removed or Deactivates an <see cref="IActivatable"/> entity.
     /// </summary>
-    /// <param name="id">The record identifier.</param>
-    /// <returns>An asynchronous operation.</returns>
-    Task RemoveAsync(TEntityId id);
-
-    /// <summary>
-    /// Updates an existing record.
-    /// </summary>
-    /// <param name="entity">The updated entity.</param>
-    /// <returns>An asynchronous operation.</returns>
-    Task UpdateAsync(TEntity entity);
+    /// <param name="entity">The entity.</param>
+    void RemoveOrDeactivate(TEntity entity);
 }
