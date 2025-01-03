@@ -2,8 +2,6 @@ using Application.Categories.Commands.UpdateCategory;
 
 using Domain.UnitTests.TestUtils;
 
-using Bogus;
-
 namespace Application.UnitTests.Categories.Commands.TestUtils;
 
 /// <summary>
@@ -11,8 +9,6 @@ namespace Application.UnitTests.Categories.Commands.TestUtils;
 /// </summary>
 public static class UpdateCategoryCommandUtils
 {
-    private static readonly Faker _faker = new();
-
     /// <summary>
     /// Creates a new instance of the <see cref="UpdateCategoryCommand"/> class.
     /// </summary>
@@ -26,7 +22,7 @@ public static class UpdateCategoryCommandUtils
     {
         return new UpdateCategoryCommand(
             id ?? NumberUtils.CreateRandomLongAsString(),
-            name ?? _faker.Commerce.Categories(1).First()
+            name ?? CategoryUtils.CreateCategoryName()
         );
     }
 }

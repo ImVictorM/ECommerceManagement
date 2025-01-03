@@ -78,9 +78,9 @@ public static class CategorySeed
     /// List all the seed categories.
     /// </summary>
     /// <param name="filter">A filter to list specific categories.</param>
-    public static IEnumerable<Category> ListCategories(Func<Category, bool>? filter = null)
+    public static IReadOnlyList<Category> ListCategories(Func<Category, bool>? filter = null)
     {
-        return filter != null ? _categories.Values.Where(filter) : _categories.Values;
+        return filter != null ? _categories.Values.Where(filter).ToList() : _categories.Values.ToList();
     }
 
     /// <summary>

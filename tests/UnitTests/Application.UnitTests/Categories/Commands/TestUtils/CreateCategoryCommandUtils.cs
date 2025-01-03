@@ -1,5 +1,6 @@
 using Application.Categories.Commands.CreateCategory;
-using Bogus;
+
+using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Categories.Commands.TestUtils;
 
@@ -8,8 +9,6 @@ namespace Application.UnitTests.Categories.Commands.TestUtils;
 /// </summary>
 public static class CreateCategoryCommandUtils
 {
-    private static readonly Faker _faker = new();
-
     /// <summary>
     /// Creates a new instance of the <see cref="CreateCategoryCommand"/> class.
     /// </summary>
@@ -19,6 +18,6 @@ public static class CreateCategoryCommandUtils
         string? name = null
     )
     {
-        return new CreateCategoryCommand(name ?? _faker.Commerce.Categories(1).First());
+        return new CreateCategoryCommand(name ?? CategoryUtils.CreateCategoryName());
     }
 }

@@ -26,7 +26,7 @@ public static class CategoryUtils
     )
     {
         var category = Category.Create(
-            name ?? _faker.Commerce.Categories(1).First()
+            name ?? CreateCategoryName()
         );
 
         if (id != null)
@@ -47,5 +47,14 @@ public static class CategoryUtils
         return Enumerable
             .Range(0, count)
             .Select(index => CreateCategory(id: CategoryId.Create(index + 1)));
+    }
+
+    /// <summary>
+    /// Creates a new category name.
+    /// </summary>
+    /// <returns>A new category name.</returns>
+    public static string CreateCategoryName()
+    {
+        return _faker.Commerce.Categories(1).First();
     }
 }
