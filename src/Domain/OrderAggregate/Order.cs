@@ -83,6 +83,7 @@ public sealed class Order : AggregateRoot<OrderId>
     }
 
     internal static Order Create(
+        Guid requestId,
         UserId userId,
         IEnumerable<OrderProduct> products,
         decimal total,
@@ -103,6 +104,7 @@ public sealed class Order : AggregateRoot<OrderId>
 
         order.AddDomainEvent(
             new OrderCreated(
+                requestId,
                 order,
                 paymentMethod,
                 billingAddress,

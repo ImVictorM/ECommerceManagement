@@ -24,10 +24,10 @@ public static class OrderUtils
 {
     private static readonly Faker _faker = new();
 
-
     /// <summary>
     /// Creates a new fake instance of the <see cref="Order"/> class.
     /// </summary>
+    /// <param name="requestId">The request identifier.</param>
     /// <param name="id">The order id.</param>
     /// <param name="ownerId">The order owner id.</param>
     /// <param name="orderProducts">The order products to be processed.</param>
@@ -38,8 +38,9 @@ public static class OrderUtils
     /// <param name="couponsApplied">The order coupons applied.</param>
     /// <param name="orderService">The order service.</param>
     /// <param name="paymentId">The order payment id.</param>
-    /// <returns></returns>
+    /// <returns>A new fake instance of the <see cref="Order"/> class.</returns>
     public static async Task<Order> CreateOrderAsync(
+        Guid? requestId = null,
         OrderId? id = null,
         UserId? ownerId = null,
         IEnumerable<IOrderProductReserved>? orderProducts = null,
@@ -58,6 +59,7 @@ public static class OrderUtils
         var factory = new OrderFactory(mockOrderService);
 
         var order = await factory.CreateOrderAsync(
+            requestId ?? _faker.Random.Guid(),
             ownerId ?? UserId.Create(_faker.Random.Long()),
             products,
             paymentMethod ?? CreateMockPaymentMethod(),

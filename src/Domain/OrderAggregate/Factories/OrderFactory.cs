@@ -27,6 +27,7 @@ public class OrderFactory
     /// <summary>
     /// Creates a new instance of the <see cref="Order"/> class.
     /// </summary>
+    /// <param name="requestId">The current request identifier.</param>
     /// <param name="ownerId">The order owner id.</param>
     /// <param name="products">The order products.</param>
     /// <param name="paymentMethod">The order payment method.</param>
@@ -36,6 +37,7 @@ public class OrderFactory
     /// <param name="couponsApplied">The coupons applied.</param>
     /// <returns>A new instance of the <see cref="Order"/> class.</returns>
     public async Task<Order> CreateOrderAsync(
+        Guid requestId,
         UserId ownerId,
         IEnumerable<IOrderProductReserved> products,
         IPaymentMethod paymentMethod,
@@ -50,6 +52,7 @@ public class OrderFactory
         var total = await _orderService.CalculateTotalAsync(orderProductsWithPrice, couponsApplied);
 
         return Order.Create(
+            requestId,
             ownerId,
             orderProductsWithPrice,
             total,

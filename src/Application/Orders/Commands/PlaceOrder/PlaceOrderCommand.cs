@@ -11,6 +11,7 @@ namespace Application.Orders.Commands.PlaceOrder;
 /// <summary>
 /// Represents a command to place an order.
 /// </summary>s
+/// <param name="requestId">The current request identifier.</param>
 /// <param name="CurrentUserId">The order owner id.</param>
 /// <param name="Products">The order products.</param>
 /// <param name="BillingAddress">The order billing address.</param>
@@ -19,6 +20,7 @@ namespace Application.Orders.Commands.PlaceOrder;
 /// <param name="Installments">The payment installments.</param>
 /// <param name="CouponAppliedIds">The coupon ids applied.</param>
 public record PlaceOrderCommand(
+    Guid requestId,
     string CurrentUserId,
     IEnumerable<OrderProductInput> Products,
     Address BillingAddress,

@@ -14,6 +14,7 @@ public interface IPaymentGateway
     /// <summary>
     /// Pre-authorizes a payment, reserving the amount to be deducted.
     /// </summary>
+    /// <param name="requestId">The unique request identifier.</param>
     /// <param name="order">The order.</param>
     /// <param name="paymentMethod">The payment method.</param>
     /// <param name="payer">Who is going to be charged.</param>
@@ -22,6 +23,7 @@ public interface IPaymentGateway
     /// <param name="installments">The payment installments.</param>
     /// <returns>The payment details.</returns>
     Task AuthorizePaymentAsync(
+        Guid requestId,
         Order order,
         IPaymentMethod paymentMethod,
         User? payer = null,

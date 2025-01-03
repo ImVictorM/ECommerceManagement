@@ -1,13 +1,16 @@
 using Application.Orders.Commands.PlaceOrder;
 using Application.Orders.Queries.GetOrderById;
-using Carter;
+
 using Contracts.Orders;
+
+using WebApi.Authorization.CustomerRequired;
+using WebApi.Common.Extensions;
+
+using Carter;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Authorization.CustomerRequired;
-using WebApi.Common.Extensions;
 
 namespace WebApi.Endpoints;
 
@@ -50,16 +53,22 @@ public class OrderEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<Created, UnauthorizedHttpResult, BadRequest>> PlaceOrder(
+    private async Task<Results<Created, UnauthorizedHttpResult, BadRequest, BadRequest<string>>> PlaceOrder(
+        [FromHeader(Name = "X-Idempotency-Key")] string requestId,
         [FromBody] PlaceOrderRequest request,
         IHttpContextAccessor httpContextAccessor,
         IMapper mapper,
         ISender sender
     )
     {
+        if (!Guid.TryParse(requestId, out var guidRequestId))
+        {
+            return TypedResults.BadRequest("Missing request unique identifier");
+        }
+
         var authenticatedUserId = httpContextAccessor.HttpContext!.User.GetId();
 
-        var command = mapper.Map<PlaceOrderCommand>((authenticatedUserId, request));
+        var command = mapper.Map<PlaceOrderCommand>((authenticatedUserId, guidRequestId, request));
 
         var response = await sender.Send(command);
 

@@ -3,6 +3,7 @@ using Application.Common.Interfaces.Persistence;
 using Application.Orders.Common.Errors;
 using Application.Orders.Queries.GetOrderById;
 using Application.UnitTests.Orders.Queries.TestUtils;
+using Application.Common.Interfaces.Payments;
 
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
@@ -15,7 +16,6 @@ using SharedKernel.Authorization;
 
 using FluentAssertions;
 using Moq;
-using Application.Common.Interfaces.Payments;
 
 namespace Application.UnitTests.Orders.Queries.GetOrderById;
 
@@ -138,7 +138,7 @@ public class GetOrderByIdQueryHandlerTests
         var currentUserId = UserId.Create(query.CurrentUserId);
 
         var user = UserUtils.CreateUser(currentUserId, roles: new HashSet<Role>() { Role.Customer });
-        var order = await OrderUtils.CreateOrderAsync(orderId, UserId.Create(999));
+        var order = await OrderUtils.CreateOrderAsync(id: orderId, ownerId: UserId.Create(999));
 
         _mockOrderRepository
             .Setup(repo => repo.FindByIdAsync(orderId))

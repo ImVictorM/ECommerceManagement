@@ -65,6 +65,7 @@ public class OrderCreatedHandlerTests
 
         _mockPaymentGateway.Verify(
             g => g.AuthorizePaymentAsync(
+                It.Is<Guid>(r => r == orderCreatedEvent.requestId),
                 It.Is<Order>(o => o == order),
                 It.Is<IPaymentMethod>(pm => pm.Type == orderCreatedEvent.PaymentMethod.Type),
                 It.Is<User>(u => u == payer),
@@ -95,6 +96,7 @@ public class OrderCreatedHandlerTests
 
         _mockPaymentGateway.Verify(
             g => g.AuthorizePaymentAsync(
+                It.IsAny<Guid>(),
                 It.IsAny<Order>(),
                 It.IsAny<IPaymentMethod>(),
                 It.IsAny<User>(),

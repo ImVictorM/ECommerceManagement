@@ -15,8 +15,9 @@ public class OrderMappingConfig : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<(string AuthenticatedUserId, PlaceOrderRequest Request), PlaceOrderCommand>()
+        config.NewConfig<(string AuthenticatedUserId, Guid requestId, PlaceOrderRequest Request), PlaceOrderCommand>()
             .Map(dest => dest, src => src.Request)
+            .Map(dest => dest.requestId, src => src.requestId)
             .Map(dest => dest.BillingAddress, src => src.Request.BillingAddress)
             .Map(dest => dest.CouponAppliedIds, src => src.Request.CouponAppliedIds)
             .Map(dest => dest.DeliveryAddress, src => src.Request.DeliveryAddress)

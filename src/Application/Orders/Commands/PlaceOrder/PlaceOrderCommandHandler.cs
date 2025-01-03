@@ -41,6 +41,7 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
         var orderFactory = new OrderFactory(_orderService);
 
         var order = await orderFactory.CreateOrderAsync(
+            request.requestId,
             ownerId,
             request.Products,
             request.PaymentMethod,

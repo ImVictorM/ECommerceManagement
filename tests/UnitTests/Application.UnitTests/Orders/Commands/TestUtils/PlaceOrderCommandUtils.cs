@@ -6,6 +6,7 @@ using Application.Orders.Commands.PlaceOrder;
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
+using Bogus;
 
 namespace Application.UnitTests.Orders.Commands.TestUtils;
 
@@ -14,9 +15,12 @@ namespace Application.UnitTests.Orders.Commands.TestUtils;
 /// </summary>
 public static class PlaceOrderCommandUtils
 {
+    private static readonly Faker _faker = new();
+
     /// <summary>
     /// Creates a new instance of the <see cref="PlaceOrderCommand"/> class.
     /// </summary>
+    /// <param name="requestId">The current request id.</param>
     /// <param name="currentUserId">The owner id.</param>
     /// <param name="orderProducts">The order products.</param>
     /// <param name="billingAddress">The order billing address.</param>
@@ -26,6 +30,7 @@ public static class PlaceOrderCommandUtils
     /// <param name="installments">The installments.</param>
     /// <returns>A new instance of the <see cref="PlaceOrderCommand"/> class.</returns>
     public static PlaceOrderCommand CreateCommand(
+        Guid? requestId = null,
         string? currentUserId = null,
         IEnumerable<OrderProductInput>? orderProducts = null,
         Address? billingAddress = null,
@@ -36,6 +41,7 @@ public static class PlaceOrderCommandUtils
     )
     {
         return new PlaceOrderCommand(
+            requestId ?? _faker.Random.Guid(),
             currentUserId ?? NumberUtils.CreateRandomLongAsString(),
             orderProducts ?? CreateOrderProductInputs(1),
             AddressUtils.CreateAddress(),

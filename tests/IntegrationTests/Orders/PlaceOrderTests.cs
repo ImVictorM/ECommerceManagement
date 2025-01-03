@@ -79,6 +79,7 @@ public class PlaceOrderTests : BaseIntegrationTest
         );
 
         await Client.LoginAs(userWithCustomerRoleType);
+        Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
         var response = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -100,6 +101,7 @@ public class PlaceOrderTests : BaseIntegrationTest
         );
 
         await Client.LoginAs(SeedAvailableUsers.Customer);
+        Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
         var response = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 

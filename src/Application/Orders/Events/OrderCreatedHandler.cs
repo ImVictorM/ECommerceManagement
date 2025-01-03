@@ -39,6 +39,7 @@ public class OrderCreatedHandler : INotificationHandler<OrderCreated>
         await UpdatePayerAddresses(notification, payer);
 
         _ = _paymentGateway.AuthorizePaymentAsync(
+            requestId: notification.requestId,
             order: notification.Order,
             paymentMethod: notification.PaymentMethod,
             payer: payer,

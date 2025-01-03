@@ -16,6 +16,7 @@ public class MockPaymentGateway : IPaymentGateway
 
     /// <inheritdoc/>
     public Task AuthorizePaymentAsync(
+        Guid requestId,
         Order order,
         IPaymentMethod paymentMethod,
         User? payer = null,
