@@ -1,3 +1,5 @@
+using Domain.PaymentAggregate.Enumerations;
+
 namespace Application.Common.Interfaces.Payments;
 
 /// <summary>
@@ -8,7 +10,7 @@ public interface IPaymentStatusResponse
     /// <summary>
     /// The current status of the payment.
     /// </summary>
-    public string Status { get; }
+    public PaymentStatus Status { get; }
     /// <summary>
     /// The details of the payment.
     /// </summary>

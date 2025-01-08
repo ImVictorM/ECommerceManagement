@@ -3,7 +3,8 @@ using Application.Common.Interfaces.Payments;
 using Application.Common.Interfaces.Persistence;
 
 using Domain.OrderAggregate.Events;
-using Domain.UserAggregate;
+using Domain.PaymentAggregate;
+using Domain.PaymentAggregate.ValueObjects;
 using Domain.UserAggregate.Specification;
 
 using MediatR;
@@ -36,10 +37,10 @@ public class OrderCreatedHandler : INotificationHandler<OrderCreated>
             .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.Order.OwnerId))
             ?? throw new UserNotFoundException($"The order payer with id {notification.Order.OwnerId} could not be found");
 
-        await UpdatePayerAddresses(notification, payer);
+        payer.AssignAddress(notification.DeliveryAddress, notification.BillingAddress);
 
-        _ = _paymentGateway.AuthorizePaymentAsync(
-            requestId: notification.requestId,
+        var response = await _paymentGateway.AuthorizePaymentAsync(
+            requestId: notification.RequestId,
             order: notification.Order,
             paymentMethod: notification.PaymentMethod,
             payer: payer,
@@ -47,12 +48,14 @@ public class OrderCreatedHandler : INotificationHandler<OrderCreated>
             billingAddress: notification.BillingAddress,
             installments: notification.Installments
         );
-    }
 
-    private async Task UpdatePayerAddresses(OrderCreated notification, User payer)
-    {
-        payer.AssignAddress(notification.DeliveryAddress, notification.BillingAddress);
+        var payment = Payment.Create(
+            PaymentId.Create(response.PaymentId),
+            notification.Order.Id,
+            response.Status
+        );
 
+        await _unitOfWork.PaymentRepository.AddAsync(payment);
         await _unitOfWork.SaveChangesAsync();
     }
 }

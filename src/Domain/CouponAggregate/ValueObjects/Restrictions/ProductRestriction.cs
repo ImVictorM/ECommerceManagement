@@ -25,12 +25,12 @@ public class ProductRestriction : CouponRestriction
     /// </summary>
     /// <param name="productsAllowed">The products allowed.</param>
     /// <returns>A new instance of the <see cref="ProductRestriction"/> class.</returns>
-    /// <exception cref="DomainValidationException">Thrown when the products allowed list is empty.</exception>
+    /// <exception cref="EmptyArgumentException">Thrown when the products allowed list is empty.</exception>
     public static ProductRestriction Create(IEnumerable<CouponProduct> productsAllowed)
     {
         if (!productsAllowed.Any())
         {
-            throw new DomainValidationException("Restriction must contain at least one product");
+            throw new EmptyArgumentException("Restriction must contain at least one product");
         }
 
         return new ProductRestriction(productsAllowed);

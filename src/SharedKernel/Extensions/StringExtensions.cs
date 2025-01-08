@@ -20,11 +20,8 @@ public static class StringExtensions
         }
 
         throw new
-            BaseException(
-            message: "There was an error when converting the identifier",
-            errorCode: ErrorCode.InvalidOperation,
-            title: "Domain Error - Invalid Operation"
-            ).WithContext("IdValue", str);
+            InvalidParseException(message: "Error when converting a string to long")
+            .WithContext("IdValue", str);
     }
 
     /// <summary>

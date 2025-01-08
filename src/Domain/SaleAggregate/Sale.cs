@@ -1,5 +1,6 @@
+using Domain.SaleAggregate.Errors;
 using Domain.SaleAggregate.ValueObjects;
-using SharedKernel.Errors;
+
 using SharedKernel.Models;
 using SharedKernel.ValueObjects;
 
@@ -106,6 +107,6 @@ public class Sale : AggregateRoot<SaleId>
             return;
         }
 
-        throw new DomainValidationException($"A sale must contain at least one category or one product.");
+        throw new InvalidSaleStateException("A sale must contain at least one category or one product.");
     }
 }

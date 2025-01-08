@@ -1,4 +1,5 @@
 using Application.Common.Interfaces.Payments;
+using Domain.PaymentAggregate.Enumerations;
 
 namespace Infrastructure.Payments.Common.DTOs;
 
@@ -9,7 +10,7 @@ namespace Infrastructure.Payments.Common.DTOs;
 /// <param name="Details">The details about the request.</param>
 /// <param name="Captured">A value indicating if the payment was captured.</param>
 public record PaymentStatusResponse(
-    string Status,
+    PaymentStatus Status,
     string Details,
     bool Captured
 ) : IPaymentStatusResponse;

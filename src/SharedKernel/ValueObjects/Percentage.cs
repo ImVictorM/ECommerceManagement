@@ -6,7 +6,7 @@ namespace SharedKernel.ValueObjects;
 /// <summary>
 /// Represents a percentage.
 /// </summary>
-public class Percentage : ValueObject, IComparable<Percentage>
+public sealed class Percentage : ValueObject, IComparable<Percentage>
 {
     /// <summary>
     /// Gets the percentage value.

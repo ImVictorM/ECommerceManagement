@@ -49,12 +49,12 @@ public class OrderService : IOrderService
             return total;
         }
 
-        var totalAfterCouponDiscounts = await ApplyCouponsAsync(orderProducts, couponsApplied, total);
+        var totalAfterCouponDiscounts = await CalculateTotalApplyingCouponsAsync(orderProducts, couponsApplied, total);
 
         return totalAfterCouponDiscounts;
     }
 
-    private async Task<decimal> ApplyCouponsAsync(
+    private async Task<decimal> CalculateTotalApplyingCouponsAsync(
         IEnumerable<OrderProduct> orderProducts,
         IEnumerable<OrderCoupon> couponsApplied,
         decimal total
@@ -66,7 +66,7 @@ public class OrderService : IOrderService
 
         if (coupons.Count() != couponsApplied.Count())
         {
-            throw new InvalidOrderCouponAppliedException("Some of the applied coupons does not exist anymore");
+            throw new InvalidOrderCouponAppliedException("Some of the applied coupons are expired");
         }
 
         var products = orderProducts.Select(p => (p.ProductId, p.ProductCategoryIds)).ToHashSet();
@@ -92,14 +92,7 @@ public class OrderService : IOrderService
         {
             var product = products[op.ProductId];
 
-            if (!product.Inventory.HasInventoryAvailable(op.Quantity))
-            {
-                throw new InventoryInsufficientException(
-                    $"{product.Name} is not available. " +
-                    $"Current inventory: {product.Inventory.QuantityAvailable}. " +
-                    $"Order quantity: {op.Quantity}"
-                );
-            }
+            product.Inventory.RemoveStock(op.Quantity);
 
             var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);
 
@@ -119,7 +112,7 @@ public class OrderService : IOrderService
 
         if (products.Count() != productIds.Count())
         {
-            throw new ProductNotFoundException("Some products could not be found");
+            throw new ProductNotFoundException("Some of the order products could not be found");
         }
 
         return products.ToDictionary(p => p.Id);

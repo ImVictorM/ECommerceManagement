@@ -42,7 +42,7 @@ public sealed partial class UpdateProductInventoryCommandHandler : IRequestHandl
 
         LogIncrementingQuantityInInventory(product.Inventory.QuantityAvailable);
 
-        product.IncrementQuantityInInventory(request.QuantityToIncrement);
+        product.Inventory.AddStock(request.QuantityToIncrement);
 
         await _unitOfWork.SaveChangesAsync();
 

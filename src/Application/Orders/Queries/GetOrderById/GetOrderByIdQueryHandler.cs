@@ -48,8 +48,15 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
             throw new UserNotAllowedException($"The current user does not have permission to access the order with id {orderId}");
         }
 
-        var orderPayment = order.PaymentId != null ? await _paymentGateway.GetPaymentByIdAsync(order.PaymentId) : null;
+        var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(payment => payment.OrderId == order.Id);
 
-        return new OrderDetailedResult(order, orderPayment);
+        if (orderPayment == null)
+        {
+            return new OrderDetailedResult(order, null);
+        }
+
+        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment.Id);
+
+        return new OrderDetailedResult(order, orderPaymentDetails);
     }
 }

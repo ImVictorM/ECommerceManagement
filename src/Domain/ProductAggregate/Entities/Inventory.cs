@@ -1,4 +1,6 @@
+using Domain.ProductAggregate.Errors;
 using Domain.ProductAggregate.ValueObjects;
+
 using SharedKernel.Models;
 
 namespace Domain.ProductAggregate.Entities;
@@ -21,10 +23,10 @@ public sealed class Inventory : Entity<InventoryId>
     /// <summary>
     /// Initializes a new instance of the <see cref="Inventory"/> class.
     /// </summary>
-    /// <param name="quantityAvailable">The available quantity of the related product.</param>
-    private Inventory(int quantityAvailable)
+    /// <param name="initialQuantity">The available quantity of the related product.</param>
+    private Inventory(int initialQuantity)
     {
-        QuantityAvailable = quantityAvailable;
+        QuantityAvailable = initialQuantity;
     }
 
     /// <summary>
@@ -38,29 +40,38 @@ public sealed class Inventory : Entity<InventoryId>
     }
 
     /// <summary>
-    /// Increments the quantity available by the value specified.
+    /// Decreases the quantity available by the value specified.
     /// </summary>
-    /// <param name="quantityToAdd">The quantity to increment.</param>
-    public void IncrementQuantityAvailable(int quantityToAdd)
+    /// <param name="quantity">The quantity to remove.</param>
+    public void RemoveStock(int quantity)
     {
-        QuantityAvailable += quantityToAdd;
+        if (!HasSufficientStock(quantity))
+        {
+            throw new InventoryInsufficientException();
+        }
+
+        QuantityAvailable -= quantity;
     }
 
     /// <summary>
-    /// Verifies the inventory has the quantity available based on the given quantity.
+    /// Increments the quantity available by the value specified.
     /// </summary>
-    /// <param name="quantity">The quantity to deduct.</param>
-    /// <returns>A bool indicating if the inventory has the quantity available.</returns>
-    public bool HasInventoryAvailable(int quantity)
+    /// <param name="quantity">The quantity to increment.</param>
+    public void AddStock(int quantity)
     {
-        return QuantityAvailable > quantity;
+        QuantityAvailable += quantity;
     }
 
     /// <summary>
     /// Sets the quantity available in inventory to 0.
     /// </summary>
-    public void Reset()
+    public void ClearStock()
     {
         QuantityAvailable = 0;
+    }
+
+    private bool HasSufficientStock(int quantity)
+    {
+        return QuantityAvailable > quantity;
     }
 }

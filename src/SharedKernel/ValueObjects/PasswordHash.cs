@@ -33,7 +33,7 @@ public sealed class PasswordHash : ValueObject
     /// <param name="hash">The password hash.</param>
     /// <param name="salt">The password salt.</param>
     /// <returns>A new instance of the <see cref="PasswordHash"/> class.</returns>
-    /// <exception cref="DomainValidationException">An exception thrown when the password hash or salt has not a valid format.</exception>
+    /// <exception cref="InvalidPatternException">An exception thrown when the password hash or salt has not a valid format.</exception>
     public static PasswordHash Create(string hash, string salt)
     {
         if (
@@ -46,7 +46,7 @@ public sealed class PasswordHash : ValueObject
             return new PasswordHash(hash, salt);
         }
 
-        throw new DomainValidationException("The hash or salt is not in a valid hexadecimal format");
+        throw new InvalidPatternException("The hash or salt is not in a valid hexadecimal format");
     }
 
     /// <summary>
@@ -54,14 +54,14 @@ public sealed class PasswordHash : ValueObject
     /// </summary>
     /// <param name="passwordHash">The complete password hash containing hash-salt.</param>
     /// <returns>A new instance of the <see cref="PasswordHash"/> class.</returns>
-    /// <exception cref="DomainValidationException">An exception thrown when the password hash has not a valid format.</exception>
+    /// <exception cref="InvalidPatternException">An exception thrown when the password hash has not a valid format.</exception>
     public static PasswordHash Create(string passwordHash)
     {
         var parts = passwordHash.Split("-");
 
         return parts.Length == 2 ?
             Create(parts[0], parts[1])
-            : throw new DomainValidationException("Invalid hash and salt format");
+            : throw new InvalidPatternException("Invalid hash and salt template");
     }
 
     /// <summary>

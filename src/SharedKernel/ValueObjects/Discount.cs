@@ -6,7 +6,7 @@ namespace SharedKernel.ValueObjects;
 /// <summary>
 /// Represents a discount.
 /// </summary>
-public class Discount : ValueObject
+public sealed class Discount : ValueObject
 {
     /// <summary>
     /// Gets the discount description;
@@ -81,12 +81,12 @@ public class Discount : ValueObject
 
         if (!isDateRangeValid)
         {
-            throw new DomainValidationException("The date range between the starting and ending date is invalid");
+            throw new OutOfRangeException("The date range between the starting and ending date is invalid");
         }
 
         if (!isPercentageRangeValid)
         {
-            throw new DomainValidationException("Discount percentage must be between 1 and 100");
+            throw new OutOfRangeException("Discount percentage must be between 1 and 100");
         }
     }
 

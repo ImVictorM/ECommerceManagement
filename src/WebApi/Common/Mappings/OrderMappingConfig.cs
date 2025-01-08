@@ -37,7 +37,7 @@ public class OrderMappingConfig : IRegister
                 src.Payment.PaymentId,
                 src.Payment.Amount,
                 src.Payment.Installments,
-                src.Payment.Status,
+                src.Payment.Status.Name,
                 src.Payment.Details,
                 src.Payment.PaymentMethod
             ))

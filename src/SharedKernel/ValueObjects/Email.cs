@@ -10,7 +10,7 @@ namespace SharedKernel.ValueObjects;
 public sealed class Email : ValueObject
 {
     /// <summary>
-    /// Gets the email.
+    /// Gets the email address.
     /// </summary>
     public string Value { get; }
 
@@ -24,19 +24,19 @@ public sealed class Email : ValueObject
     /// </summary>
     /// <param name="value">The email address.</param>
     /// <returns>A new instance of the <see cref="Email"/> class.</returns>
-    /// <exception cref="DomainValidationException">An exception thrown when the email is not valid.</exception>
+    /// <exception cref="InvalidPatternException">An exception thrown when the email pattern is not valid.</exception>
     public static Email Create(string value)
     {
         if (!IsValidEmail(value))
         {
-            throw new DomainValidationException($"The {value} does not correspond to a valid email");
+            throw new InvalidPatternException($"The {value} does not correspond to a valid email");
         }
 
         return new Email(value);
     }
 
     /// <summary>
-    /// Validate if the given email has a valid format.
+    /// Validate if the given email address has a valid pattern.
     /// </summary>
     /// <param name="email">The email to validate.</param>
     /// <returns>A boolean value indicating if the email is valid.</returns>

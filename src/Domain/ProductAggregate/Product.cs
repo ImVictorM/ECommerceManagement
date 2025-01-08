@@ -119,19 +119,10 @@ public sealed class Product : AggregateRoot<ProductId>, IActivatable
         _productCategories.UnionWith(categories);
     }
 
-    /// <summary>
-    /// Increments the quantity of this product in inventory by the value specified.
-    /// </summary>
-    /// <param name="quantityToAdd">The quantity of products to add.</param>
-    public void IncrementQuantityInInventory(int quantityToAdd)
-    {
-        Inventory.IncrementQuantityAvailable(quantityToAdd);
-    }
-
     /// <inheritdoc/>
     public void Deactivate()
     {
         IsActive = false;
-        Inventory.Reset();
+        Inventory.ClearStock();
     }
 }

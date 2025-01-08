@@ -36,10 +36,6 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public long OrderStatusId { get; private set; }
     /// <summary>
-    /// Gets the order payment id.
-    /// </summary>
-    public OrderPaymentId? PaymentId { get; private set; }
-    /// <summary>
     /// Gets the order products.
     /// </summary>
     public IReadOnlySet<OrderProduct> Products => _products;
@@ -75,7 +71,7 @@ public sealed class Order : AggregateRoot<OrderId>
         {
             if (couponsApplied.Count() > 2)
             {
-                throw new DomainValidationException("You cannot apply more than 2 coupons per order");
+                throw new OutOfRangeException("An order can contain a maximum of two applied coupons");
             }
 
             _couponsApplied.UnionWith(couponsApplied);
@@ -119,18 +115,20 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Cancels an order by setting its status to <see cref="OrderStatus.Canceled"/>.
     /// </summary>
-    public void CancelOrder(string reason)
+    public void Cancel(string reason)
     {
         UpdateOrderStatus(OrderStatus.Canceled, reason);
+        AddDomainEvent(new OrderCanceled(this));
     }
 
     /// <summary>
-    /// Sets the order payment id.
+    /// Marks the order as paid.
     /// </summary>
-    /// <param name="paymentId">The order payment id.</param>
-    public void SetPaymentId(OrderPaymentId paymentId)
+    /// <param name="deliveryAddress">The delivery address.</param>
+    public void MarkAsPaid(Address deliveryAddress)
     {
-        PaymentId = paymentId;
+        UpdateOrderStatus(OrderStatus.Paid, "The order was paid successfully");
+        AddDomainEvent(new OrderPaid(this, deliveryAddress));
     }
 
     /// <summary>

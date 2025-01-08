@@ -1,6 +1,7 @@
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.CouponAggregate.Abstracts;
 using Domain.ProductAggregate.ValueObjects;
+
 using SharedKernel.Errors;
 
 namespace Domain.CouponAggregate.ValueObjects.Restrictions;
@@ -36,7 +37,7 @@ public class CategoryRestriction : CouponRestriction
     /// <param name="categoriesAllowed">The categories allowed.</param>
     /// <param name="productsFromCategoryNotAllowed">The products from the category not allowed.</param>
     /// <returns>A new instance of the <see cref="CategoryRestriction"/> class.</returns>
-    /// <exception cref="DomainValidationException">Thrown when categories allowed list is empty.</exception>
+    /// <exception cref="EmptyArgumentException">Thrown when categories allowed list is empty.</exception>
     public static CategoryRestriction Create(
         IEnumerable<CouponCategory> categoriesAllowed,
         IEnumerable<CouponProduct>? productsFromCategoryNotAllowed = null
@@ -44,7 +45,7 @@ public class CategoryRestriction : CouponRestriction
     {
         if (!categoriesAllowed.Any())
         {
-            throw new DomainValidationException("Restriction must contain at least one category");
+            throw new EmptyArgumentException("Restriction must contain at least one category");
         }
 
         return new CategoryRestriction(categoriesAllowed, productsFromCategoryNotAllowed);

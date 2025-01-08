@@ -1,4 +1,5 @@
 using Application.Common.Interfaces.Payments;
+using Domain.PaymentAggregate.Enumerations;
 
 namespace Infrastructure.Payments.Common.DTOs;
 
@@ -15,7 +16,7 @@ public record PaymentRefundResponse(
     string RefundId,
     string PaymentId,
     decimal Amount,
-    string Status,
+    PaymentStatus Status,
     string Reason,
     string RefundMode
 ) : IPaymentRefundResponse;

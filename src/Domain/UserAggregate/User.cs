@@ -1,4 +1,5 @@
 using Domain.UserAggregate.ValueObjects;
+
 using SharedKernel.Authorization;
 using SharedKernel.Errors;
 using SharedKernel.Interfaces;
@@ -61,7 +62,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
 
         if (roles.Count == 0)
         {
-            throw new DomainValidationException("Users must have at least one role");
+            throw new EmptyArgumentException("Users must have at least one role");
         }
 
         _userRoles.UnionWith(roles.Select(r => UserRole.Create(r.Id)));

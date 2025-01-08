@@ -10,6 +10,10 @@ using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
+using Domain.PaymentAggregate;
+using Domain.PaymentAggregate.ValueObjects;
+using Domain.ShipmentAggregate;
+using Domain.ShipmentAggregate.ValueObjects;
 
 namespace Application.Common.Interfaces.Persistence;
 
@@ -42,6 +46,14 @@ public interface IUnitOfWork : IDisposable
     /// Gets the coupon repository.
     /// </summary>
     public IRepository<Coupon, CouponId> CouponRepository { get; }
+    /// <summary>
+    /// Gets the payment repository.
+    /// </summary>
+    public IRepository<Payment, PaymentId> PaymentRepository { get; }
+    /// <summary>
+    /// Gets the shipment repository.
+    /// </summary>
+    public IRepository<Shipment, ShipmentId> ShipmentRepository { get; }
     /// <summary>
     /// Save all the operations done within the repositories.
     /// </summary>

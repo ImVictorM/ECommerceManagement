@@ -2,6 +2,7 @@ using Domain.CategoryAggregate;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.Abstracts;
 using Domain.OrderAggregate;
+using Domain.PaymentAggregate;
 using Domain.ProductAggregate;
 using Domain.ProductFeedbackAggregate;
 using Domain.SaleAggregate;
@@ -62,6 +63,10 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the sale aggregate context.
     /// </summary>
     public DbSet<Sale> Sales { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the payment aggregate context.
+    /// </summary>
+    public DbSet<Payment> Payments { get; set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.

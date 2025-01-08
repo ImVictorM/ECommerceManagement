@@ -9,7 +9,8 @@ namespace Domain.OrderAggregate.Services;
 public interface IOrderService
 {
     /// <summary>
-    /// Prepares the order products verifying inventory.
+    /// Prepares the products for the order by reserving the necessary
+    /// quantity of items in the inventory for each product
     /// </summary>
     /// <param name="orderProducts">The order products input.</param>
     /// <returns>A list of prepared order products.</returns>

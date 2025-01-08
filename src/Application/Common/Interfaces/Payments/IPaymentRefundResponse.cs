@@ -1,3 +1,5 @@
+using Domain.PaymentAggregate.Enumerations;
+
 namespace Application.Common.Interfaces.Payments;
 
 /// <summary>
@@ -20,7 +22,7 @@ public interface IPaymentRefundResponse
     /// <summary>
     /// The status of the refund.
     /// </summary>
-    public string Status { get; }
+    public PaymentStatus Status { get; }
     /// <summary>
     /// The reason for the refund.
     /// </summary>

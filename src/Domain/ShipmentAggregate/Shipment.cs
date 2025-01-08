@@ -1,4 +1,5 @@
 using Domain.OrderAggregate.ValueObjects;
+using Domain.ShipmentAggregate.Entities;
 using Domain.ShipmentAggregate.ValueObjects;
 using SharedKernel.Models;
 using SharedKernel.ValueObjects;
@@ -39,11 +40,15 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
 
     private Shipment(
         OrderId orderId,
-        string accountable
+        string accountable,
+        Address deliveryAddress
     )
     {
         OrderId = orderId;
         Accountable = accountable;
+        DeliveryAddress = deliveryAddress;
+
+        UpdateShipmentStatus(ShipmentStatus.Pending);
     }
 
     /// <summary>
@@ -51,15 +56,24 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     /// <param name="orderId">The order id this shipment is related.</param>
     /// <param name="accountable">The accountable of the shipment.</param>
+    /// <param name="deliveryAddress">The  delivery address.</param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>
     public static Shipment Create(
         OrderId orderId,
-        string accountable
+        string accountable,
+        Address deliveryAddress
     )
     {
         return new Shipment(
             orderId,
-            accountable
+            accountable,
+            deliveryAddress
         );
+    }
+
+    private void UpdateShipmentStatus(ShipmentStatus status)
+    {
+        ShipmentStatusId = status.Id;
+        _shipmentStatusHistories.Add(ShipmentStatusHistory.Create(ShipmentStatusId));
     }
 }
