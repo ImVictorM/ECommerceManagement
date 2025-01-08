@@ -16,7 +16,7 @@ public partial class GetCategoriesQueryHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message =  "All categories fetched successfully"
+        Message = "All categories fetched successfully"
     )]
     private partial void LogAllCategoriesFetched();
 }

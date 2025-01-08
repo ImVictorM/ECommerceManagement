@@ -16,7 +16,8 @@ public partial class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQu
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoriesQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork"></param>
+    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="logger">The logger.</param>
     public GetCategoriesQueryHandler(IUnitOfWork unitOfWork, ILogger<GetCategoriesQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;

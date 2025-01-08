@@ -1,5 +1,5 @@
 using Domain.OrderAggregate;
-using Domain.OrderAggregate.ValueObjects;
+using Domain.PaymentAggregate.ValueObjects;
 using Domain.UserAggregate;
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
@@ -22,7 +22,7 @@ public interface IPaymentGateway
     /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="installments">The payment installments.</param>
     /// <returns>The payment details.</returns>
-    Task AuthorizePaymentAsync(
+    Task<IPaymentResponse> AuthorizePaymentAsync(
         Guid requestId,
         Order order,
         IPaymentMethod paymentMethod,
@@ -36,25 +36,25 @@ public interface IPaymentGateway
     /// </summary>
     /// <param name="paymentId">The payment identifier.</param>
     /// <returns>A payment status response.</returns>
-    Task<IPaymentStatusResponse> CapturePaymentAsync(OrderPaymentId paymentId);
+    Task<IPaymentStatusResponse> CapturePaymentAsync(PaymentId paymentId);
     /// <summary>
     /// Cancels a pre-authorized payment. The reserved amount is released back to the customer without charging them.
     /// </summary>
     /// <param name="paymentId">The payment identifier.</param>
     /// <returns>A payment status response.</returns>
-    Task<IPaymentStatusResponse> CancelAuthorizationAsync(OrderPaymentId paymentId);
+    Task<IPaymentStatusResponse> CancelAuthorizationAsync(PaymentId paymentId);
     /// <summary>
     /// Refunds total amount to the customer after the payment has been captured.
     /// </summary>
     /// <param name="paymentId">The payment identifier.</param>
     /// <param name="amount">The amount to be refunded.</param>
     /// <returns>A payment refund response.</returns>
-    Task<IPaymentRefundResponse> RefundPaymentAsync(OrderPaymentId paymentId, decimal amount);
+    Task<IPaymentRefundResponse> RefundPaymentAsync(PaymentId paymentId, decimal amount);
 
     /// <summary>
     /// Retrieves a payment by its identifier.
     /// </summary>
     /// <param name="paymentId">The payment id.</param>
     /// <returns>The payment details.</returns>
-    Task<IPaymentResponse> GetPaymentByIdAsync(OrderPaymentId paymentId);
+    Task<IPaymentResponse> GetPaymentByIdAsync(PaymentId paymentId);
 }
