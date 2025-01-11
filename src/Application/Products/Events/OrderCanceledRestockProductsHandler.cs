@@ -2,21 +2,21 @@ using Application.Common.Interfaces.Persistence;
 using Domain.OrderAggregate.Events;
 using MediatR;
 
-namespace Application.Orders.Events;
+namespace Application.Products.Events;
 
 /// <summary>
 /// Handles the <see cref="OrderCanceled"/> event by
 /// restocking the order reserved products.
 /// </summary>
-public class OrderCanceledHandler : INotificationHandler<OrderCanceled>
+public class OrderCanceledRestockProductsHandler : INotificationHandler<OrderCanceled>
 {
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCanceledHandler"/> class.
+    /// Initiates a new instance of the <see cref="OrderCanceledRestockProductsHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderCanceledHandler(IUnitOfWork unitOfWork)
+    public OrderCanceledRestockProductsHandler(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

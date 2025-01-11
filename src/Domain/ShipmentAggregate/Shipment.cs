@@ -1,8 +1,8 @@
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.Entities;
 using Domain.ShipmentAggregate.ValueObjects;
+
 using SharedKernel.Models;
-using SharedKernel.ValueObjects;
 
 namespace Domain.ShipmentAggregate;
 
@@ -28,10 +28,6 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     public long ShipmentStatusId { get; private set; }
     /// <summary>
-    /// Gets the shipment delivery address.
-    /// </summary>
-    public Address DeliveryAddress { get; private set; } = null!;
-    /// <summary>
     /// Gets the shipment status change history.
     /// </summary>
     public IReadOnlyList<ShipmentStatusHistory> ShipmentStatusHistories => _shipmentStatusHistories.AsReadOnly();
@@ -40,13 +36,11 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
 
     private Shipment(
         OrderId orderId,
-        string accountable,
-        Address deliveryAddress
+        string accountable
     )
     {
         OrderId = orderId;
         Accountable = accountable;
-        DeliveryAddress = deliveryAddress;
 
         UpdateShipmentStatus(ShipmentStatus.Pending);
     }
@@ -56,18 +50,15 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     /// <param name="orderId">The order id this shipment is related.</param>
     /// <param name="accountable">The accountable of the shipment.</param>
-    /// <param name="deliveryAddress">The  delivery address.</param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>
     public static Shipment Create(
         OrderId orderId,
-        string accountable,
-        Address deliveryAddress
+        string accountable
     )
     {
         return new Shipment(
             orderId,
-            accountable,
-            deliveryAddress
+            accountable
         );
     }
 

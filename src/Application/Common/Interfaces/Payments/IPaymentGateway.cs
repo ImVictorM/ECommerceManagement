@@ -19,7 +19,6 @@ public interface IPaymentGateway
     /// <param name="paymentMethod">The payment method.</param>
     /// <param name="payer">Who is going to be charged.</param>
     /// <param name="billingAddress">The billing address.</param>
-    /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="installments">The payment installments.</param>
     /// <returns>The payment details.</returns>
     Task<IPaymentResponse> AuthorizePaymentAsync(
@@ -28,7 +27,6 @@ public interface IPaymentGateway
         IPaymentMethod paymentMethod,
         User? payer = null,
         Address? billingAddress = null,
-        Address? deliveryAddress = null,
         int? installments = null
     );
     /// <summary>

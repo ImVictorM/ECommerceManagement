@@ -51,6 +51,21 @@ public class Payment : AggregateRoot<PaymentId>
     {
         PaymentStatusId = status.Id;
 
-        AddDomainEvent(new PaymentStatusChanged(this));
+        if (status == PaymentStatus.Authorized)
+        {
+            AddDomainEvent(new PaymentAuthorized(this));
+        }
+        else if (status == PaymentStatus.Approved)
+        {
+            AddDomainEvent(new PaymentApproved(this));
+        }
+        else if (status == PaymentStatus.Rejected)
+        {
+            AddDomainEvent(new PaymentRejected(this));
+        }
+        else if (status == PaymentStatus.Canceled)
+        {
+            AddDomainEvent(new PaymentCanceled(this));
+        }
     }
 }

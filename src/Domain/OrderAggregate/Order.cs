@@ -1,4 +1,5 @@
 using Domain.OrderAggregate.Enumerations;
+using Domain.OrderAggregate.Errors;
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
@@ -36,6 +37,10 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public long OrderStatusId { get; private set; }
     /// <summary>
+    /// Gets the order delivery address.
+    /// </summary>
+    public Address DeliveryAddress { get; private set; } = null!;
+    /// <summary>
     /// Gets the order products.
     /// </summary>
     public IReadOnlySet<OrderProduct> Products => _products;
@@ -55,12 +60,14 @@ public sealed class Order : AggregateRoot<OrderId>
         IEnumerable<OrderProduct> products,
         OrderStatus orderStatus,
         decimal total,
+        Address deliveryAddress,
         IEnumerable<OrderCoupon>? couponsApplied
     )
     {
         OwnerId = userId;
         OrderStatusId = orderStatus.Id;
         Total = total;
+        DeliveryAddress = deliveryAddress;
         Description = "Order pending. Waiting for payment";
 
         _products.UnionWith(products);
@@ -95,6 +102,7 @@ public sealed class Order : AggregateRoot<OrderId>
             products,
             OrderStatus.Pending,
             total,
+            deliveryAddress,
             couponsApplied
         );
 
@@ -104,7 +112,6 @@ public sealed class Order : AggregateRoot<OrderId>
                 order,
                 paymentMethod,
                 billingAddress,
-                deliveryAddress,
                 installments
             )
         );
@@ -117,6 +124,11 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public void Cancel(string reason)
     {
+        if (OrderStatusId != OrderStatus.Pending.Id)
+        {
+            throw new InvalidOrderCancellationException();
+        }
+
         UpdateOrderStatus(OrderStatus.Canceled, reason);
         AddDomainEvent(new OrderCanceled(this));
     }
@@ -124,11 +136,15 @@ public sealed class Order : AggregateRoot<OrderId>
     /// <summary>
     /// Marks the order as paid.
     /// </summary>
-    /// <param name="deliveryAddress">The delivery address.</param>
-    public void MarkAsPaid(Address deliveryAddress)
+    public void MarkAsPaid()
     {
+        if (OrderStatusId != OrderStatus.Pending.Id)
+        {
+            throw new InvalidOrderStateForPaymentException();
+        }
+
         UpdateOrderStatus(OrderStatus.Paid, "The order was paid successfully");
-        AddDomainEvent(new OrderPaid(this, deliveryAddress));
+        AddDomainEvent(new OrderPaid(this));
     }
 
     /// <summary>

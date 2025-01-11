@@ -25,7 +25,6 @@ public class MockPaymentGateway : IPaymentGateway
         IPaymentMethod paymentMethod,
         User? payer = null,
         Address? billingAddress = null,
-        Address? deliveryAddress = null,
         int? installments = null
     )
     {
@@ -38,13 +37,7 @@ public class MockPaymentGateway : IPaymentGateway
             Installments: 1,
             Status: PaymentStatus.FromDisplayName("pending"),
             Details: "does not matter",
-            Captured: true,
-            DeliveryAddress: Address.Create(
-                "NE9 6JP",
-                "20 Chowdene Bank",
-                "Tyne and Wear",
-                "Gateshead"
-            )
+            Captured: true
         );
     }
 
@@ -99,13 +92,7 @@ public class MockPaymentGateway : IPaymentGateway
             Installments: 1,
             Status: PaymentStatus.FromDisplayName("pending"),
             Details: "does not matter",
-            Captured: true,
-            DeliveryAddress: Address.Create(
-                "NE9 6JP",
-                "20 Chowdene Bank",
-                "Tyne and Wear",
-                "Gateshead"
-            )
+            Captured: true
         );
     }
 }

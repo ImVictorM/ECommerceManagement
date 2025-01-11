@@ -1,5 +1,4 @@
 using SharedKernel.Interfaces;
-using SharedKernel.ValueObjects;
 
 namespace Domain.OrderAggregate.Events;
 
@@ -7,5 +6,4 @@ namespace Domain.OrderAggregate.Events;
 /// Event that occurs when an order is paid.
 /// </summary>
 /// <param name="Order">The order.</param>
-/// <param name="DeliveryAddress">The order delivery address.</param>
-public record OrderPaid(Order Order, Address DeliveryAddress) : IDomainEvent;
+public record OrderPaid(Order Order) : IDomainEvent;

@@ -1,5 +1,3 @@
-using SharedKernel.ValueObjects;
-
 namespace Application.Common.Interfaces.Payments;
 
 /// <summary>
@@ -23,8 +21,4 @@ public interface IPaymentResponse : IPaymentStatusResponse
     /// Gets the payment installments.
     /// </summary>
     public int Installments { get; }
-    /// <summary>
-    /// Gets the delivery address.
-    /// </summary>
-    public Address DeliveryAddress { get; }
 }

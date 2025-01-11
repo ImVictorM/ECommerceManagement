@@ -3,7 +3,6 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
 using Domain.ShipmentAggregate.Entities;
 using Domain.ShipmentAggregate.ValueObjects;
-using Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -59,8 +58,6 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
         builder
             .Property(s => s.ShipmentStatusId)
             .IsRequired();
-
-        builder.OwnsOne(order => order.DeliveryAddress, AddressNavigationBuilderConfigurations.Configure);
     }
 
     private static void ConfigureOwnedShipmentStatusHistoriesTable(EntityTypeBuilder<Shipment> builder)
