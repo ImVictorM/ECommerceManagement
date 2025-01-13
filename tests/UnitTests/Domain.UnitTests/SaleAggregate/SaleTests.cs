@@ -3,8 +3,8 @@ using Domain.UnitTests.TestUtils;
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
+using Domain.SaleAggregate.Errors;
 
-using SharedKernel.Errors;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
@@ -70,7 +70,7 @@ public class SaleTests
         FluentActions
             .Invoking(() => SaleUtils.CreateSale(categoriesInSale: emptyCategories, productsInSale: emptyProducts))
             .Should()
-            .Throw<DomainValidationException>()
+            .Throw<InvalidSaleStateException>()
             .WithMessage("A sale must contain at least one category or one product.");
     }
 
@@ -99,7 +99,7 @@ public class SaleTests
                 productsExcludeFromSale: productsExcluded
             ))
             .Should()
-            .Throw<DomainValidationException>()
+            .Throw<InvalidSaleStateException>()
             .WithMessage("A sale must contain at least one category or one product.");
     }
 

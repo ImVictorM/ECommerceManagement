@@ -101,7 +101,7 @@ public class DiscountTests
         FluentActions
             .Invoking(() => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate))
             .Should()
-            .Throw<DomainValidationException>()
+            .Throw<OutOfRangeException>()
             .WithMessage("The date range between the starting and ending date is invalid");
     }
 
@@ -120,7 +120,7 @@ public class DiscountTests
         FluentActions
             .Invoking(() => DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(percentage)))
             .Should()
-            .Throw<DomainValidationException>()
+            .Throw<OutOfRangeException>()
             .WithMessage("Discount percentage must be between 1 and 100");
     }
 

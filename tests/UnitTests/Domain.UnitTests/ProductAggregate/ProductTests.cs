@@ -4,6 +4,7 @@ using Domain.UnitTests.TestUtils;
 using Domain.ProductAggregate;
 
 using FluentAssertions;
+using Domain.ProductAggregate.Errors;
 
 namespace Domain.UnitTests.ProductAggregate;
 
@@ -116,7 +117,7 @@ public class ProductTests
     [InlineData(10, 55, 65)]
     [InlineData(20, 5, 25)]
     [InlineData(12, 1, 13)]
-    public void IncrementProductInventory_WithPositiveValue_UpdatesInventoryQuantityAvailableCorrectly(
+    public void AddStockToInventory_WithPositiveValue_UpdatesInventoryQuantityAvailableCorrectly(
         int initialQuantity,
         int quantityToAdd,
         int expectedQuantityAvailable
@@ -124,16 +125,57 @@ public class ProductTests
     {
         var product = ProductUtils.CreateProduct(initialQuantityInInventory: initialQuantity);
 
-        product.IncrementQuantityInInventory(quantityToAdd);
+        product.Inventory.AddStock(quantityToAdd);
 
         product.Inventory.QuantityAvailable.Should().Be(expectedQuantityAvailable);
+    }
+
+    /// <summary>
+    /// Tests it is possible to remove items from stock when quantity available is sufficient.
+    /// </summary>
+    [Fact]
+    public void RemoveStockFromInventory_WhenQuantityInStockIsSufficient_UpdatesInventoryQuantityAvailableCorrectly()
+    {
+        var product = ProductUtils.CreateProduct(initialQuantityInInventory: 100);
+
+        product.Inventory.RemoveStock(20);
+
+        product.Inventory.QuantityAvailable.Should().Be(80);
+    }
+
+    /// <summary>
+    /// Tests removing items from stock throws an error when the quantity available
+    /// is not sufficient.
+    /// </summary>
+    [Fact]
+    public void RemoveStockFromInventory_WhenQuantityInStockIsNotSufficient_ThrowsError()
+    {
+        var product = ProductUtils.CreateProduct(initialQuantityInInventory: 10);
+
+        FluentActions
+            .Invoking(() =>  product.Inventory.RemoveStock(20))
+            .Should()
+            .Throw<InventoryInsufficientException>();
+    }
+
+    /// <summary>
+    /// Tests clearing the inventory stock sets the quantity available to zero.
+    /// </summary>
+    [Fact]
+    public void ClearStock_WhenCalled_SetsQuantityAvailableToZero()
+    {
+        var product = ProductUtils.CreateProduct(initialQuantityInInventory: 200);
+
+        product.Inventory.ClearStock();
+
+        product.Inventory.QuantityAvailable.Should().Be(0);
     }
 
     /// <summary>
     /// Tests that making a product inactivate deactivates it and sets the inventory to 0.
     /// </summary>
     [Fact]
-    public void DeactivateProduct_WhenCallingDeactivateMethod_UpdatesFieldsCorrectly()
+    public void DeactivateProduct_WhenCallingDeactivateMethod_DeactivatesItAndClearsInventory()
     {
         var product = ProductUtils.CreateProduct(initialQuantityInInventory: 500);
 

@@ -4,6 +4,7 @@ using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.OrderAggregate.Services;
+using Domain.OrderAggregate.Errors;
 
 using FluentAssertions;
 using Moq;
@@ -15,6 +16,32 @@ namespace Domain.UnitTests.OrderAggregate;
 /// </summary>
 public class OrderTests
 {
+    /// <summary>
+    /// List of order status different than pending.
+    /// </summary>
+    public static IEnumerable<object[]> OrderStatusesDifferentThanPending()
+    {
+        var orderStatuses = OrderStatus.List().Where(os => os != OrderStatus.Pending);
+
+        foreach (var status in orderStatuses)
+        {
+            yield return new object[] { status };
+        }
+    }
+
+    /// <summary>
+    /// List of order status.
+    /// </summary>
+    public static IEnumerable<object[]> OrderStatuses()
+    {
+        var orderStatuses = OrderStatus.List();
+
+        foreach (var status in orderStatuses)
+        {
+            yield return new object[] { status };
+        }
+    }
+
     /// <summary>
     /// Tests the order is created correctly when creating it with correct parameters.
     /// </summary>
@@ -65,27 +92,78 @@ public class OrderTests
     /// Tests that canceling an order sets the order status to canceled, updates the description to match the reason, and increments the order status history.
     /// </summary>
     [Fact]
-    public async Task CancelOrder_WhenOrderIsPending_UpdateFieldsCorrectly()
+    public async Task CancelOrder_WhenOrderIsPending_UpdatesItCorrectly()
     {
         var reasonToCancel = "Important reason";
         var order = await OrderUtils.CreateOrderAsync();
 
-        order.CancelOrder(reasonToCancel);
+        order.Cancel(reasonToCancel);
 
         order.OrderStatusId.Should().Be(OrderStatus.Canceled.Id);
         order.Description.Should().Be(reasonToCancel);
         order.OrderStatusHistories.Count.Should().Be(2);
         order.OrderStatusHistories.Should().Contain(osh => osh.OrderStatusId == OrderStatus.Canceled.Id);
+        order.DomainEvents.Should().ContainItemsAssignableTo<OrderCanceled>();
+    }
+
+    /// <summary>
+    /// Verifies that cancelling an order with status different than pending results in an exception
+    /// being throwed.
+    /// </summary>
+    /// <param name="status">The status different than pending.</param>
+    [Theory]
+    [MemberData(nameof(OrderStatusesDifferentThanPending))]
+    public async Task CancelOrder_WhenOrderIsNotPending_ThrowsError(OrderStatus status)
+    {
+        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: status);
+
+        FluentActions
+            .Invoking(() => order.Cancel("Any"))
+            .Should()
+            .Throw<InvalidOrderCancellationException>();
     }
 
     /// <summary>
     /// Tests that getting the order status description returns correctly.
     /// </summary>
-    [Fact]
-    public async Task GetOrderStatusDescription_WhenOrderIsPending_ReturnsPendingName()
+    [Theory]
+    [MemberData(nameof(OrderStatuses))]
+    public async Task GetOrderStatusDescription_WhenCalled_ReturnsStatusName(OrderStatus status)
     {
-        var order = await OrderUtils.CreateOrderAsync();
+        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: status);
 
-        order.GetStatusDescription().Should().Be(OrderStatus.Pending.Name);
+        order.GetStatusDescription().Should().Be(status.Name);
+    }
+
+    /// <summary>
+    /// Tests when order is pending it is possible to mark it as paid.
+    /// </summary>
+    [Fact]
+    public async Task MarkAsPaid_WhenOrderIsPending_UpdatesItCorrectly()
+    {
+        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: OrderStatus.Pending);
+
+        order.MarkAsPaid();
+
+        order.DomainEvents.Should().ContainItemsAssignableTo<OrderPaid>();
+        order.OrderStatusId.Should().Be(OrderStatus.Paid.Id);
+        order.OrderStatusHistories.Should().Contain(osh => osh.OrderStatusId == OrderStatus.Paid.Id);
+    }
+
+    /// <summary>
+    /// Tests an error is thrown when trying to mark order as paid when the
+    /// order status is different than pending.
+    /// </summary>
+    /// <param name="statusDifferentThanPending">The order initial status.</param>
+    [Theory]
+    [MemberData(nameof(OrderStatusesDifferentThanPending))]
+    public async Task MarkAsPaid_WhenOrderIsNotPending_ThrowsError(OrderStatus statusDifferentThanPending)
+    {
+        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: statusDifferentThanPending);
+
+        FluentActions
+            .Invoking(order.MarkAsPaid)
+            .Should()
+            .Throw<InvalidOrderStateForPaymentException>();
     }
 }

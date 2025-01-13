@@ -16,6 +16,9 @@ using SharedKernel.Authorization;
 
 using FluentAssertions;
 using Moq;
+using Domain.PaymentAggregate.ValueObjects;
+using Domain.PaymentAggregate;
+using System.Linq.Expressions;
 
 namespace Application.UnitTests.Orders.Queries.GetOrderById;
 
@@ -26,6 +29,7 @@ public class GetOrderByIdQueryHandlerTests
 {
     private readonly GetOrderByIdQueryHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    private readonly Mock<IRepository<Payment, PaymentId>> _mockPaymentRepository;
     private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
     private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
     private readonly Mock<IPaymentGateway> _mockPaymentGateway;
@@ -38,9 +42,11 @@ public class GetOrderByIdQueryHandlerTests
         _mockUserRepository = new Mock<IRepository<User, UserId>>();
         _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
         _mockPaymentGateway = new Mock<IPaymentGateway>();
+        _mockPaymentRepository = new Mock<IRepository<Payment, PaymentId>>();
 
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
+        _mockUnitOfWork.Setup(uow => uow.PaymentRepository).Returns(_mockPaymentRepository.Object);
         _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
         _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
 
@@ -57,10 +63,14 @@ public class GetOrderByIdQueryHandlerTests
 
         var orderOwnerId = UserId.Create(query.CurrentUserId);
         var orderId = OrderId.Create(query.OrderId);
-        var paymentId = OrderPaymentId.Create(Guid.NewGuid().ToString());
 
-        var order = await OrderUtils.CreateOrderAsync(id: orderId, ownerId: orderOwnerId, paymentId: paymentId);
+        var order = await OrderUtils.CreateOrderAsync(id: orderId, ownerId: orderOwnerId);
         var orderOwner = UserUtils.CreateUser(id: orderOwnerId);
+        var orderPayment = PaymentUtils.CreatePayment(
+            paymentId: PaymentId.Create(Guid.NewGuid().ToString()),
+            orderId: orderId
+        );
+
         var mockPaymentResponse = new Mock<IPaymentResponse>().Object;
 
         _mockOrderRepository
@@ -71,8 +81,12 @@ public class GetOrderByIdQueryHandlerTests
             .Setup(repo => repo.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync(orderOwner);
 
+        _mockPaymentRepository
+            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Payment, bool>>>()))
+            .ReturnsAsync(orderPayment);
+
         _mockPaymentGateway
-            .Setup(p => p.GetPaymentByIdAsync(It.IsAny<OrderPaymentId>()))
+            .Setup(p => p.GetPaymentByIdAsync(orderPayment.Id))
             .ReturnsAsync(mockPaymentResponse);
 
         var result = await _handler.Handle(query, default);
@@ -155,7 +169,7 @@ public class GetOrderByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Verifies that the handler returns order details without payment when no payment is found for the order.
+    /// Verifies that the handler returns order details without payment when no payment is found.
     /// </summary>
     [Fact]
     public async Task HandleGetOrderByIdQuery_WhenOrderExistsAndNoPayment_ReturnsOrderWithoutPayment()
@@ -175,9 +189,9 @@ public class GetOrderByIdQueryHandlerTests
             .Setup(repo => repo.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync(user);
 
-        _mockPaymentGateway
-            .Setup(p => p.GetPaymentByIdAsync(It.IsAny<OrderPaymentId>()))
-            .ReturnsAsync((IPaymentResponse)null!);
+        _mockPaymentRepository
+            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Payment, bool>>>()))
+            .ReturnsAsync((Payment)null!);
 
         var result = await _handler.Handle(query, default);
 

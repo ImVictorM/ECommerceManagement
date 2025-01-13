@@ -1,4 +1,3 @@
-using Application.Common.Errors;
 using Application.Common.Interfaces.Persistence;
 
 using Domain.OrderAggregate.Events;
@@ -28,12 +27,14 @@ public class OrderCreatedAssignUserAddressesHandler : INotificationHandler<Order
     /// <inheritdoc/>
     public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
     {
-        var payer = await _unitOfWork.UserRepository
-            .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.Order.OwnerId))
-            ?? throw new UserNotFoundException($"The order payer with id {notification.Order.OwnerId} could not be found");
+        var user = await _unitOfWork.UserRepository
+            .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.Order.OwnerId));
 
-        payer.AssignAddress(notification.Order.DeliveryAddress, notification.BillingAddress);
+        if (user != null)
+        {
+            user.AssignAddress(notification.Order.DeliveryAddress, notification.BillingAddress);
 
-        await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

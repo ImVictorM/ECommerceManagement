@@ -62,7 +62,7 @@ public class EmailTests
         FluentActions
             .Invoking(() => EmailUtils.CreateEmail(emailAddress))
             .Should()
-            .Throw<DomainValidationException>()
+            .Throw<InvalidPatternException>()
             .WithMessage($"The {emailAddress} does not correspond to a valid email");
     }
 }

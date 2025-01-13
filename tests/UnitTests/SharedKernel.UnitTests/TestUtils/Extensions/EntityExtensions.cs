@@ -27,7 +27,7 @@ public static class EntityExtensions
         }
         else
         {
-            throw new InvalidOperationException($"It was not possible to set the entity id");
+            throw new InvalidOperationException("It was not possible to set the entity id");
         }
     }
 }

@@ -9,6 +9,7 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+using Domain.ProductAggregate.Errors;
 
 using SharedKernel.UnitTests.TestUtils;
 

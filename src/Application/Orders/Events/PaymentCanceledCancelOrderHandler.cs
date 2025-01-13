@@ -1,5 +1,4 @@
 using Application.Common.Interfaces.Persistence;
-using Application.Orders.Common.Errors;
 
 using Domain.PaymentAggregate.Events;
 
@@ -29,11 +28,13 @@ public sealed class PaymentCanceledCancelOrderHandler : INotificationHandler<Pay
     {
         var orderId = notification.Payment.OrderId;
 
-        var order = await _unitOfWork.OrderRepository.FindByIdAsync(orderId) ??
-                    throw new OrderNotFoundException($"The order with id {orderId} cannot be canceled because it does not exist");
+        var order = await _unitOfWork.OrderRepository.FindByIdAsync(orderId);
 
-        order.Cancel("The payment was canceled");
+        if (order != null)
+        {
+            order.Cancel("The payment was canceled");
 
-        await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

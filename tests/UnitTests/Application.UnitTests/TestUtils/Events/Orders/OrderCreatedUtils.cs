@@ -8,7 +8,7 @@ using SharedKernel.ValueObjects;
 
 using Bogus;
 
-namespace Application.UnitTests.Orders.Events.TestUtils;
+namespace Application.UnitTests.TestUtils.Events.Orders;
 
 /// <summary>
 /// Utilities for the <see cref="OrderCreated"/> event.
@@ -27,7 +27,7 @@ public static class OrderCreatedUtils
     /// <param name="deliveryAddress">The delivery address.</param>
     /// <param name="installments">The installments quantity.</param>
     /// <returns>A new instance of the <see cref="OrderCreated"/> class.</returns>
-    public static async Task<OrderCreated> CreateEvent(
+    public static async Task<OrderCreated> CreateEventAsync(
         Guid? requestId = null,
         Order? order = null,
         IPaymentMethod? paymentMethod = null,
@@ -41,7 +41,6 @@ public static class OrderCreatedUtils
             order ?? await OrderUtils.CreateOrderAsync(),
             paymentMethod ?? OrderUtils.CreateMockPaymentMethod(),
             billingAddress ?? AddressUtils.CreateAddress(),
-            deliveryAddress ?? AddressUtils.CreateAddress(),
             installments
         );
     }

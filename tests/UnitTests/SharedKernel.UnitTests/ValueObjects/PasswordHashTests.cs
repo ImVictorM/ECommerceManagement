@@ -51,7 +51,7 @@ public class PasswordHashTests
     }
 
     /// <summary>
-    /// Verifies that creating a <see cref="PasswordHash"/> with invalid hexadecimal input throws a <see cref="DomainValidationException"/>.
+    /// Verifies that creating a <see cref="PasswordHash"/> with invalid hexadecimal input throws a <see cref="InvalidPatternException"/>.
     /// </summary>
     [Fact]
     public void CreatePasswordHash_WithInvalidHexInput_ThrowsError()
@@ -62,12 +62,12 @@ public class PasswordHashTests
         FluentActions
             .Invoking(() => PasswordHashUtils.Create(invalidHash, invalidSalt))
             .Should()
-            .Throw<DomainValidationException>()
+            .Throw<InvalidPatternException>()
             .WithMessage("The hash or salt is not in a valid hexadecimal format");
     }
 
     /// <summary>
-    /// Verifies that creating a <see cref="PasswordHash"/> with an invalid hash-salt template throws a <see cref="DomainValidationException"/>.
+    /// Verifies that creating a <see cref="PasswordHash"/> with an invalid hash-salt template throws a <see cref="InvalidPatternException"/>.
     /// </summary>
     [Fact]
     public void CreatePasswordHash_WithInvalidTemplate_ThrowsError()
@@ -77,8 +77,8 @@ public class PasswordHashTests
         FluentActions
             .Invoking(() => PasswordHashUtils.CreateUsingDirectValue(invalidPasswordHash))
             .Should()
-            .Throw<DomainValidationException>()
-            .WithMessage("Invalid hash and salt format");
+            .Throw<InvalidPatternException>()
+            .WithMessage("Invalid hash and salt template");
     }
 
     /// <summary>

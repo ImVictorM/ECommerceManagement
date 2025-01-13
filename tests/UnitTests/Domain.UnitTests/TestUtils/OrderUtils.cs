@@ -6,6 +6,8 @@ using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+using Domain.PaymentAggregate.ValueObjects;
+using Domain.OrderAggregate.Enumerations;
 
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
@@ -37,7 +39,7 @@ public static class OrderUtils
     /// <param name="installments">The order installments.</param>
     /// <param name="couponsApplied">The order coupons applied.</param>
     /// <param name="orderService">The order service.</param>
-    /// <param name="paymentId">The order payment id.</param>
+    /// <param name="initialOrderStatus">The initial order status.</param>
     /// <returns>A new fake instance of the <see cref="Order"/> class.</returns>
     public static async Task<Order> CreateOrderAsync(
         Guid? requestId = null,
@@ -50,7 +52,7 @@ public static class OrderUtils
         int? installments = null,
         IEnumerable<OrderCoupon>? couponsApplied = null,
         IOrderService? orderService = null,
-        OrderPaymentId? paymentId = null
+        OrderStatus? initialOrderStatus = null
     )
     {
         var products = orderProducts ?? CreateReservedProducts();
@@ -74,33 +76,46 @@ public static class OrderUtils
             order.SetIdUsingReflection(id);
         }
 
-        if (paymentId != null)
+        if (initialOrderStatus is not null)
         {
-            order.SetPaymentId(paymentId);
+            var statusIdProperty = typeof(Order).GetProperty(
+                nameof(Order.OrderStatusId),
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
+            );
+
+            if (statusIdProperty != null && statusIdProperty.CanWrite)
+            {
+                statusIdProperty.SetValue(order, initialOrderStatus.Id);
+            }
         }
 
         return order;
     }
 
     /// <summary>
-    /// Generates fake instances of <see cref="OrderProduct"/>.
+    /// Generates a single instance of <see cref="IOrderProductReserved"/>.
+    /// </summary>
+    /// <param name="productId">The product id.</param>
+    /// <param name="quantity">The product quantity.</param>
+    /// <returns>A new instance of <see cref="IOrderProductReserved"/>.</returns>
+    public static IOrderProductReserved CreateReservedProduct(
+        ProductId? productId = null,
+        int? quantity = null
+    )
+    {
+        return new Faker<IOrderProductReserved>()
+            .CustomInstantiator(_ => CreateOrderProductReservedMock(productId, quantity))
+            .Generate();
+    }
+
+    /// <summary>
+    /// Generates fake instances of <see cref="IOrderProductReserved"/>.
     /// </summary>
     /// <returns>A list of reserved products.</returns>
     public static IReadOnlyCollection<IOrderProductReserved> CreateReservedProducts(int count = 1)
     {
         return new Faker<IOrderProductReserved>()
-            .CustomInstantiator(f =>
-            {
-                var productId = ProductId.Create(f.Random.Int(1, 100));
-                var quantity = f.Random.Int(1, 10);
-
-                var mock = new Mock<IOrderProductReserved>();
-
-                mock.SetupGet(op => op.ProductId).Returns(productId);
-                mock.SetupGet(op => op.Quantity).Returns(quantity);
-
-                return mock.Object;
-            })
+            .CustomInstantiator(_ => CreateOrderProductReservedMock())
             .Generate(count);
     }
 
@@ -153,6 +168,21 @@ public static class OrderUtils
 
         mock.Setup(s => s.CalculateTotalAsync(It.IsAny<IEnumerable<OrderProduct>>(), It.IsAny<IEnumerable<OrderCoupon>>()))
             .ReturnsAsync(preparedProductsTotal);
+
+        return mock.Object;
+    }
+
+    private static IOrderProductReserved CreateOrderProductReservedMock(
+         ProductId? productId = null,
+        int? quantity = null
+    )
+    {
+        var id = productId ?? ProductId.Create(_faker.Random.Int(1, 100));
+        var productQuantity = quantity ?? _faker.Random.Int(1, 10);
+
+        var mock = new Mock<IOrderProductReserved>();
+        mock.SetupGet(op => op.ProductId).Returns(id);
+        mock.SetupGet(op => op.Quantity).Returns(productQuantity);
 
         return mock.Object;
     }
