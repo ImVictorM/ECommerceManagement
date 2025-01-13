@@ -60,6 +60,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 "roles",
                 "order_statuses",
                 "shipment_statuses",
+                "payment_statuses"
             ],
         });
     }

@@ -6,7 +6,6 @@ using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
-using Domain.PaymentAggregate.ValueObjects;
 using Domain.OrderAggregate.Enumerations;
 
 using SharedKernel.Interfaces;

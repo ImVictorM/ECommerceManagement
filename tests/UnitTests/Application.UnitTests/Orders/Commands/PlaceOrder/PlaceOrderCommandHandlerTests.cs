@@ -73,7 +73,10 @@ public class PlaceOrderCommandHandlerTests
 
         result.Id.Should().Be(mockCreatedId.ToString());
 
-        _mockOrderRepository.Verify(r => r.AddAsync(It.IsAny<Order>()), Times.Once());
+        _mockOrderRepository.Verify(
+            r => r.AddAsync(It.Is<Order>(o => o.Total == mockTotal && o.Products == orderProducts)),
+            Times.Once()
+        );
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 }

@@ -116,11 +116,11 @@ public static class UserSeed
     /// </summary>
     /// <param name="filter">Filter the users based on a predicate.</param>
     /// <returns>A list of all seed users.</returns>
-    public static IEnumerable<User> ListUsers(Func<User, bool>? filter = null)
+    public static IReadOnlyList<User> ListUsers(Func<User, bool>? filter = null)
     {
         var users = _users.Values.Select(u => u.User);
 
-        return filter != null ? users.Where(filter) : users;
+        return filter != null ? users.Where(filter).ToList() : [.. users];
     }
 
     /// <summary>
@@ -128,11 +128,11 @@ public static class UserSeed
     /// </summary>
     /// <param name="filter">Filter the users credentials based on a predicate.</param>
     /// <returns>A tuple of email and password for each seed user.</returns>
-    public static IEnumerable<(string Email, string Password)> ListUsersCredentials(Func<User, bool>? filter = null)
+    public static IReadOnlyList<(string Email, string Password)> ListUsersCredentials(Func<User, bool>? filter = null)
     {
 
         return filter != null ?
-            _users.Values.Where(u => filter(u.User)).Select(u => (u.User.Email.ToString(), u.Password)) :
-            _users.Values.Select(u => (u.User.Email.ToString(), u.Password));
+            _users.Values.Where(u => filter(u.User)).Select(u => (u.User.Email.ToString(), u.Password)).ToList() :
+            _users.Values.Select(u => (u.User.Email.ToString(), u.Password)).ToList();
     }
 }

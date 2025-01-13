@@ -8,6 +8,7 @@ using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
 
 using Bogus;
+using Domain.CouponAggregate.Abstracts;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -28,6 +29,7 @@ public static class CouponUtils
     /// <param name="minPrice">The coupon minimum price.</param>
     /// <param name="autoApply">The coupon auto apply flag.</param>
     /// <param name="active">The initial state of the coupon.</param>
+    /// <param name="initialRestrictions">The coupon initial restrictions.</param>
     /// <returns>A new instance of the <see cref="Coupon"/> class.</returns>
     public static Coupon CreateCoupon(
         CouponId? id = null,
@@ -36,7 +38,8 @@ public static class CouponUtils
         int? usageLimit = null,
         decimal? minPrice = null,
         bool? autoApply = null,
-        bool active = true
+        bool active = true,
+        IEnumerable<CouponRestriction>? initialRestrictions = null
     )
     {
         var coupon = Coupon.Create(
@@ -55,6 +58,15 @@ public static class CouponUtils
         if (!active)
         {
             coupon.Deactivate();
+        }
+
+        if (initialRestrictions != null)
+        {
+            foreach (var restriction in initialRestrictions)
+            {
+
+                coupon.AssignRestriction(restriction);
+            }
         }
 
         return coupon;

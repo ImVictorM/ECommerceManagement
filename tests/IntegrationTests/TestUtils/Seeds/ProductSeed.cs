@@ -13,7 +13,7 @@ public enum SeedAvailableProducts
     /// <summary>
     /// Simple computer containing discounts.
     /// </summary>
-    COMPUTER_WITH_DISCOUNTS,
+    COMPUTER_ON_SALE,
     /// <summary>
     /// Represents a t-shirt.
     /// </summary>
@@ -42,7 +42,7 @@ public static class ProductSeed
     /// </summary>
     private static readonly Dictionary<SeedAvailableProducts, Product> _products = new Dictionary<SeedAvailableProducts, Product>()
     {
-        [SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS] = ProductUtils.CreateProduct(
+        [SeedAvailableProducts.COMPUTER_ON_SALE] = ProductUtils.CreateProduct(
             id: ProductId.Create(-1),
             name: "Computer",
             description: "Simple computer",
@@ -119,9 +119,9 @@ public static class ProductSeed
     /// List all the seed products.
     /// </summary>
     /// <param name="filter">A filter to list specific products.</param>
-    public static IEnumerable<Product> ListProducts(Func<Product, bool>? filter = null)
+    public static IReadOnlyList<Product> ListProducts(Func<Product, bool>? filter = null)
     {
-        return filter != null ? _products.Values.Where(filter) : _products.Values;
+        return filter != null ? _products.Values.Where(filter).ToList() : [.. _products.Values];
     }
 
     /// <summary>
@@ -139,13 +139,13 @@ public static class ProductSeed
     /// </summary>
     /// <param name="categoryIds">The categories the products should contain.</param>
     /// <returns>A list of products that contain certain categories.</returns>
-    public static IEnumerable<Product> GetSeedProductsByCategories(params CategoryId[] categoryIds)
+    public static IReadOnlyList<Product> GetSeedProductsByCategories(params CategoryId[] categoryIds)
     {
         return ListProducts()
             .Where(p =>
                 p.ProductCategories
                     .Select(pc => pc.CategoryId)
                     .Any(id => categoryIds.Contains(id))
-            );
+            ).ToList();
     }
 }

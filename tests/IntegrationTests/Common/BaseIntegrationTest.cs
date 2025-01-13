@@ -59,6 +59,8 @@ public class BaseIntegrationTest : IAsyncLifetime
         await dbContext.Categories.AddRangeAsync(CategorySeed.ListCategories());
         await dbContext.Users.AddRangeAsync(UserSeed.ListUsers());
         await dbContext.Products.AddRangeAsync(ProductSeed.ListProducts());
+        await dbContext.Coupons.AddRangeAsync(CouponSeed.ListCoupons());
+        await dbContext.Sales.AddRangeAsync(SaleSeed.ListSales());
 
         await OrderSeed.InitializeAsync();
         await dbContext.Orders.AddRangeAsync(OrderSeed.ListOrders());

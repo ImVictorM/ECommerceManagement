@@ -80,7 +80,7 @@ public static class CategorySeed
     /// <param name="filter">A filter to list specific categories.</param>
     public static IReadOnlyList<Category> ListCategories(Func<Category, bool>? filter = null)
     {
-        return filter != null ? _categories.Values.Where(filter).ToList() : _categories.Values.ToList();
+        return filter != null ? _categories.Values.Where(filter).ToList() : [.. _categories.Values];
     }
 
     /// <summary>

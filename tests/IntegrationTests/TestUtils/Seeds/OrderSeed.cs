@@ -56,13 +56,13 @@ public static class OrderSeed
     /// <summary>
     /// Lists all seed orders.
     /// </summary>
-    public static IEnumerable<Order> ListOrders()
+    public static IReadOnlyList<Order> ListOrders()
     {
         if (_orders.Count == 0)
         {
             throw new InvalidOperationException($"To list the orders, you must initialize it first");
         }
 
-        return _orders.Values;
+        return [.. _orders.Values];
     }
 }

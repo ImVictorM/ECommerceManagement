@@ -85,5 +85,6 @@ public class GetOrderByIdTests : BaseIntegrationTest
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent.Should().NotBeNull();
         responseContent!.Id.Should().Be(order.Id.ToString());
+        responseContent!.Payment.Should().NotBeNull();
     }
 }

@@ -34,13 +34,13 @@ public class Payment : AggregateRoot<PaymentId>
     /// <summary>
     /// Creates a new instance of the <see cref="Payment"/> class.
     /// </summary>
-    /// <param name="paymentId">The payment id.</param>
+    /// <param name="id">The payment id.</param>
     /// <param name="orderId">The order id.</param>
     /// <param name="paymentStatus">The initial payment status.</param>
     /// <returns>A new instance of the <see cref="Payment"/> class.</returns>
-    public static Payment Create(PaymentId paymentId, OrderId orderId, PaymentStatus paymentStatus)
+    public static Payment Create(PaymentId id, OrderId orderId, PaymentStatus paymentStatus)
     {
-        return new Payment(paymentId, orderId, paymentStatus);
+        return new Payment(id, orderId, paymentStatus);
     }
 
     /// <summary>

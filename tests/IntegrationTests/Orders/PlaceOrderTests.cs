@@ -7,6 +7,8 @@ using WebApi.Endpoints;
 
 using Contracts.Orders;
 
+using SharedKernel.Services;
+
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
@@ -69,20 +71,61 @@ public class PlaceOrderTests : BaseIntegrationTest
     public async Task PlaceOrder_WhenParametersAreCorrectAndUserIsAuthorized_CreatesOrderAndReturnsCreated(SeedAvailableUsers userWithCustomerRoleType)
     {
         var pencil = ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL);
-        var computer = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS);
+        var computer = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_ON_SALE);
+        var couponApplied = CouponSeed.GetSeedCoupon(SeedAvailableCoupons.TECH_COUPON);
 
         var request = PlaceOrderRequestUtils.CreateRequest(
-            products: [
+            products:
+            [
                 new OrderProductRequest(pencil.Id.ToString(), 1),
                 new OrderProductRequest(computer.Id.ToString(), 2),
+            ],
+            couponAppliedIds:
+            [
+                couponApplied.Id.ToString()
             ]
         );
 
-        await Client.LoginAs(userWithCustomerRoleType);
-        Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
-        var response = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var expectedCreatedPencilResponse = new OrderProductResponse(
+            pencil.Id.ToString(),
+            1,
+            pencil.BasePrice,
+            SaleSeed.CalculateExpectedPriceAfterApplyingSales(pencil)
+        );
 
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var expectedCreatedComputerResponse = new OrderProductResponse(
+            computer.Id.ToString(),
+            2,
+            computer.BasePrice,
+            SaleSeed.CalculateExpectedPriceAfterApplyingSales(computer)
+        );
+
+        var expectedComputerTotal = expectedCreatedComputerResponse.PurchasedPrice * expectedCreatedComputerResponse.Quantity;
+        var expectedPencilTotal = expectedCreatedPencilResponse.PurchasedPrice * expectedCreatedPencilResponse.Quantity;
+
+        var expectedTotalPrice = DiscountService.ApplyDiscounts(
+            expectedComputerTotal + expectedPencilTotal,
+            [couponApplied.Discount]
+        );
+
+        var orderOwner = await Client.LoginAs(userWithCustomerRoleType);
+
+        Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
+
+        var createResponse = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var resourceLocation = createResponse.Headers.Location;
+        var getResourceResponse = await Client.GetAsync(resourceLocation);
+        var createdResourceContent = await getResourceResponse.Content.ReadFromJsonAsync<OrderDetailedResponse>();
+
+        createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        createdResourceContent!.Status.Should().Be("pending");
+        createdResourceContent.Should().NotBeNull();
+        createdResourceContent.Products.Should().Contain(expectedCreatedPencilResponse);
+        createdResourceContent.Products.Should().Contain(expectedCreatedComputerResponse);
+        createdResourceContent.OwnerId.Should().Be(orderOwner.Id.ToString());
+        createdResourceContent.Total.Should().Be(expectedTotalPrice);
+        createdResourceContent.Payment.Should().NotBeNull();
     }
 
     /// <summary>
@@ -107,7 +150,7 @@ public class PlaceOrderTests : BaseIntegrationTest
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         responseContent!.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        responseContent.Detail.Should().Be($"{pencil.Name} is not available. Current inventory: {pencil.Inventory.QuantityAvailable}. Order quantity: {quantityToBuy}");
+        responseContent.Detail.Should().Be("The product does not have available stock to complete the operation");
         responseContent.Title.Should().Be("Inventory Insufficient");
     }
 }

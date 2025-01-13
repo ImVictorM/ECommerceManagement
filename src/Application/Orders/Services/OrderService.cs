@@ -60,11 +60,11 @@ public class OrderService : IOrderService
         decimal total
     )
     {
-        var couponAppliedIds = couponsApplied.Select(c => c.CouponId);
+        var couponAppliedIds = couponsApplied.Select(c => c.CouponId).ToList();
 
         var coupons = await _unitOfWork.CouponRepository.FindAllAsync(c => couponAppliedIds.Contains(c.Id));
 
-        if (coupons.Count() != couponsApplied.Count())
+        if (coupons.Count() != couponAppliedIds.Count)
         {
             throw new InvalidOrderCouponAppliedException("Some of the applied coupons are expired");
         }

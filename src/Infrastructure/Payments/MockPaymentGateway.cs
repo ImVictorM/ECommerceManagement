@@ -86,7 +86,7 @@ public class MockPaymentGateway : IPaymentGateway
         await Task.CompletedTask;
 
         return new PaymentResponse(
-            PaymentId: Guid.NewGuid().ToString(),
+            PaymentId: paymentId.ToString(),
             PaymentMethod: "credit_card",
             Amount: 120m,
             Installments: 1,

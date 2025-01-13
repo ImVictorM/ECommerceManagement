@@ -67,6 +67,18 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "payment_statuses",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_payment_statuses", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "products",
                 columns: table => new
                 {
@@ -335,7 +347,11 @@ namespace Infrastructure.Migrations
                     id_owner = table.Column<long>(type: "bigint", nullable: false),
                     description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     id_order_status = table.Column<long>(type: "bigint", nullable: false),
-                    id_payment = table.Column<string>(type: "text", nullable: true),
+                    postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    street = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    neighborhood = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
+                    state = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    city = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -567,6 +583,33 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "payments",
+                columns: table => new
+                {
+                    id = table.Column<string>(type: "text", nullable: false),
+                    id_order = table.Column<long>(type: "bigint", nullable: false),
+                    id_payment_status = table.Column<long>(type: "bigint", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_payments", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_payments_orders_id_order",
+                        column: x => x.id_order,
+                        principalTable: "orders",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_payments_payment_statuses_id_payment_status",
+                        column: x => x.id_payment_status,
+                        principalTable: "payment_statuses",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "product_feedbacks",
                 columns: table => new
                 {
@@ -614,11 +657,6 @@ namespace Infrastructure.Migrations
                     accountable = table.Column<string>(type: "text", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
                     id_shipment_status = table.Column<long>(type: "bigint", nullable: false),
-                    postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    street = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    neighborhood = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
-                    state = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    city = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -696,6 +734,20 @@ namespace Infrastructure.Migrations
                     { 3L, "shipped" },
                     { 4L, "delivered" },
                     { 5L, "canceled" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "payment_statuses",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { 1L, "pending" },
+                    { 2L, "in_progress" },
+                    { 3L, "authorized" },
+                    { 4L, "approved" },
+                    { 5L, "rejected" },
+                    { 6L, "canceled" },
+                    { 7L, "refunded" }
                 });
 
             migrationBuilder.InsertData(
@@ -787,6 +839,23 @@ namespace Infrastructure.Migrations
                 name: "IX_orders_products_id_product",
                 table: "orders_products",
                 column: "id_product");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_payment_statuses_name",
+                table: "payment_statuses",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_payments_id_order",
+                table: "payments",
+                column: "id_order",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_payments_id_payment_status",
+                table: "payments",
+                column: "id_payment_status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_product_feedbacks_id_order",
@@ -960,6 +1029,9 @@ namespace Infrastructure.Migrations
                 name: "orders_coupons");
 
             migrationBuilder.DropTable(
+                name: "payments");
+
+            migrationBuilder.DropTable(
                 name: "product_feedbacks");
 
             migrationBuilder.DropTable(
@@ -997,6 +1069,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "orders_products");
+
+            migrationBuilder.DropTable(
+                name: "payment_statuses");
 
             migrationBuilder.DropTable(
                 name: "restriction_products");

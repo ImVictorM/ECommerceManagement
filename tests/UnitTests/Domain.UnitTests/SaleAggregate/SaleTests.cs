@@ -50,7 +50,13 @@ public class SaleTests
         HashSet<ProductReference> productsExcludedFromSale
     )
     {
-        var sale = SaleUtils.CreateSale(discount, categoriesInSale, productsInSale, productsExcludedFromSale);
+        var sale = SaleUtils.CreateSale(
+            discount: discount,
+            categoriesInSale: categoriesInSale,
+            productsInSale: productsInSale,
+            productsExcludeFromSale:
+            productsExcludedFromSale
+        );
 
         sale.Discount.Should().BeEquivalentTo(discount);
         sale.CategoriesInSale.Should().BeEquivalentTo(categoriesInSale);

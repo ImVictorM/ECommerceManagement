@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20250101002503_InitialCreate")]
+    [Migration("20250113172555_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -202,10 +202,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_owner");
 
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("text")
-                        .HasColumnName("id_payment");
-
                     b.Property<decimal>("Total")
                         .HasColumnType("numeric")
                         .HasColumnName("total");
@@ -221,6 +217,95 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("orders", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.PaymentAggregate.Enumerations.PaymentStatus", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("payment_statuses", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Name = "pending"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Name = "in_progress"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Name = "authorized"
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            Name = "approved"
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            Name = "rejected"
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            Name = "canceled"
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            Name = "refunded"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_order");
+
+                    b.Property<long>("PaymentStatusId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_payment_status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("PaymentStatusId");
+
+                    b.ToTable("payments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>
@@ -591,6 +676,49 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("SharedKernel.ValueObjects.Address", "DeliveryAddress", b1 =>
+                        {
+                            b1.Property<long>("OrderId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("city");
+
+                            b1.Property<string>("Neighborhood")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("neighborhood");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("postal_code");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("state");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("street");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
                     b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderCoupon", "CouponsApplied", b1 =>
                         {
                             b1.Property<long>("id")
@@ -743,9 +871,27 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CouponsApplied");
 
+                    b.Navigation("DeliveryAddress")
+                        .IsRequired();
+
                     b.Navigation("OrderStatusHistories");
 
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Domain.PaymentAggregate.Payment", b =>
+                {
+                    b.HasOne("Domain.OrderAggregate.Order", null)
+                        .WithOne()
+                        .HasForeignKey("Domain.PaymentAggregate.Payment", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.PaymentAggregate.Enumerations.PaymentStatus", null)
+                        .WithMany()
+                        .HasForeignKey("PaymentStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.ProductAggregate.Product", b =>
@@ -1041,49 +1187,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("SharedKernel.ValueObjects.Address", "DeliveryAddress", b1 =>
-                        {
-                            b1.Property<long>("ShipmentId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("city");
-
-                            b1.Property<string>("Neighborhood")
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("neighborhood");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("character varying(10)")
-                                .HasColumnName("postal_code");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("state");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("street");
-
-                            b1.HasKey("ShipmentId");
-
-                            b1.ToTable("shipments");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ShipmentId");
-                        });
-
                     b.OwnsMany("Domain.ShipmentAggregate.ValueObjects.ShipmentStatusHistory", "ShipmentStatusHistories", b1 =>
                         {
                             b1.Property<long>("id")
@@ -1122,9 +1225,6 @@ namespace Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("id_shipment");
                         });
-
-                    b.Navigation("DeliveryAddress")
-                        .IsRequired();
 
                     b.Navigation("ShipmentStatusHistories");
                 });

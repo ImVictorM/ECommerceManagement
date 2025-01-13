@@ -9,7 +9,7 @@ namespace Contracts.Orders;
 /// <param name="PurchasedPrice">The product purchase price.</param>
 public record OrderProductResponse(
     string ProductId,
-    string Quantity,
+    int Quantity,
     decimal BasePrice,
     decimal PurchasedPrice
 );

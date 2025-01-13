@@ -19,13 +19,13 @@ public class PaymentConfigurations : IEntityTypeConfiguration<Payment>
     {
         builder.ToTable("payments");
 
-        builder.HasKey(p => p.Id);
-
         builder
             .Property(p => p.Id)
             .HasConversion(id => id.Value, value => PaymentId.Create(value))
-            .ValueGeneratedOnAdd()
+            .ValueGeneratedNever()
             .IsRequired();
+
+        builder.HasKey(p => p.Id);
 
         builder
             .HasOne<Order>()

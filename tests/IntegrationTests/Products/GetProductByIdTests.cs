@@ -40,7 +40,7 @@ public class GetProductByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetProductById_WhenProductExists_RetrievesItAndReturnsOk()
     {
-        var productToFetch = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_WITH_DISCOUNTS);
+        var productToFetch = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_ON_SALE);
 
         var response = await Client.GetAsync($"/products/{productToFetch.Id}");
         var responseContent = await response.Content.ReadFromJsonAsync<ProductResponse>();
