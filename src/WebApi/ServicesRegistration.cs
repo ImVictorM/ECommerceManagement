@@ -1,10 +1,11 @@
+using WebApi.Common.Interfaces;
+
+using MapsterMapper;
 using Carter;
 using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
-using WebApi.Common.Interfaces;
 
 namespace WebApi;
 
@@ -17,11 +18,12 @@ public static class ServicesRegistration
     /// Add the required dependencies of the presentation layer.
     /// </summary>
     /// <param name="services">The app services.</param>
+    /// <param name="configuration">The app configuration.</param>
     /// <returns>
     /// The app services including the registration of the presentation layer
     /// required services.
     /// </returns>
-    public static IServiceCollection AddPresentation(this IServiceCollection services)
+    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfigurationManager configuration)
     {
         services.AddCarter();
         services.AddHttpContextAccessor();

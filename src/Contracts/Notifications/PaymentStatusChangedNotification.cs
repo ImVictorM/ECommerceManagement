@@ -5,4 +5,4 @@ namespace Contracts.Notifications;
 /// </summary>
 /// <param name="PaymentId">The payment id.</param>
 /// <param name="PaymentStatus">The payment status.</param>
-public record PaymentStatusNotification(string PaymentId, string PaymentStatus);
+public record PaymentStatusChangedNotification(string PaymentId, string PaymentStatus);

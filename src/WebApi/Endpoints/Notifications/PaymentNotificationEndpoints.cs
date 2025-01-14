@@ -1,11 +1,13 @@
 using Contracts.Notifications;
 
+using Application.Payments.Commands.UpdatePaymentStatus;
+
 using Carter;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Application.Payments.Commands.UpdatePaymentStatus;
+using Application.Common.Interfaces.Authentication;
 
 namespace WebApi.Endpoints.Notifications;
 
@@ -27,15 +29,29 @@ public class PaymentNotificationEndpoints : ICarterModule
             .WithTags("Notifications", "Payments")
             .WithOpenApi();
 
-        paymentNotificationGroup.MapPost("/", ReceivePaymentStatusNotification);
+        paymentNotificationGroup.MapPost("/", HandlePaymentStatusChangedNotification);
     }
 
-    private async Task<NoContent> ReceivePaymentStatusNotification(
-        [FromBody] PaymentStatusNotification notification,
+    private async Task<Results<NoContent, UnauthorizedHttpResult>> HandlePaymentStatusChangedNotification(
+        [FromHeader(Name = "X-Provider-Signature")] string providerSignature,
+        [FromBody] PaymentStatusChangedNotification notification,
+        HttpRequest request,
+        IHmacSignatureProvider hmacSignatureProvider,
         ISender sender,
         IMapper mapper
     )
     {
+        using var requestBodyReader = new StreamReader(request.Body);
+
+        var payload = await requestBodyReader.ReadToEndAsync();
+
+        var computedSignature = hmacSignatureProvider.ComputeHmac(payload);
+
+        if (!hmacSignatureProvider.Verify(computedSignature, providerSignature))
+        {
+            return TypedResults.Unauthorized();
+        }
+
         var command = mapper.Map<UpdatePaymentStatusCommand>(notification);
 
         await sender.Send(command);

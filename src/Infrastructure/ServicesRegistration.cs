@@ -1,18 +1,21 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+
+using Application.Common.Interfaces.Authentication;
+using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces.Payments;
+
+using Infrastructure.Persistence.Interceptors;
 using Infrastructure.Authentication;
 using Infrastructure.Persistence;
-using Application.Common.Interfaces.Authentication;
+using Infrastructure.Payments;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Infrastructure.Persistence.Interceptors;
-using Application.Common.Interfaces.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Infrastructure.Payments;
-using Application.Common.Interfaces.Payments;
 
 namespace Infrastructure;
 
@@ -42,6 +45,8 @@ public static class ServicesRegistration
 
         services.AddSingleton(Options.Create(dbConnectionSettings));
 
+        services.Configure<HmacSignatureSettings>(configuration.GetSection(HmacSignatureSettings.SectionName));
+
         services.AddDbContext<ECommerceDbContext>(options =>
         {
             if (!environment.IsProduction())
@@ -55,6 +60,7 @@ public static class ServicesRegistration
         services.AddAuth(configuration);
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IHmacSignatureProvider, HmacSignatureProvider>();
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPaymentGateway, MockPaymentGateway>();

@@ -12,7 +12,7 @@ public class PaymentMappingConfig : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<PaymentStatusNotification, UpdatePaymentStatusCommand>()
+        config.NewConfig<PaymentStatusChangedNotification, UpdatePaymentStatusCommand>()
             .MapWith(src => new UpdatePaymentStatusCommand(src.PaymentId, src.PaymentStatus));
     }
 }

@@ -16,6 +16,7 @@ services:
       - DbConnectionSettings__Username=${POSTGRES_USER}
       - DbConnectionSettings__Database=ecommerce-management
       - JwtSettings__Secret=${TOKEN_SECRET}
+      - HmacSignatureSettings__Secret=${HMAC_SIGNATURE_SECRET}
     ports:
      - 8000:8080
   database:
