@@ -1,6 +1,8 @@
-using FluentAssertions;
+using SharedKernel.Errors;
 using SharedKernel.Models;
 using static SharedKernel.UnitTests.Models.TestUtils.BaseEnumerationUtils;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.Models;
 
@@ -103,7 +105,7 @@ public class BaseEnumerationTests
         FluentActions
             .Invoking(() => BaseEnumeration.FromValue<SampleEnumeration>(3))
             .Should()
-            .Throw<InvalidOperationException>();
+            .Throw<InvalidParseException>();
     }
 
     /// <summary>
@@ -126,7 +128,7 @@ public class BaseEnumerationTests
         FluentActions
             .Invoking(() => BaseEnumeration.FromDisplayName<SampleEnumeration>("Invalid"))
             .Should()
-            .Throw<InvalidOperationException>();
+            .Throw<InvalidParseException>();
     }
 
     /// <summary>

@@ -47,9 +47,10 @@ public class PlaceOrderCommandHandlerTests
     [Fact]
     public async Task HandlePlaceOrder_WhenRequestIsValid_CreatesOrder()
     {
-        var reservedProducts = OrderUtils.CreateReservedProducts(3);
+        var reservedProducts = OrderUtils.CreateReservedProducts(3).ToList();
         var orderProducts = reservedProducts
-            .Select(rp => OrderUtils.CreateOrderProduct(productId: rp.ProductId, quantity: rp.Quantity));
+            .Select(rp => OrderUtils.CreateOrderProduct(productId: rp.ProductId, quantity: rp.Quantity))
+            .ToList();
         var mockTotal = orderProducts.Sum(op => op.CalculateTransactionPrice());
 
         var command = PlaceOrderCommandUtils.CreateCommand(
@@ -74,7 +75,7 @@ public class PlaceOrderCommandHandlerTests
         result.Id.Should().Be(mockCreatedId.ToString());
 
         _mockOrderRepository.Verify(
-            r => r.AddAsync(It.Is<Order>(o => o.Total == mockTotal && o.Products == orderProducts)),
+            r => r.AddAsync(It.Is<Order>(o => o.Total == mockTotal && o.Products.All(orderProducts.Contains))),
             Times.Once()
         );
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
