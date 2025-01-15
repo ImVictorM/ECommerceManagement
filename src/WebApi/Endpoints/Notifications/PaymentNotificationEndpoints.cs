@@ -8,6 +8,8 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Application.Common.Interfaces.Authentication;
+using System.Text.Json;
+using WebApi.Common.Utils;
 
 namespace WebApi.Endpoints.Notifications;
 
@@ -32,17 +34,17 @@ public class PaymentNotificationEndpoints : ICarterModule
         paymentNotificationGroup.MapPost("/", HandlePaymentStatusChangedNotification);
     }
 
-    private async Task<Results<NoContent, UnauthorizedHttpResult>> HandlePaymentStatusChangedNotification(
+    private async Task<Results<NoContent, BadRequest, UnauthorizedHttpResult>> HandlePaymentStatusChangedNotification(
         [FromHeader(Name = "X-Provider-Signature")] string providerSignature,
-        [FromBody] PaymentStatusChangedNotification notification,
         HttpRequest request,
         IHmacSignatureProvider hmacSignatureProvider,
         ISender sender,
         IMapper mapper
     )
     {
-        using var requestBodyReader = new StreamReader(request.Body);
+        request.EnableBuffering();
 
+        using var requestBodyReader = new StreamReader(request.Body);
         var payload = await requestBodyReader.ReadToEndAsync();
 
         var computedSignature = hmacSignatureProvider.ComputeHmac(payload);
@@ -50,6 +52,18 @@ public class PaymentNotificationEndpoints : ICarterModule
         if (!hmacSignatureProvider.Verify(computedSignature, providerSignature))
         {
             return TypedResults.Unauthorized();
+        }
+
+        //  rewind the stream to the beginning for deserialization
+        request.Body.Position = 0;
+
+        var notification = await JsonSerializerUtils.DeserializeFromWebAsync<PaymentStatusChangedNotification>(
+            requestBodyReader.BaseStream
+        );
+
+        if (notification == null)
+        {
+            return TypedResults.BadRequest();
         }
 
         var command = mapper.Map<UpdatePaymentStatusCommand>(notification);

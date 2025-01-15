@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Persistence;
 using Application.Payments.Common.Errors;
+
 using MediatR;
 
 namespace Application.Payments.Commands.UpdatePaymentStatus;

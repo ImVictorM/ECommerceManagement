@@ -1,4 +1,5 @@
 using System.Reflection;
+using SharedKernel.Errors;
 
 namespace SharedKernel.Models;
 
@@ -209,6 +210,6 @@ public abstract class BaseEnumeration : IComparable
     {
         return
             GetAll<T>().FirstOrDefault(predicate) ??
-            throw new InvalidOperationException($"'{value}' is not a valid {description} in {typeof(T)}");
+            throw new InvalidParseException($"'{value}' is not a valid {description} in {typeof(T)}");
     }
 }
