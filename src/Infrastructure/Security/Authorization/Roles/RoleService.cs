@@ -13,7 +13,11 @@ public class RoleService : IRoleService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    internal RoleService(IUnitOfWork unitOfWork)
+    /// <summary>
+    /// Initiates a new instance of the <see cref="RoleService"/> class.
+    /// </summary>
+    /// <param name="unitOfWork">The unit of work.</param>
+    public RoleService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

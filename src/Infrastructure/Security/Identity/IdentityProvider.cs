@@ -13,7 +13,12 @@ public class IdentityProvider : IIdentityProvider
 {
     private readonly HttpContext _httpContext;
 
-    internal IdentityProvider(IHttpContextAccessor httpContextAccessor)
+    /// <summary>
+    /// Initiates a new instance of the <see cref="IdentityProvider"/> class.
+    /// </summary>
+    /// <param name="httpContextAccessor">The http context accessor.</param>
+    /// <exception cref="InvalidOperationException">Exception thrown when the http context is null.</exception>
+    public IdentityProvider(IHttpContextAccessor httpContextAccessor)
     {
         if (httpContextAccessor.HttpContext == null)
         {

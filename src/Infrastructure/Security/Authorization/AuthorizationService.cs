@@ -15,7 +15,12 @@ public class AuthorizationService : IAuthorizationService
     private readonly IIdentityProvider _identityProvider;
     private readonly IServiceProvider _serviceProvider;
 
-    internal AuthorizationService(IIdentityProvider identityProvider, IServiceProvider serviceProvider)
+    /// <summary>
+    /// Initiates a new instance of the <see cref="AuthorizationService"/> class.
+    /// </summary>
+    /// <param name="identityProvider">The identity provider.</param>
+    /// <param name="serviceProvider">The service provider.</param>
+    public AuthorizationService(IIdentityProvider identityProvider, IServiceProvider serviceProvider)
     {
         _identityProvider = identityProvider;
         _serviceProvider = serviceProvider;

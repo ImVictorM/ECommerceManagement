@@ -94,8 +94,6 @@ public static class ServicesRegistration
         configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
         services.AddSingleton(Options.Create(jwtSettings));
-        services.AddScoped<IJwtTokenService, JwtTokenService>();
-
         services.Configure<HmacSignatureSettings>(configuration.GetSection(HmacSignatureSettings.SectionName));
 
         services
@@ -116,11 +114,12 @@ public static class ServicesRegistration
                 };
             });
 
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IHmacSignatureProvider, HmacSignatureProvider>();
+        services.AddScoped<IIdentityProvider, IdentityProvider>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
         services.AddScoped<IRoleService, RoleService>();
-        services.AddScoped<IIdentityProvider, IdentityProvider>();
 
         return services;
     }
