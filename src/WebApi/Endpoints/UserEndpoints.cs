@@ -5,16 +5,12 @@ using Application.Users.Queries.GetUserById;
 
 using Contracts.Users;
 
-using WebApi.Authorization.AdminRequired;
-using WebApi.Common.Extensions;
-
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MapsterMapper;
 using MediatR;
 using Carter;
+using Application.Users.Queries.GetSelf;
 
 namespace WebApi.Endpoints;
 
@@ -47,9 +43,9 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get User By Id",
-                Description = "Retrieves a specific user's details by identifier. Admin authentication is required.",
+                Description = "Retrieves a specific user's details by identifier. Admin authentication required.",
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         userGroup
             .MapGet("/", GetAllUsers)
@@ -59,7 +55,7 @@ public sealed class UserEndpoints : ICarterModule
                 Summary = "Get All Users",
                 Description = "Retrieves the users. The {{active}} query parameter is optional and can be used to filter active/inactive users. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         userGroup
             .MapPut("/{id:long}", UpdateUser)
@@ -83,19 +79,11 @@ public sealed class UserEndpoints : ICarterModule
     }
 
     private async Task<Results<Ok<UserResponse>, BadRequest, UnauthorizedHttpResult>> GetUserByAuthenticationToken(
-        IHttpContextAccessor httpContextAccessor,
         ISender sender,
         IMapper mapper
     )
     {
-        var userId = httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-        if (userId == null)
-        {
-            return TypedResults.Unauthorized();
-        }
-
-        var query = new GetUserByIdQuery(userId);
+        var query = new GetSelfQuery();
 
         var result = await sender.Send(query);
 
@@ -132,13 +120,10 @@ public sealed class UserEndpoints : ICarterModule
         [FromRoute] string id,
         [FromBody] UpdateUserRequest request,
         ISender sender,
-        IMapper mapper,
-        IHttpContextAccessor contextAccessor
+        IMapper mapper
     )
     {
-        var idAuthenticatedUser = contextAccessor.HttpContext!.User.GetId();
-
-        var command = mapper.Map<UpdateUserCommand>((idAuthenticatedUser, id, request));
+        var command = mapper.Map<UpdateUserCommand>((id, request));
 
         await sender.Send(command);
 
@@ -147,13 +132,10 @@ public sealed class UserEndpoints : ICarterModule
 
     private async Task<Results<NoContent, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
         [FromRoute] string id,
-        ISender sender,
-        IHttpContextAccessor contextAccessor
+        ISender sender
     )
     {
-        var idUserAuthenticated = contextAccessor.HttpContext!.User.GetId();
-
-        var command = new DeactivateUserCommand(idUserAuthenticated, id);
+        var command = new DeactivateUserCommand(id);
 
         await sender.Send(command);
 

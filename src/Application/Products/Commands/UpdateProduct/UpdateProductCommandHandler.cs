@@ -1,6 +1,5 @@
 using Application.Common.Errors;
-using Application.Common.Interfaces.Persistence;
-
+using Application.Common.Persistence;
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;

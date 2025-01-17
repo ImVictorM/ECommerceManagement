@@ -1,14 +1,13 @@
 using Contracts.Notifications;
 
 using Application.Payments.Commands.UpdatePaymentStatus;
+using Application.Common.Security.Authentication;
 
 using Carter;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Application.Common.Interfaces.Authentication;
-using System.Text.Json;
 using WebApi.Common.Utils;
 
 namespace WebApi.Endpoints.Notifications;

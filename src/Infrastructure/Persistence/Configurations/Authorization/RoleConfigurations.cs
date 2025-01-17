@@ -1,6 +1,6 @@
+using Application.Common.Security.Authorization.Roles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedKernel.Authorization;
 
 namespace Infrastructure.Persistence.Configurations.Authorization;
 

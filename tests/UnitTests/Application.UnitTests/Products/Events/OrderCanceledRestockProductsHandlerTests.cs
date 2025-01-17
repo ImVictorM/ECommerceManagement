@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.Products.Events;
 using Application.UnitTests.TestUtils.Events.Orders;
 
@@ -9,6 +8,7 @@ using Domain.UnitTests.TestUtils;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Products.Events;
 

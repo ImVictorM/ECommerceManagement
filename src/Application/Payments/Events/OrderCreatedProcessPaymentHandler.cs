@@ -1,6 +1,5 @@
-using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Persistence;
-
+using Application.Common.PaymentGateway;
+using Application.Common.Persistence;
 using Domain.OrderAggregate.Events;
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.ValueObjects;
@@ -35,14 +34,14 @@ public class OrderCreatedProcessPaymentHandler : INotificationHandler<OrderCreat
         var payer = await _unitOfWork.UserRepository
             .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.Order.OwnerId));
 
-        var response = await _paymentGateway.AuthorizePaymentAsync(
+        var response = await _paymentGateway.AuthorizePaymentAsync(new AuthorizePaymentInput(
             requestId: notification.RequestId,
             order: notification.Order,
             paymentMethod: notification.PaymentMethod,
             payer: payer,
             billingAddress: notification.BillingAddress,
             installments: notification.Installments
-        );
+        ));
 
         var payment = Payment.Create(
             PaymentId.Create(response.PaymentId),

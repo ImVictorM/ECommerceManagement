@@ -11,7 +11,7 @@ public partial class UpdateUserCommandHandler
         Level = LogLevel.Debug,
         Message = "Initiating user update. User id: {Id}."
     )]
-    private partial void LogInitiatingUserUpdate(string id);
+    private partial void LogInitiatingUserUpdate(string? id);
 
     [LoggerMessage(
         EventId = 2,

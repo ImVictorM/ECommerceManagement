@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.Orders.Events;
 
 using Domain.OrderAggregate.Enumerations;
@@ -10,6 +9,7 @@ using Domain.OrderAggregate;
 using FluentAssertions;
 using Moq;
 using Application.UnitTests.TestUtils.Events.Payments;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Orders.Events;
 

@@ -1,4 +1,4 @@
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Application.Products.Queries.Common.DTOs;
 
 using Domain.CategoryAggregate.ValueObjects;

@@ -1,4 +1,4 @@
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Application.Shipments.Events;
 using Application.UnitTests.TestUtils.Events.Orders;
 

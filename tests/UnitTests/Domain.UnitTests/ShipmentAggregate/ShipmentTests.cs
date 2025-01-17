@@ -1,5 +1,5 @@
 using Domain.OrderAggregate.ValueObjects;
-using Domain.ShipmentAggregate.Entities;
+using Domain.ShipmentAggregate.Enumerations;
 using Domain.UnitTests.TestUtils;
 
 using FluentAssertions;

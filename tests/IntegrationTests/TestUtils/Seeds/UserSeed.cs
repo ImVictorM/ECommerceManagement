@@ -1,8 +1,8 @@
+using Application.Common.Security.Authorization.Roles;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
-using Infrastructure.Authentication;
-using SharedKernel.Authorization;
+using Infrastructure.Security.Authentication;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 

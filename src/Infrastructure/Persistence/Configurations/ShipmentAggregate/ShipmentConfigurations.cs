@@ -1,7 +1,7 @@
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
-using Domain.ShipmentAggregate.Entities;
+using Domain.ShipmentAggregate.Enumerations;
 using Domain.ShipmentAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

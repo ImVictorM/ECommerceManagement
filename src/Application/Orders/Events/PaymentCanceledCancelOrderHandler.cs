@@ -1,5 +1,4 @@
-using Application.Common.Interfaces.Persistence;
-
+using Application.Common.Persistence;
 using Domain.PaymentAggregate.Events;
 
 using MediatR;

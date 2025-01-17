@@ -23,14 +23,7 @@ public partial class LoginQueryHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "User with email {Email} was successfully authenticated. Initiating token generation."
+        Message = "User with email {Email} was successfully authenticated."
     )]
     private partial void LogSuccessfullyAuthenticatedUser(string email);
-
-    [LoggerMessage(
-        EventId = 4,
-        Level = LogLevel.Debug,
-        Message = "JWT token generated successfully."
-    )]
-    private partial void LogTokenGenerated();
 }

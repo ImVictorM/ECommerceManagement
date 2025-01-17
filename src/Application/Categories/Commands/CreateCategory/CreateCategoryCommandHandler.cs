@@ -1,6 +1,5 @@
 using Application.Common.DTOs;
-using Application.Common.Interfaces.Persistence;
-
+using Application.Common.Persistence;
 using Domain.CategoryAggregate;
 
 using MediatR;

@@ -1,5 +1,5 @@
-using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.PaymentGateway;
+using Application.Common.Persistence;
 using Application.Payments.Events;
 using Application.UnitTests.TestUtils.Events.Payments;
 
@@ -43,7 +43,7 @@ public class PaymentAuthorizedCapturePaymentHandlerTests
             paymentStatus: PaymentStatus.Authorized
         );
 
-        var mockPaymentStatusResponse = new Mock<IPaymentStatusResponse>();
+        var mockPaymentStatusResponse = new Mock<PaymentStatusResponse>();
 
         mockPaymentStatusResponse.SetupGet(x => x.Status).Returns(PaymentStatus.Approved);
 

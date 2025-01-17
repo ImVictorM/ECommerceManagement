@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.Categories.Common.Errors;
 using Application.Categories.Queries.GetCategoryById;
 using Application.UnitTests.Categories.Queries.TestUtils;
@@ -11,6 +10,7 @@ using Moq;
 using FluentAssertions;
 
 using Domain.UnitTests.TestUtils;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Categories.Queries.GetCategoryById;
 

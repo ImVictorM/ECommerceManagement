@@ -1,7 +1,5 @@
 using Application.Authentication.Commands.Register;
 using Application.Common.Errors;
-using Application.Common.Interfaces.Authentication;
-using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Authentication.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Constants;
 
@@ -15,7 +13,9 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.Authorization;
+using Application.Common.Security.Authorization.Roles;
+using Application.Common.Security.Authentication;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Authentication.Commands.Register;
 

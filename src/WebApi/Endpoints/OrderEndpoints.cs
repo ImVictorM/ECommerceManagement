@@ -3,9 +3,6 @@ using Application.Orders.Queries.GetOrderById;
 
 using Contracts.Orders;
 
-using WebApi.Authorization.CustomerRequired;
-using WebApi.Common.Extensions;
-
 using Carter;
 using MapsterMapper;
 using MediatR;
@@ -40,7 +37,7 @@ public class OrderEndpoints : ICarterModule
                 Summary = "Place Order",
                 Description = "Places an order for a customer. Customer authentication required."
             })
-            .RequireAuthorization(CustomerRequiredPolicy.Name);
+            .RequireAuthorization();
 
         orderGroup
             .MapGet("/{id:long}", GetOrderById)
@@ -48,7 +45,7 @@ public class OrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Order By Id",
-                Description = "Retrieves an order by identifier. Customers can only retrieve their own orders. Administrators can access any order."
+                Description = "Retrieves an order by identifier. Administrators can access any order."
             })
             .RequireAuthorization();
     }
@@ -56,7 +53,6 @@ public class OrderEndpoints : ICarterModule
     private async Task<Results<Created, UnauthorizedHttpResult, BadRequest, BadRequest<string>>> PlaceOrder(
         [FromHeader(Name = "X-Idempotency-Key")] string requestId,
         [FromBody] PlaceOrderRequest request,
-        IHttpContextAccessor httpContextAccessor,
         IMapper mapper,
         ISender sender
     )
@@ -66,9 +62,7 @@ public class OrderEndpoints : ICarterModule
             return TypedResults.BadRequest("Missing request unique identifier");
         }
 
-        var authenticatedUserId = httpContextAccessor.HttpContext!.User.GetId();
-
-        var command = mapper.Map<PlaceOrderCommand>((authenticatedUserId, guidRequestId, request));
+        var command = mapper.Map<PlaceOrderCommand>((guidRequestId, request));
 
         var response = await sender.Send(command);
 
@@ -78,13 +72,10 @@ public class OrderEndpoints : ICarterModule
     private async Task<Results<Ok<OrderDetailedResponse>, ForbidHttpResult, NotFound>> GetOrderById(
         [FromRoute] string id,
         ISender sender,
-        IMapper mapper,
-        IHttpContextAccessor contextAccessor
+        IMapper mapper
     )
     {
-        var authenticatedUserId = contextAccessor.HttpContext!.User.GetId();
-
-        var query = new GetOrderByIdQuery(authenticatedUserId, id);
+        var query = new GetOrderByIdQuery(id);
 
         var result = await sender.Send(query);
 

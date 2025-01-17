@@ -16,6 +16,7 @@ using System.Text;
 using Xunit.Abstractions;
 using Microsoft.Extensions.Options;
 using FluentAssertions;
+using Infrastructure.Security.Authentication;
 
 namespace IntegrationTests.Notifications.Payments;
 

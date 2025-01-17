@@ -1,4 +1,4 @@
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.Commands.TestUtils;
 using Application.UnitTests.Orders.TestUtils.Extensions;

@@ -1,4 +1,4 @@
-using Domain.ShipmentAggregate.Entities;
+using Domain.ShipmentAggregate.Enumerations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

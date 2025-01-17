@@ -1,7 +1,6 @@
 using Application.Categories.Common.DTOs;
 using Application.Categories.Common.Errors;
-using Application.Common.Interfaces.Persistence;
-
+using Application.Common.Persistence;
 using Domain.CategoryAggregate.ValueObjects;
 
 using MediatR;

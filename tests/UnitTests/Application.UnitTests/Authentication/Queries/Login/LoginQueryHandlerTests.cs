@@ -1,7 +1,5 @@
 using Application.Authentication.Common.Errors;
 using Application.Authentication.Queries.Login;
-using Application.Common.Interfaces.Authentication;
-using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Authentication.Queries.TestUtils;
 using Application.UnitTests.TestUtils.Constants;
 
@@ -16,6 +14,8 @@ using SharedKernel.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Application.Common.Security.Authentication;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Authentication.Queries.Login;
 

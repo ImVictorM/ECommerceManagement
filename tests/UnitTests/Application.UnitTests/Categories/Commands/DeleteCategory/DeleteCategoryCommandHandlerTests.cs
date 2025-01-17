@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.Categories.Commands.DeleteCategory;
 using Application.UnitTests.Categories.Commands.TestUtils;
 using Application.Categories.Common.Errors;
@@ -10,6 +9,7 @@ using Domain.CategoryAggregate;
 using Microsoft.Extensions.Logging;
 using Moq;
 using FluentAssertions;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Categories.Commands.DeleteCategory;
 

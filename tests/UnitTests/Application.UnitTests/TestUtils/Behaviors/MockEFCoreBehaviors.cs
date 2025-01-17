@@ -1,9 +1,8 @@
-using Application.Common.Interfaces.Persistence;
-
 using SharedKernel.Models;
 using SharedKernel.UnitTests.TestUtils.Extensions;
 
 using Moq;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.TestUtils.Behaviors;
 

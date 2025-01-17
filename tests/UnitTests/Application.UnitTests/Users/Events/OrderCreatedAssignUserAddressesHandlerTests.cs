@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.TestUtils.Events.Orders;
 using Application.Users.Events;
 
@@ -11,6 +10,7 @@ using SharedKernel.UnitTests.TestUtils;
 
 using FluentAssertions;
 using Moq;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Users.Events;
 

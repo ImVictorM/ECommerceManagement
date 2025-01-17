@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.Orders.Common.Errors;
 using Application.Orders.Services;
 
@@ -16,6 +15,7 @@ using SharedKernel.UnitTests.TestUtils;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Orders.Services;
 

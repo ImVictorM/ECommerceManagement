@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.Categories.Queries.GetCategories;
 using Application.UnitTests.Categories.Queries.TestUtils;
 
@@ -10,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Linq.Expressions;
 using FluentAssertions;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Categories.Queries.GetCategories;
 

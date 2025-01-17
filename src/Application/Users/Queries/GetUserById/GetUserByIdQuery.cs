@@ -1,5 +1,7 @@
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
 using Application.Users.Common.DTOs;
-using MediatR;
 
 namespace Application.Users.Queries.GetUserById;
 
@@ -7,4 +9,5 @@ namespace Application.Users.Queries.GetUserById;
 /// Query to get the user by identifier.
 /// </summary>
 /// <param name="Id">The identifier value.</param>
-public record GetUserByIdQuery(string Id) : IRequest<UserResult>;
+[Authorize(roleName: nameof(Role.Admin))]
+public record GetUserByIdQuery(string Id) : RequestWithAuthorization<UserResult>;

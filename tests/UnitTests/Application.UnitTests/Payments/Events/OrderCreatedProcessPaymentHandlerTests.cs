@@ -1,5 +1,3 @@
-using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Persistence;
 using Application.Payments.Events;
 using Application.UnitTests.TestUtils.Events.Orders;
 
@@ -15,6 +13,8 @@ using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
 using Moq;
+using Application.Common.Persistence;
+using Application.Common.PaymentGateway;
 
 namespace Application.UnitTests.Payments.Events;
 
@@ -55,7 +55,7 @@ public class OrderCreatedProcessPaymentHandlerTests
         var payer = UserUtils.CreateUser(id: payerId);
         var order = await OrderUtils.CreateOrderAsync(ownerId: payerId);
 
-        var mockPaymentResponse = new Mock<IPaymentResponse>();
+        var mockPaymentResponse = new Mock<PaymentResponse>();
         mockPaymentResponse.SetupGet(x => x.PaymentId).Returns(Guid.NewGuid().ToString());
         mockPaymentResponse.SetupGet(x => x.Status).Returns(PaymentStatus.Pending);
 

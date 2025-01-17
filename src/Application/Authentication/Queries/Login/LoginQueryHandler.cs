@@ -1,12 +1,17 @@
-using Application.Authentication.Common.DTOs;
-using Application.Authentication.Common.Errors;
-using Application.Common.Interfaces.Authentication;
-using Application.Common.Interfaces.Persistence;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
+
+using Application.Authentication.Common.DTOs;
+using Application.Authentication.Common.Errors;
+using Application.Common.Persistence;
+using Application.Common.Security.Authentication;
+using Application.Common.Security.Authorization.Roles;
+using Application.Common.Security.Identity;
+
+using SharedKernel.ValueObjects;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SharedKernel.ValueObjects;
 
 namespace Application.Authentication.Queries.Login;
 
@@ -17,7 +22,7 @@ namespace Application.Authentication.Queries.Login;
 public partial class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
 {
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IJwtTokenService _jwtTokenGenerator;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
@@ -35,7 +40,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
     )
     {
         _passwordHasher = passwordHasher;
-        _jwtTokenGenerator = jwtTokenGenerator;
+        _jwtTokenService = jwtTokenGenerator;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -47,9 +52,9 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
 
         LogHandlingLoginQuery(inputEmail.Value);
 
-        var user = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(
-            new QueryUserByEmailSpecification(inputEmail).And(new QueryActiveUserSpecification())
-        );
+        var userQuerySpecification = new QueryUserByEmailSpecification(inputEmail).And(new QueryActiveUserSpecification());
+
+        var user = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(userQuerySpecification);
 
         if (user == null || !IsUserPasswordCorrect(query, user))
         {
@@ -58,12 +63,23 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
             throw new AuthenticationFailedException();
         }
 
+        var token = GenerateToken(user);
+
         LogSuccessfullyAuthenticatedUser(query.Email);
 
-        var token = _jwtTokenGenerator.GenerateToken(user);
-        LogTokenGenerated();
-
         return new AuthenticationResult(user, token);
+    }
+
+    private string GenerateToken(User user)
+    {
+        var availableRoles = Role.List().ToDictionary(r => r.Id);
+        var userRoleNames = user.UserRoles.Select(ur => availableRoles[ur.RoleId].Name).ToList();
+
+        var userIdentity = new IdentityUser(user.Id.ToString(), userRoleNames);
+
+        var token = _jwtTokenService.GenerateToken(userIdentity);
+
+        return token;
     }
 
     private bool IsUserPasswordCorrect(LoginQuery query, User user)

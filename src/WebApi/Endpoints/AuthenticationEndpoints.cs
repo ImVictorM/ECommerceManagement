@@ -1,5 +1,6 @@
 using Application.Authentication.Commands.Register;
 using Application.Authentication.Queries.Login;
+
 using Carter;
 using Contracts.Authentication;
 using MapsterMapper;

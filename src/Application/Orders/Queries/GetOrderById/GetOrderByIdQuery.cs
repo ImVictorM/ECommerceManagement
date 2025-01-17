@@ -1,11 +1,13 @@
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
 using Application.Orders.Common.DTOs;
-using MediatR;
 
 namespace Application.Orders.Queries.GetOrderById;
 
 /// <summary>
 /// Query to retrieve an order by id.
 /// </summary>
-/// <param name="CurrentUserId">The identifier of the current user.</param>
 /// <param name="OrderId">The order id.</param>
-public record GetOrderByIdQuery(string CurrentUserId, string OrderId) : IRequest<OrderDetailedResult>;
+[Authorize(roleName: nameof(Role.Admin))]
+public record GetOrderByIdQuery(string OrderId) : RequestWithAuthorization<OrderDetailedResult>;

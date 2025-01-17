@@ -1,3 +1,7 @@
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
+
 using MediatR;
 
 namespace Application.Categories.Commands.UpdateCategory;
@@ -7,4 +11,5 @@ namespace Application.Categories.Commands.UpdateCategory;
 /// </summary>
 /// <param name="Id">The category id.</param>
 /// <param name="Name">The new category name.</param>
-public record UpdateCategoryCommand(string Id, string Name) : IRequest<Unit>;
+[Authorize(roleName: nameof(Role.Admin))]
+public record UpdateCategoryCommand(string Id, string Name) : RequestWithAuthorization<Unit>;

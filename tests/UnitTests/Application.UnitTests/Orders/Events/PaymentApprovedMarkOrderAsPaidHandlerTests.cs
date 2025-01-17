@@ -1,4 +1,4 @@
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Application.Orders.Common.Errors;
 using Application.Orders.Events;
 using Application.UnitTests.TestUtils.Events.Payments;

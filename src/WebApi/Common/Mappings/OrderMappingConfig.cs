@@ -15,14 +15,13 @@ public class OrderMappingConfig : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<(string AuthenticatedUserId, Guid requestId, PlaceOrderRequest Request), PlaceOrderCommand>()
+        config.NewConfig<(Guid requestId, PlaceOrderRequest Request), PlaceOrderCommand>()
             .Map(dest => dest, src => src.Request)
             .Map(dest => dest.requestId, src => src.requestId)
             .Map(dest => dest.BillingAddress, src => src.Request.BillingAddress)
             .Map(dest => dest.CouponAppliedIds, src => src.Request.CouponAppliedIds)
             .Map(dest => dest.DeliveryAddress, src => src.Request.DeliveryAddress)
             .Map(dest => dest.Products, src => src.Request.Products.Select(p => new OrderProductInput(p.ProductId, p.Quantity)))
-            .Map(dest => dest.CurrentUserId, src => src.AuthenticatedUserId)
             .Map(dest => dest.PaymentMethod, src => src.Request.PaymentMethod)
             .Map(dest => dest.Installments, src => src.Request.installments);
 

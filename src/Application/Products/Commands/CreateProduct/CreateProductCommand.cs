@@ -1,5 +1,7 @@
 using Application.Common.DTOs;
-using MediatR;
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
 
 namespace Application.Products.Commands.CreateProduct;
 
@@ -12,6 +14,7 @@ namespace Application.Products.Commands.CreateProduct;
 /// <param name="BasePrice">The new product base price.</param>
 /// <param name="CategoryIds">Categories the new product belongs to.</param>
 /// <param name="Images">The new product images.</param>
+[Authorize(roleName: nameof(Role.Admin))]
 public record CreateProductCommand(
     string Name,
     string Description,
@@ -19,4 +22,4 @@ public record CreateProductCommand(
     decimal BasePrice,
     IEnumerable<string> CategoryIds,
     IEnumerable<Uri> Images
-) : IRequest<CreatedResult>;
+) : RequestWithAuthorization<CreatedResult>;

@@ -1,17 +1,17 @@
-using Carter;
-using MapsterMapper;
-using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using WebApi.Authorization.AdminRequired;
-
-using Contracts.Products;
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.DeactivateProduct;
 using Application.Products.Commands.UpdateProduct;
 using Application.Products.Commands.UpdateProductInventory;
 using Application.Products.Queries.GetProductById;
 using Application.Products.Queries.GetProducts;
+
+using Contracts.Products;
+
+using Carter;
+using MapsterMapper;
+using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Endpoints;
 
@@ -36,7 +36,7 @@ public class ProductsEndpoints : ICarterModule
                 Summary = "Create Product",
                 Description = "Creates a new product. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         productGroup
             .MapGet("/{id:long}", GetProductById)
@@ -67,7 +67,7 @@ No authentication is required."
                 Summary = "Update Product",
                 Description = "Updates the details of an active product. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         productGroup
             .MapDelete("/{id:long}", DeactivateProduct)
@@ -77,7 +77,7 @@ No authentication is required."
                 Summary = "Deactivate Product",
                 Description = "Deactivates a product and set the inventory to 0 items. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         productGroup
             .MapPut("/{id:long}/inventory", UpdateProductInventory)
@@ -87,7 +87,7 @@ No authentication is required."
                 Summary = "Update Product Inventory",
                 Description = "Increments the inventory quantity available for an active product. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
     }
 

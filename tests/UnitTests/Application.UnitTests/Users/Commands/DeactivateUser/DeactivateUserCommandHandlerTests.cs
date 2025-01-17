@@ -1,5 +1,6 @@
 using Application.Common.Errors;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
+using Application.Common.Security.Authorization.Roles;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.DeactivateUser;
 
@@ -11,7 +12,6 @@ using Domain.UserAggregate.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.Authorization;
 
 namespace Application.UnitTests.Users.Commands.DeactivateUser;
 

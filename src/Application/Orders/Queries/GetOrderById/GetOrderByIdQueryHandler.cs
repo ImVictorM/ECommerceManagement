@@ -1,12 +1,9 @@
-using Application.Common.Errors;
-using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.PaymentGateway;
+using Application.Common.Persistence;
 using Application.Orders.Common.DTOs;
 using Application.Orders.Common.Errors;
 
 using Domain.OrderAggregate.ValueObjects;
-using Domain.UserAggregate.Specification;
-using Domain.UserAggregate.ValueObjects;
 
 using MediatR;
 
@@ -35,18 +32,10 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
     public async Task<OrderDetailedResult> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
         var orderId = OrderId.Create(request.OrderId);
-        var currentUserId = UserId.Create(request.CurrentUserId);
 
         var order =
             await _unitOfWork.OrderRepository.FindByIdAsync(orderId)
             ?? throw new OrderNotFoundException();
-
-        var currentUser = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(currentUserId));
-
-        if (currentUser == null || !new ReadOrderSpecification(order.OwnerId).IsSatisfiedBy(currentUser))
-        {
-            throw new UserNotAllowedException($"The current user does not have permission to access the order with id {orderId}");
-        }
 
         var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(payment => payment.OrderId == order.Id);
 
@@ -55,7 +44,7 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
             return new OrderDetailedResult(order, null);
         }
 
-        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment.Id);
+        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment.Id.ToString());
 
         return new OrderDetailedResult(order, orderPaymentDetails);
     }

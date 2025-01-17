@@ -1,4 +1,3 @@
-using Application.Common.Interfaces.Persistence;
 using Application.UnitTests.Users.Queries.TestUtils;
 using Application.Users.Queries.GetAllUsers;
 
@@ -10,6 +9,7 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Application.Common.Persistence;
 
 namespace Application.UnitTests.Users.Queries.GetAllUsers;
 

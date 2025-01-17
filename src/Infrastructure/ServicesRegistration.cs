@@ -1,19 +1,25 @@
+using Application.Common.Security.Authorization.Roles;
+using Application.Common.Security.Authentication;
+using Application.Common.Persistence;
+using Application.Common.Security.Authorization;
+using Application.Common.PaymentGateway;
+using Application.Common.Security.Identity;
 
-using Application.Common.Interfaces.Authentication;
-using Application.Common.Interfaces.Persistence;
-using Application.Common.Interfaces.Payments;
-
+using Infrastructure.Security.Identity;
+using Infrastructure.PaymentGateway;
+using Infrastructure.Security.Authorization;
+using Infrastructure.Security.Authentication;
+using Infrastructure.Security.Authentication.Settings;
+using Infrastructure.Security.Authorization.Roles;
 using Infrastructure.Persistence.Interceptors;
-using Infrastructure.Authentication;
 using Infrastructure.Persistence;
-using Infrastructure.Payments;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -40,12 +46,25 @@ public static class ServicesRegistration
         IHostEnvironment environment
     )
     {
+        services.AddPersistence(configuration, environment);
+
+        services.AddScoped<IPaymentGateway, MockPaymentGateway>();
+
+        services.AddSecurity(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection AddPersistence(
+        this IServiceCollection services,
+        IConfigurationManager configuration,
+        IHostEnvironment environment
+    )
+    {
         var dbConnectionSettings = new DbConnectionSettings();
         configuration.Bind(DbConnectionSettings.SectionName, dbConnectionSettings);
 
         services.AddSingleton(Options.Create(dbConnectionSettings));
-
-        services.Configure<HmacSignatureSettings>(configuration.GetSection(HmacSignatureSettings.SectionName));
 
         services.AddDbContext<ECommerceDbContext>(options =>
         {
@@ -57,13 +76,8 @@ public static class ServicesRegistration
             options.UseNpgsql($"Host={dbConnectionSettings.Host};Port={dbConnectionSettings.Port};Database={dbConnectionSettings.Database};Username={dbConnectionSettings.Username};Password={dbConnectionSettings.Password};Trust Server Certificate=true;");
         });
 
-        services.AddAuth(configuration);
-
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IHmacSignatureProvider, HmacSignatureProvider>();
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IPaymentGateway, MockPaymentGateway>();
 
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<PublishDomainEventsInterceptor>();
@@ -71,7 +85,7 @@ public static class ServicesRegistration
         return services;
     }
 
-    private static IServiceCollection AddAuth(
+    private static IServiceCollection AddSecurity(
         this IServiceCollection services,
         IConfigurationManager configuration
     )
@@ -81,6 +95,8 @@ public static class ServicesRegistration
 
         services.AddSingleton(Options.Create(jwtSettings));
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+        services.Configure<HmacSignatureSettings>(configuration.GetSection(HmacSignatureSettings.SectionName));
 
         services
             .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
@@ -99,6 +115,12 @@ public static class ServicesRegistration
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
                 };
             });
+
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IHmacSignatureProvider, HmacSignatureProvider>();
+        services.AddScoped<IAuthorizationService, AuthorizationService>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IIdentityProvider, IdentityProvider>();
 
         return services;
     }

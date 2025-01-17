@@ -1,3 +1,6 @@
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
 using MediatR;
 
 namespace Application.Products.Commands.UpdateProduct;
@@ -11,6 +14,7 @@ namespace Application.Products.Commands.UpdateProduct;
 /// <param name="BasePrice">The new product base price.</param>
 /// <param name="Images">The new product images.</param>
 /// <param name="CategoryIds">The product new categories ids.</param>
+[Authorize(roleName: nameof(Role.Admin))]
 public record UpdateProductCommand(
     string Id,
     string Name,
@@ -18,4 +22,4 @@ public record UpdateProductCommand(
     decimal BasePrice,
     IEnumerable<Uri> Images,
     IEnumerable<string> CategoryIds
-) : IRequest<Unit>;
+) : RequestWithAuthorization<Unit>;

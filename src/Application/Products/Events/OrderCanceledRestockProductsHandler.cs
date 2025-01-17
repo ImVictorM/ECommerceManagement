@@ -1,4 +1,4 @@
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Domain.OrderAggregate.Events;
 using MediatR;
 

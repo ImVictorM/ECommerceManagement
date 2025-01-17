@@ -1,5 +1,7 @@
 using Application.Common.DTOs;
-using MediatR;
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
 
 namespace Application.Categories.Commands.CreateCategory;
 
@@ -7,4 +9,5 @@ namespace Application.Categories.Commands.CreateCategory;
 /// Command to create a new category.
 /// </summary>
 /// <param name="Name">The category name.</param>
-public record CreateCategoryCommand(string Name) : IRequest<CreatedResult>;
+[Authorize(roleName: nameof(Role.Admin))]
+public record CreateCategoryCommand(string Name) : RequestWithAuthorization<CreatedResult>;

@@ -1,4 +1,4 @@
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Application.Products.Commands.CreateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Behaviors;

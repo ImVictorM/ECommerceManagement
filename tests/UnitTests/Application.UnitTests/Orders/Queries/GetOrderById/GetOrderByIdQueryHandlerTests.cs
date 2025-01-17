@@ -1,9 +1,7 @@
 using Application.Common.Errors;
-using Application.Common.Interfaces.Persistence;
 using Application.Orders.Common.Errors;
 using Application.Orders.Queries.GetOrderById;
 using Application.UnitTests.Orders.Queries.TestUtils;
-using Application.Common.Interfaces.Payments;
 
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
@@ -12,13 +10,14 @@ using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 
-using SharedKernel.Authorization;
-
 using FluentAssertions;
 using Moq;
 using Domain.PaymentAggregate.ValueObjects;
 using Domain.PaymentAggregate;
 using System.Linq.Expressions;
+using Application.Common.Security.Authorization.Roles;
+using Application.Common.Persistence;
+using Application.Common.PaymentGateway;
 
 namespace Application.UnitTests.Orders.Queries.GetOrderById;
 
@@ -71,7 +70,7 @@ public class GetOrderByIdQueryHandlerTests
             orderId: orderId
         );
 
-        var mockPaymentResponse = new Mock<IPaymentResponse>().Object;
+        var mockPaymentResponse = new Mock<PaymentResponse>().Object;
 
         _mockOrderRepository
             .Setup(r => r.FindByIdAsync(orderId))

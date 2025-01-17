@@ -1,5 +1,5 @@
-using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.PaymentGateway;
+using Application.Common.Persistence;
 using Domain.PaymentAggregate.Events;
 
 using MediatR;
@@ -31,7 +31,7 @@ public sealed class PaymentAuthorizedCapturePaymentHandler : INotificationHandle
     {
         var payment = notification.Payment;
 
-        var captureResponse = await _paymentGateway.CapturePaymentAsync(payment.Id);
+        var captureResponse = await _paymentGateway.CapturePaymentAsync(payment.Id.ToString());
 
         payment.UpdatePaymentStatus(captureResponse.Status);
 

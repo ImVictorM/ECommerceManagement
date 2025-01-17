@@ -6,8 +6,6 @@ using Application.Categories.Queries.GetCategoryById;
 
 using Contracts.Categories;
 
-using WebApi.Authorization.AdminRequired;
-
 using Carter;
 using MapsterMapper;
 using MediatR;
@@ -42,7 +40,7 @@ public class CategoryEndpoints : ICarterModule
                 Summary = "Create New Category",
                 Description = "Create a new category. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         categoryGroup
             .MapDelete("/{id:long}", DeleteCategory)
@@ -52,7 +50,7 @@ public class CategoryEndpoints : ICarterModule
                 Summary = "Delete Category",
                 Description = "Deletes an existing category. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         categoryGroup
             .MapPut("/{id:long}", UpdateCategory)
@@ -62,7 +60,7 @@ public class CategoryEndpoints : ICarterModule
                 Summary = "Update Category",
                 Description = "Updates an existing category. Admin authentication is required."
             })
-            .RequireAuthorization(AdminRequiredPolicy.Name);
+            .RequireAuthorization();
 
         categoryGroup
             .MapGet("/", GetCategories)

@@ -1,6 +1,5 @@
 using Domain.UserAggregate.ValueObjects;
 
-using SharedKernel.Authorization;
 using SharedKernel.Errors;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
@@ -49,7 +48,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
         string name,
         Email email,
         PasswordHash passwordHash,
-        IReadOnlySet<Role> roles,
+        IReadOnlySet<UserRole> roles,
         string? phone
     )
     {
@@ -65,7 +64,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
             throw new EmptyArgumentException("Users must have at least one role");
         }
 
-        _userRoles.UnionWith(roles.Select(r => UserRole.Create(r.Id)));
+        _userRoles.UnionWith(roles);
     }
 
     /// <summary>
@@ -80,7 +79,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
         string name,
         Email email,
         PasswordHash passwordHash,
-        IReadOnlySet<Role> roles,
+        IReadOnlySet<UserRole> roles,
         string? phone = null
     )
     {
@@ -113,38 +112,18 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     }
 
     /// <summary>
-    /// Relate the user with a role.
+    /// Adds a role to the user.
     /// </summary>
-    /// <param name="role">The role to be assigned to the user.</param>
-    public void AssignRole(Role role)
+    /// <param name="role">The role.</param>
+    public void AssignRole(UserRole role)
     {
-        _userRoles.Add(UserRole.Create(role.Id));
-    }
-
-    /// <summary>
-    /// List the name of the user roles.
-    /// </summary>
-    /// <returns>A list of names containing the user roles.</returns>
-    public IEnumerable<string> GetRoleNames()
-    {
-        var userRoleIds = UserRoles.Select(ur => ur.RoleId).ToList();
-
-        return Role.List(role => userRoleIds.Contains(role.Id)).Select(role => role.Name);
+        _userRoles.Add(role);
     }
 
     /// <inheritdoc/>
     public void Deactivate()
     {
         IsActive = false;
-    }
-
-    /// <summary>
-    /// Checks if the user has the admin role assigned to them.
-    /// </summary>
-    /// <returns>A boolean value indicating if the user is an administrator.</returns>
-    public bool IsAdmin()
-    {
-        return Role.HasAdminRole(UserRoles.Select(ur => ur.RoleId));
     }
 
     /// <summary>

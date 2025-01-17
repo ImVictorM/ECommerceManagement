@@ -1,5 +1,5 @@
 using Application.Common.Errors;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Application.Products.Commands.UpdateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
 

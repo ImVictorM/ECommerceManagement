@@ -1,7 +1,7 @@
 using SharedKernel.Extensions;
 using SharedKernel.Models;
 
-namespace Domain.ShipmentAggregate.Entities;
+namespace Domain.ShipmentAggregate.Enumerations;
 
 /// <summary>
 /// Represents the shipment status.

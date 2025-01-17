@@ -1,13 +1,18 @@
-using MediatR;
-using Application.Common.Errors;
-using Application.Common.Interfaces.Authentication;
 using Domain.UserAggregate;
-using Application.Common.Interfaces.Persistence;
-using Microsoft.Extensions.Logging;
-using Application.Authentication.Common.DTOs;
-using SharedKernel.ValueObjects;
 using Domain.UserAggregate.Specification;
-using SharedKernel.Authorization;
+using Domain.UserAggregate.ValueObjects;
+
+using Application.Common.Errors;
+using Application.Authentication.Common.DTOs;
+using Application.Common.Security.Authorization.Roles;
+using Application.Common.Security.Authentication;
+using Application.Common.Persistence;
+using Application.Common.Security.Identity;
+
+using SharedKernel.ValueObjects;
+
+using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Authentication.Commands.Register;
 
@@ -18,7 +23,7 @@ namespace Application.Authentication.Commands.Register;
 public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthenticationResult>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IJwtTokenService _jwtTokenGenerator;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly IPasswordHasher _passwordHasher;
 
     /// <summary>
@@ -35,7 +40,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
         ILogger<RegisterCommandHandler> logger
     )
     {
-        _jwtTokenGenerator = jwtTokenGenerator;
+        _jwtTokenService = jwtTokenGenerator;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
         _logger = logger;
@@ -61,7 +66,10 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
             command.Name,
             inputEmail,
             passwordHash,
-            new HashSet<Role>() { Role.Customer }
+            new HashSet<UserRole>()
+            {
+                UserRole.Create(Role.Customer.Id)
+            }
         );
 
         LogUserCreatedWithCustomerRole();
@@ -72,7 +80,14 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
 
         LogUserSavedSuccessfully(user.Email.Value);
 
-        var token = _jwtTokenGenerator.GenerateToken(user);
+        var availableRoles = Role.List().ToDictionary(r => r.Id);
+
+        var token = _jwtTokenService.GenerateToken(
+            new IdentityUser(
+                user.Id.ToString(),
+                user.UserRoles.Select(r => availableRoles[r.RoleId].Name).ToList()
+            )
+        );
 
         LogTokenGeneratedSuccessfully();
 

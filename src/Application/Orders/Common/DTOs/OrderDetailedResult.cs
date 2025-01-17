@@ -1,4 +1,4 @@
-using Application.Common.Interfaces.Payments;
+using Application.Common.PaymentGateway;
 using Domain.OrderAggregate;
 
 namespace Application.Orders.Common.DTOs;
@@ -10,5 +10,5 @@ namespace Application.Orders.Common.DTOs;
 /// <param name="Payment">The order payment.</param>
 public record OrderDetailedResult(
     Order Order,
-    IPaymentResponse? Payment
+    PaymentResponse? Payment
 );

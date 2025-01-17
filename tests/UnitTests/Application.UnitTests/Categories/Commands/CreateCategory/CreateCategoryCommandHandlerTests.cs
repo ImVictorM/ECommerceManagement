@@ -1,5 +1,5 @@
 using Application.Categories.Commands.CreateCategory;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Application.UnitTests.Categories.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Behaviors;
 

@@ -1,6 +1,5 @@
-using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Persistence;
-
+using Application.Common.PaymentGateway;
+using Application.Common.Persistence;
 using Domain.PaymentAggregate.Events;
 
 using MediatR;
@@ -32,7 +31,7 @@ public sealed class PaymentRejectedCancelAuthorizationHandler : INotificationHan
     {
         var payment = notification.Payment;
 
-        var response = await _paymentGateway.CancelAuthorizationAsync(payment.Id);
+        var response = await _paymentGateway.CancelAuthorizationAsync(payment.Id.ToString());
 
         payment.UpdatePaymentStatus(response.Status);
 

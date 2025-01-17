@@ -1,3 +1,7 @@
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
+
 using MediatR;
 
 namespace Application.Products.Commands.UpdateProductInventory;
@@ -7,4 +11,5 @@ namespace Application.Products.Commands.UpdateProductInventory;
 /// </summary>
 /// <param name="ProductId">The product id.</param>
 /// <param name="QuantityToIncrement">The quantity to add to the inventory.</param>
-public record UpdateProductInventoryCommand(string ProductId, int QuantityToIncrement) : IRequest<Unit>;
+[Authorize(roleName: nameof(Role.Admin))]
+public record UpdateProductInventoryCommand(string ProductId, int QuantityToIncrement) : RequestWithAuthorization<Unit>;

@@ -1,10 +1,13 @@
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
 using Application.Users.Common.DTOs;
-using MediatR;
 
 namespace Application.Users.Queries.GetAllUsers;
 
 /// <summary>
-/// Query for all users.
+/// Represents a query to retrieve all all users.
 /// </summary>
 /// <param name="IsActive">Filter condition for querying the users that is active or not (optional).</param>
-public record GetAllUsersQuery(bool? IsActive = null) : IRequest<IEnumerable<UserResult>>;
+[Authorize(roleName: nameof(Role.Admin))]
+public record GetAllUsersQuery(bool? IsActive = null) : RequestWithAuthorization<IEnumerable<UserResult>>;

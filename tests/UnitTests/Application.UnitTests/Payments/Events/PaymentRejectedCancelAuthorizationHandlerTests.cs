@@ -1,5 +1,5 @@
-using Application.Common.Interfaces.Payments;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.PaymentGateway;
+using Application.Common.Persistence;
 using Application.Payments.Events;
 using Application.UnitTests.TestUtils.Events.Payments;
 
@@ -48,7 +48,7 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
 
         var notification = PaymentRejectedUtils.CreateEvent(payment);
 
-        var mockPaymentStatusResponse = new Mock<IPaymentStatusResponse>();
+        var mockPaymentStatusResponse = new Mock<PaymentStatusResponse>();
         mockPaymentStatusResponse.SetupGet(x => x.Status).Returns(PaymentStatus.Canceled);
 
         _mockPaymentGateway.Setup(g => g.CancelAuthorizationAsync(payment.Id)).ReturnsAsync(mockPaymentStatusResponse.Object);

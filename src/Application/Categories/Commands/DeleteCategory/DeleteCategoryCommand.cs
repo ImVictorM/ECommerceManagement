@@ -1,3 +1,7 @@
+using Application.Common.Security.Authorization;
+using Application.Common.Security.Authorization.Requests;
+using Application.Common.Security.Authorization.Roles;
+
 using MediatR;
 
 namespace Application.Categories.Commands.DeleteCategory;
@@ -6,4 +10,5 @@ namespace Application.Categories.Commands.DeleteCategory;
 /// Command to delete a category.
 /// </summary>
 /// <param name="Id">The category id.</param>
-public record DeleteCategoryCommand(string Id) : IRequest<Unit>;
+[Authorize(roleName: nameof(Role.Admin))]
+public record DeleteCategoryCommand(string Id) : RequestWithAuthorization<Unit>;

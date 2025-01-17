@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;

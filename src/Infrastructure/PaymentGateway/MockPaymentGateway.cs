@@ -1,0 +1,83 @@
+using Domain.PaymentAggregate.Enumerations;
+
+using Application.Common.PaymentGateway;
+
+namespace Infrastructure.PaymentGateway;
+
+/// <summary>
+/// Represents a simple mocked implementation of a payment gateway.
+/// </summary>
+public class MockPaymentGateway : IPaymentGateway
+{
+
+    /// <inheritdoc/>
+    public async Task<PaymentResponse> AuthorizePaymentAsync(AuthorizePaymentInput input)
+    {
+        await Task.CompletedTask;
+
+        return new PaymentResponse(
+            PaymentId: Guid.NewGuid().ToString(),
+            PaymentMethod: "credit_card",
+            Amount: 120m,
+            Installments: 1,
+            Status: PaymentStatus.FromDisplayName("pending"),
+            Details: "does not matter",
+            Captured: true
+        );
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaymentStatusResponse> CapturePaymentAsync(string paymentId)
+    {
+        await Task.CompletedTask;
+
+        return new PaymentStatusResponse(
+            Status: PaymentStatus.FromDisplayName("approved"),
+            Details: "accredited",
+            Captured: true
+        );
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaymentStatusResponse> CancelAuthorizationAsync(string paymentId)
+    {
+        await Task.CompletedTask;
+
+        return new PaymentStatusResponse(
+            Status: PaymentStatus.FromDisplayName("canceled"),
+            Details: "by collector",
+            Captured: false
+        );
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaymentRefundResponse> RefundPaymentAsync(string paymentId, decimal amount)
+    {
+        await Task.CompletedTask;
+
+        return new PaymentRefundResponse(
+            RefundId: Guid.NewGuid().ToString(),
+            PaymentId: paymentId,
+            Amount: amount,
+            Status: PaymentStatus.FromDisplayName("approved"),
+            Reason: "does not matter",
+            RefundMode: "standard"
+        );
+    }
+
+    /// <inheritdoc/>
+    public async Task<PaymentResponse> GetPaymentByIdAsync(string paymentId)
+    {
+        await Task.CompletedTask;
+
+        return new PaymentResponse(
+            PaymentId: paymentId,
+            PaymentMethod: "credit_card",
+            Amount: 120m,
+            Installments: 1,
+            Status: PaymentStatus.FromDisplayName("pending"),
+            Details: "does not matter",
+            Captured: true
+        );
+    }
+}
