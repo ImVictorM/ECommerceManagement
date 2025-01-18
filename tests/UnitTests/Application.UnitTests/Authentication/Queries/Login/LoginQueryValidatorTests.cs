@@ -1,5 +1,7 @@
 using Application.Authentication.Queries.Login;
 using Application.UnitTests.Authentication.Queries.TestUtils;
+using Application.UnitTests.TestUtils.ValidationData;
+
 using FluentAssertions;
 using FluentValidation.TestHelper;
 
@@ -21,20 +23,11 @@ public class LoginQueryValidatorTests
     }
 
     /// <summary>
-    /// List of empty strings.
-    /// </summary>
-    public static IEnumerable<object[]> EmptyStrings =>
-    [
-        [""],
-        ["      "],
-    ];
-
-    /// <summary>
     /// Tests when the email is empty the email has validation errors.
     /// </summary>
     /// <param name="empty">An empty input string.</param>
     [Theory]
-    [MemberData(nameof(EmptyStrings))]
+    [MemberData(nameof(ValidationTestData.EmptyStrings), MemberType = typeof(ValidationTestData))]
     public void ValidateLoginQuery_WhenEmailIsEmpty_ShouldHaveValidationError(string empty)
     {
         var command = LoginQueryUtils.CreateQuery(email: empty);
@@ -50,7 +43,7 @@ public class LoginQueryValidatorTests
     /// </summary>
     /// <param name="empty">An empty input string.</param>
     [Theory]
-    [MemberData(nameof(EmptyStrings))]
+    [MemberData(nameof(ValidationTestData.EmptyStrings), MemberType = typeof(ValidationTestData))]
     public void ValidateLoginQuery_WhenPasswordIsEmpty_ShouldHaveValidationError(string empty)
     {
         var command = LoginQueryUtils.CreateQuery(password: empty);

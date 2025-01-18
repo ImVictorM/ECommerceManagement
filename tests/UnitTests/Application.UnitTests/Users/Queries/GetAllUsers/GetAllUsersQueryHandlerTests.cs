@@ -1,5 +1,6 @@
 using Application.UnitTests.Users.Queries.TestUtils;
 using Application.Users.Queries.GetAllUsers;
+using Application.Common.Persistence;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -9,7 +10,6 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Users.Queries.GetAllUsers;
 

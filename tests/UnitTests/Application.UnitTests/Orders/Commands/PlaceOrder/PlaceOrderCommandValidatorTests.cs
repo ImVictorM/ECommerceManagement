@@ -34,19 +34,6 @@ public class PlaceOrderCommandValidatorTests
     }
 
     /// <summary>
-    /// Tests when the authenticated user id is empty the validator should have an error.
-    /// </summary>
-    [Fact]
-    public void ValidatePlaceOrderCommand_WhenAuthenticatedUserIdIsEmpty_ShouldHaveValidationError()
-    {
-        var command = PlaceOrderCommandUtils.CreateCommand(currentUserId: "");
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(c => c.CurrentUserId).WithErrorMessage("'Current User Id' must not be empty.");
-    }
-
-    /// <summary>
     /// Tests when the installments are less than zero the validator should have an error.
     /// </summary>
     /// <param name="installments">The negative installment quantity.</param>

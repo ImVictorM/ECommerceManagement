@@ -2,6 +2,7 @@ using Application.Common.PaymentGateway;
 using Application.Common.Persistence;
 using Application.Payments.Events;
 using Application.UnitTests.TestUtils.Events.Payments;
+using Application.UnitTests.TestUtils.PaymentGateway;
 
 using Domain.PaymentAggregate.Enumerations;
 using Domain.PaymentAggregate.ValueObjects;
@@ -43,20 +44,18 @@ public class PaymentAuthorizedCapturePaymentHandlerTests
             paymentStatus: PaymentStatus.Authorized
         );
 
-        var mockPaymentStatusResponse = new Mock<PaymentStatusResponse>();
-
-        mockPaymentStatusResponse.SetupGet(x => x.Status).Returns(PaymentStatus.Approved);
+        var paymentStatusResponse = PaymentStatusResponseUtils.CreateResponse(paymentStatus: PaymentStatus.Approved);
 
         _mockPaymentGateway
-            .Setup(g => g.CapturePaymentAsync(payment.Id))
-            .ReturnsAsync(mockPaymentStatusResponse.Object);
+            .Setup(g => g.CapturePaymentAsync(payment.Id.ToString()))
+            .ReturnsAsync(paymentStatusResponse);
 
         var notification = PaymentAuthorizedUtils.CreateEvent(payment: payment);
 
         await _handler.Handle(notification, default);
 
-        _mockPaymentGateway.Verify(g => g.CapturePaymentAsync(payment.Id), Times.Once());
-        payment.PaymentStatusId.Should().Be(mockPaymentStatusResponse.Object.Status.Id);
+        _mockPaymentGateway.Verify(g => g.CapturePaymentAsync(payment.Id.ToString()), Times.Once());
+        payment.PaymentStatusId.Should().Be(paymentStatusResponse.Status.Id);
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 }

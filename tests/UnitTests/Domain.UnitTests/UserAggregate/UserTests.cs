@@ -1,10 +1,10 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 
-using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
 
 using FluentAssertions;
+using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UnitTests.UserAggregate;
 
@@ -22,7 +22,7 @@ public class UserTests
             () => UserUtils.CreateUser(name: "New user name"),
         ],
         [
-            () => UserUtils.CreateUser(roles: new HashSet<Role>() { Role.Admin }),
+            () => UserUtils.CreateUser(roles: new HashSet<UserRole>() { UserRole.Create(4) }),
         ],
         [
             () => UserUtils.CreateUser(phone: "19987093231"),
@@ -71,39 +71,19 @@ public class UserTests
     /// Tests if it is possible to add roles to a current user.
     /// </summary>
     [Fact]
-    public void AssignRole_WhenAssigningAdminRole_IncrementsUserRoles()
+    public void AssignRole_WhenAssigningNewRole_IncrementsUserRoles()
     {
-        var user = UserUtils.CreateUser(roles: new HashSet<Role>()
+        var user = UserUtils.CreateUser(roles: new HashSet<UserRole>()
         {
-            Role.Customer,
+            UserRole.Create(1),
         });
+        var userNewRole = UserRole.Create(2);
 
-        user.AssignRole(Role.Admin);
+        user.AssignRole(userNewRole);
 
         user.UserRoles.Count.Should().Be(2);
 
-        user.UserRoles.Select(ur => ur.RoleId).Should().Contain(Role.Admin.Id);
-    }
-
-
-    /// <summary>
-    /// Tests if it is possible to get the user role names.
-    /// </summary>
-    [Fact]
-    public void GetRoleNames_WhenCallingGetRoleNamesMethod_ReturnsUserRoleNames()
-    {
-        var expectedRoleNames = new string[] { Role.Admin.Name, Role.Customer.Name };
-
-        var user = UserUtils.CreateUser(roles: new HashSet<Role>()
-        {
-            Role.Customer,
-        });
-
-        user.AssignRole(Role.Admin);
-
-        var roleNames = user.GetRoleNames();
-
-        roleNames.Should().BeEquivalentTo(expectedRoleNames);
+        user.UserRoles.Should().Contain(userNewRole);
     }
 
     /// <summary>
@@ -119,25 +99,6 @@ public class UserTests
 
         user.UserAddresses.Count.Should().Be(1);
         user.UserAddresses.Should().Contain(address);
-    }
-
-    /// <summary>
-    /// Tests if the <see cref="User.IsAdmin"/> method returns the correct value.
-    /// </summary>
-    [Fact]
-    public void IsAdmin_WhenCalled_ReturnsExpectedBoolean()
-    {
-        var userAdmin = UserUtils.CreateUser(roles: new HashSet<Role>()
-        {
-            Role.Admin
-        });
-        var userNotAdmin = UserUtils.CreateUser(roles: new HashSet<Role>()
-        {
-            Role.Customer
-        });
-
-        userAdmin.IsAdmin().Should().BeTrue();
-        userNotAdmin.IsAdmin().Should().BeFalse();
     }
 
     /// <summary>

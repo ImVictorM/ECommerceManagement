@@ -42,7 +42,6 @@ public static class PlaceOrderCommandUtils
     {
         return new PlaceOrderCommand(
             requestId ?? _faker.Random.Guid(),
-            currentUserId ?? NumberUtils.CreateRandomLongAsString(),
             orderProducts ?? CreateOrderProductInputs(1),
             AddressUtils.CreateAddress(),
             AddressUtils.CreateAddress(),

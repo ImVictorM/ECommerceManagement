@@ -55,7 +55,7 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
             {
                 LogEmailConflict();
 
-                throw new UserAlreadyExistsException("The email is already in use");
+                throw new UserAlreadyExistsException("The email you entered is already in use");
             }
         }
 

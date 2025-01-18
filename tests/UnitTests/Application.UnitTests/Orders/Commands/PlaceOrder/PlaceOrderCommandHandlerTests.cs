@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+using Application.Common.Security.Identity;
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.Commands.TestUtils;
 using Application.UnitTests.Orders.TestUtils.Extensions;
@@ -23,6 +24,7 @@ public class PlaceOrderCommandHandlerTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IOrderService> _mockOrdersService;
     private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
+    private readonly Mock<IIdentityProvider> _mockIdentityProvider;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PlaceOrderCommandHandlerTests"/> class.
@@ -31,13 +33,15 @@ public class PlaceOrderCommandHandlerTests
     {
         _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
         _mockOrdersService = new Mock<IOrderService>();
+        _mockIdentityProvider = new Mock<IIdentityProvider>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
 
         _handler = new PlaceOrderCommandHandler(
             _mockUnitOfWork.Object,
-            _mockOrdersService.Object
+            _mockOrdersService.Object,
+            _mockIdentityProvider.Object
         );
     }
 
@@ -47,6 +51,7 @@ public class PlaceOrderCommandHandlerTests
     [Fact]
     public async Task HandlePlaceOrder_WhenRequestIsValid_CreatesOrder()
     {
+        var mockIdentityUser = new IdentityUser("1", ["customer"]);
         var reservedProducts = OrderUtils.CreateReservedProducts(3).ToList();
         var orderProducts = reservedProducts
             .Select(rp => OrderUtils.CreateOrderProduct(productId: rp.ProductId, quantity: rp.Quantity))
@@ -58,6 +63,10 @@ public class PlaceOrderCommandHandlerTests
             couponsAppliedIds: ["1", "2"],
             installments: 2
         );
+
+        _mockIdentityProvider
+            .Setup(i => i.GetCurrentUserIdentity())
+            .Returns(mockIdentityUser);
 
         _mockOrdersService
             .Setup(s => s.PrepareOrderProductsAsync(command.Products))
@@ -75,7 +84,11 @@ public class PlaceOrderCommandHandlerTests
         result.Id.Should().Be(mockCreatedId.ToString());
 
         _mockOrderRepository.Verify(
-            r => r.AddAsync(It.Is<Order>(o => o.Total == mockTotal && o.Products.All(orderProducts.Contains))),
+            r => r.AddAsync(It.Is<Order>(o =>
+                o.Total == mockTotal
+                && o.Products.All(orderProducts.Contains)
+                && o.OwnerId.ToString() == mockIdentityUser.Id
+            )),
             Times.Once()
         );
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());

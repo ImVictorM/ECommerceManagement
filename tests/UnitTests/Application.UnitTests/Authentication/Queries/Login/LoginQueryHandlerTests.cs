@@ -1,7 +1,9 @@
 using Application.Authentication.Common.Errors;
 using Application.Authentication.Queries.Login;
 using Application.UnitTests.Authentication.Queries.TestUtils;
-using Application.UnitTests.TestUtils.Constants;
+using Application.Common.Security.Authentication;
+using Application.Common.Persistence;
+using Application.Common.Security.Identity;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -10,12 +12,11 @@ using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Models;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
+using SharedKernel.Interfaces;
 
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Application.Common.Security.Authentication;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Authentication.Queries.Login;
 
@@ -70,13 +71,20 @@ public class LoginQueryHandlerTests
     [MemberData(nameof(ValidLoginQueries))]
     public async Task HandleLoginQuery_WhenCredentialsAreValid_ReturnsTokenAndUser(LoginQuery query)
     {
-        _mockJwtTokenService
-            .Setup(jwtTokenService => jwtTokenService.GenerateToken(It.IsAny<User>()))
-            .Returns(ApplicationConstants.Jwt.Token);
+        var generatedToken = "generated-token";
+
+        var user = UserUtils.CreateUser(
+            id: UserId.Create(1),
+            email: EmailUtils.CreateEmail(query.Email)
+        );
 
         _mockUserRepository
-            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
-            .ReturnsAsync(UserUtils.CreateUser(email: EmailUtils.CreateEmail(query.Email)));
+            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<User>>()))
+            .ReturnsAsync(user);
+
+        _mockJwtTokenService
+            .Setup(jwtTokenService => jwtTokenService.GenerateToken(It.IsAny<IdentityUser>()))
+            .Returns(generatedToken);
 
         _mockPasswordHasher
             .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
@@ -88,7 +96,7 @@ public class LoginQueryHandlerTests
 
         result.User.Email.ToString().Should().Be(query.Email);
 
-        result.Token.Should().Be(ApplicationConstants.Jwt.Token);
+        result.Token.Should().Be(generatedToken);
 
         _mockUnitOfWork.Verify(m => m.SaveChangesAsync(), Times.Never);
     }

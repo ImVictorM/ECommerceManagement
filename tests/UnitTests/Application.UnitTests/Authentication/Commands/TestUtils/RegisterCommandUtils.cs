@@ -1,5 +1,6 @@
 using Application.Authentication.Commands.Register;
 using Bogus;
+using Domain.UnitTests.TestUtils;
 using SharedKernel.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Authentication.Commands.TestUtils;
@@ -25,7 +26,7 @@ public static class RegisterCommandUtils
     )
     {
         return new RegisterCommand(
-            name ?? _faker.Name.FullName(),
+            name ?? UserUtils.CreateUserName(),
             email ?? EmailUtils.CreateEmailAddress(),
             password ?? string.Concat(
                 _faker.Random.AlphaNumeric(6),

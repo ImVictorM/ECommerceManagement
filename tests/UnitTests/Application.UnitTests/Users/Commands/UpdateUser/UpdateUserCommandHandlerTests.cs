@@ -1,6 +1,5 @@
 using Application.Common.Errors;
 using Application.Common.Persistence;
-using Application.Common.Security.Authorization.Roles;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.UpdateUser;
 
@@ -9,10 +8,11 @@ using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 
+using SharedKernel.UnitTests.TestUtils;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Users.Commands.UpdateUser;
 
@@ -42,59 +42,17 @@ public class UpdateUserCommandHandlerTests
     }
 
     /// <summary>
-    /// List of not allowed pairs.
+    /// Tests that when the user to be updated exists they are updated.
     /// </summary>
-    public static IEnumerable<object[]> NotAllowedPairs =>
-    [
-        [
-            UserUtils.CreateUser(id: UserId.Create(2), roles : new HashSet < Role >() { Role.Customer }),
-            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Customer }),
-            UserUtils.CreateUser(id: UserId.Create(4), roles : new HashSet < Role >() { Role.Customer }),
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
-            UserUtils.CreateUser(id: UserId.Create(4), roles : new HashSet < Role >() { Role.Admin }),
-        ]
-    ];
-
-    /// <summary>
-    /// List of allowed pairs.
-    /// </summary>
-    public static IEnumerable<object[]> AllowedPairs =>
-    [
-        [
-            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Customer }),
-            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Customer })
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Admin }),
-            UserUtils.CreateUser(id: UserId.Create(2) ,roles : new HashSet < Role >() { Role.Customer })
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Admin }),
-            UserUtils.CreateUser(id: UserId.Create(1) ,roles : new HashSet < Role >() { Role.Admin })
-        ],
-    ];
-
-    /// <summary>
-    /// Tests that when the user to be updated exists and the current user has the right permissions the update is done successfully.
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(AllowedPairs))]
-    public async Task HandleUpdateUser_WhenUserExists_UpdateTheUserCorrectly(
-        User currentUser,
-        User userToBeUpdated
-    )
+    [Fact]
+    public async Task HandleUpdateUser_WhenUserExists_UpdateTheUserCorrectly()
     {
+        var userToBeUpdated = UserUtils.CreateUser();
+        var command = UpdateUserCommandUtils.CreateCommand(name: "new name", phone: "19958274823");
+
         _mockUserRepository
             .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
-            .ReturnsAsync(currentUser)
             .ReturnsAsync(userToBeUpdated);
-
-        var command = UpdateUserCommandUtils.CreateCommand(name: "new name", phone: "19958274823");
 
         await _handler.Handle(command, default);
 
@@ -111,8 +69,7 @@ public class UpdateUserCommandHandlerTests
     public async Task HandleUpdateUser_WhenUserDoesNotExist_ThrowsException()
     {
         _mockUserRepository
-            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
-            .ReturnsAsync(UserUtils.CreateUser())
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync((User?)null);
 
         await FluentActions
@@ -148,29 +105,5 @@ public class UpdateUserCommandHandlerTests
             .Should()
             .ThrowAsync<UserAlreadyExistsException>()
             .WithMessage("The email you entered is already in use");
-    }
-
-    /// <summary>
-    /// Tests that a user cannot update another user if they do not have the right permissions.
-    /// </summary>
-    /// <param name="currentUser">The current user.</param>
-    /// <param name="toBeUpdated">The user to be updated.</param>
-    [Theory]
-    [MemberData(nameof(NotAllowedPairs))]
-    public async Task HandleUpdateUser_WhenUserTriesToUpdateSomeoneTheyAreNotAllowed_ThrowsException(
-        User currentUser,
-        User toBeUpdated
-    )
-    {
-        _mockUserRepository
-            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
-            .ReturnsAsync(currentUser)
-            .ReturnsAsync(toBeUpdated);
-
-        await FluentActions
-            .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))
-            .Should()
-            .ThrowAsync<UserNotAllowedException>()
-            .WithMessage($"The current user is not allowed to update the user with id {toBeUpdated.Id}");
     }
 }

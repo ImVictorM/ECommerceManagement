@@ -12,16 +12,13 @@ public static class GetOrderByIdQueryUtils
     /// <summary>
     /// Creates a new instance of the <see cref="GetOrderByIdQuery"/> class.
     /// </summary>
-    /// <param name="currentUserId">The current user id.</param>
     /// <param name="orderId">The order id.</param>
     /// <returns>A new instance of the <see cref="GetOrderByIdQuery"/> class.</returns>
     public static GetOrderByIdQuery CreateQuery(
-        string? currentUserId = null,
         string? orderId = null
     )
     {
         return new GetOrderByIdQuery(
-            currentUserId ?? NumberUtils.CreateRandomLongAsString(),
             orderId ?? NumberUtils.CreateRandomLongAsString()
         );
     }

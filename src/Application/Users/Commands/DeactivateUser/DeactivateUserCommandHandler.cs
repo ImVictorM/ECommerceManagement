@@ -39,7 +39,8 @@ public sealed partial class DeactivateUserCommandHandler : IRequestHandler<Deact
 
         var idUserToBeDeactivated = UserId.Create(request.UserId);
 
-        var userToBeDeactivated = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(idUserToBeDeactivated));
+        var userToBeDeactivated = await _unitOfWork.UserRepository
+            .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(idUserToBeDeactivated));
 
         if (userToBeDeactivated == null)
         {

@@ -1,7 +1,6 @@
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
-using SharedKernel.Authorization;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
@@ -35,18 +34,18 @@ public static class UserUtils
         Email? email = null,
         PasswordHash? passwordHash = null,
         string? phone = null,
-        IReadOnlySet<Role>? roles = null,
+        IReadOnlySet<UserRole>? roles = null,
         IReadOnlySet<Address>? addresses = null,
         bool active = true
     )
     {
         var user = User.Create(
-            name ?? _faker.Name.FullName(),
+            name ?? CreateUserName(),
             email ?? EmailUtils.CreateEmail(),
             passwordHash ?? PasswordHashUtils.Create(),
-            roles ?? new HashSet<Role>()
+            roles ?? new HashSet<UserRole>()
             {
-                Role.Customer,
+                UserRole.Create(1),
             },
             phone
         );
@@ -67,6 +66,15 @@ public static class UserUtils
         }
 
         return user;
+    }
+
+    /// <summary>
+    /// Generates a new user name.
+    /// </summary>
+    /// <returns>The new user name.</returns>
+    public static string CreateUserName()
+    {
+        return _faker.Name.FullName();
     }
 
     /// <summary>

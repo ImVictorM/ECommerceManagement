@@ -2,6 +2,7 @@ using Application.Common.PaymentGateway;
 using Application.Common.Persistence;
 using Application.Payments.Events;
 using Application.UnitTests.TestUtils.Events.Payments;
+using Application.UnitTests.TestUtils.PaymentGateway;
 
 using Domain.PaymentAggregate.Enumerations;
 using Domain.PaymentAggregate.ValueObjects;
@@ -48,15 +49,16 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
 
         var notification = PaymentRejectedUtils.CreateEvent(payment);
 
-        var mockPaymentStatusResponse = new Mock<PaymentStatusResponse>();
-        mockPaymentStatusResponse.SetupGet(x => x.Status).Returns(PaymentStatus.Canceled);
+        var paymentStatusResponse = PaymentStatusResponseUtils.CreateResponse(paymentStatus: PaymentStatus.Canceled);
 
-        _mockPaymentGateway.Setup(g => g.CancelAuthorizationAsync(payment.Id)).ReturnsAsync(mockPaymentStatusResponse.Object);
+        _mockPaymentGateway
+            .Setup(g => g.CancelAuthorizationAsync(payment.Id.ToString()))
+            .ReturnsAsync(paymentStatusResponse);
 
         await _handler.Handle(notification, default);
 
-        payment.PaymentStatusId.Should().Be(mockPaymentStatusResponse.Object.Status.Id);
-        _mockPaymentGateway.Verify(g => g.CancelAuthorizationAsync(payment.Id), Times.Once());
+        payment.PaymentStatusId.Should().Be(paymentStatusResponse.Status.Id);
+        _mockPaymentGateway.Verify(g => g.CancelAuthorizationAsync(payment.Id.ToString()), Times.Once());
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 }

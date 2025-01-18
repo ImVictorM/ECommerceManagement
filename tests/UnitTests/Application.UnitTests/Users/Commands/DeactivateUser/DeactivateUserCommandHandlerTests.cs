@@ -1,6 +1,4 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
-using Application.Common.Security.Authorization.Roles;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.DeactivateUser;
 
@@ -41,61 +39,20 @@ public class DeactivateUserCommandHandlerTests
     }
 
     /// <summary>
-    /// Not allowed pairs.
+    /// Tests that when the user to be deactivated exists it is deactivated.
     /// </summary>
-    public static IEnumerable<object[]> NotAllowedPairs =>
-    [
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), roles: new HashSet<Role>() { Role.Customer }),
-            UserUtils.CreateUser(id: UserId.Create(2), roles: new HashSet<Role>() { Role.Customer })
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), roles: new HashSet<Role>() { Role.Customer }),
-            UserUtils.CreateUser(id: UserId.Create(2), roles: new HashSet<Role>() { Role.Admin })
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
-            UserUtils.CreateUser(id: UserId.Create(2), roles : new HashSet < Role >() { Role.Admin })
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
-            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin })
-        ]
-    ];
-
-    /// <summary>
-    /// List of allowed pairs.
-    /// </summary>
-    public static IEnumerable<object[]> AllowedPairs =>
-    [
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), active: true, roles: new HashSet<Role>() { Role.Customer }),
-            UserUtils.CreateUser(id: UserId.Create(1), active: true, roles : new HashSet<Role>() { Role.Customer })
-        ],
-        [
-            UserUtils.CreateUser(id: UserId.Create(1), roles : new HashSet < Role >() { Role.Admin }),
-            UserUtils.CreateUser(id: UserId.Create(2), active: true, roles: new HashSet<Role>() { Role.Customer })
-        ]
-    ];
-
-    /// <summary>
-    /// Tests that when the user to be deactivated exists and the current user has the right permissions the deactivation occurs.
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(AllowedPairs))]
-    public async Task HandleDeactivateUser_WhenUserExists_DeactivateItAndSave(
-        User currentUser,
-        User userToBeDeactivate
-    )
+    [Fact]
+    public async Task HandleDeactivateUser_WhenUserExists_DeactivateItAndSave()
     {
+        var userToBeDeactivated = UserUtils.CreateUser(active: true);
+
         _mockUserRepository
-            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
-            .ReturnsAsync(currentUser)
-            .ReturnsAsync(userToBeDeactivate);
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .ReturnsAsync(userToBeDeactivated);
 
         await _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default);
 
-        userToBeDeactivate.IsActive.Should().BeFalse();
+        userToBeDeactivated.IsActive.Should().BeFalse();
         _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Once());
     }
 
@@ -105,11 +62,8 @@ public class DeactivateUserCommandHandlerTests
     [Fact]
     public async Task HandleDeactivateUser_WhenUserDoesNotExist_ReturnsWithoutThrowing()
     {
-        var currentUser = UserUtils.CreateUser(roles: new HashSet<Role>() { Role.Admin }, id: UserId.Create(1));
-
         _mockUserRepository
-            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
-            .ReturnsAsync(currentUser)
+            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
             .ReturnsAsync((User?)null);
 
         await FluentActions
@@ -118,28 +72,5 @@ public class DeactivateUserCommandHandlerTests
             .NotThrowAsync();
 
         _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Never());
-    }
-
-    /// <summary>
-    /// Tests a user without the right permissions cannot use the deactivation feature.
-    /// </summary>
-    /// <param name="currentUser">The current user.</param>
-    /// <param name="userToDeactivate">The user to be deactivated.</param>
-    [Theory]
-    [MemberData(nameof(NotAllowedPairs))]
-    public async Task HandleDeactivateUser_WhenCurrentUserDoesNotHaveTheRightPermission_ThrowsException(
-        User currentUser,
-        User userToDeactivate
-    )
-    {
-        _mockUserRepository
-            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
-            .ReturnsAsync(currentUser)
-            .ReturnsAsync(userToDeactivate);
-
-        await FluentActions
-            .Invoking(() => _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default))
-            .Should()
-            .ThrowAsync<UserNotAllowedException>();
     }
 }
