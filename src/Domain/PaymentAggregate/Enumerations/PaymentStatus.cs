@@ -42,16 +42,6 @@ public class PaymentStatus : BaseEnumeration
     }
 
     /// <summary>
-    /// Retrieves a payment status from its display name.
-    /// </summary>
-    /// <param name="name">The status name.</param>
-    /// <returns>The payment status corresponding to the name.</returns>
-    public static PaymentStatus FromDisplayName(string name)
-    {
-        return FromDisplayName<PaymentStatus>(name.ToLowerSnakeCase());
-    }
-
-    /// <summary>
     /// List all the available payment statuses.
     /// </summary>
     /// <returns>All the available payment statuses.</returns>

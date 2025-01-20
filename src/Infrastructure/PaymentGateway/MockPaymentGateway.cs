@@ -2,6 +2,8 @@ using Domain.PaymentAggregate.Enumerations;
 
 using Application.Common.PaymentGateway;
 
+using SharedKernel.Models;
+
 namespace Infrastructure.PaymentGateway;
 
 /// <summary>
@@ -20,7 +22,7 @@ public class MockPaymentGateway : IPaymentGateway
             PaymentMethod: "credit_card",
             Amount: 120m,
             Installments: 1,
-            Status: PaymentStatus.FromDisplayName("pending"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("pending"),
             Details: "does not matter",
             Captured: true
         );
@@ -32,7 +34,7 @@ public class MockPaymentGateway : IPaymentGateway
         await Task.CompletedTask;
 
         return new PaymentStatusResponse(
-            Status: PaymentStatus.FromDisplayName("approved"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("approved"),
             Details: "accredited",
             Captured: true
         );
@@ -44,7 +46,7 @@ public class MockPaymentGateway : IPaymentGateway
         await Task.CompletedTask;
 
         return new PaymentStatusResponse(
-            Status: PaymentStatus.FromDisplayName("canceled"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("canceled"),
             Details: "by collector",
             Captured: false
         );
@@ -59,7 +61,7 @@ public class MockPaymentGateway : IPaymentGateway
             RefundId: Guid.NewGuid().ToString(),
             PaymentId: paymentId,
             Amount: amount,
-            Status: PaymentStatus.FromDisplayName("approved"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("approved"),
             Reason: "does not matter",
             RefundMode: "standard"
         );
@@ -75,7 +77,7 @@ public class MockPaymentGateway : IPaymentGateway
             PaymentMethod: "credit_card",
             Amount: 120m,
             Installments: 1,
-            Status: PaymentStatus.FromDisplayName("pending"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("pending"),
             Details: "does not matter",
             Captured: true
         );

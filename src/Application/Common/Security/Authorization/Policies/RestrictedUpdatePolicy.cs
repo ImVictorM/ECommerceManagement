@@ -1,6 +1,9 @@
+using Application.Common.Extensions.Users;
+using Application.Common.Persistence;
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
+
+using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Common.Security.Authorization.Policies;
 
@@ -10,11 +13,11 @@ namespace Application.Common.Security.Authorization.Policies;
 /// </summary>
 public sealed class RestrictedUpdatePolicy : IPolicy
 {
-    private readonly IRoleService _roleService;
+    private readonly IUnitOfWork _unitOfWork;
 
-    internal RestrictedUpdatePolicy(IRoleService roleService)
+    internal RestrictedUpdatePolicy(IUnitOfWork unitOfWork)
     {
-        _roleService = roleService;
+        _unitOfWork = unitOfWork;
     }
 
     /// <inheritdoc/>
@@ -26,8 +29,16 @@ public sealed class RestrictedUpdatePolicy : IPolicy
         }
 
         var userToBeUpdatedId = request.UserId;
-        var currentUserIsAdmin = _roleService.IsAdmin(currentUser);
-        var userToBeUpdatedIsAdmin = await _roleService.IsAdminAsync(userToBeUpdatedId);
+        var currentUserIsAdmin = currentUser.IsAdmin();
+
+        var userToBeUpdated = await _unitOfWork.UserRepository.FindByIdAsync(UserId.Create(userToBeUpdatedId));
+
+        if (userToBeUpdated == null)
+        {
+            return false;
+        }
+
+        var userToBeUpdatedIsAdmin = userToBeUpdated.IsAdmin();
 
         return currentUser.Id == userToBeUpdatedId || (currentUserIsAdmin && !userToBeUpdatedIsAdmin);
     }

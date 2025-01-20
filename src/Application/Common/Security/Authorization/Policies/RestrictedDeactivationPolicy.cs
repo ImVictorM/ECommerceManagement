@@ -1,6 +1,9 @@
+using Application.Common.Extensions.Users;
+using Application.Common.Persistence;
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
+
+using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Common.Security.Authorization.Policies;
 
@@ -11,11 +14,15 @@ namespace Application.Common.Security.Authorization.Policies;
 /// </summary>
 public sealed class RestrictedDeactivationPolicy : IPolicy
 {
-    private readonly IRoleService _roleService;
+    private readonly IUnitOfWork _unitOfWork;
 
-    internal RestrictedDeactivationPolicy(IRoleService roleService)
+    /// <summary>
+    /// Initiates a new instance of the <see cref="RestrictedDeactivationPolicy"/> class.
+    /// </summary>
+    /// <param name="unitOfWork">The unit of work.</param>
+    public RestrictedDeactivationPolicy(IUnitOfWork unitOfWork)
     {
-        _roleService = roleService;
+        _unitOfWork = unitOfWork;
     }
 
     /// <inheritdoc/>
@@ -26,12 +33,20 @@ public sealed class RestrictedDeactivationPolicy : IPolicy
             throw new ArgumentException($"The user id is required for the authorization process. Policy: {nameof(RestrictedDeactivationPolicy)}");
         }
 
-        var userToBeDeactivatedId = request.UserId;
-        var currentUserIsAdmin = _roleService.IsAdmin(currentUser);
+        var currentUserId = UserId.Create(currentUser.Id);
+        var userToBeDeactivatedId = UserId.Create(request.UserId);
+        var currentUserIsAdmin = currentUser.IsAdmin();
 
-        if (currentUser.Id != userToBeDeactivatedId)
+        if (currentUserId != userToBeDeactivatedId)
         {
-            var userToBeDeactivatesIsAdmin = await _roleService.IsAdminAsync(userToBeDeactivatedId);
+            var userToBeDeactivated = await _unitOfWork.UserRepository.FindByIdAsync(userToBeDeactivatedId);
+
+            if (userToBeDeactivated == null)
+            {
+                return false;
+            }
+
+            var userToBeDeactivatesIsAdmin = userToBeDeactivated.IsAdmin();
 
             // Only admins are allowed to deactivate other users that are not admins
             return currentUserIsAdmin && !userToBeDeactivatesIsAdmin;

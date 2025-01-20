@@ -1,6 +1,11 @@
 using Application.Common.Persistence;
 using Application.Payments.Common.Errors;
 
+using Domain.PaymentAggregate.Enumerations;
+using Domain.PaymentAggregate.ValueObjects;
+
+using SharedKernel.Models;
+
 using MediatR;
 
 namespace Application.Payments.Commands.UpdatePaymentStatus;
@@ -24,11 +29,14 @@ public class UpdatePaymentStatusCommandHandler : IRequestHandler<UpdatePaymentSt
     /// <inheritdoc/>
     public async Task<Unit> Handle(UpdatePaymentStatusCommand request, CancellationToken cancellationToken)
     {
+        var paymentId = PaymentId.Create(request.PaymentId);
+        var paymentStatus = BaseEnumeration.FromDisplayName<PaymentStatus>(request.Status);
+
         var payment =
-            await _unitOfWork.PaymentRepository.FindByIdAsync(request.PaymentId)
+            await _unitOfWork.PaymentRepository.FindByIdAsync(paymentId)
             ?? throw new PaymentNotFoundException();
 
-        payment.UpdatePaymentStatus(request.Status);
+        payment.UpdatePaymentStatus(paymentStatus);
 
         await _unitOfWork.SaveChangesAsync();
 

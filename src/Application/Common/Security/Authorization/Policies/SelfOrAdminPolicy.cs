@@ -1,5 +1,4 @@
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
 
 namespace Application.Common.Security.Authorization.Policies;
@@ -10,12 +9,6 @@ namespace Application.Common.Security.Authorization.Policies;
 /// </summary>
 public sealed class SelfOrAdminPolicy : IPolicy
 {
-    private readonly IRoleService _roleService;
-
-    internal SelfOrAdminPolicy(IRoleService roleService)
-    {
-        _roleService = roleService;
-    }
 
     /// <inheritdoc/>
     public Task<bool> IsAuthorizedAsync<T>(RequestWithAuthorization<T> request, IdentityUser currentUser)
@@ -25,6 +18,6 @@ public sealed class SelfOrAdminPolicy : IPolicy
             throw new ArgumentException($"The user id is required for the authorization process. Policy: {nameof(SelfOrAdminPolicy)}");
         }
 
-        return Task.FromResult(request.UserId == currentUser.Id || _roleService.IsAdmin(currentUser));
+        return Task.FromResult(request.UserId == currentUser.Id || currentUser.IsAdmin());
     }
 }

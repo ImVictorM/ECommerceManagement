@@ -1,4 +1,3 @@
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
 using Application.Common.Security.Authorization;
@@ -10,7 +9,6 @@ using Infrastructure.PaymentGateway;
 using Infrastructure.Security.Authorization;
 using Infrastructure.Security.Authentication;
 using Infrastructure.Security.Authentication.Settings;
-using Infrastructure.Security.Authorization.Roles;
 using Infrastructure.Persistence.Interceptors;
 using Infrastructure.Persistence;
 
@@ -119,7 +117,6 @@ public static class ServicesRegistration
         services.AddScoped<IHmacSignatureProvider, HmacSignatureProvider>();
         services.AddScoped<IIdentityProvider, IdentityProvider>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
-        services.AddScoped<IRoleService, RoleService>();
 
         return services;
     }

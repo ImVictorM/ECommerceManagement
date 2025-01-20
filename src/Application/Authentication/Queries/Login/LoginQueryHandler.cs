@@ -5,13 +5,13 @@ using Application.Authentication.Common.DTOs;
 using Application.Authentication.Common.Errors;
 using Application.Common.Persistence;
 using Application.Common.Security.Authentication;
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
 
 using SharedKernel.ValueObjects;
 
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Application.Common.Extensions.Users;
 
 namespace Application.Authentication.Queries.Login;
 
@@ -72,10 +72,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
 
     private string GenerateToken(User user)
     {
-        var availableRoles = Role.List().ToDictionary(r => r.Id);
-        var userRoleNames = user.UserRoles.Select(ur => availableRoles[ur.RoleId].Name).ToList();
-
-        var userIdentity = new IdentityUser(user.Id.ToString(), userRoleNames);
+        var userIdentity = new IdentityUser(user.Id.ToString(), user.UserRoles.GetRoleNames());
 
         var token = _jwtTokenService.GenerateToken(userIdentity);
 

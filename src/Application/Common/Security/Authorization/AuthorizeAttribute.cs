@@ -1,5 +1,6 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Roles;
+
 using SharedKernel.Errors;
 
 namespace Application.Common.Security.Authorization;
@@ -37,7 +38,7 @@ public sealed class AuthorizeAttribute : Attribute
         {
             try
             {
-                Role.FromDisplayName(roleName);
+                RoleUtils.FromDisplayName(roleName);
             }
             catch (InvalidParseException)
             {
