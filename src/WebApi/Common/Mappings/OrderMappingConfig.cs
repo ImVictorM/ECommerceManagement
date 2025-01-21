@@ -45,5 +45,12 @@ public class OrderMappingConfig : IRegister
                 src.Payment.PaymentMethod
             ))
             .IgnoreNullValues(true);
+
+        config.NewConfig<OrderResult, OrderResponse>()
+            .Map(dest => dest.Id, src => src.Order.Id.ToString())
+            .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
+            .Map(dest => dest.Description, src => src.Order.Description)
+            .Map(dest => dest.Status, src => src.Order.GetStatusDescription())
+            .Map(dest => dest.Total, src => src.Order.Total);
     }
 }

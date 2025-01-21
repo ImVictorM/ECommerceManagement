@@ -1,5 +1,6 @@
 using Application.Orders.Commands.PlaceOrder;
 using Application.Orders.Queries.GetOrderById;
+using Application.Orders.Queries.GetOrders;
 
 using Contracts.Orders;
 
@@ -48,6 +49,16 @@ public class OrderEndpoints : ICarterModule
                 Description = "Retrieves an order by identifier. Administrators can access any order."
             })
             .RequireAuthorization();
+
+        orderGroup
+            .MapGet("/", GetOrders)
+            .WithName("GetOrders")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Get Orders",
+                Description = "Retrieves all the orders. Administrator authentication required."
+            })
+            .RequireAuthorization();
     }
 
     private async Task<Results<Created, UnauthorizedHttpResult, BadRequest, BadRequest<string>>> PlaceOrder(
@@ -80,5 +91,18 @@ public class OrderEndpoints : ICarterModule
         var result = await sender.Send(query);
 
         return TypedResults.Ok(mapper.Map<OrderDetailedResponse>(result));
+    }
+
+    private async Task<Results<Ok<IEnumerable<OrderResponse>>, UnauthorizedHttpResult, ForbidHttpResult>> GetOrders(
+        [FromQuery(Name = "status")] string? status,
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var query = new GetOrdersQuery(status);
+
+        var result = await sender.Send(query);
+
+        return TypedResults.Ok(result.Select(mapper.Map<OrderResponse>));
     }
 }

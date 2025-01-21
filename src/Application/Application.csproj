@@ -10,12 +10,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Orders\Queries\GetCustomerOrderById\" />
-    <Folder Include="Orders\Queries\GetOrders\" />
-    <Folder Include="Orders\Queries\GetCustomerOrders\" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
