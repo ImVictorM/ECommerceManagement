@@ -1,10 +1,7 @@
-using WebApi.Common.Interfaces;
-
 using MapsterMapper;
 using Carter;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 
 namespace WebApi;
@@ -29,7 +26,7 @@ public static class ServicesRegistration
         services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
         services.AddSwagger();
-        services.AddAuthorizationPolicies();
+        services.AddAuthorization();
 
         services.AddProblemDetails(
             options => options.CustomizeProblemDetails = context =>
@@ -75,37 +72,6 @@ public static class ServicesRegistration
                 { jwtSecurityScheme, Array.Empty<string>() }
             });
         });
-
-        return services;
-    }
-
-    private static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
-    {
-        // Configure policies
-        services.AddAuthorization(options =>
-        {
-            var assembly = typeof(ServicesRegistration).Assembly;
-
-            var policyTypes = assembly.GetTypes()
-                .Where(type => typeof(IAuthorizationPolicy).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
-
-            foreach (var policyType in policyTypes)
-            {
-                if (Activator.CreateInstance(policyType) is IAuthorizationPolicy policy)
-                {
-                    policy.ConfigurePolicy(options);
-                }
-            }
-        });
-
-        // Configure authorization handler
-        var handlerTypes = typeof(ServicesRegistration).Assembly.GetTypes()
-            .Where(type => typeof(IAuthorizationHandler).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
-
-        foreach (var handlerType in handlerTypes)
-        {
-            services.AddScoped(typeof(IAuthorizationHandler), handlerType);
-        }
 
         return services;
     }

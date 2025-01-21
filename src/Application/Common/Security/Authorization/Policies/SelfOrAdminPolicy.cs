@@ -11,7 +11,7 @@ public sealed class SelfOrAdminPolicy : IPolicy
 {
 
     /// <inheritdoc/>
-    public Task<bool> IsAuthorizedAsync<T>(RequestWithAuthorization<T> request, IdentityUser currentUser)
+    public Task<bool> IsAuthorizedAsync<T>(IRequestWithAuthorization<T> request, IdentityUser currentUser)
     {
         if (request.UserId == null)
         {

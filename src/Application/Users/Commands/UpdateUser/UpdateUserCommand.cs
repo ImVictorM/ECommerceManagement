@@ -18,4 +18,4 @@ public record UpdateUserCommand(
     string Name,
     string Email,
     string? Phone = null
-) : RequestWithAuthorization<Unit>(UserId);
+) : IRequestWithAuthorization<Unit>;

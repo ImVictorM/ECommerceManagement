@@ -2,6 +2,9 @@ using Application.Orders.Commands.Common.DTOs;
 using Application.Orders.Commands.PlaceOrder;
 using Application.Orders.Common.DTOs;
 
+using SharedKernel.Interfaces;
+using SharedKernel.ValueObjects;
+
 using Contracts.Orders;
 using Mapster;
 
@@ -16,14 +19,15 @@ public class OrderMappingConfig : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<(Guid requestId, PlaceOrderRequest Request), PlaceOrderCommand>()
-            .Map(dest => dest, src => src.Request)
-            .Map(dest => dest.requestId, src => src.requestId)
-            .Map(dest => dest.BillingAddress, src => src.Request.BillingAddress)
-            .Map(dest => dest.CouponAppliedIds, src => src.Request.CouponAppliedIds)
-            .Map(dest => dest.DeliveryAddress, src => src.Request.DeliveryAddress)
-            .Map(dest => dest.Products, src => src.Request.Products.Select(p => new OrderProductInput(p.ProductId, p.Quantity)))
-            .Map(dest => dest.PaymentMethod, src => src.Request.PaymentMethod)
-            .Map(dest => dest.Installments, src => src.Request.installments);
+            .MapWith(src => new PlaceOrderCommand(
+                src.requestId,
+                src.Request.Products.Select(p => new OrderProductInput(p.ProductId, p.Quantity)),
+                src.Request.BillingAddress.Adapt<Address>(),
+                src.Request.DeliveryAddress.Adapt<Address>(),
+                src.Request.PaymentMethod.Adapt<IPaymentMethod>(),
+                src.Request.CouponAppliedIds,
+                src.Request.installments
+            ));
 
         config.NewConfig<OrderDetailedResult, OrderDetailedResponse>()
             .Map(dest => dest.Id, src => src.Order.Id.ToString())

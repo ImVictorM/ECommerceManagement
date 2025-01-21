@@ -2,6 +2,7 @@ using Application.Users.Commands.DeactivateUser;
 using Application.Users.Commands.UpdateUser;
 using Application.Users.Queries.GetAllUsers;
 using Application.Users.Queries.GetUserById;
+using Application.Users.Queries.GetSelf;
 
 using Contracts.Users;
 
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using MapsterMapper;
 using MediatR;
 using Carter;
-using Application.Users.Queries.GetSelf;
 
 namespace WebApi.Endpoints;
 

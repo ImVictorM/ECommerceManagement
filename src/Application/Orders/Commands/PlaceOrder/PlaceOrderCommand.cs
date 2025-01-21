@@ -29,4 +29,8 @@ public record PlaceOrderCommand(
     IPaymentMethod PaymentMethod,
     IEnumerable<string>? CouponAppliedIds = null,
     int? Installments = null
-) : RequestWithAuthorization<CreatedResult>;
+) : IRequestWithAuthorization<CreatedResult>
+{
+    /// <inheritdoc/>
+    public string? UserId => null;
+}

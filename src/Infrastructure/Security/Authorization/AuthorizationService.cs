@@ -28,7 +28,7 @@ public class AuthorizationService : IAuthorizationService
 
     /// <inheritdoc/>
     public async Task<bool> IsCurrentUserAuthorizedAsync<T>(
-        RequestWithAuthorization<T> request,
+        IRequestWithAuthorization<T> request,
         IReadOnlyList<string> requiredRoleNames,
         IReadOnlyList<Type> requiredPolicyTypes
     )

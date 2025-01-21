@@ -26,7 +26,7 @@ public sealed class RestrictedDeactivationPolicy : IPolicy
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsAuthorizedAsync<T>(RequestWithAuthorization<T> request, IdentityUser currentUser)
+    public async Task<bool> IsAuthorizedAsync<T>(IRequestWithAuthorization<T> request, IdentityUser currentUser)
     {
         if (request.UserId == null)
         {

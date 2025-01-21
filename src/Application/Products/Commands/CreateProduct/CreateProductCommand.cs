@@ -22,4 +22,8 @@ public record CreateProductCommand(
     decimal BasePrice,
     IEnumerable<string> CategoryIds,
     IEnumerable<Uri> Images
-) : RequestWithAuthorization<CreatedResult>;
+) : IRequestWithAuthorization<CreatedResult>
+{
+    /// <inheritdoc/>
+    public string? UserId => null;
+}

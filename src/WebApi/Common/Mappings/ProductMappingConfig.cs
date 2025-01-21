@@ -18,15 +18,31 @@ public class ProductMappingConfig : IRegister
     /// <param name="config">The global configuration object.</param>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<CreateProductRequest, CreateProductCommand>();
+        config.NewConfig<CreateProductRequest, CreateProductCommand>()
+            .ConstructUsing(src => new CreateProductCommand(
+                src.Name,
+                src.Description,
+                src.InitialQuantity,
+                src.BasePrice,
+                src.CategoryIds,
+                src.Images
+            ));
 
         config.NewConfig<(string Id, UpdateProductRequest Request), UpdateProductCommand>()
-            .Map(dest => dest, src => src.Request)
-            .Map(dest => dest.Id, src => src.Id);
+            .ConstructUsing(src => new UpdateProductCommand(
+                src.Id,
+                src.Request.Name,
+                src.Request.Description,
+                src.Request.BasePrice,
+                src.Request.Images,
+                src.Request.CategoryIds
+            ));
 
         config.NewConfig<(string Id, UpdateProductInventoryRequest Request), UpdateProductInventoryCommand>()
-            .Map(dest => dest.ProductId, src => src.Id)
-            .Map(dest => dest, src => src.Request);
+            .ConstructUsing(src => new UpdateProductInventoryCommand(
+                src.Id,
+                src.Request.QuantityToIncrement
+            ));
 
         config.NewConfig<ProductResult, ProductResponse>()
             .Map(dest => dest.Id, src => src.Product.Id.ToString())

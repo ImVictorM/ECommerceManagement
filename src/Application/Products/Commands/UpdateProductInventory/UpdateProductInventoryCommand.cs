@@ -12,4 +12,8 @@ namespace Application.Products.Commands.UpdateProductInventory;
 /// <param name="ProductId">The product id.</param>
 /// <param name="QuantityToIncrement">The quantity to add to the inventory.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record UpdateProductInventoryCommand(string ProductId, int QuantityToIncrement) : RequestWithAuthorization<Unit>;
+public record UpdateProductInventoryCommand(string ProductId, int QuantityToIncrement) : IRequestWithAuthorization<Unit>
+{
+    /// <inheritdoc/>
+    public string? UserId => null;
+}

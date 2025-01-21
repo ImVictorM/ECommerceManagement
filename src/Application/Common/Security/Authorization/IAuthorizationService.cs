@@ -16,7 +16,7 @@ public interface IAuthorizationService
     /// <param name="requiredPolicyTypes">The authorization required policy types.</param>
     /// <returns>A bool value indicating if the user is authorized.</returns>
     Task<bool> IsCurrentUserAuthorizedAsync<T>(
-        RequestWithAuthorization<T> request,
+        IRequestWithAuthorization<T> request,
         IReadOnlyList<string> requiredRoleNames,
         IReadOnlyList<Type> requiredPolicyTypes
     );

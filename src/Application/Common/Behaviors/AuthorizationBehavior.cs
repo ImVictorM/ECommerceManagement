@@ -15,11 +15,15 @@ namespace Application.Common.Behaviors;
 /// <typeparam name="TRequest">The type of the request.</typeparam>
 /// <typeparam name="TResponse">The type of the response.</typeparam>
 public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : RequestWithAuthorization<TResponse>
+    where TRequest : IRequestWithAuthorization<TResponse>
 {
     private readonly IAuthorizationService _authorizationService;
 
-    internal AuthorizationBehavior(IAuthorizationService authorizationService)
+    /// <summary>
+    /// Initiates a new instance of the <see cref="AuthorizationBehavior{TRequest, TResponse}"/> class.
+    /// </summary>
+    /// <param name="authorizationService">The authorization service.</param>
+    public AuthorizationBehavior(IAuthorizationService authorizationService)
     {
         _authorizationService = authorizationService;
     }

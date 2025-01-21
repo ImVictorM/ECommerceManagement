@@ -15,13 +15,17 @@ public sealed class RestrictedUpdatePolicy : IPolicy
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    internal RestrictedUpdatePolicy(IUnitOfWork unitOfWork)
+    /// <summary>
+    /// Creates a new instance of the <see cref="RestrictedUpdatePolicy"/> class.
+    /// </summary>
+    /// <param name="unitOfWork">The unit of work.</param>
+    public RestrictedUpdatePolicy(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsAuthorizedAsync<T>(RequestWithAuthorization<T> request, IdentityUser currentUser)
+    public async Task<bool> IsAuthorizedAsync<T>(IRequestWithAuthorization<T> request, IdentityUser currentUser)
     {
         if (request.UserId == null)
         {

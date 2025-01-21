@@ -8,6 +8,6 @@ namespace Application.Users.Queries.GetUserById;
 /// <summary>
 /// Query to get the user by identifier.
 /// </summary>
-/// <param name="Id">The identifier value.</param>
+/// <param name="UserId">The user identifier value.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record GetUserByIdQuery(string Id) : RequestWithAuthorization<UserResult>;
+public record GetUserByIdQuery(string UserId) : IRequestWithAuthorization<UserResult>;

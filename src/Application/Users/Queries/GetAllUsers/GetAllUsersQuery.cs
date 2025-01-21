@@ -10,4 +10,8 @@ namespace Application.Users.Queries.GetAllUsers;
 /// </summary>
 /// <param name="IsActive">Filter condition for querying the users that is active or not (optional).</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record GetAllUsersQuery(bool? IsActive = null) : RequestWithAuthorization<IEnumerable<UserResult>>;
+public record GetAllUsersQuery(bool? IsActive = null) : IRequestWithAuthorization<IEnumerable<UserResult>>
+{
+    /// <inheritdoc/>
+    public string? UserId => null;
+}

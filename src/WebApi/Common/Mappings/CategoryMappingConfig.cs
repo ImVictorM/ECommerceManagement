@@ -16,11 +16,11 @@ public class CategoryMappingConfig : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<CreateCategoryRequest, CreateCategoryCommand>();
+        config.NewConfig<CreateCategoryRequest, CreateCategoryCommand>()
+            .ConstructUsing(src => new CreateCategoryCommand(src.Name));
 
         config.NewConfig<(string Id, UpdateCategoryRequest Request), UpdateCategoryCommand>()
-            .Map(dest => dest.Id, src => src.Id)
-            .Map(dest => dest.Name, src => src.Request.Name);
+            .ConstructUsing(src => new UpdateCategoryCommand(src.Id, src.Request.Name));
 
         config.NewConfig<CategoryResult, CategoryResponse>();
     }

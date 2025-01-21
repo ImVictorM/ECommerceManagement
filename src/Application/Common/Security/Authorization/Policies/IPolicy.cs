@@ -15,7 +15,7 @@ public interface IPolicy
     /// The type of the result that the request produces.
     /// </typeparam>
     /// <param name="request">
-    /// The request to evaluate, implementing <see cref="RequestWithAuthorization{T}"/>.
+    /// The request to evaluate, implementing <see cref="IRequestWithAuthorization{T}"/>.
     /// </param>
     /// <param name="currentUser">
     /// An instance of <see cref="IdentityUser"/> representing the user for whom authorization 
@@ -25,7 +25,7 @@ public interface IPolicy
     /// A boolean value indicating if the user is authorized to perform the request.
     /// </returns>
     Task<bool> IsAuthorizedAsync<T>(
-        RequestWithAuthorization<T> request,
+        IRequestWithAuthorization<T> request,
         IdentityUser currentUser
     );
 }

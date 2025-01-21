@@ -22,4 +22,8 @@ public record UpdateProductCommand(
     decimal BasePrice,
     IEnumerable<Uri> Images,
     IEnumerable<string> CategoryIds
-) : RequestWithAuthorization<Unit>;
+) : IRequestWithAuthorization<Unit>
+{
+    /// <inheritdoc/>
+    public string? UserId => null;
+}

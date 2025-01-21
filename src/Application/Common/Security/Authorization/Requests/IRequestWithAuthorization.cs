@@ -6,5 +6,10 @@ namespace Application.Common.Security.Authorization.Requests;
 /// Represents a request that needs authorization.
 /// </summary>
 /// <typeparam name="T">The request return type.</typeparam>
-/// <param name="UserId">The user id for requests related to users.</param>
-public abstract record RequestWithAuthorization<T>(string? UserId = null) : IRequest<T>;
+public interface IRequestWithAuthorization<out T> : IRequest<T>
+{
+    /// <summary>
+    /// Gets the user id for user specific requests.
+    /// </summary>
+    public string? UserId { get; }
+}

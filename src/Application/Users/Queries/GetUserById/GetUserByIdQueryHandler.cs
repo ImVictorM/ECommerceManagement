@@ -30,9 +30,9 @@ public sealed partial class GetUserByIdQueryHandler : IRequestHandler<GetUserByI
     /// <inheritdoc/>
     public async Task<UserResult> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        LogInitiatingUserFetch(request.Id);
+        LogInitiatingUserFetch(request.UserId);
 
-        var id = UserId.Create(request.Id);
+        var id = UserId.Create(request.UserId);
 
         var user = await _unitOfWork.UserRepository.FindByIdAsync(id);
 
