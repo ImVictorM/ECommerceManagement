@@ -1,8 +1,11 @@
 using Application.Common.Security.Authorization.Roles;
+
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+
 using Infrastructure.Security.Authentication;
+
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
@@ -49,7 +52,7 @@ public static class UserSeed
         [SeedAvailableUsers.Admin] = (UserUtils.CreateUser(
             id: UserId.Create(-1),
             name: "admin",
-            roles: new HashSet<Role>() { Role.Admin },
+            roles: new HashSet<UserRole>() { UserRole.Create(Role.Admin.Id) },
             email: EmailUtils.CreateEmail("system_admin@email.com"),
             passwordHash: _hasher.Hash(AdminPassword)
         ), AdminPassword),
@@ -57,7 +60,7 @@ public static class UserSeed
         [SeedAvailableUsers.OtherAdmin] = (UserUtils.CreateUser(
             id: UserId.Create(-2),
             name: "other admin",
-            roles: new HashSet<Role>() { Role.Admin },
+            roles: new HashSet<UserRole>() { UserRole.Create(Role.Admin.Id) },
             email: EmailUtils.CreateEmail("other_admin@email.com"),
             passwordHash: _hasher.Hash(AdminPassword)
         ), AdminPassword),
@@ -66,7 +69,7 @@ public static class UserSeed
             id: UserId.Create(-3),
             name: "normal user",
             email: EmailUtils.CreateEmail("user_normal@email.com"),
-            roles: new HashSet<Role>() { Role.Customer },
+            roles: new HashSet<UserRole>() { UserRole.Create(Role.Customer.Id) },
             passwordHash: _hasher.Hash(UserPassword)
         ), UserPassword),
 
@@ -74,7 +77,7 @@ public static class UserSeed
             id: UserId.Create(-4),
             name: "user with address",
             email: EmailUtils.CreateEmail("user_address@email.com"),
-            roles: new HashSet<Role>() { Role.Customer },
+            roles: new HashSet<UserRole>() { UserRole.Create(Role.Customer.Id) },
             addresses: new HashSet<Address>() { AddressUtils.CreateAddress() },
             passwordHash: _hasher.Hash(UserPassword)
         ), UserPassword),
@@ -83,7 +86,7 @@ public static class UserSeed
             id: UserId.Create(-5),
             name: "inactive user",
             email: EmailUtils.CreateEmail("user_inactive@email.com"),
-            roles: new HashSet<Role>() { Role.Customer },
+            roles: new HashSet<UserRole>() { UserRole.Create(Role.Customer.Id) },
             passwordHash: _hasher.Hash(UserPassword),
             active: false
         ), UserPassword),

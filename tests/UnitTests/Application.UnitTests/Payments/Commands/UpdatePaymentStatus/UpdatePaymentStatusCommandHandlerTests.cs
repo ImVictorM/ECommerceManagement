@@ -44,7 +44,7 @@ public class UpdatePaymentStatusCommandHandlerTests
         var command = UpdatePaymentStatusCommandUtils.CreateCommand();
 
         _mockPaymentRepository
-            .Setup(r => r.FindByIdAsync(command.PaymentId))
+            .Setup(r => r.FindByIdAsync(PaymentId.Create(command.PaymentId)))
             .ReturnsAsync((Payment?)null);
 
         await FluentActions
@@ -61,10 +61,11 @@ public class UpdatePaymentStatusCommandHandlerTests
     {
         var newStatus = PaymentStatus.Authorized;
         var command = UpdatePaymentStatusCommandUtils.CreateCommand(status: newStatus.Name);
-        var payment = PaymentUtils.CreatePayment(paymentId: command.PaymentId, paymentStatus: PaymentStatus.Pending);
+        var paymentId = PaymentId.Create(command.PaymentId);
+        var payment = PaymentUtils.CreatePayment(paymentId: paymentId, paymentStatus: PaymentStatus.Pending);
 
         _mockPaymentRepository
-            .Setup(r => r.FindByIdAsync(command.PaymentId))
+            .Setup(r => r.FindByIdAsync(paymentId))
             .ReturnsAsync(payment);
 
         await _handler.Handle(command, default);

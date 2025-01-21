@@ -64,6 +64,7 @@ public class CreateCategoryTests : BaseIntegrationTest
 
         await Client.LoginAs(SeedAvailableUsers.Admin);
         var createResponse = await Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
+
         var resourceLocation = createResponse.Headers.Location;
         var getCreatedResponse = await Client.GetAsync(resourceLocation);
         var createdCategory = await getCreatedResponse.Content.ReadFromJsonAsync<CategoryResponse>();

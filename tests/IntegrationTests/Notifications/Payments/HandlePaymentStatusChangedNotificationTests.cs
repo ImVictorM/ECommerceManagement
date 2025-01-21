@@ -1,11 +1,12 @@
 using Contracts.Notifications;
 using Contracts.Orders;
 
-using Infrastructure.Authentication;
-
 using WebApi.Common.Utils;
 using WebApi.Endpoints;
 using WebApi.Endpoints.Notifications;
+
+using Infrastructure.Security.Authentication;
+using Infrastructure.Security.Authentication.Settings;
 
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
@@ -16,7 +17,6 @@ using System.Text;
 using Xunit.Abstractions;
 using Microsoft.Extensions.Options;
 using FluentAssertions;
-using Infrastructure.Security.Authentication;
 
 namespace IntegrationTests.Notifications.Payments;
 

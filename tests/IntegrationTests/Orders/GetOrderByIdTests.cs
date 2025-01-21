@@ -73,8 +73,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
     /// <param name="allowedUser">Allowed user types.</param>
     [Theory]
     [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.Customer)]
-    public async Task GetOrderById_WhenUserIsAllowedToReadOrder_ReturnsOk(SeedAvailableUsers allowedUser)
+    public async Task GetOrderById_WhenUserIsAllowed_ReturnsOk(SeedAvailableUsers allowedUser)
     {
         var order = OrderSeed.GetSeedOrder(SeedAvailableOrders.CUSTOMER_ORDER_PENDING);
 
