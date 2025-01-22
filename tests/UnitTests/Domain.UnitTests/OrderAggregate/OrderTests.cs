@@ -124,18 +124,6 @@ public class OrderTests
     }
 
     /// <summary>
-    /// Tests that getting the order status description returns correctly.
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(OrderStatuses))]
-    public async Task GetOrderStatusDescription_WhenCalled_ReturnsStatusName(OrderStatus status)
-    {
-        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: status);
-
-        order.GetStatusDescription().Should().Be(status.Name);
-    }
-
-    /// <summary>
     /// Tests when order is pending it is possible to mark it as paid.
     /// </summary>
     [Fact]

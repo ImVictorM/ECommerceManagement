@@ -1,6 +1,7 @@
 using Application.Orders.Commands.Common.DTOs;
 using Application.Orders.Commands.PlaceOrder;
 using Application.Orders.Common.DTOs;
+using Application.Common.Extensions.Orders;
 
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;

@@ -147,17 +147,6 @@ public sealed class Order : AggregateRoot<OrderId>
         AddDomainEvent(new OrderPaid(this));
     }
 
-    /// <summary>
-    /// Retrieves the order status description.
-    /// </summary>
-    /// <returns>The description of the order status.</returns>
-    public string GetStatusDescription()
-    {
-        var status = BaseEnumeration.FromValue<OrderStatus>(OrderStatusId);
-
-        return status.Name;
-    }
-
     private void UpdateOrderStatus(OrderStatus status, string description)
     {
         OrderStatusId = status.Id;
