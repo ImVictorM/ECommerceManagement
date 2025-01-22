@@ -40,14 +40,14 @@ public partial class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior
         CancellationToken cancellationToken
     )
     {
+        LogValidatingRequest(typeof(TRequest).Name);
+
         if (_validator is null)
         {
             LogNoValidator(typeof(TRequest).Name);
 
             return await next();
         }
-
-        LogValidatingRequest(typeof(TRequest).Name);
 
         var validationResult = await _validator.ValidateAsync(request, cancellationToken);
 

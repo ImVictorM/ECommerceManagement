@@ -21,7 +21,13 @@ public sealed class AuthorizeAttribute : Attribute
     /// </summary>
     public Type? PolicyType { get; }
 
-    internal AuthorizeAttribute(string? roleName = null, Type? policyType = null)
+    /// <summary>
+    /// Initiates a new instance of the <see cref="AuthorizeAttribute"/> class.
+    /// </summary>
+    /// <param name="roleName">The required role name.</param>
+    /// <param name="policyType">The required police type.</param>
+    /// <exception cref="ArgumentException">Thrown when any of the arguments are invalid.</exception>
+    public AuthorizeAttribute(string? roleName = null, Type? policyType = null)
     {
         RoleName = roleName;
         PolicyType = policyType;

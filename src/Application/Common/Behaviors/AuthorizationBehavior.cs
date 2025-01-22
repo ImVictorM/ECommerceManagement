@@ -3,6 +3,7 @@ using Application.Common.Security.Authorization;
 using Application.Common.Security.Authorization.Requests;
 
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace Application.Common.Behaviors;
@@ -14,7 +15,7 @@ namespace Application.Common.Behaviors;
 /// </summary>
 /// <typeparam name="TRequest">The type of the request.</typeparam>
 /// <typeparam name="TResponse">The type of the response.</typeparam>
-public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public partial class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequestWithAuthorization<TResponse>
 {
     private readonly IAuthorizationService _authorizationService;
@@ -23,9 +24,14 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     /// Initiates a new instance of the <see cref="AuthorizationBehavior{TRequest, TResponse}"/> class.
     /// </summary>
     /// <param name="authorizationService">The authorization service.</param>
-    public AuthorizationBehavior(IAuthorizationService authorizationService)
+    /// <param name="logger">The logger.</param>
+    public AuthorizationBehavior(
+        IAuthorizationService authorizationService,
+        ILogger<AuthorizationBehavior<TRequest, TResponse>> logger
+    )
     {
         _authorizationService = authorizationService;
+        _logger = logger;
     }
 
     /// <inheritdoc/>
@@ -35,6 +41,8 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         CancellationToken cancellationToken
     )
     {
+        LogAuthorizingRequest(typeof(TRequest).Name);
+
         var authorizationAttributes = request
             .GetType()
             .GetCustomAttributes<AuthorizeAttribute>()
@@ -42,6 +50,8 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
 
         if (authorizationAttributes.Count == 0)
         {
+            LogNoAuthorizationAttributesFound();
+
             return await next();
         }
 
@@ -51,19 +61,27 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
             .Cast<string>()
             .ToList();
 
+        LogRequiredRoles(requiredRoles.Count);
+
         var requiredPolicies = authorizationAttributes
             .Select(attr => attr.PolicyType)
             .Where(policyType => policyType != null)
             .Cast<Type>()
             .ToList();
 
+        LogRequiredPolicies(requiredRoles.Count);
+
+        LogCheckingUserAuthorization();
+
         var isAuthorized = await _authorizationService.IsCurrentUserAuthorizedAsync(request, requiredRoles, requiredPolicies);
 
         if (isAuthorized)
         {
+            LogUserIsAuthorized();
             return await next();
         }
 
+        LogUserIsNotAuthorized();
         throw new NotAllowedException();
     }
 }

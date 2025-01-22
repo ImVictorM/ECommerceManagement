@@ -11,16 +11,16 @@ public partial class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "No validator found for request of type {RequestType}. Proceeding to next delegate."
+        Message = "Starting validation for request of type {RequestType}."
     )]
-    private partial void LogNoValidator(string requestType);
+    private partial void LogValidatingRequest(string requestType);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Starting validation for request of type {RequestType}."
+        Message = "No validator found for request of type {RequestType}. Proceeding to next delegate."
     )]
-    private partial void LogValidatingRequest(string requestType);
+    private partial void LogNoValidator(string requestType);
 
     [LoggerMessage(
         EventId = 3,
