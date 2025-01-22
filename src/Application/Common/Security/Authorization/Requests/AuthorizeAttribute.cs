@@ -35,7 +35,7 @@ public sealed class AuthorizeAttribute : Attribute
         if (policyType != null && !typeof(IPolicy).IsAssignableFrom(policyType))
         {
             throw new ArgumentException(
-                $"The provided policy type must implement {nameof(IPolicy)}.",
+                $"The provided policy type must implement {nameof(IPolicy)}",
                 nameof(policyType)
             );
         }
@@ -46,7 +46,7 @@ public sealed class AuthorizeAttribute : Attribute
             {
                 RoleUtils.FromDisplayName(roleName);
             }
-            catch (InvalidParseException)
+            catch (Exception)
             {
                 throw new ArgumentException($"The provided role name is incorrect: {roleName}", nameof(roleName));
             }

@@ -1,6 +1,5 @@
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Authorization.Roles;
-using Application.Common.Security.Authorization;
 
 namespace Application.UnitTests.Common.Behaviors.TestUtils;
 
