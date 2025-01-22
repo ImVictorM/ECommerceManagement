@@ -1,4 +1,3 @@
-using Application.Common.Security.Authorization;
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Authorization.Roles;
 using Application.Users.Common.DTOs;

@@ -1,5 +1,4 @@
 using Application.Common.DTOs;
-using Application.Common.Security.Authorization;
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Authorization.Roles;
 

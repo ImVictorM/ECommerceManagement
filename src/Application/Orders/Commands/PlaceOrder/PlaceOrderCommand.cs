@@ -5,7 +5,6 @@ using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization;
 using Application.Common.Security.Authorization.Roles;
 
 namespace Application.Orders.Commands.PlaceOrder;

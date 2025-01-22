@@ -13,7 +13,7 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     /// </summary>
     public UpdateUserCommandValidator()
     {
-        RuleFor(x => x.Name).IsValidName();
+        RuleFor(x => x.Name).IsValidUserName();
 
         RuleFor(x => x.Email).IsValidEmail();
     }

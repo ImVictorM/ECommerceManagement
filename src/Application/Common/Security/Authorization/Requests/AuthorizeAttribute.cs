@@ -3,7 +3,7 @@ using Application.Common.Security.Authorization.Roles;
 
 using SharedKernel.Errors;
 
-namespace Application.Common.Security.Authorization;
+namespace Application.Common.Security.Authorization.Requests;
 
 /// <summary>
 /// Attribute used to authorize requests.
@@ -48,7 +48,7 @@ public sealed class AuthorizeAttribute : Attribute
             }
             catch (InvalidParseException)
             {
-                throw new ArgumentException($"The provided role name is incorrect: {roleName}.", nameof(roleName));
+                throw new ArgumentException($"The provided role name is incorrect: {roleName}", nameof(roleName));
             }
         }
     }

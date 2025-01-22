@@ -13,7 +13,7 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     /// </summary>
     public RegisterCommandValidator()
     {
-        RuleFor(x => x.Name).IsValidName();
+        RuleFor(x => x.Name).IsValidUserName();
 
         RuleFor(x => x.Password)
             .NotEmpty()
