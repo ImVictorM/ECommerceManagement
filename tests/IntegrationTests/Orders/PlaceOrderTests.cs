@@ -3,6 +3,8 @@ using IntegrationTests.Orders.TestUtils;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 
+using Domain.OrderAggregate.Enumerations;
+
 using WebApi.Endpoints;
 
 using Contracts.Orders;
@@ -113,19 +115,20 @@ public class PlaceOrderTests : BaseIntegrationTest
         var orderOwner = await Client.LoginAs(userWithCustomerRoleType);
 
         var createResponse = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var resourceLocation = createResponse.Headers.Location;
 
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        //var resourceLocation = createResponse.Headers.Location;
-        //var getResourceResponse = await Client.GetAsync(resourceLocation);
-        //var createdResourceContent = await getResourceResponse.Content.ReadFromJsonAsync<OrderDetailedResponse>();
-        //createdResourceContent!.Status.Should().Be("pending");
-        //createdResourceContent.Should().NotBeNull();
-        //createdResourceContent.Products.Should().Contain(expectedCreatedPencilResponse);
-        //createdResourceContent.Products.Should().Contain(expectedCreatedComputerResponse);
-        //createdResourceContent.OwnerId.Should().Be(orderOwner.Id.ToString());
-        //createdResourceContent.Total.Should().Be(expectedTotalPrice);
-        //createdResourceContent.Payment.Should().NotBeNull();
+        await Client.LoginAs(SeedAvailableUsers.Admin);
+        var getResourceResponse = await Client.GetAsync(resourceLocation);
+        var createdResourceContent = await getResourceResponse.Content.ReadFromJsonAsync<OrderDetailedResponse>();
+        createdResourceContent!.Status.Should().Be(OrderStatus.Pending.Name);
+        createdResourceContent.Should().NotBeNull();
+        createdResourceContent.Products.Should().Contain(expectedCreatedPencilResponse);
+        createdResourceContent.Products.Should().Contain(expectedCreatedComputerResponse);
+        createdResourceContent.OwnerId.Should().Be(orderOwner.Id.ToString());
+        createdResourceContent.Total.Should().Be(expectedTotalPrice);
+        createdResourceContent.Payment.Should().NotBeNull();
     }
 
     /// <summary>

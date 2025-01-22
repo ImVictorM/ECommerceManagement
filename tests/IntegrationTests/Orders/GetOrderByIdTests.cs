@@ -2,6 +2,7 @@ using Contracts.Orders;
 
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
+using IntegrationTests.TestUtils.Extensions.Orders;
 using IntegrationTests.TestUtils.Seeds;
 
 using WebApi.Endpoints;
@@ -82,8 +83,6 @@ public class GetOrderByIdTests : BaseIntegrationTest
         var responseContent = await response.Content.ReadFromJsonAsync<OrderDetailedResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent.Should().NotBeNull();
-        responseContent!.Id.Should().Be(order.Id.ToString());
-        responseContent!.Payment.Should().NotBeNull();
+        responseContent.EnsureCorrespondsTo(order);
     }
 }
