@@ -29,7 +29,7 @@ public class CategoryEndpoints : ICarterModule
     {
         var categoryGroup = app
             .MapGroup(BaseEndpoint)
-            .WithTags("Products", "Categories")
+            .WithTags("Products")
             .WithOpenApi();
 
         categoryGroup

@@ -771,6 +771,30 @@ namespace Infrastructure.Migrations
                     { 5L, "canceled" }
                 });
 
+            // password: admin123
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
+                values: [
+                    1,
+                    "admin",
+                    "admin@email.com",
+                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
+                    true,
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
+                ]
+            );
+
+            migrationBuilder.InsertData(
+                table: "users_roles",
+                columns: ["id_role", "id_user"],
+                values: [
+                    1,
+                    1,
+                ]
+            );
+
             migrationBuilder.CreateIndex(
                 name: "IX_categories_name",
                 table: "categories",

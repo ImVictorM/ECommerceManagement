@@ -3,12 +3,13 @@ using Contracts.Notifications;
 using Application.Payments.Commands.UpdatePaymentStatus;
 using Application.Common.Security.Authentication;
 
+using WebApi.Common.Utils;
+
 using Carter;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Common.Utils;
 
 namespace WebApi.Endpoints.Notifications;
 
@@ -27,7 +28,7 @@ public class PaymentNotificationEndpoints : ICarterModule
     {
         var paymentNotificationGroup = app
             .MapGroup(BaseEndpoint)
-            .WithTags("Notifications", "Payments")
+            .WithTags("PaymentNotifications")
             .WithOpenApi();
 
         paymentNotificationGroup.MapPost("/", HandlePaymentStatusChangedNotification);
@@ -53,7 +54,7 @@ public class PaymentNotificationEndpoints : ICarterModule
             return TypedResults.Unauthorized();
         }
 
-        //  rewind the stream to the beginning for deserialization
+        //  Rewind the stream to the beginning for deserialization
         request.Body.Position = 0;
 
         var notification = await JsonSerializerUtils.DeserializeFromWebAsync<PaymentStatusChangedNotification>(
