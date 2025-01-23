@@ -1,14 +1,15 @@
-using System.Data.Common;
 using Infrastructure.Persistence;
+
+using System.Data.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Testcontainers.PostgreSql;
 using Npgsql;
 using Respawn;
-using Testcontainers.PostgreSql;
 
 namespace IntegrationTests.Common;
 
@@ -40,7 +41,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         _dbContainer = new PostgreSqlBuilder()
            .WithImage("postgres:latest")
            .WithDatabase("ecommerce-management-test")
-           .WithPortBinding("8002", "5432")
+           .WithPortBinding("8011", "5432")
            .Build();
 
         await _dbContainer.StartAsync();

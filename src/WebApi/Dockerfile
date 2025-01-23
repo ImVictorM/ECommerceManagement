@@ -9,21 +9,32 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/WebApi/WebApi.csproj", "src/WebApi/"]
-COPY ["src/Presentation/Presentation.csproj", "src/Presentation/"]
-COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
-COPY ["src/Application/Application.csproj", "src/Application/"]
-COPY ["src/Domain/Domain.csproj", "src/Domain/"]
-COPY ["src/SharedKernel/SharedKernel.csproj", "src/SharedKernel/"]
-RUN dotnet restore "./src/WebApi/WebApi.csproj"
-COPY . .
-WORKDIR "/src/src/WebApi"
+# Copy all the referenced projects
+COPY src/SharedKernel/SharedKernel.csproj ./SharedKernel/SharedKernel.csproj
+COPY src/Domain/Domain.csproj ./Domain/Domain.csproj
+COPY src/Application/Application.csproj ./Application/Application.csproj
+COPY src/Infrastructure/Infrastructure.csproj ./Infrastructure/Infrastructure.csproj
+COPY src/Contracts/Contracts.csproj ./Contracts/Contracts.csproj
+COPY src/WebApi/WebApi.csproj  ./WebApi/WebApi.csproj
+# Restore packages based on startup project
+RUN dotnet restore "./WebApi/WebApi.csproj"
+# Copy source code
+COPY src/SharedKernel/ ./SharedKernel/
+COPY src/Domain/ ./Domain/
+COPY src/Application/ ./Application/
+COPY src/Infrastructure/ ./Infrastructure/
+COPY src/Contracts/ ./Contracts/
+COPY src/WebApi/  ./WebApi/
+WORKDIR "/src/WebApi"
+
 RUN dotnet build "./WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# Publish
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Define entrypoint
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

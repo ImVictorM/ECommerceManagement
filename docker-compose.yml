@@ -1,8 +1,5 @@
-version: '3.4'
-
 services:
   webapi:
-    image: ${DOCKER_REGISTRY-}webapi
     build:
       context: .
       dockerfile: src/WebApi/Dockerfile
@@ -19,6 +16,7 @@ services:
       - HmacSignatureSettings__Secret=${HMAC_SIGNATURE_SECRET}
     ports:
      - 8000:8080
+     - 8001:8081
   database:
     image: "postgres:latest"
     environment:
@@ -26,7 +24,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ecommerce-management
     ports:
-     - 8001:5432
+     - 8010:5432
     volumes:
      - ./.containers/database:/var/lib/postgresql/data
     env_file:

@@ -1,9 +1,10 @@
 using Application;
-using Carter;
 using Infrastructure;
-using Serilog;
-using WebApi;
 using WebApi.Endpoints;
+using WebApi;
+
+using Carter;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,6 @@ app.MapCarter();
 app.Run();
 
 /// <summary>
-/// Defines the program as a partial class for testing purposes.
+/// Defines the program entry point.
 /// </summary>
 public partial class Program;
