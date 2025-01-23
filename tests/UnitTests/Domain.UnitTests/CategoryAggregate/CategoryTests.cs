@@ -33,10 +33,10 @@ public class CategoryTests
     {
         var newCategoryName = "TECHNOLOGY";
 
-        var category = CategoryUtils.CreateCategory(name: "OLD_TECH_CATEGORY");
+        var category = CategoryUtils.CreateCategory(name: "old_tech_category");
 
         category.Update(newCategoryName);
 
-        category.Name.Should().Be(newCategoryName);
+        category.Name.Should().Be("technology");
     }
 }

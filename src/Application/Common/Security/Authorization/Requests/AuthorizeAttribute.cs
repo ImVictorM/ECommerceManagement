@@ -1,8 +1,6 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Roles;
 
-using SharedKernel.Errors;
-
 namespace Application.Common.Security.Authorization.Requests;
 
 /// <summary>

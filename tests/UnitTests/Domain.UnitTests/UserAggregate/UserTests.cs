@@ -1,10 +1,10 @@
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
+using Domain.UserAggregate.ValueObjects;
 
 using SharedKernel.UnitTests.TestUtils;
 
 using FluentAssertions;
-using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UnitTests.UserAggregate;
 

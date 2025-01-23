@@ -37,6 +37,6 @@ public class Category : AggregateRoot<CategoryId>
     /// <param name="name">The new category name.</param>
     public void Update(string name)
     {
-        Name = name;
+        Name = name.ToLowerSnakeCase();
     }
 }
