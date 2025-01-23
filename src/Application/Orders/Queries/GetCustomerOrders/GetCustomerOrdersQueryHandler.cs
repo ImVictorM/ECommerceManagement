@@ -1,12 +1,14 @@
 using Application.Common.Persistence;
 using Application.Orders.Common.DTOs;
+
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Specifications;
 using Domain.UserAggregate.ValueObjects;
 
+using SharedKernel.Models;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SharedKernel.Models;
 
 namespace Application.Orders.Queries.GetCustomerOrders;
 
