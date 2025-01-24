@@ -78,7 +78,7 @@ public sealed class UserEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<Ok<UserResponse>, BadRequest, UnauthorizedHttpResult>> GetUserByAuthenticationToken(
+    private async Task<Results<Ok<UserResponse>, NotFound, UnauthorizedHttpResult>> GetUserByAuthenticationToken(
         ISender sender,
         IMapper mapper
     )
@@ -90,7 +90,7 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserResponse>(result));
     }
 
-    private async Task<Results<Ok<UserResponse>, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> GetUserById(
+    private async Task<Results<Ok<UserResponse>, NotFound, ForbidHttpResult, UnauthorizedHttpResult>> GetUserById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper
@@ -130,7 +130,7 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
+    private async Task<Results<NoContent, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
         [FromRoute] string id,
         ISender sender
     )

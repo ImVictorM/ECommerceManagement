@@ -8,6 +8,7 @@
 ### using a similar HMAC algorithm It is being used to check the signature. I suggest skipping this one ;)
 ### Returns a 204 NO_CONTENT in case of success.
 POST {{base_endpoint}}
+Content-Type: application/json
 X-Provider-Signature: {{provider_signature}}
 
 {

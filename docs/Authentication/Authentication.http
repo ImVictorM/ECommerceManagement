@@ -1,6 +1,6 @@
 @base_endpoint = http://localhost:8000/auth
 
-### This endpoint allows a new user to register for an account.
+### Allows a new user to register for an account.
 ### Returns a 204 CREATED response in case of success.
 POST {{base_endpoint}}/register
 Content-Type: application/json

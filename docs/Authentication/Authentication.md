@@ -2,9 +2,12 @@
 
 ## Authentication
 
+The Authentication feature enables users to register as customers and provides a secure mechanism for general users to authenticate themselves.
+Upon successful authentication, a JSON Web Token (JWT) is generated, allowing users to securely access protected endpoints throughout the system.
+
 ### Register
 
-This endpoint allows a new user to register for an account.
+Allows a new user to register for an account as a customer.
 
 ```js
 POST "/auth/register"
@@ -32,11 +35,13 @@ Field Rules:
 
 #### Response Format
 
-201 CREATED
+- 201 CREATED: the request was successfully processed and a new customer was created.
+- 400 BAD_REQUEST: The request body is invalid or missing required fields.
+- 409 CONFLICT: The user email is already in use.
 
 ```json
 {
-  "id": 1,
+  "id": "1",
   "name": "Victor Figueiredo Mendes",
   "email": "victor7@email.com",
   "token": "eyJhbGciOiJIUzI1N...adQssw5c"
@@ -45,7 +50,7 @@ Field Rules:
 
 ### Login
 
-Users can log in using their email and password.
+Users can log in using their email and password.<br/>
 PS: Inactive users cannot log in.
 
 ```js
@@ -72,13 +77,15 @@ Field Rules:
 
 #### Response Format
 
-200 OK
+- 200 OK: The user email an password were correct and the user was authenticated.
 
 ```json
 {
-  "id": 1,
+  "id": "1",
   "name": "Victor Figueiredo Mendes",
   "email": "victor7@email.com",
   "token": "eyJhbGciOiJIUzI1N...adQssw5c"
 }
 ```
+
+- 400 BAD_REQUEST: The email or password is incorrect.

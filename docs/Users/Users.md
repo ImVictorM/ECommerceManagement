@@ -2,7 +2,9 @@
 
 ## Users
 
-### Get User By Authentication Token
+The Users feature provides functionality for managing user accounts within the e-commerce system. It allows users to retrieve and update their own details, as well as deactivate their accounts. Administrators can manage all user accounts, including retrieving user details, updating information, and deactivating non-administrator accounts. The feature supports filtering users by their active status and ensures secure authentication and role-based permissions, restricting sensitive actions to authorized users.
+
+### Get User by Authentication Token
 
 Retrieves the currently authenticated user's details. Requires authentication.
 
@@ -16,7 +18,7 @@ GET "users/self"
 
 #### Response Format
 
-200 OK
+- 200 OK: The request was successfully processed and the current user details were returned.
 
 ```json
 {
@@ -25,17 +27,19 @@ GET "users/self"
   "email": "admin@email.com",
   "phone": null,
   "addresses": [],
-  "roles": ["admin"]
+  "roles": ["Admin"]
 }
 ```
 
-### Get User By Id
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 404 NOT_FOUND: The current user could not be found.
 
-Retrieves a specific user's details by identifier. Admin authentication is required.
+### Get User by Id
+
+Retrieves a specific user's details by their identifier. Admin authentication is required.
 
 ```js
-GET "/users/{{user_id}}"
-
+GET "/users/{{id_user}}"
 ```
 
 #### Headers
@@ -44,7 +48,7 @@ GET "/users/{{user_id}}"
 
 #### Response Format
 
-200 OK
+- 200 OK: The request was successfully processed and the user details were returned.
 
 ```json
 {
@@ -56,6 +60,10 @@ GET "/users/{{user_id}}"
   "roles": ["admin"]
 }
 ```
+
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user is not an administrator.
+- 404 NOT_FOUND: The user could not be found.
 
 ### Get Users
 
@@ -71,37 +79,46 @@ GET "/users?active=true"
 
 #### Response Format
 
-200 OK
+- 200 OK: The request was successfully processed and the users were returned.
 
 ```json
-{
-  "users": [
-    {
-      "id": "1",
-      "name": "admin",
-      "email": "admin@email.com",
-      "phone": null,
-      "addresses": [],
-      "roles": ["admin"]
-    },
-    {
-      "id": "2",
-      "name": "Fubumga Maloca Bocada",
-      "email": "newemail@email.com",
-      "phone": "52948572842",
-      "addresses": [],
-      "roles": ["customer"]
-    }
-  ]
-}
+[
+  {
+    "id": "1",
+    "name": "admin",
+    "email": "admin@email.com",
+    "phone": null,
+    "addresses": [],
+    "roles": ["Admin"]
+  },
+  {
+    "id": "2",
+    "name": "Victor Figueiredo Mendes",
+    "email": "victor7@email.com",
+    "phone": null,
+    "addresses": [
+      {
+        "postalCode": "47305",
+        "street": "2856 Overlook Drive",
+        "state": "IN",
+        "city": "Muncie",
+        "neighborhood": "Grove Street, home"
+      }
+    ],
+    "roles": ["Customer"]
+  }
+]
 ```
+
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user is not an administrator.
 
 ### Update User
 
 Updates a user's details. Users can only update their own details. Administrators can update any other non-administrator user's details.
 
 ```js
-PUT "/users/{{user_id}}"
+PUT "/users/{{id_user}}"
 ```
 
 #### Headers
@@ -127,14 +144,19 @@ Field Rules:
 
 #### Response Format
 
-204 NO_CONTENT
+- 204 NO_CONTENT: The request was successfully processed and the user was updated.
+- 400 BAD_REQUEST: The request body is invalid or missing required fields.
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user does not have the necessary updated privileges.
+- 404 NOT_FOUND: The user to be updated does not exist.
+- 409 CONFLICT: The request email is already in use.
 
 ### Deactivate User
 
 Deactivates a user by setting them as inactive. Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account.
 
 ```js
-DELETE "/users/{{user_id}}"
+DELETE "/users/{{id_user}}"
 ```
 
 #### Headers
@@ -143,4 +165,6 @@ DELETE "/users/{{user_id}}"
 
 #### Response Format
 
-204 NO_CONTENT
+- 204 NO_CONTENT: The request was successfully processed and the user was deactivated (or the user was already inactive).
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user does not have the necessary deactivation privileges.

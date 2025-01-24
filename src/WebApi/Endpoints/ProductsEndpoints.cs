@@ -104,7 +104,7 @@ No authentication is required."
         return TypedResults.Ok(mapper.Map<ProductResponse>(result));
     }
 
-    private async Task<Results<Created, BadRequest, UnauthorizedHttpResult>> CreateProduct(
+    private async Task<Results<Created, BadRequest, UnauthorizedHttpResult, ForbidHttpResult>> CreateProduct(
         [FromBody] CreateProductRequest request,
         IMapper mapper,
         ISender sender
@@ -131,7 +131,7 @@ No authentication is required."
         return TypedResults.Ok(result.Select(mapper.Map<ProductResponse>));
     }
 
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProduct(
+    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> UpdateProduct(
         [FromRoute] string id,
         [FromBody] UpdateProductRequest request,
         IMapper mapper,
@@ -145,7 +145,7 @@ No authentication is required."
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, NotFound, UnauthorizedHttpResult>> DeactivateProduct(
+    private async Task<Results<NoContent, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> DeactivateProduct(
         [FromRoute] string id,
         ISender sender
     )
@@ -157,7 +157,7 @@ No authentication is required."
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult>> UpdateProductInventory
+    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> UpdateProductInventory
     (
         [FromRoute] string id,
         [FromBody] UpdateProductInventoryRequest request,

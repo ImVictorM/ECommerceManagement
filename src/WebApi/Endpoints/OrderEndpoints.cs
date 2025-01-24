@@ -61,7 +61,7 @@ public class OrderEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<Created, UnauthorizedHttpResult, BadRequest, BadRequest<string>>> PlaceOrder(
+    private async Task<Results<Created, BadRequest, BadRequest<string>, ForbidHttpResult, UnauthorizedHttpResult>> PlaceOrder(
         [FromHeader(Name = "X-Idempotency-Key")] string requestId,
         [FromBody] PlaceOrderRequest request,
         IMapper mapper,
@@ -80,7 +80,7 @@ public class OrderEndpoints : ICarterModule
         return TypedResults.Created($"/{BaseEndpoint}/{response.Id}");
     }
 
-    private async Task<Results<Ok<OrderDetailedResponse>, ForbidHttpResult, NotFound>> GetOrderById(
+    private async Task<Results<Ok<OrderDetailedResponse>, ForbidHttpResult, UnauthorizedHttpResult, NotFound>> GetOrderById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper
