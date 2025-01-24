@@ -1,9 +1,42 @@
 @base_endpoint = http://localhost:8000/products
 @token = insert-token-here
 @product_id = 2
+@category_id = 1
+
+### Creates a new product category. Admin authentication is required.
+### Returns an 201 CREATED response in case of success.
+POST {{base_endpoint}}/categories
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "fashion"
+}
+
+### Deletes an existing category. Admin authentication is required.
+### Returns an 204 NO_CONTENT in case of success.
+DELETE {{base_endpoint}}/categories/{{category_id}}
+Authorization: Bearer {{token}}
+
+### Updates an existing category name. Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+PUT {{base_endpoint}}/categories/{{category_id}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "sports_outdoor"
+}
+
+### Retrieves all available product categories. No authentication is required.
+### Returns an 200 OK response in case of success.
+GET {{base_endpoint}}/categories
+
+### Retrieves a category by its identifier. No authentication is required.
+GET {{base_endpoint}}/categories/{{category_id}}
 
 ### Creates a new product. Admin authentication is required.
-### Returns a 204 NO_CONTENT response in case of success.
+### Returns a 201 CREATED response in case of success.
 POST {{base_endpoint}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -13,31 +46,9 @@ Authorization: Bearer {{token}}
   "description": "Great outerwear jackets for Spring/Autumn/Winter, suitable for many occasions.",
   "initialQuantity": 50,
   "basePrice": 200,
-  "categories": ["fashion", "sports_outdoor"],
-  "images": ["jacket.png"],
-  "initialDiscounts": [
-    {
-      "percentage": 25,
-      "description": "Black Friday discount",
-      "startingDate": "2024-11-22T15:29:54.683Z",
-      "endingDate": "2024-11-25T15:29:54.683Z"
-    }
-  ]
+  "categoryIds": ["1"],
+  "images": ["jacket.png"]
 }
-
-### Retrieves an active product by its identifier. No authentication is required.
-### Returns an OK response in case of success.
-GET {{base_endpoint}}/{{product_id}}
-
-### Retrieves all active products. It will retrieve the first 20 products if no limit is specified.
-### It is possible to filter the products by the specified categories appending &category={category_name} to the URL.
-### No authentication is required.
-### Returns an 200 OK response in case of success.
-GET {{base_endpoint}}?category=fashion&category=books_stationery&limit=2
-
-### Retrieves all available product categories. No authentication is required.
-### Returns an 200 OK response in case of success.
-GET {{base_endpoint}}/categories
 
 ### Updates the details of an active product. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
@@ -53,15 +64,9 @@ Authorization: Bearer {{token}}
     "jacket.png",
     "jacket-behind.png"
   ],
-  "categories": [
-    "fashion"
-  ]
+  "categoryIds": ["1"]
 }
 
-### Deactivates a product and set the inventory to 0 items. Admin authentication is required.
-### Returns a 204 NO_CONTENT response in case of success.
-DELETE {{base_endpoint}}/{{product_id}}
-Authorization: Bearer {{token}}
 
 ### Increments the inventory quantity available for an active product. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
@@ -73,19 +78,17 @@ Authorization: Bearer {{token}}
   "quantityToIncrement": 25
 }
 
-### Changes the list of discounts related to an active product. If you need to remove a product's discounts, send an empty discounts list. Admin authentication is required.
+### Deactivates a product and set the inventory to 0 items. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
-PUT {{base_endpoint}}/{{product_id}}/discounts
-Content-Type: application/json
+DELETE {{base_endpoint}}/{{product_id}}
 Authorization: Bearer {{token}}
 
-{
-  "discounts": [
-    {
-      "percentage": 5,
-      "description": "Five percent discount.",
-      "startingDate": "2024-11-25T15:55:48.930Z",
-      "endingDate": "2024-11-27T15:55:48.930Z"
-    }
-  ]
-}
+### Retrieves all active products. It will retrieve the first 20 products if no limit is specified.
+### It is possible to filter the products by the specified categories appending &category={category_id} to the URL.
+### No authentication is required.
+### Returns an 200 OK response in case of success.
+GET {{base_endpoint}}?category=1&limit=2
+
+### Retrieves an active product by its identifier. No authentication is required.
+### Returns an OK response in case of success.
+GET {{base_endpoint}}/{{product_id}}

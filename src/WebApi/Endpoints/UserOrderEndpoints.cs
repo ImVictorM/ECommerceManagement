@@ -21,7 +21,7 @@ public sealed class UserOrderEndpoints : ICarterModule
     {
         var userOrderGroup = app
             .MapGroup("users/{userId:long}/orders")
-            .WithTags("UserOrders")
+            .WithTags("Orders")
             .WithOpenApi();
 
         userOrderGroup

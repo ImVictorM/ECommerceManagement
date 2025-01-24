@@ -1,0 +1,60 @@
+@token_customer = insert-token-here
+@token_admin = insert-token-here
+@order_id = 1
+@order_owner_id = 2
+@base_orders_endpoint = http://localhost:8000/orders
+@base_user_orders_endpoint = http://localhost:8000/users/{{order_owner_id}}/orders
+
+### Places an order for a customer. Customer authentication is required.
+### Returns a 201 CREATED response in case of success.
+POST {{base_orders_endpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token_customer}}
+X-Idempotency-Key: dc6f84e4-0afb-42d4-b72a-261974c3d010
+
+{
+  "products": [
+    {
+      "productId": "2",
+      "quantity": 2
+    }
+  ],
+  "billingAddress": {
+    "postalCode": "47305",
+    "street": "2856 Overlook Drive",
+    "state": "IN",
+    "city": "Muncie",
+    "neighborhood": "Grove Street, home"
+  },
+  "deliveryAddress": {
+    "postalCode": "47305",
+    "street": "2856 Overlook Drive",
+    "state": "IN",
+    "city": "Muncie",
+    "neighborhood": "Grove Street, home"
+  },
+  "paymentMethod": {
+    "type": "credit_card"
+  },
+  "installments": 1
+}
+
+### Retrieves all the orders. Administrator authentication is required.
+### Returns an 200 OK response in case of success.
+GET {{base_orders_endpoint}}
+Authorization: Bearer {{token_admin}}
+
+### Retrieves an order by its identifier. Admin authentication is required.
+### Returns an 200 OK response in case of success.
+GET {{base_orders_endpoint}}/{{order_id}}
+Authorization: Bearer {{token_admin}}
+
+### Retrieves all orders related to a customer. Self or admin authentication is required.
+### Returns a 200 OK response in case of success.
+GET {{base_user_orders_endpoint}}
+Authorization: Bearer {{token_admin}}
+
+### Retrieves a customer's order by its identifier. Self or admin authentication is required.
+### Returns a 200 OK response in case of success.
+GET  {{base_user_orders_endpoint}}/{{order_id}}
+Authorization: Bearer {{token_admin}}
