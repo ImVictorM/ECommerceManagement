@@ -1,71 +1,71 @@
 using Application.Authentication.Commands.Register;
-using Application.Authentication.Common;
+using Application.Authentication.Queries.Login;
+
 using Carter;
 using Contracts.Authentication;
+using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace WebApi.Endpoints;
 
 /// <summary>
 /// Wraps the routes related to authentication.
 /// </summary>
-public sealed class AuthenticationEndpoints : CarterModule
+public sealed class AuthenticationEndpoints : ICarterModule
 {
-    /// <summary>
-    /// Mediatr sender service.
-    /// </summary>
-    private readonly ISender _sender;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AuthenticationEndpoints"/> class.
-    /// </summary>
-    /// <param name="sender">Mediatr sender service.</param>
-    public AuthenticationEndpoints(ISender sender) : base("/auth")
-    {
-        _sender = sender;
-    }
-
     /// <inheritdoc/>
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/register", Register);
-        app.MapPost("/login", Login);
-        app.MapPost("/self", AuthByToken);
+        var authenticationGroup = app
+            .MapGroup("/auth")
+            .WithTags("Authentication")
+            .WithOpenApi();
+
+        authenticationGroup
+            .MapPost("/register", Register)
+            .WithName("Register")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Register",
+                Description = "This endpoint allows a new user to register for an account."
+            });
+
+        authenticationGroup
+            .MapPost("/login", Login)
+            .WithName("Login")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Login",
+                Description = "Users can log in using their email and password."
+            });
     }
 
-    /// <summary>
-    /// Route to register a new user.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <returns>An authentication response containing the token.</returns>
-    private async Task<IResult> Register(RegisterRequest request)
+    private async Task<Results<Created<AuthenticationResponse>, BadRequest, Conflict>> Register(
+        RegisterRequest request,
+        ISender sender,
+        IMapper mapper
+    )
     {
-        var command = new RegisterCommand(request.Name, request.Email, request.Password);
+        var command = mapper.Map<RegisterCommand>(request);
 
-        AuthenticationResult result = await _sender.Send(command);
+        var result = await sender.Send(command);
 
-        return Results.Created("", result);
+        var mappedResult = mapper.Map<AuthenticationResponse>(result);
+
+        return TypedResults.Created($"/users/{mappedResult.Id}", mappedResult);
     }
 
-    /// <summary>
-    /// Route to authenticate a registered user.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <returns>An authentication response containing the user token.</returns>
-    private IResult Login(LoginRequest request)
+    private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> Login(
+        LoginRequest request,
+        ISender sender,
+        IMapper mapper
+    )
     {
-        // endpoint to authenticate a user with credentials
-        return Results.Ok(request);
-    }
+        var query = mapper.Map<LoginQuery>(request);
 
-    /// <summary>
-    /// Route to authenticate an user using their authentication token.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <returns>An authentication response containing the user token.</returns>
-    private IResult AuthByToken(AuthByTokenRequest request)
-    {
-        // endpoint to authenticate a user with a token
-        return Results.Ok(request);
+        var result = await sender.Send(query);
+
+        return TypedResults.Ok(mapper.Map<AuthenticationResponse>(result));
     }
 }

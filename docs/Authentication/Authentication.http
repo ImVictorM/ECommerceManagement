@@ -1,0 +1,32 @@
+@base_endpoint = http://localhost:8000/auth
+
+### Allows a new user to register for an account.
+### Returns a 204 CREATED response in case of success.
+POST {{base_endpoint}}/register
+Content-Type: application/json
+
+{
+	"name": "Victor Figueiredo Mendes",
+	"email": "victor7@email.com",
+	"password": "victor123!"
+}
+
+### Login as the new user. Inactive users cannot log in.
+### Returns a 200 OK response in case of success.
+POST {{base_endpoint}}/login
+Content-Type: application/json
+
+{
+	"email": "victor7@email.com",
+	"password": "victor123!"
+}
+
+### Log in as an administrator.
+### Returns a 200 OK response in case of success.
+POST {{base_endpoint}}/login
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+	"password": "admin123"
+}

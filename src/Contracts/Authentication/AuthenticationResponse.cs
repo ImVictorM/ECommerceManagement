@@ -1,7 +1,7 @@
 namespace Contracts.Authentication;
 
 /// <summary>
-/// The response type for authentication requests.
+/// The response type for authentications.
 /// </summary>
 /// <param name="Id">The user identifier.</param>
 /// <param name="Name">The user name.</param>
@@ -9,7 +9,7 @@ namespace Contracts.Authentication;
 /// <param name="Phone">The user phone (optional).</param>
 /// <param name="Token">The user authentication token.</param>
 public record AuthenticationResponse(
-    long Id,
+    string Id,
     string Name,
     string Email,
     string? Phone,

@@ -1,28 +1,22 @@
 using Application;
-using Carter;
 using Infrastructure;
-using Serilog;
 using WebApi.Endpoints;
+using WebApi;
+
+using Carter;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddCarter();
-
-builder.Services.AddProblemDetails(
-    options => options.CustomizeProblemDetails = context =>
-    {
-        context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
-        context.ProblemDetails.Extensions["userAgent"] = context.HttpContext.Request.Headers.UserAgent.ToString();
-    }
-);
+builder.Configuration
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
+    .AddEnvironmentVariables();
 
 builder.Services
     .AddApplication()
-    .AddInfrastructure(builder.Configuration);
+    .AddInfrastructure(builder.Configuration, builder.Environment)
+    .AddPresentation(builder.Configuration);
 
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 
@@ -34,13 +28,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseSerilogRequestLogging();
 
-app.UseHttpsRedirection();
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.UseExceptionHandler(ErrorEndpoints.BaseEndpoint);
 
 app.MapCarter();
 
 app.Run();
+
+/// <summary>
+/// Defines the program entry point.
+/// </summary>
+public partial class Program;

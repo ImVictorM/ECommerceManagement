@@ -1,51 +1,62 @@
-﻿using Carter;
+using Carter;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
+using SharedKernel.Errors;
+using WebApi.Common.Extensions;
 
 namespace WebApi.Endpoints;
 
 /// <summary>
 /// Endpoints to handle errors.
 /// </summary>
-public sealed class ErrorEndpoints : CarterModule
+public sealed class ErrorEndpoints : ICarterModule
 {
     /// <summary>
     /// Base endpoint for handling errors.
     /// </summary>
     public const string BaseEndpoint = "/error";
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ErrorEndpoints"/> class.
-    /// </summary>
-    public ErrorEndpoints() : base(BaseEndpoint) { }
-
     /// <inheritdoc/>
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.Map("/", HandleGlobalErrors);
+        var errorGroup = app.MapGroup(BaseEndpoint);
+
+        errorGroup.Map("/", HandleGlobalErrors);
     }
 
-    /// <summary>
-    /// Handle all thrown exceptions.
-    /// </summary>
-    /// <param name="httpContext">Context of the request.</param>
-    /// <returns>A <see cref="IResult"/> containing a <see cref="Microsoft.AspNetCore.Mvc.ProblemDetails"/> response</returns>
-    private IResult HandleGlobalErrors(HttpContext httpContext)
+    private Results<ProblemHttpResult, ValidationProblem> HandleGlobalErrors(HttpContext httpContext)
     {
-        Exception? exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
+        var exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
-        if (exception is null)
-        {
-            // Handle unexpected errors
-            return Results.Problem(
-                statusCode: StatusCodes.Status500InternalServerError,
-                title: "An unexpected error ocurred."
-            );
-        }
+        var genericProblem = TypedResults.Problem(
+            statusCode: StatusCodes.Status500InternalServerError,
+            title: "An unexpected error occurred.",
+            detail: exception?.Message
+        );
 
-        // Handle custom errors
         return exception switch
         {
-            _ => Results.Problem(),
+            BaseException baseException => TypedResults.Problem(
+                statusCode: (int)baseException.ErrorCode.ToHttpStatusCode(),
+                title: baseException.Title,
+                detail: baseException.Message,
+                extensions: baseException.Context
+            ),
+            ValidationException validationException => HandleValidationException(validationException),
+            _ => genericProblem,
         };
+    }
+
+    private static ValidationProblem HandleValidationException(ValidationException validationException)
+    {
+        var errors = validationException.Errors
+            .GroupBy(e => e.PropertyName)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(e => e.ErrorMessage).ToArray()
+            );
+
+        return TypedResults.ValidationProblem(errors);
     }
 }

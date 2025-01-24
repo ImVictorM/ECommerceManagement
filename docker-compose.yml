@@ -1,23 +1,31 @@
-version: '3.4'
-
 services:
   webapi:
-    image: ${DOCKER_REGISTRY-}webapi
     build:
       context: .
       dockerfile: src/WebApi/Dockerfile
     depends_on:
      - database
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DbConnectionSettings__Host=database
+      - DbConnectionSettings__Port=5432
+      - DbConnectionSettings__Password=${POSTGRES_PASSWORD}
+      - DbConnectionSettings__Username=${POSTGRES_USER}
+      - DbConnectionSettings__Database=ecommerce-management
+      - JwtSettings__Secret=${TOKEN_SECRET}
+      - HmacSignatureSettings__Secret=${HMAC_SIGNATURE_SECRET}
     ports:
      - 8000:8080
+     - 8001:8081
   database:
     image: "postgres:latest"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-4WXUms893U6j4GE&Hvk3S*hqcqebFgo!vZi}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ecommerce-management
     ports:
-     - 8001:5432
+     - 8010:5432
     volumes:
      - ./.containers/database:/var/lib/postgresql/data
-
+    env_file:
+     - .env

@@ -1,4 +1,15 @@
+using Application.Common.Behaviors;
+using Application.Common.Security.Authorization.Policies;
+using Application.Orders.Services;
+using Application.Products.Services;
+using Application.Sales.Services;
+
+using Domain.OrderAggregate.Services;
+using Domain.ProductAggregate.Services;
+using Domain.SaleAggregate.Services;
+
 using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -20,9 +31,19 @@ public static class ServicesRegistration
     {
         var assembly = typeof(ServicesRegistration).Assembly;
 
-        services
-          .AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly))
-          .AddValidatorsFromAssembly(assembly);
+        services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
+
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
+        services.AddValidatorsFromAssembly(assembly);
+
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<ISaleService, SaleService>();
+
+        services.AddScoped<RestrictedDeactivationPolicy>();
+        services.AddScoped<SelfOrAdminPolicy>();
+        services.AddScoped<RestrictedUpdatePolicy>();
 
         return services;
     }
