@@ -9,4 +9,4 @@ namespace Application.Users.Queries.GetUserById;
 /// </summary>
 /// <param name="UserId">The user identifier value.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record GetUserByIdQuery(string UserId) : IRequestWithAuthorization<UserResult>;
+public record GetUserByIdQuery(string UserId) : IRequestWithAuthorization<UserResult>, IUserSpecificResource;

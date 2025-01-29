@@ -10,17 +10,18 @@ using Domain.UnitTests.TestUtils;
 
 using Moq;
 using FluentAssertions;
+using Application.Common.Security.Authorization.Requests;
 
 namespace Application.UnitTests.Common.Security.Authorization.Policies;
 
 /// <summary>
-/// Unit test for the <see cref="RestrictedUpdatePolicy"/> policy.
+/// Unit test for the <see cref="RestrictedUpdatePolicy{T}"/> policy.
 /// </summary>
 public class RestrictedUpdatePolicyTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
-    private readonly RestrictedUpdatePolicy _policy;
+    private readonly RestrictedUpdatePolicy<IUserSpecificResource> _policy;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RestrictedUpdatePolicyTests"/> class.
@@ -32,23 +33,7 @@ public class RestrictedUpdatePolicyTests
 
         _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
 
-        _policy = new RestrictedUpdatePolicy(_mockUnitOfWork.Object);
-    }
-
-    /// <summary>
-    /// Verifies an exception is thrown when the request user id is null.
-    /// </summary>
-    [Fact]
-    public async Task IsAuthorizedAsync_WhenRequestIdIsNull_ThrowsException()
-    {
-        var request = new TestRequestWithEmptyUser();
-
-        var currentUser = new IdentityUser("1", [Role.Admin.Name]);
-
-        await FluentActions
-            .Invoking(() => _policy.IsAuthorizedAsync(request, currentUser))
-            .Should()
-            .ThrowAsync<ArgumentException>();
+        _policy = new RestrictedUpdatePolicy<IUserSpecificResource>(_mockUnitOfWork.Object);
     }
 
     /// <summary>

@@ -7,17 +7,12 @@ namespace Application.Common.Security.Authorization.Policies;
 /// Defines a policy that authorizes the user if the current user is the same
 /// as the request user or if the current user is an administrator.
 /// </summary>
-public sealed class SelfOrAdminPolicy : IPolicy
+public sealed class SelfOrAdminPolicy<TRequest>
+    : IPolicy<TRequest> where TRequest : IUserSpecificResource
 {
-
     /// <inheritdoc/>
-    public Task<bool> IsAuthorizedAsync<T>(IRequestWithAuthorization<T> request, IdentityUser currentUser)
+    public Task<bool> IsAuthorizedAsync(TRequest request, IdentityUser currentUser)
     {
-        if (request.UserId == null)
-        {
-            throw new ArgumentException($"The user id is required for the authorization process. Policy: {nameof(SelfOrAdminPolicy)}");
-        }
-
         return Task.FromResult(request.UserId == currentUser.Id || currentUser.IsAdmin());
     }
 }

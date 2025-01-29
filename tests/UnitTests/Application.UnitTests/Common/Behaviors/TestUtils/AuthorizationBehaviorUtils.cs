@@ -17,11 +17,7 @@ public static class AuthorizationBehaviorUtils
     /// <summary>
     /// Represents a request without authorization attributes.
     /// </summary>
-    public class TestRequest : IRequestWithAuthorization<TestResponse>
-    {
-        /// <inheritdoc/>
-        public string? UserId => null;
-    }
+    public class TestRequest : IRequestWithAuthorization<TestResponse>;
 
     /// <summary>
     /// Represents a request with one authorization attribute.

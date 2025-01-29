@@ -1,23 +1,19 @@
-using Application.Common.Security.Authorization.Requests;
-
 namespace Application.Common.Security.Authorization;
 
 /// <summary>
-/// Service to handle authorization.
+/// Service for handling authorization.
 /// </summary>
 public interface IAuthorizationService
 {
     /// <summary>
-    /// Verifies if the current user is authorized.
+    /// Checks if the current user is authorized to perform a request.
     /// </summary>
-    /// <typeparam name="T">The request return type.</typeparam>
+    /// <typeparam name="TRequest">The request type.</typeparam>
     /// <param name="request">The current request.</param>
-    /// <param name="requiredRoleNames">The authorization required roles.</param>
-    /// <param name="requiredPolicyTypes">The authorization required policy types.</param>
+    /// <param name="metadata">The authorization metadata for the request.</param>
     /// <returns>A bool value indicating if the user is authorized.</returns>
-    Task<bool> IsCurrentUserAuthorizedAsync<T>(
-        IRequestWithAuthorization<T> request,
-        IReadOnlyList<string> requiredRoleNames,
-        IReadOnlyList<Type> requiredPolicyTypes
+    Task<bool> IsCurrentUserAuthorizedAsync<TRequest>(
+        TRequest request,
+        AuthorizationMetadata metadata
     );
 }

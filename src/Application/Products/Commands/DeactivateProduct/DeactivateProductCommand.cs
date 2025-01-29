@@ -9,8 +9,4 @@ namespace Application.Products.Commands.DeactivateProduct;
 /// </summary>
 /// <param name="Id">The product id.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record DeactivateProductCommand(string Id) : IRequestWithAuthorization<Unit>
-{
-    /// <inheritdoc/>
-    public string? UserId => null;
-}
+public record DeactivateProductCommand(string Id) : IRequestWithAuthorization<Unit>;

@@ -9,5 +9,7 @@ namespace Application.Orders.Queries.GetCustomerOrderById;
 /// </summary>
 /// <param name="UserId">The order owner id.</param>
 /// <param name="OrderId">The order id.</param>
-[Authorize(policyType: (typeof(SelfOrAdminPolicy)))]
-public record GetCustomerOrderByIdQuery(string UserId, string OrderId) : IRequestWithAuthorization<OrderDetailedResult>;
+[Authorize(policyType: (typeof(SelfOrAdminPolicy<GetCustomerOrderByIdQuery>)))]
+public record GetCustomerOrderByIdQuery(string UserId, string OrderId) :
+    IRequestWithAuthorization<OrderDetailedResult>,
+    IUserSpecificResource;

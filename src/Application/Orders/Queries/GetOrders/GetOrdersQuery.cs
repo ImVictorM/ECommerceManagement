@@ -9,8 +9,4 @@ namespace Application.Orders.Queries.GetOrders;
 /// </summary>
 /// <param name="Status">The status filter condition.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record GetOrdersQuery(string? Status = null) : IRequestWithAuthorization<IEnumerable<OrderResult>>
-{
-    /// <inheritdoc/>
-    public string? UserId => null;
-}
+public record GetOrdersQuery(string? Status = null) : IRequestWithAuthorization<IEnumerable<OrderResult>>;

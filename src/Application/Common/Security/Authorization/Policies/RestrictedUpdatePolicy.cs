@@ -11,12 +11,13 @@ namespace Application.Common.Security.Authorization.Policies;
 /// Represents a policy to update a user.
 /// Users can update themselves. Admins can update other non-admin users.
 /// </summary>
-public sealed class RestrictedUpdatePolicy : IPolicy
+public sealed class RestrictedUpdatePolicy<TRequest> : IPolicy<TRequest>
+    where TRequest : IUserSpecificResource
 {
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
-    /// Creates a new instance of the <see cref="RestrictedUpdatePolicy"/> class.
+    /// Creates a new instance of the <see cref="RestrictedUpdatePolicy{T}"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
     public RestrictedUpdatePolicy(IUnitOfWork unitOfWork)
@@ -25,13 +26,8 @@ public sealed class RestrictedUpdatePolicy : IPolicy
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsAuthorizedAsync<T>(IRequestWithAuthorization<T> request, IdentityUser currentUser)
+    public async Task<bool> IsAuthorizedAsync(TRequest request, IdentityUser currentUser)
     {
-        if (request.UserId == null)
-        {
-            throw new ArgumentException($"The user id is required for the authorization process. Policy: {nameof(RestrictedUpdatePolicy)}");
-        }
-
         var userToBeUpdatedId = request.UserId;
         var currentUserIsAdmin = currentUser.IsAdmin();
 

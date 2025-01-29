@@ -33,6 +33,10 @@ public static class ServicesRegistration
 
         services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
 
+        services.AddScoped(typeof(SelfOrAdminPolicy<>));
+        services.AddScoped(typeof(RestrictedDeactivationPolicy<>));
+        services.AddScoped(typeof(RestrictedUpdatePolicy<>));
+
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
         services.AddValidatorsFromAssembly(assembly);
@@ -40,10 +44,6 @@ public static class ServicesRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISaleService, SaleService>();
-
-        services.AddScoped<RestrictedDeactivationPolicy>();
-        services.AddScoped<SelfOrAdminPolicy>();
-        services.AddScoped<RestrictedUpdatePolicy>();
 
         return services;
     }
