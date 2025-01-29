@@ -11,6 +11,18 @@ namespace Application.UnitTests.Common.Security.Authorization.Requests;
 /// </summary>
 public class AuthorizeAttributeTests
 {
+    [Authorize(roleName: nameof(Role.Admin))]
+    private class SingleRoleRequest { }
+
+    [Authorize(policyType: typeof(SelfOrAdminPolicy<IUserSpecificResource>))]
+    private class SinglePolicyRequest { }
+
+    [Authorize(roleName: nameof(Role.Admin))]
+    [Authorize(policyType: typeof(SelfOrAdminPolicy<IUserSpecificResource>))]
+    private class MultipleAuthorizationRequest { }
+
+    private record NoAuthorizationRequest(string? Name);
+
     /// <summary>
     /// Verifies the attribute is created with a valid role.
     /// </summary>
@@ -46,7 +58,7 @@ public class AuthorizeAttributeTests
     [Fact]
     public void CreateAttribute_WithValidPolicyType_DoesNotThrowException()
     {
-        var policyType = typeof(SelfOrAdminPolicy);
+        var policyType = typeof(SelfOrAdminPolicy<IUserSpecificResource>);
 
         FluentActions
             .Invoking(() => new AuthorizeAttribute(policyType: policyType))
@@ -66,6 +78,54 @@ public class AuthorizeAttributeTests
             .Invoking(() => new AuthorizeAttribute(policyType: invalidPolicyType))
             .Should()
             .Throw<ArgumentException>()
-            .WithMessage($"The provided policy type must implement {nameof(IPolicy)} (Parameter 'policyType')");
+            .WithMessage($"The provided policy type must implement {typeof(IPolicy<>).Name} (Parameter 'policyType')");
+    }
+
+    /// <summary>
+    /// Verifies getting the metadata with a single admin role returns the expected result.
+    /// </summary>
+    [Fact]
+    public void GetAuthorizationMetadata_WithSingleAdminRole_ReturnsCorrectRole()
+    {
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(SingleRoleRequest));
+
+        metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin.Name);
+        metadata.Policies.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// Verifies getting the metadata with a single policy returns the expected result.
+    /// </summary>
+    [Fact]
+    public void GetAuthorizationMetadata_WithSinglePolicy_ReturnsCorrectPolicy()
+    {
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(SinglePolicyRequest));
+
+        metadata.Policies.Should().ContainSingle().Which.Should().Be(typeof(SelfOrAdminPolicy<IUserSpecificResource>));
+        metadata.Roles.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// Verifies getting the metadata with multiple authorization attributes returns the expected result.
+    /// </summary>
+    [Fact]
+    public void GetAuthorizationMetadata_WithMultipleAuthorization_ReturnsAllRolesAndPolicies()
+    {
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(MultipleAuthorizationRequest));
+
+        metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin.Name);
+        metadata.Policies.Should().ContainSingle().Which.Should().Be(typeof(SelfOrAdminPolicy<IUserSpecificResource>));
+    }
+
+    /// <summary>
+    /// Verifies getting the metadata without authorization attributes returns an empty metadata.
+    /// </summary>
+    [Fact]
+    public void GetAuthorizationMetadata_WithNoAuthorization_ReturnsEmptyMetadata()
+    {
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(NoAuthorizationRequest));
+
+        metadata.Roles.Should().BeEmpty();
+        metadata.Policies.Should().BeEmpty();
     }
 }

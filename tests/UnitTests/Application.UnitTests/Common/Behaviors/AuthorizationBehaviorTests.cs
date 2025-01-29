@@ -47,8 +47,7 @@ public class AuthorizationBehaviorTests
         _mockAuthService
             .Setup(s => s.IsCurrentUserAuthorizedAsync(
                 It.IsAny<TestRequest>(),
-                It.IsAny<IReadOnlyList<string>>(),
-                It.IsAny<IReadOnlyList<Type>>()
+                It.IsAny<AuthorizationMetadata>()
             ))
             .ReturnsAsync(true);
 
@@ -59,14 +58,6 @@ public class AuthorizationBehaviorTests
         var response = await _behavior.Handle(request, _mockNextDelegate.Object, default);
 
         response.Should().Be(expectedResponse);
-        _mockAuthService.Verify(
-            s => s.IsCurrentUserAuthorizedAsync(
-                It.IsAny<TestRequest>(),
-                It.IsAny<IReadOnlyList<string>>(),
-                It.IsAny<IReadOnlyList<Type>>()
-            ),
-            Times.Never()
-        );
     }
 
     /// <summary>
@@ -82,8 +73,7 @@ public class AuthorizationBehaviorTests
         _mockAuthService
             .Setup(s => s.IsCurrentUserAuthorizedAsync(
                 It.IsAny<TestRequest>(),
-                It.IsAny<IReadOnlyList<string>>(),
-                It.IsAny<IReadOnlyList<Type>>()
+                It.IsAny<AuthorizationMetadata>()
             ))
             .ReturnsAsync(true);
 
@@ -97,8 +87,7 @@ public class AuthorizationBehaviorTests
         _mockAuthService.Verify(
             s => s.IsCurrentUserAuthorizedAsync(
                 It.IsAny<TestRequest>(),
-                It.IsAny<IReadOnlyList<string>>(),
-                It.IsAny<IReadOnlyList<Type>>()
+                It.IsAny<AuthorizationMetadata>()
             ),
             Times.Once()
         );
@@ -116,8 +105,7 @@ public class AuthorizationBehaviorTests
         _mockAuthService
             .Setup(s => s.IsCurrentUserAuthorizedAsync(
                 It.IsAny<TestRequest>(),
-                It.IsAny<IReadOnlyList<string>>(),
-                It.IsAny<IReadOnlyList<Type>>()
+                It.IsAny<AuthorizationMetadata>()
             ))
             .ReturnsAsync(false);
 
@@ -129,8 +117,7 @@ public class AuthorizationBehaviorTests
         _mockAuthService.Verify(
             s => s.IsCurrentUserAuthorizedAsync(
                 It.IsAny<TestRequest>(),
-                It.IsAny<IReadOnlyList<string>>(),
-                It.IsAny<IReadOnlyList<Type>>()
+                It.IsAny<AuthorizationMetadata>()
             ),
             Times.Once()
         );

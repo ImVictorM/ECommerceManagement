@@ -16,15 +16,12 @@ public static class RequestWithAuthorizationUtils
     /// <summary>
     /// Represents a request with empty user id.
     /// </summary>
-    public class TestRequestWithEmptyUser : IRequestWithAuthorization<TestResponse>
-    {
-        /// <inheritdoc/>
-        public string? UserId => null;
-    }
+    public class TestRequest() : IRequestWithAuthorization<TestResponse>;
+
     /// <summary>
     /// Represents a request with defined user id.
     /// </summary>
     /// <param name="UserId">The user id.</param>
-    public record TestRequestWithUser(string UserId) : IRequestWithAuthorization<TestResponse>;
+    public record TestRequestWithUser(string UserId) : IRequestWithAuthorization<TestResponse>, IUserSpecificResource;
 
 }
