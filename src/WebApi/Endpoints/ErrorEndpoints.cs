@@ -1,9 +1,11 @@
+using WebApi.Common.Extensions;
+
+using SharedKernel.Errors;
+
 using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
-using SharedKernel.Errors;
-using WebApi.Common.Extensions;
 
 namespace WebApi.Endpoints;
 
@@ -29,26 +31,25 @@ public sealed class ErrorEndpoints : ICarterModule
     {
         var exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
-        var genericProblem = TypedResults.Problem(
-            statusCode: StatusCodes.Status500InternalServerError,
-            title: "An unexpected error occurred.",
-            detail: exception?.Message
-        );
-
         return exception switch
         {
-            BaseException baseException => TypedResults.Problem(
-                statusCode: (int)baseException.ErrorCode.ToHttpStatusCode(),
-                title: baseException.Title,
-                detail: baseException.Message,
-                extensions: baseException.Context
-            ),
-            ValidationException validationException => HandleValidationException(validationException),
-            _ => genericProblem,
+            BaseException baseException => CreateBaseExceptionProblem(baseException),
+            ValidationException validationException => CreateValidationProblem(validationException),
+            _ => CreateGenericProblem(exception),
         };
     }
 
-    private static ValidationProblem HandleValidationException(ValidationException validationException)
+    private static ProblemHttpResult CreateBaseExceptionProblem(BaseException baseException)
+    {
+        return TypedResults.Problem(
+            statusCode: (int)baseException.ErrorCode.ToHttpStatusCode(),
+            title: baseException.Title,
+            detail: baseException.Message,
+            extensions: baseException.Context
+        );
+    }
+
+    private static ValidationProblem CreateValidationProblem(ValidationException validationException)
     {
         var errors = validationException.Errors
             .GroupBy(e => e.PropertyName)
@@ -58,5 +59,14 @@ public sealed class ErrorEndpoints : ICarterModule
             );
 
         return TypedResults.ValidationProblem(errors);
+    }
+
+    private static ProblemHttpResult CreateGenericProblem(Exception? exception)
+    {
+        return TypedResults.Problem(
+            statusCode: StatusCodes.Status500InternalServerError,
+            title: "An unexpected error occurred.",
+            detail: exception?.Message
+        );
     }
 }

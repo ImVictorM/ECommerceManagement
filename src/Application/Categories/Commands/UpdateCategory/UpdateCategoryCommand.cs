@@ -11,8 +11,4 @@ namespace Application.Categories.Commands.UpdateCategory;
 /// <param name="Id">The category id.</param>
 /// <param name="Name">The new category name.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record UpdateCategoryCommand(string Id, string Name) : IRequestWithAuthorization<Unit>
-{
-    /// <inheritdoc/>
-    public string? UserId => null;
-}
+public record UpdateCategoryCommand(string Id, string Name) : IRequestWithAuthorization<Unit>;

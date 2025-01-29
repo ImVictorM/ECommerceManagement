@@ -12,12 +12,13 @@ namespace Application.Common.Security.Authorization.Policies;
 /// A non-admin user can deactivate themselves.
 /// An admin can deactivate other non-admin users.
 /// </summary>
-public sealed class RestrictedDeactivationPolicy : IPolicy
+public sealed class RestrictedDeactivationPolicy<TRequest> :
+    IPolicy<TRequest> where TRequest : IUserSpecificResource
 {
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="RestrictedDeactivationPolicy"/> class.
+    /// Initiates a new instance of the <see cref="RestrictedDeactivationPolicy{TRequest}"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
     public RestrictedDeactivationPolicy(IUnitOfWork unitOfWork)
@@ -26,13 +27,8 @@ public sealed class RestrictedDeactivationPolicy : IPolicy
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsAuthorizedAsync<T>(IRequestWithAuthorization<T> request, IdentityUser currentUser)
+    public async Task<bool> IsAuthorizedAsync(TRequest request, IdentityUser currentUser)
     {
-        if (request.UserId == null)
-        {
-            throw new ArgumentException($"The user id is required for the authorization process. Policy: {nameof(RestrictedDeactivationPolicy)}");
-        }
-
         var currentUserId = UserId.Create(currentUser.Id);
         var userToBeDeactivatedId = UserId.Create(request.UserId);
         var currentUserIsAdmin = currentUser.IsAdmin();

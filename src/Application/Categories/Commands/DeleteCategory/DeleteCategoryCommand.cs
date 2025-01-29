@@ -10,8 +10,4 @@ namespace Application.Categories.Commands.DeleteCategory;
 /// </summary>
 /// <param name="Id">The category id.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record DeleteCategoryCommand(string Id) : IRequestWithAuthorization<Unit>
-{
-    /// <inheritdoc/>
-    public string? UserId => null;
-}
+public record DeleteCategoryCommand(string Id) : IRequestWithAuthorization<Unit>;

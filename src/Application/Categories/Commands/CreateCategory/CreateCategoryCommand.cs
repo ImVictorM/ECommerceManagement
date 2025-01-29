@@ -9,8 +9,4 @@ namespace Application.Categories.Commands.CreateCategory;
 /// </summary>
 /// <param name="Name">The category name.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record CreateCategoryCommand(string Name) : IRequestWithAuthorization<CreatedResult>
-{
-    /// <inheritdoc/>
-    public string? UserId => null;
-}
+public record CreateCategoryCommand(string Name) : IRequestWithAuthorization<CreatedResult>;

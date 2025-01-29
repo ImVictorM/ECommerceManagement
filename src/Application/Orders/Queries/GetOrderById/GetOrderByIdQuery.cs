@@ -9,8 +9,4 @@ namespace Application.Orders.Queries.GetOrderById;
 /// </summary>
 /// <param name="OrderId">The order id.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record GetOrderByIdQuery(string OrderId) : IRequestWithAuthorization<OrderDetailedResult>
-{
-    /// <inheritdoc/>
-    public string? UserId => null;
-}
+public record GetOrderByIdQuery(string OrderId) : IRequestWithAuthorization<OrderDetailedResult>;

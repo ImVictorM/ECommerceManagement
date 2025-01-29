@@ -1,6 +1,5 @@
 using Application.Common.Security.Authorization;
 using Application.Common.Security.Authorization.Policies;
-using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Identity;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -27,22 +26,25 @@ public class AuthorizationService : IAuthorizationService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsCurrentUserAuthorizedAsync<T>(
-        IRequestWithAuthorization<T> request,
-        IReadOnlyList<string> requiredRoleNames,
-        IReadOnlyList<Type> requiredPolicyTypes
-    )
+    public async Task<bool> IsCurrentUserAuthorizedAsync<TRequest>(TRequest request, AuthorizationMetadata metadata)
     {
+        if (!metadata.Roles.Any() && !metadata.Policies.Any())
+        {
+            return true;
+        }
+
         var currentUser = _identityProvider.GetCurrentUserIdentity();
 
-        if (requiredRoleNames.Except(currentUser.Roles).Any())
+        // Check roles
+        if (metadata.Roles.Except(currentUser.Roles).Any())
         {
             return false;
         }
 
-        foreach (var policyType in requiredPolicyTypes)
+        // Check policies
+        foreach (var policyType in metadata.Policies)
         {
-            var policy = (IPolicy)_serviceProvider.GetRequiredService(policyType);
+            var policy = (IPolicy<TRequest>)_serviceProvider.GetRequiredService(policyType);
 
             if (!await policy.IsAuthorizedAsync(request, currentUser))
             {

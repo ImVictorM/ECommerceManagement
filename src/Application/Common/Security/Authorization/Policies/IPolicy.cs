@@ -1,21 +1,17 @@
-using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Identity;
 
 namespace Application.Common.Security.Authorization.Policies;
 
 /// <summary>
-/// Represents a contract for defining and evaluating authorization policies.
+/// Represents a contract for defining and evaluating specific authorization policies.
 /// </summary>
-public interface IPolicy
+public interface IPolicy<TRequest>
 {
     /// <summary>
     /// Evaluates whether the specified request is authorized for the given user.
     /// </summary>
-    /// <typeparam name="T">
-    /// The type of the result that the request produces.
-    /// </typeparam>
     /// <param name="request">
-    /// The request to evaluate, implementing <see cref="IRequestWithAuthorization{T}"/>.
+    /// The request to evaluate.
     /// </param>
     /// <param name="currentUser">
     /// An instance of <see cref="IdentityUser"/> representing the user for whom authorization 
@@ -24,8 +20,8 @@ public interface IPolicy
     /// <returns>
     /// A boolean value indicating if the user is authorized to perform the request.
     /// </returns>
-    Task<bool> IsAuthorizedAsync<T>(
-        IRequestWithAuthorization<T> request,
+    Task<bool> IsAuthorizedAsync(
+        TRequest request,
         IdentityUser currentUser
     );
 }

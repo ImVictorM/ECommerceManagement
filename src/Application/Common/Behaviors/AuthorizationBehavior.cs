@@ -4,7 +4,6 @@ using Application.Common.Security.Authorization.Requests;
 
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 
 namespace Application.Common.Behaviors;
 
@@ -43,37 +42,14 @@ public partial class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehav
     {
         LogAuthorizingRequest(typeof(TRequest).Name);
 
-        var authorizationAttributes = request
-            .GetType()
-            .GetCustomAttributes<AuthorizeAttribute>()
-            .ToList();
+        var authorizationMetadata = AuthorizeAttribute.GetAuthorizationMetadata(request.GetType());
 
-        if (authorizationAttributes.Count == 0)
-        {
-            LogNoAuthorizationAttributesFound();
-
-            return await next();
-        }
-
-        var requiredRoles = authorizationAttributes
-            .Select(attr => attr.RoleName)
-            .Where(roleName => !string.IsNullOrWhiteSpace(roleName))
-            .Cast<string>()
-            .ToList();
-
-        LogRequiredRoles(requiredRoles.Count);
-
-        var requiredPolicies = authorizationAttributes
-            .Select(attr => attr.PolicyType)
-            .Where(policyType => policyType != null)
-            .Cast<Type>()
-            .ToList();
-
-        LogRequiredPolicies(requiredRoles.Count);
+        LogRequiredRoles(authorizationMetadata.Roles.Count);
+        LogRequiredPolicies(authorizationMetadata.Policies.Count);
 
         LogCheckingUserAuthorization();
 
-        var isAuthorized = await _authorizationService.IsCurrentUserAuthorizedAsync(request, requiredRoles, requiredPolicies);
+        var isAuthorized = await _authorizationService.IsCurrentUserAuthorizedAsync(request, authorizationMetadata);
 
         if (isAuthorized)
         {
