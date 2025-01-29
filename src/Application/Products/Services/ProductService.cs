@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.SaleAggregate.Services;

@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
-using Application.Products.Queries.Common.DTOs;
+using Application.Products.DTOs;
+using Application.Products.Errors;
 
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;

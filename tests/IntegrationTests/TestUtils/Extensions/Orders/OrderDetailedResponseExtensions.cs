@@ -1,5 +1,4 @@
-using Application.Common.Extensions.Orders;
-
+using Application.Common.Extensions;
 using Contracts.Orders;
 
 using Domain.OrderAggregate;

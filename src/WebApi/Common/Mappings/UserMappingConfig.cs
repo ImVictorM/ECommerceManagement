@@ -1,7 +1,6 @@
-using Application.Common.Extensions.Users;
+using Application.Common.Extensions;
 using Application.Users.Commands.UpdateUser;
-using Application.Users.Common.DTOs;
-
+using Application.Users.DTOs;
 using Contracts.Users;
 using Mapster;
 

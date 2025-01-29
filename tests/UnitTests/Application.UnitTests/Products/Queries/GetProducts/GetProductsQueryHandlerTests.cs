@@ -7,10 +7,11 @@ using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
+using SharedKernel.Models;
+
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.Models;
 
 namespace Application.UnitTests.Products.Queries.GetProducts;
 

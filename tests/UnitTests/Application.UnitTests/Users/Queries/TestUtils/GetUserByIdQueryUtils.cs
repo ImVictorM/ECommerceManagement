@@ -1,4 +1,5 @@
 using Application.Users.Queries.GetUserById;
+
 using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Users.Queries.TestUtils;

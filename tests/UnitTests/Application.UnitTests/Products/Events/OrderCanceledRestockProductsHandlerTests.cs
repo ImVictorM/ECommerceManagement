@@ -1,5 +1,6 @@
 using Application.Products.Events;
 using Application.UnitTests.TestUtils.Events.Orders;
+using Application.Common.Persistence;
 
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
@@ -8,7 +9,6 @@ using Domain.UnitTests.TestUtils;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Products.Events;
 

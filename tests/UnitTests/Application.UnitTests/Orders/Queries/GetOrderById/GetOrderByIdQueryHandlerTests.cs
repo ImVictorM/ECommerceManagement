@@ -1,8 +1,8 @@
-using Application.Orders.Common.Errors;
 using Application.Orders.Queries.GetOrderById;
-using Application.UnitTests.Orders.Queries.TestUtils;
+using Application.Orders.Errors;
 using Application.Common.Persistence;
 using Application.Common.PaymentGateway;
+using Application.UnitTests.Orders.Queries.TestUtils;
 using Application.UnitTests.TestUtils.PaymentGateway;
 
 using Domain.OrderAggregate;

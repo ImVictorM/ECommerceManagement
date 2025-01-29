@@ -1,6 +1,6 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Requests;
-using Application.Orders.Common.DTOs;
+using Application.Orders.DTOs;
 
 namespace Application.Orders.Queries.GetCustomerOrders;
 

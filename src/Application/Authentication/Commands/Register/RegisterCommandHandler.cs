@@ -2,12 +2,12 @@ using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 
-using Application.Common.Errors;
-using Application.Authentication.Common.DTOs;
 using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
+using Application.Common.Errors;
+using Application.Authentication.DTOs;
 
 using SharedKernel.ValueObjects;
 
@@ -57,7 +57,8 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
         {
             LogUserAlreadyExists();
 
-            throw new UserAlreadyExistsException().WithContext("Email", command.Email);
+            throw new EmailConflictException()
+                .WithContext("Email", command.Email);
         }
 
         var passwordHash = _passwordHasher.Hash(command.Password);

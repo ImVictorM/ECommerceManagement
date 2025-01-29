@@ -1,5 +1,7 @@
 using Application.Common.Persistence;
+
 using Domain.OrderAggregate.Events;
+
 using MediatR;
 
 namespace Application.Products.Events;

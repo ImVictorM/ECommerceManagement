@@ -1,5 +1,5 @@
+using Application.Payments.Errors;
 using Application.Common.Persistence;
-using Application.Payments.Common.Errors;
 
 using Domain.PaymentAggregate.Enumerations;
 using Domain.PaymentAggregate.ValueObjects;

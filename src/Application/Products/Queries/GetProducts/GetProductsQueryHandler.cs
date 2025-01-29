@@ -1,14 +1,15 @@
 using Application.Common.Persistence;
-using Application.Products.Queries.Common.DTOs;
+using Application.Products.DTOs;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;
 
+using SharedKernel.Models;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SharedKernel.Models;
 
 namespace Application.Products.Queries.GetProducts;
 

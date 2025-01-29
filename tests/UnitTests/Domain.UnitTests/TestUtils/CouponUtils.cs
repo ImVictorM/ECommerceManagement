@@ -2,13 +2,13 @@ using Domain.CategoryAggregate.ValueObjects;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
+using Domain.CouponAggregate.Abstracts;
 
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
 
 using Bogus;
-using Domain.CouponAggregate.Abstracts;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -45,7 +45,7 @@ public static class CouponUtils
         var coupon = Coupon.Create(
             discount ?? DiscountUtils.CreateDiscount(),
             code ?? _faker.Lorem.Word(),
-            usageLimit ?? _faker.Random.Int(0, 100),
+            usageLimit ?? _faker.Random.Int(1, 100),
             minPrice ?? _faker.Finance.Amount(0, 1000),
             autoApply ?? _faker.Random.Bool()
         );

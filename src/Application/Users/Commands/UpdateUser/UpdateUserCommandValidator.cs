@@ -1,4 +1,5 @@
-using Application.Common.Extensions.Validations;
+using Application.Common.Validation;
+
 using FluentValidation;
 
 namespace Application.Users.Commands.UpdateUser;

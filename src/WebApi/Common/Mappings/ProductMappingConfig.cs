@@ -1,7 +1,7 @@
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.UpdateProduct;
 using Application.Products.Commands.UpdateProductInventory;
-using Application.Products.Queries.Common.DTOs;
+using Application.Products.DTOs;
 using Contracts.Products;
 using Mapster;
 

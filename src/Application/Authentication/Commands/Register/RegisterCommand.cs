@@ -1,4 +1,5 @@
-using Application.Authentication.Common.DTOs;
+using Application.Authentication.DTOs;
+
 using MediatR;
 
 namespace Application.Authentication.Commands.Register;

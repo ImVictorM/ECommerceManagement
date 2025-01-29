@@ -1,11 +1,11 @@
 using Application.Authentication.Commands.Register;
-using Application.Common.Errors;
-using Application.UnitTests.Authentication.Commands.TestUtils;
 using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
+using Application.Common.Errors;
 using Application.UnitTests.TestUtils.Behaviors;
+using Application.UnitTests.Authentication.Commands.TestUtils;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -122,7 +122,6 @@ public class RegisterCommandHandlerTests
 
         await FluentActions.Invoking(() => _handler.Handle(registerCommand, default))
            .Should()
-           .ThrowAsync<UserAlreadyExistsException>()
-           .WithMessage("The user already exists");
+           .ThrowAsync<EmailConflictException>();
     }
 }

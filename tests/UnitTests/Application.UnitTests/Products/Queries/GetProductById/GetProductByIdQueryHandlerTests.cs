@@ -1,5 +1,5 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
+using Application.Products.Errors;
 using Application.Products.Queries.GetProductById;
 using Application.UnitTests.Products.Queries.TestUtils;
 

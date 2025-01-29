@@ -1,6 +1,5 @@
 using Application.Common.PaymentGateway;
 using Application.Common.Persistence;
-using Application.Orders.Common.Errors;
 using Application.Orders.Queries.GetCustomerOrderById;
 using Application.UnitTests.Orders.Queries.TestUtils;
 using Application.UnitTests.TestUtils.PaymentGateway;
@@ -16,6 +15,7 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Application.Orders.Errors;
 
 namespace Application.UnitTests.Orders.Queries.GetCustomerOrderById;
 

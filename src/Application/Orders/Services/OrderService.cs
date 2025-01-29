@@ -1,6 +1,5 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
-using Application.Orders.Common.Errors;
+using Application.Orders.Errors;
 
 using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Interfaces;
@@ -66,7 +65,7 @@ public class OrderService : IOrderService
 
         if (coupons.Count() != couponAppliedIds.Count)
         {
-            throw new InvalidOrderCouponAppliedException("Some of the applied coupons are expired");
+            throw new InvalidCouponAppliedException("Some of the applied coupons are expired");
         }
 
         var products = orderProducts.Select(p => (p.ProductId, p.ProductCategoryIds)).ToHashSet();
@@ -75,7 +74,7 @@ public class OrderService : IOrderService
 
         if (!couponsCanBeApplied)
         {
-            throw new InvalidOrderCouponAppliedException("Some of the applied coupons are expired or invalid");
+            throw new InvalidCouponAppliedException("Some of the applied coupons are expired or invalid");
         }
 
         var couponDiscounts = coupons.Select(c => c.Discount);
@@ -112,7 +111,7 @@ public class OrderService : IOrderService
 
         if (products.Count() != productIds.Count())
         {
-            throw new ProductNotFoundException("Some of the order products could not be found");
+            throw new OrderProductNotAvailableException("Some of the order products could not be found");
         }
 
         return products.ToDictionary(p => p.Id);

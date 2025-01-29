@@ -1,7 +1,8 @@
+using Application.Common.Errors;
 using Application.Common.Persistence;
-using Application.Orders.Common.Errors;
 using Application.Orders.Events;
 using Application.UnitTests.TestUtils.Events.Payments;
+
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
@@ -74,6 +75,6 @@ public class PaymentApprovedMarkOrderAsPaidHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(notification, default))
             .Should()
-            .ThrowAsync<OrderNotFoundException>();
+            .ThrowAsync<OperationProcessFailedException>();
     }
 }

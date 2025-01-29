@@ -1,7 +1,7 @@
 using Application.Common.PaymentGateway;
 using Application.Common.Persistence;
-using Application.Orders.Common.DTOs;
-using Application.Orders.Common.Errors;
+using Application.Orders.DTOs;
+using Application.Orders.Errors;
 
 using Domain.OrderAggregate.ValueObjects;
 

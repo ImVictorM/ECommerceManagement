@@ -1,7 +1,6 @@
 using Application.Categories.Commands.CreateCategory;
 using Application.Categories.Commands.UpdateCategory;
-using Application.Categories.Common.DTOs;
-
+using Application.Categories.DTOs;
 using Contracts.Categories;
 
 using Mapster;

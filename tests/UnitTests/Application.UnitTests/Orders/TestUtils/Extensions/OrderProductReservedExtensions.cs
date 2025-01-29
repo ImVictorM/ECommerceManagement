@@ -1,5 +1,4 @@
-using Application.Orders.Commands.Common.DTOs;
-
+using Application.Orders.DTOs;
 using Domain.OrderAggregate.Interfaces;
 
 namespace Application.UnitTests.Orders.TestUtils.Extensions;

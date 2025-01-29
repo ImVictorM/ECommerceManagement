@@ -1,5 +1,6 @@
 using Application.UnitTests.TestUtils.Events.Orders;
 using Application.Users.Events;
+using Application.Common.Persistence;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -10,7 +11,6 @@ using SharedKernel.UnitTests.TestUtils;
 
 using FluentAssertions;
 using Moq;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Users.Events;
 

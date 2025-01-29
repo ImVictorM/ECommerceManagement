@@ -1,6 +1,6 @@
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Authorization.Roles;
-using Application.Users.Common.DTOs;
+using Application.Users.DTOs;
 
 namespace Application.Users.Queries.GetUserById;
 

@@ -1,7 +1,8 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.UnitTests.Users.Commands.TestUtils;
+using Application.Users.Errors;
 using Application.Users.Commands.UpdateUser;
+using Application.Common.Errors;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -81,7 +82,7 @@ public class UpdateUserCommandHandlerTests
 
     /// <summary>
     /// Tests that when trying to update a user's email to an already existing one,
-    /// the handler throws a <see cref="UserAlreadyExistsException"/>.
+    /// the handler throws a <see cref="EmailConflictException"/>.
     /// </summary>
     [Fact]
     public async Task HandleUpdateUser_WhenTryingToUpdateEmailWithExistingOne_ThrowsException()
@@ -103,7 +104,6 @@ public class UpdateUserCommandHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(updateRequest, default))
             .Should()
-            .ThrowAsync<UserAlreadyExistsException>()
-            .WithMessage("The email you entered is already in use");
+            .ThrowAsync<EmailConflictException>();
     }
 }

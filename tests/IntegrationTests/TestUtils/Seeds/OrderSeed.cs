@@ -1,4 +1,4 @@
-using Application.Orders.Commands.Common.DTOs;
+using Application.Orders.DTOs;
 
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;

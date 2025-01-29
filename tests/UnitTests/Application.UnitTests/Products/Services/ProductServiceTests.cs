@@ -1,4 +1,5 @@
 using Application.Products.Services;
+using Application.Common.Persistence;
 
 using Domain.CategoryAggregate;
 using Domain.CategoryAggregate.ValueObjects;
@@ -13,7 +14,6 @@ using SharedKernel.UnitTests.TestUtils;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Products.Services;
 

@@ -1,5 +1,6 @@
 using Application.Categories.Queries.GetCategories;
 using Application.UnitTests.Categories.Queries.TestUtils;
+using Application.Common.Persistence;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.CategoryAggregate;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Linq.Expressions;
 using FluentAssertions;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Categories.Queries.GetCategories;
 

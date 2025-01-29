@@ -1,7 +1,7 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Users.Queries.GetSelf;
+using Application.Users.Errors;
 using Application.Common.Security.Authorization.Roles;
 
 using Domain.UserAggregate.ValueObjects;

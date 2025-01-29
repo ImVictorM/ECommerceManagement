@@ -1,4 +1,4 @@
-using Application.Authentication.Common.DTOs;
+using Application.Authentication.DTOs;
 
 using MediatR;
 
