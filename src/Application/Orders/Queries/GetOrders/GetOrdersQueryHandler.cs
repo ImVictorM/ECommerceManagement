@@ -1,5 +1,5 @@
+using Application.Orders.DTOs;
 using Application.Common.Persistence;
-using Application.Orders.Common.DTOs;
 
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Specifications;

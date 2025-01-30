@@ -1,6 +1,6 @@
 using Contracts.Common;
+using Contracts.Common.PaymentMethods;
 using Contracts.Orders;
-using Contracts.Orders.Common;
 
 using Domain.UnitTests.TestUtils;
 

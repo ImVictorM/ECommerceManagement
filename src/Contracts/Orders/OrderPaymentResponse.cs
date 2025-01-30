@@ -1,7 +1,7 @@
 namespace Contracts.Orders;
 
 /// <summary>
-/// Represents an order payment.
+/// Represents an order payment response.
 /// </summary>
 /// <param name="PaymentId">The payment id.</param>
 /// <param name="Amount">The payment amount.</param>

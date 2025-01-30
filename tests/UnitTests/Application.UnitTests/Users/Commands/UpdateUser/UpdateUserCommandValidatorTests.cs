@@ -1,6 +1,7 @@
 using Application.UnitTests.TestUtils.ValidationData;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.UpdateUser;
+
 using FluentAssertions;
 using FluentValidation.TestHelper;
 

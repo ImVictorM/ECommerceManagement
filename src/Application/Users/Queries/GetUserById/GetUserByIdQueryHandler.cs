@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
-using Application.Users.Common.DTOs;
+using Application.Users.DTOs;
+using Application.Users.Errors;
 
 using Domain.UserAggregate.ValueObjects;
 

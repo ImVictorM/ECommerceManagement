@@ -1,5 +1,3 @@
-using Application.Common.Extensions.Users;
-
 using Contracts.Users;
 
 using Domain.UserAggregate;
@@ -7,6 +5,7 @@ using Domain.UserAggregate;
 using SharedKernel.ValueObjects;
 
 using FluentAssertions;
+using Application.Common.Extensions;
 
 namespace IntegrationTests.TestUtils.Extensions.Users;
 

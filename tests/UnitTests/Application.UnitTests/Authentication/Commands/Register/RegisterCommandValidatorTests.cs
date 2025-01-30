@@ -1,6 +1,7 @@
 using Application.Authentication.Commands.Register;
 using Application.UnitTests.Authentication.Commands.TestUtils;
 using Application.UnitTests.TestUtils.ValidationData;
+
 using FluentAssertions;
 using FluentValidation.TestHelper;
 

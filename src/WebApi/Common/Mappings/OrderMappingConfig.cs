@@ -1,18 +1,18 @@
-using Application.Orders.Commands.Common.DTOs;
 using Application.Orders.Commands.PlaceOrder;
-using Application.Orders.Common.DTOs;
-using Application.Common.Extensions.Orders;
+using Application.Orders.DTOs;
+using Application.Common.Extensions;
 
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
 using Contracts.Orders;
+
 using Mapster;
 
 namespace WebApi.Common.Mappings;
 
 /// <summary>
-/// Configures mapping between order objects.
+/// Configures the mappings between order objects.
 /// </summary>
 public class OrderMappingConfig : IRegister
 {

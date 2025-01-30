@@ -1,5 +1,6 @@
-using Application.Orders.Common.Errors;
 using Application.Orders.Services;
+using Application.Common.Persistence;
+using Application.Orders.Errors;
 
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
@@ -15,7 +16,6 @@ using SharedKernel.UnitTests.TestUtils;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Orders.Services;
 
@@ -150,7 +150,7 @@ public class OrderServiceTests
         await FluentActions
             .Invoking(() => _service.CalculateTotalAsync(orderProducts, orderCoupons))
             .Should()
-            .ThrowAsync<InvalidOrderCouponAppliedException>();
+            .ThrowAsync<InvalidCouponAppliedException>();
     }
 
     /// <summary>

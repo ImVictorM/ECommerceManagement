@@ -1,7 +1,7 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
-using Application.Users.Common.DTOs;
+using Application.Users.DTOs;
+using Application.Users.Errors;
 
 using Domain.UserAggregate.ValueObjects;
 

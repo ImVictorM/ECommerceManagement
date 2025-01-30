@@ -1,17 +1,17 @@
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 
-using Application.Authentication.Common.DTOs;
-using Application.Authentication.Common.Errors;
+using Application.Authentication.DTOs;
+using Application.Authentication.Errors;
 using Application.Common.Persistence;
 using Application.Common.Security.Authentication;
 using Application.Common.Security.Identity;
+using Application.Common.Extensions;
 
 using SharedKernel.ValueObjects;
 
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Application.Common.Extensions.Users;
 
 namespace Application.Authentication.Queries.Login;
 

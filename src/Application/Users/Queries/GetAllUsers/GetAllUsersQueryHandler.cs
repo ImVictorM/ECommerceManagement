@@ -1,5 +1,5 @@
 using Application.Common.Persistence;
-using Application.Users.Common.DTOs;
+using Application.Users.DTOs;
 
 using MediatR;
 using Microsoft.Extensions.Logging;

@@ -2,7 +2,7 @@ using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
 using Application.Common.Security.Authorization.Requests;
-using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestWithAuthorizationUtils;
+using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestUtils;
 
 using FluentAssertions;
 
@@ -30,7 +30,7 @@ public class SelfOrAdminPolicyTests
     public async Task IsAuthorizedAsync_WhenUserAccessesThemselves_ReturnsTrue()
     {
         var userId = "1";
-        var request = new TestRequestWithUser(userId);
+        var request = new TestRequestWithoutAuthUserRelated(userId);
         var currentUser = new IdentityUser(userId, [Role.Customer.Name]);
 
         var result = await _policy.IsAuthorizedAsync(request, currentUser);
@@ -45,7 +45,7 @@ public class SelfOrAdminPolicyTests
     public async Task IsAuthorizedAsync_WhenAdminAccessesAnotherUser_ReturnsTrue()
     {
         var requestUserId = "2";
-        var request = new TestRequestWithUser(requestUserId);
+        var request = new TestRequestWithoutAuthUserRelated(requestUserId);
         var adminUser = new IdentityUser("1", [Role.Admin.Name]);
 
         var result = await _policy.IsAuthorizedAsync(request, adminUser);
@@ -61,7 +61,7 @@ public class SelfOrAdminPolicyTests
     {
         var requestUserId = "2";
         var currentUser = new IdentityUser("1", [Role.Customer.Name]);
-        var request = new TestRequestWithUser(requestUserId);
+        var request = new TestRequestWithoutAuthUserRelated(requestUserId);
 
         var result = await _policy.IsAuthorizedAsync(request, currentUser);
 

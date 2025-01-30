@@ -3,7 +3,7 @@ using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
 using Application.Common.Security.Authorization.Requests;
-using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestWithAuthorizationUtils;
+using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestUtils;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -43,7 +43,7 @@ public class RestrictedDeactivationPolicyTests
     public async Task IsAuthorizedAsync_WhenNonAdminCurrentUserDeactivatesThemselves_ReturnsTrue()
     {
         var userId = "1";
-        var request = new TestRequestWithUser(userId);
+        var request = new TestRequestWithoutAuthUserRelated(userId);
         var currentCustomerUser = new IdentityUser(userId, [Role.Customer.Name]);
 
         var result = await _policy.IsAuthorizedAsync(request, currentCustomerUser);
@@ -58,7 +58,7 @@ public class RestrictedDeactivationPolicyTests
     public async Task IsAuthorizedAsync_CurrentAdminDeactivatesThemselves_ReturnsFalse()
     {
         var userId = "1";
-        var request = new TestRequestWithUser(userId);
+        var request = new TestRequestWithoutAuthUserRelated(userId);
         var currentAdminUser = new IdentityUser(userId, [Role.Admin.Name]);
 
         var result = await _policy.IsAuthorizedAsync(request, currentAdminUser);
@@ -76,7 +76,7 @@ public class RestrictedDeactivationPolicyTests
         var currentAdminUserId = UserId.Create("1");
         var userToBeDeactivatedId = UserId.Create("2");
 
-        var request = new TestRequestWithUser(userToBeDeactivatedId.ToString());
+        var request = new TestRequestWithoutAuthUserRelated(userToBeDeactivatedId.ToString());
 
         var currentUser = new IdentityUser(currentAdminUserId.ToString(), [Role.Admin.Name]);
 
@@ -104,7 +104,7 @@ public class RestrictedDeactivationPolicyTests
         var currentAdminUser = UserId.Create("1");
         var otherAdminToBeDeactivatedId = UserId.Create("2");
 
-        var request = new TestRequestWithUser(otherAdminToBeDeactivatedId.ToString());
+        var request = new TestRequestWithoutAuthUserRelated(otherAdminToBeDeactivatedId.ToString());
 
         var currentUser = new IdentityUser(currentAdminUser.ToString(), [Role.Admin.Name]);
 
@@ -132,7 +132,7 @@ public class RestrictedDeactivationPolicyTests
         var currentAdminUserId = UserId.Create("1");
         var nonExistingUserId = UserId.Create("9999");
 
-        var request = new TestRequestWithUser(nonExistingUserId.ToString());
+        var request = new TestRequestWithoutAuthUserRelated(nonExistingUserId.ToString());
 
         var currentUser = new IdentityUser(currentAdminUserId.ToString(), [Role.Admin.Name]);
 

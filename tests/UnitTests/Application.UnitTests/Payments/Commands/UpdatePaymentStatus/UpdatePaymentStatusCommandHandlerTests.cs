@@ -1,6 +1,6 @@
 using Application.Common.Persistence;
 using Application.Payments.Commands.UpdatePaymentStatus;
-using Application.Payments.Common.Errors;
+using Application.Payments.Errors;
 using Application.UnitTests.Payments.Commands.TestUtils;
 
 using Domain.PaymentAggregate;

@@ -1,4 +1,4 @@
-using Application.Authentication.Common.Errors;
+using Application.Authentication.Errors;
 using Application.Authentication.Queries.Login;
 using Application.UnitTests.Authentication.Queries.TestUtils;
 using Application.Common.Security.Authentication;

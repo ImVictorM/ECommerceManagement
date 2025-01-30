@@ -1,7 +1,7 @@
 namespace Contracts.Products;
 
 /// <summary>
-/// Defines a product response.
+/// Represents a product response.
 /// </summary>
 /// <param name="Id">The product id.</param>
 /// <param name="Name">The product name.</param>

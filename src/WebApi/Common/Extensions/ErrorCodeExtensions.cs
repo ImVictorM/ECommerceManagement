@@ -1,5 +1,6 @@
-using System.Net;
 using SharedKernel.Errors;
+
+using System.Net;
 
 namespace WebApi.Common.Extensions;
 
@@ -8,7 +9,7 @@ namespace WebApi.Common.Extensions;
 /// </summary>
 public static class ErrorCodeExtensions
 {
-    private static readonly Dictionary<ErrorCode, HttpStatusCode> _errorCodeToHttpStatusCode = new()
+    private static readonly Dictionary<ErrorCode, HttpStatusCode> _map = new()
     {
         { ErrorCode.NotFound, HttpStatusCode.NotFound },
         { ErrorCode.Conflict, HttpStatusCode.Conflict },
@@ -25,7 +26,8 @@ public static class ErrorCodeExtensions
     /// <returns>An HTTP status code.</returns>
     public static HttpStatusCode ToHttpStatusCode(this ErrorCode errorCode)
     {
-        return _errorCodeToHttpStatusCode.TryGetValue(errorCode, out var statusCode) ? statusCode : HttpStatusCode.InternalServerError;
-
+        return _map.TryGetValue(errorCode, out var statusCode)
+            ? statusCode
+            : HttpStatusCode.InternalServerError;
     }
 }

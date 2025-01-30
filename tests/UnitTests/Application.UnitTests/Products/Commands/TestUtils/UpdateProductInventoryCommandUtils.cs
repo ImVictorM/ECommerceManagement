@@ -1,4 +1,5 @@
 using Application.Products.Commands.UpdateProductInventory;
+
 using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Products.Commands.TestUtils;

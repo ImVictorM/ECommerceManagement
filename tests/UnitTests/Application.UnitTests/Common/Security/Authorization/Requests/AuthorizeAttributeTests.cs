@@ -1,6 +1,7 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Authorization.Roles;
+using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestUtils;
 
 using FluentAssertions;
 
@@ -11,17 +12,6 @@ namespace Application.UnitTests.Common.Security.Authorization.Requests;
 /// </summary>
 public class AuthorizeAttributeTests
 {
-    [Authorize(roleName: nameof(Role.Admin))]
-    private class SingleRoleRequest { }
-
-    [Authorize(policyType: typeof(SelfOrAdminPolicy<IUserSpecificResource>))]
-    private class SinglePolicyRequest { }
-
-    [Authorize(roleName: nameof(Role.Admin))]
-    [Authorize(policyType: typeof(SelfOrAdminPolicy<IUserSpecificResource>))]
-    private class MultipleAuthorizationRequest { }
-
-    private record NoAuthorizationRequest(string? Name);
 
     /// <summary>
     /// Verifies the attribute is created with a valid role.
@@ -87,7 +77,7 @@ public class AuthorizeAttributeTests
     [Fact]
     public void GetAuthorizationMetadata_WithSingleAdminRole_ReturnsCorrectRole()
     {
-        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(SingleRoleRequest));
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(TestRequestWithRoleAuthorization));
 
         metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin.Name);
         metadata.Policies.Should().BeEmpty();
@@ -99,7 +89,7 @@ public class AuthorizeAttributeTests
     [Fact]
     public void GetAuthorizationMetadata_WithSinglePolicy_ReturnsCorrectPolicy()
     {
-        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(SinglePolicyRequest));
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(TestRequestWithPolicyAuthorization));
 
         metadata.Policies.Should().ContainSingle().Which.Should().Be(typeof(SelfOrAdminPolicy<IUserSpecificResource>));
         metadata.Roles.Should().BeEmpty();
@@ -111,7 +101,7 @@ public class AuthorizeAttributeTests
     [Fact]
     public void GetAuthorizationMetadata_WithMultipleAuthorization_ReturnsAllRolesAndPolicies()
     {
-        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(MultipleAuthorizationRequest));
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(TestRequestWithMultipleAuthorization));
 
         metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin.Name);
         metadata.Policies.Should().ContainSingle().Which.Should().Be(typeof(SelfOrAdminPolicy<IUserSpecificResource>));
@@ -123,7 +113,7 @@ public class AuthorizeAttributeTests
     [Fact]
     public void GetAuthorizationMetadata_WithNoAuthorization_ReturnsEmptyMetadata()
     {
-        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(NoAuthorizationRequest));
+        var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(TestRequestWithoutAuth));
 
         metadata.Roles.Should().BeEmpty();
         metadata.Policies.Should().BeEmpty();

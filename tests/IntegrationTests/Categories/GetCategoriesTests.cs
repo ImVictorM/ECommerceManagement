@@ -3,7 +3,7 @@ using Contracts.Categories;
 using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Seeds;
 
-using WebApi.Endpoints;
+using WebApi.Categories;
 
 using System.Net.Http.Json;
 using FluentAssertions;

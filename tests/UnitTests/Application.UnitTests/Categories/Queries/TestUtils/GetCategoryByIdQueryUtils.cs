@@ -1,4 +1,5 @@
 using Application.Categories.Queries.GetCategoryById;
+
 using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Categories.Queries.TestUtils;

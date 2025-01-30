@@ -1,4 +1,5 @@
 using Application.Orders.Queries.GetCustomerOrders;
+
 using Domain.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Orders.Queries.TestUtils;

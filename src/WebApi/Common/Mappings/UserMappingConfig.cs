@@ -1,21 +1,19 @@
-using Application.Common.Extensions.Users;
+using Application.Common.Extensions;
 using Application.Users.Commands.UpdateUser;
-using Application.Users.Common.DTOs;
+using Application.Users.DTOs;
 
 using Contracts.Users;
+
 using Mapster;
 
 namespace WebApi.Common.Mappings;
 
 /// <summary>
-/// Configure mappings between user objects.
+/// Configures the mappings between user objects.
 /// </summary>
 public class UserMappingConfig : IRegister
 {
-    /// <summary>
-    /// Register the mapping configuration related to users.
-    /// </summary>
-    /// <param name="config">The global configuration object.</param>
+    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<UserResult, UserResponse>()

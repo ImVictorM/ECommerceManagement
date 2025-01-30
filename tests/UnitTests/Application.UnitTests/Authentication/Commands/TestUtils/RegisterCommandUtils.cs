@@ -1,7 +1,10 @@
 using Application.Authentication.Commands.Register;
-using Bogus;
+
 using Domain.UnitTests.TestUtils;
+
 using SharedKernel.UnitTests.TestUtils;
+
+using Bogus;
 
 namespace Application.UnitTests.Authentication.Commands.TestUtils;
 

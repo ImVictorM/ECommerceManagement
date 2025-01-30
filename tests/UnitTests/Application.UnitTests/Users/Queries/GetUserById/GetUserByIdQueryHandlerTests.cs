@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.UnitTests.Users.Queries.TestUtils;
+using Application.Users.Errors;
 using Application.Users.Queries.GetUserById;
 
 using Domain.UnitTests.TestUtils;

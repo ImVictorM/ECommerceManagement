@@ -1,5 +1,6 @@
+using Application.Common.Errors;
 using Application.Common.Persistence;
-using Application.Orders.Common.Errors;
+
 using Domain.PaymentAggregate.Events;
 
 using MediatR;
@@ -29,7 +30,7 @@ public sealed class PaymentApprovedMarkOrderAsPaidHandler : INotificationHandler
         var orderId = notification.Payment.OrderId;
 
         var order = await _unitOfWork.OrderRepository.FindByIdAsync(orderId) ??
-                    throw new OrderNotFoundException($"The order with id {orderId} cannot be marked as paid because it does not exist");
+                    throw new OperationProcessFailedException($"The order with id {orderId} cannot be marked as paid because it does not exist");
 
         order.MarkAsPaid();
 

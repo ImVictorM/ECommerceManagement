@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.Products.Commands.DeactivateProduct;
+using Application.Products.Errors;
 using Application.UnitTests.Products.Commands.TestUtils;
 
 using Domain.ProductAggregate;

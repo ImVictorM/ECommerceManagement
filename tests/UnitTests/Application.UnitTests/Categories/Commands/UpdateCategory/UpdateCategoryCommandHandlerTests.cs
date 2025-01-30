@@ -1,6 +1,7 @@
 using Application.UnitTests.Categories.Commands.TestUtils;
-using Application.Categories.Common.Errors;
 using Application.Categories.Commands.UpdateCategory;
+using Application.Common.Persistence;
+using Application.Categories.Errors;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.CategoryAggregate;
@@ -9,7 +10,6 @@ using Domain.UnitTests.TestUtils;
 using Microsoft.Extensions.Logging;
 using Moq;
 using FluentAssertions;
-using Application.Common.Persistence;
 
 namespace Application.UnitTests.Categories.Commands.UpdateCategory;
 

@@ -1,5 +1,6 @@
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Authorization.Roles;
+
 using MediatR;
 
 namespace Application.Products.Commands.DeactivateProduct;

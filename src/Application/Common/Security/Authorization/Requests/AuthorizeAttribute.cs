@@ -1,6 +1,7 @@
-using System.Reflection;
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Roles;
+
+using System.Reflection;
 
 namespace Application.Common.Security.Authorization.Requests;
 

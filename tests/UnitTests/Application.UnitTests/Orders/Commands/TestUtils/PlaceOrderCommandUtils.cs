@@ -1,11 +1,12 @@
-using Domain.UnitTests.TestUtils;
-
-using Application.Orders.Commands.Common.DTOs;
+using Application.Orders.DTOs;
 using Application.Orders.Commands.PlaceOrder;
+
+using Domain.UnitTests.TestUtils;
 
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
+
 using Bogus;
 
 namespace Application.UnitTests.Orders.Commands.TestUtils;

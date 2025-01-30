@@ -1,6 +1,6 @@
 using Application.Categories.Commands.CreateCategory;
 using Application.Categories.Commands.UpdateCategory;
-using Application.Categories.Common.DTOs;
+using Application.Categories.DTOs;
 
 using Contracts.Categories;
 
@@ -9,7 +9,7 @@ using Mapster;
 namespace WebApi.Common.Mappings;
 
 /// <summary>
-/// Mapping configuration between category objects.
+/// Configures the mappings between category objects.
 /// </summary>
 public class CategoryMappingConfig : IRegister
 {

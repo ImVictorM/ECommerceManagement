@@ -1,7 +1,7 @@
 namespace Contracts.Common;
 
 /// <summary>
-/// Represents a discount.
+/// Represents a discount request/response.
 /// </summary>
 /// <param name="Percentage">The discount percentage.</param>
 /// <param name="Description">The discount description.</param>

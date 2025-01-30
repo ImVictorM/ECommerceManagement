@@ -25,23 +25,17 @@ public static class ServicesRegistration
         services.AddCarter();
         services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
-        services.AddSwagger();
+        services.AddSwaggerDocumentation();
         services.AddAuthorization();
 
-        services.AddProblemDetails(
-            options => options.CustomizeProblemDetails = context =>
-            {
-                context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
-                context.ProblemDetails.Extensions["userAgent"] = context.HttpContext.Request.Headers.UserAgent.ToString();
-            }
-        );
+        services.AddProblemDetails(ConfigureProblemDetails);
 
         services.AddMappings();
 
         return services;
     }
 
-    private static IServiceCollection AddSwagger(this IServiceCollection services)
+    private static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
     {
         services.AddSwaggerGen(setup =>
         {
@@ -85,5 +79,14 @@ public static class ServicesRegistration
         services.AddScoped<IMapper, ServiceMapper>();
 
         return services;
+    }
+
+    private static void ConfigureProblemDetails(ProblemDetailsOptions options)
+    {
+        options.CustomizeProblemDetails = context =>
+        {
+            context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+            context.ProblemDetails.Extensions["userAgent"] = context.HttpContext.Request.Headers.UserAgent.ToString();
+        };
     }
 }

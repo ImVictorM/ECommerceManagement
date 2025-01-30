@@ -3,9 +3,10 @@ using Domain.UserAggregate.ValueObjects;
 
 using Application.Common.Persistence;
 
+using SharedKernel.Errors;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SharedKernel.Errors;
 
 namespace Application.Users.Commands.DeactivateUser;
 

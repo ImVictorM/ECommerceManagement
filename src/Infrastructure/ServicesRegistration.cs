@@ -9,8 +9,8 @@ using Infrastructure.PaymentGateway;
 using Infrastructure.Security.Authorization;
 using Infrastructure.Security.Authentication;
 using Infrastructure.Security.Authentication.Settings;
-using Infrastructure.Persistence.Interceptors;
-using Infrastructure.Persistence;
+using Infrastructure.Common.Persistence;
+using Infrastructure.Common.Persistence.Interceptors;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;

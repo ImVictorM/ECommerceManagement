@@ -1,5 +1,5 @@
 using Contracts.Common;
-using Contracts.Orders.Common;
+using Contracts.Common.PaymentMethods;
 
 namespace Contracts.Orders;
 

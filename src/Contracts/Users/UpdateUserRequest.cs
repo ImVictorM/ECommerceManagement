@@ -1,7 +1,7 @@
 namespace Contracts.Users;
 
 /// <summary>
-/// Represents a request object containing updated user data.
+/// Represents a request to update a user.
 /// </summary>
 /// <param name="Name">The user name.</param>
 /// <param name="Phone">The user phone.</param>

@@ -1,6 +1,8 @@
-using System.Security.Cryptography;
 using Application.Common.Security.Authentication;
+
 using SharedKernel.ValueObjects;
+
+using System.Security.Cryptography;
 
 namespace Infrastructure.Security.Authentication;
 

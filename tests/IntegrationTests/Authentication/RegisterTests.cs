@@ -79,7 +79,7 @@ public class RegisterTests : BaseIntegrationTest
         httpResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
         responseContent.Should().NotBeNull();
         responseContent!.Status.Should().Be((int)HttpStatusCode.Conflict);
-        responseContent.Title.Should().Be("User Conflict");
-        responseContent.Detail.Should().Be("The user already exists");
+        responseContent.Title.Should().Be("Email Conflict");
+        responseContent.Detail.Should().Be("The email you entered is already in use");
     }
 }

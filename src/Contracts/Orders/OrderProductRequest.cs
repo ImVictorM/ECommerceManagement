@@ -1,7 +1,7 @@
 namespace Contracts.Orders;
 
 /// <summary>
-/// Represents an order product request.
+/// Represents a request order product.
 /// </summary>
 /// <param name="ProductId">The product id.</param>
 /// <param name="Quantity">The product quantity.</param>

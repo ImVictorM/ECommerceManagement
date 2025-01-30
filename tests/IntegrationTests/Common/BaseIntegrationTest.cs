@@ -1,5 +1,7 @@
-using Infrastructure.Persistence;
+using Infrastructure.Common.Persistence;
+
 using IntegrationTests.TestUtils.Seeds;
+
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 

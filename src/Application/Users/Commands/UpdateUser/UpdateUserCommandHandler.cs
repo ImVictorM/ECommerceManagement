@@ -1,8 +1,9 @@
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 
-using Application.Common.Errors;
 using Application.Common.Persistence;
+using Application.Common.Errors;
+using Application.Users.Errors;
 
 using SharedKernel.Errors;
 using SharedKernel.ValueObjects;
@@ -55,7 +56,7 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
             {
                 LogEmailConflict();
 
-                throw new UserAlreadyExistsException("The email you entered is already in use");
+                throw new EmailConflictException();
             }
         }
 
