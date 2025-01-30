@@ -1,4 +1,4 @@
-using Infrastructure.Persistence;
+using Infrastructure.Common.Persistence;
 
 using System.Data.Common;
 using Microsoft.AspNetCore.Hosting;

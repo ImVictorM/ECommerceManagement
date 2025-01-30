@@ -1,8 +1,10 @@
+using Application.Common.Security.Authentication;
+
+using Infrastructure.Security.Authentication.Settings;
+
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
-using Application.Common.Security.Authentication;
-using Infrastructure.Security.Authentication.Settings;
 
 namespace Infrastructure.Security.Authentication;
 

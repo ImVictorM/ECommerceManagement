@@ -1,7 +1,7 @@
 namespace Infrastructure.Security.Authentication.Settings;
 
 /// <summary>
-/// JWT Token settings.
+/// Maps the JWT Token settings.
 /// </summary>
 public class JwtSettings
 {

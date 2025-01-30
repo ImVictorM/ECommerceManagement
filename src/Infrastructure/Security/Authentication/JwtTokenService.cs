@@ -12,7 +12,7 @@ using System.Text;
 namespace Infrastructure.Security.Authentication;
 
 /// <summary>
-/// Implementation of the token generator service.
+/// Implementation of the token service.
 /// </summary>
 public class JwtTokenService : IJwtTokenService
 {
