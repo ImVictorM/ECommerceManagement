@@ -1,4 +1,4 @@
-using Contracts.Notifications;
+using Contracts.Payments;
 using Contracts.Orders;
 
 using Infrastructure.Security.Authentication;
@@ -49,7 +49,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     [Fact]
     public async Task HandlePaymentStatusChanged_WithoutSignatureHeader_ReturnsBadRequest()
     {
-        var request = new PaymentStatusChangedNotification("1", "authorized");
+        var request = new PaymentStatusChangedRequest("1", "authorized");
 
         var response = await Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
 
@@ -62,7 +62,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     [Fact]
     public async Task HandlePaymentStatusChanged_WithIncorrectSignature_ReturnsUnauthorized()
     {
-        var request = new PaymentStatusChangedNotification("1", "authorized");
+        var request = new PaymentStatusChangedRequest("1", "authorized");
 
         var invalidBase64Signature = Convert.ToBase64String(Encoding.UTF8.GetBytes("xyz"));
 
@@ -79,7 +79,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     [Fact]
     public async Task HandlePaymentStatusChanged_WhenPaymentIsNotFound_ReturnsNotFound()
     {
-        var request = new PaymentStatusChangedNotification("404", "authorized");
+        var request = new PaymentStatusChangedRequest("404", "authorized");
 
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
 
@@ -97,7 +97,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     public async Task HandlePaymentStatusChanged_WithValidSignatureAndPaymentExists_ReturnsNoContent()
     {
         var existingPayment = await GetExistingOrderPayment();
-        var request = new PaymentStatusChangedNotification(existingPayment.PaymentId, "authorized");
+        var request = new PaymentStatusChangedRequest(existingPayment.PaymentId, "authorized");
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
 
         Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
@@ -113,7 +113,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     public async Task HandlePaymentStatusChanged_WithInvalidPaymentStatus_ReturnsBadRequest()
     {
         var invalidStatus = "invalid_status";
-        var request = new PaymentStatusChangedNotification("1", invalidStatus);
+        var request = new PaymentStatusChangedRequest("1", invalidStatus);
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
 
         Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
