@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace WebApi.Common.Utils;
+namespace WebApi.Common.Utilities;
 
 /// <summary>
 /// Json serializer utilities to serialize/deserialize web content.

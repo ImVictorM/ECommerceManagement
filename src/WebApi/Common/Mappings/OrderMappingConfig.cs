@@ -12,7 +12,7 @@ using Mapster;
 namespace WebApi.Common.Mappings;
 
 /// <summary>
-/// Configures mapping between order objects.
+/// Configures the mappings between order objects.
 /// </summary>
 public class OrderMappingConfig : IRegister
 {

@@ -1,15 +1,17 @@
-using Mapster;
 using SharedKernel.ValueObjects;
+
 using Contracts.Common;
 
-namespace WebApi.Common.Mappings.Common;
+using Mapster;
+
+namespace WebApi.Common.Mappings;
 
 /// <summary>
-/// Configures mapping between discount objects.
+/// Configures the mappings between discount objects.
 /// </summary>
 public class DiscountMappingConfig : IRegister
 {
-   /// <inheritdoc/>
+    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<DiscountContract, Discount>()

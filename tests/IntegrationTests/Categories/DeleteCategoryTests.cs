@@ -2,7 +2,7 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 
-using WebApi.Endpoints;
+using WebApi.Categories;
 
 using Xunit.Abstractions;
 using FluentAssertions;

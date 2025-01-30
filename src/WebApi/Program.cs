@@ -1,7 +1,9 @@
 using Application;
+
 using Infrastructure;
-using WebApi.Endpoints;
+
 using WebApi;
+using WebApi.Common.Middleware;
 
 using Carter;
 using Serilog;
@@ -39,7 +41,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseExceptionHandler(ErrorEndpoints.BaseEndpoint);
+app.UseExceptionHandler(GlobalExceptionHandler.BaseEndpoint);
 
 app.MapCarter();
 

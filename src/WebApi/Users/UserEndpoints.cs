@@ -12,7 +12,7 @@ using MapsterMapper;
 using MediatR;
 using Carter;
 
-namespace WebApi.Endpoints;
+namespace WebApi.Users;
 
 /// <summary>
 /// Defines all user-related endpoints.
@@ -33,7 +33,7 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get User By Authentication Token",
-                Description = "Retrieves the currently authenticated user's details. Requires authentication.",
+                Description = "Retrieves the authenticated user details. Authentication is required.",
             })
             .RequireAuthorization();
 
@@ -43,7 +43,7 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get User By Id",
-                Description = "Retrieves a specific user's details by identifier. Admin authentication required.",
+                Description = "Retrieves a user by its identifier. Admin authentication required.",
             })
             .RequireAuthorization();
 
@@ -53,7 +53,9 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get All Users",
-                Description = "Retrieves the users. The {{active}} query parameter is optional and can be used to filter active/inactive users. Admin authentication is required."
+                Description = "Retrieves all the registered users. " +
+                "Can receive an {{active}} query parameter to filter users. " +
+                "Admin authentication is required."
             })
             .RequireAuthorization();
 
@@ -63,7 +65,9 @@ public sealed class UserEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update User By Id",
-                Description = "Updates a user's details. Users can only update their own details. Administrators can update any other non-administrator user's details. Requires authentication."
+                Description = "Updates a user by its identifier. " +
+                "Users can only update their own details. " +
+                "Administrators can update any other non-administrator user's details."
             })
             .RequireAuthorization();
 
@@ -72,8 +76,9 @@ public sealed class UserEndpoints : ICarterModule
             .WithName("DeactivateUser")
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Delete User",
-                Description = "Deactivates a user by setting them as inactive. Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account."
+                Summary = "Deactivate User",
+                Description = "Deactivates a user by setting them as inactive. " +
+                "Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account."
             })
             .RequireAuthorization();
     }

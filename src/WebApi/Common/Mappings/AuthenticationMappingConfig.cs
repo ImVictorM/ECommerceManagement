@@ -1,13 +1,15 @@
 using Application.Authentication.Commands.Register;
 using Application.Authentication.DTOs;
 using Application.Authentication.Queries.Login;
+
 using Contracts.Authentication;
+
 using Mapster;
 
 namespace WebApi.Common.Mappings;
 
 /// <summary>
-/// Configure mappings between authentication objects.
+/// Configures the mappings between authentication objects.
 /// </summary>
 public class AuthenticationMappingConfig : IRegister
 {

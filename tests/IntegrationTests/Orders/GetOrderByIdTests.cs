@@ -5,7 +5,7 @@ using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Extensions.Orders;
 using IntegrationTests.TestUtils.Seeds;
 
-using WebApi.Endpoints;
+using WebApi.Orders;
 
 using System.Net.Http.Json;
 using FluentAssertions;

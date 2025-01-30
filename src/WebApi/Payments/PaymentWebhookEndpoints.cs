@@ -3,7 +3,7 @@ using Contracts.Notifications;
 using Application.Payments.Commands.UpdatePaymentStatus;
 using Application.Common.Security.Authentication;
 
-using WebApi.Common.Utils;
+using WebApi.Common.Utilities;
 
 using Carter;
 using MapsterMapper;
@@ -11,30 +11,37 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.Endpoints.Notifications;
+namespace WebApi.Payments;
 
 /// <summary>
-/// Endpoints related to payment notifications.
+/// Endpoints related to payment webhooks.
 /// </summary>
-public class PaymentNotificationEndpoints : ICarterModule
+public class PaymentWebhookEndpoints : ICarterModule
 {
     /// <summary>
-    /// The base endpoint for the payment notifications.
+    /// The base endpoint for payment webhooks.
     /// </summary>
-    public const string BaseEndpoint = "notifications/payments";
+    public const string BaseEndpoint = "webhooks/payments";
 
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         var paymentNotificationGroup = app
             .MapGroup(BaseEndpoint)
-            .WithTags("PaymentNotifications")
+            .WithTags("PaymentWebhooks")
             .WithOpenApi();
 
-        paymentNotificationGroup.MapPost("/", HandlePaymentStatusChangedNotification);
+        paymentNotificationGroup
+            .MapPost("/", HandlePaymentStatusChanged)
+            .WithName("HandlePaymentStatusChangedNotification")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Handle Payment Status Changed Notification",
+                Description = "Updates internal data based on the changed payment status."
+            });
     }
 
-    private async Task<Results<NoContent, BadRequest, UnauthorizedHttpResult>> HandlePaymentStatusChangedNotification(
+    private async Task<Results<NoContent, BadRequest, UnauthorizedHttpResult>> HandlePaymentStatusChanged(
         [FromHeader(Name = "X-Provider-Signature")] string providerSignature,
         HttpRequest request,
         IHmacSignatureProvider hmacSignatureProvider,

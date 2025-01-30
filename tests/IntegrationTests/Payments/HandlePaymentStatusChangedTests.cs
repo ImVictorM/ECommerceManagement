@@ -1,10 +1,6 @@
 using Contracts.Notifications;
 using Contracts.Orders;
 
-using WebApi.Common.Utils;
-using WebApi.Endpoints;
-using WebApi.Endpoints.Notifications;
-
 using Infrastructure.Security.Authentication;
 using Infrastructure.Security.Authentication.Settings;
 
@@ -12,27 +8,31 @@ using IntegrationTests.Common;
 using IntegrationTests.TestUtils.Extensions.HttpClient;
 using IntegrationTests.TestUtils.Seeds;
 
+using WebApi.Orders;
+using WebApi.Payments;
+using WebApi.Common.Utilities;
+
 using System.Net.Http.Json;
 using System.Text;
 using Xunit.Abstractions;
 using Microsoft.Extensions.Options;
 using FluentAssertions;
 
-namespace IntegrationTests.Notifications.Payments;
+namespace IntegrationTests.Payments;
 
 /// <summary>
 /// Integration test for the process of handling a payment status changed notification.
 /// </summary>
-public class HandlePaymentStatusChangedNotificationTests : BaseIntegrationTest
+public class HandlePaymentStatusChangedTests : BaseIntegrationTest
 {
     private readonly HmacSignatureProvider _hmacSignatureProvider;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="HandlePaymentStatusChangedNotificationTests"/> class.
+    /// Initiates a new instance of the <see cref="HandlePaymentStatusChangedTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public HandlePaymentStatusChangedNotificationTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public HandlePaymentStatusChangedTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
         // Same secret from appsettings.Test.json
         var testingHmacSignatureOptions = Options.Create(new HmacSignatureSettings
@@ -51,7 +51,7 @@ public class HandlePaymentStatusChangedNotificationTests : BaseIntegrationTest
     {
         var request = new PaymentStatusChangedNotification("1", "authorized");
 
-        var response = await Client.PostAsJsonAsync(PaymentNotificationEndpoints.BaseEndpoint, request);
+        var response = await Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -68,7 +68,7 @@ public class HandlePaymentStatusChangedNotificationTests : BaseIntegrationTest
 
         Client.DefaultRequestHeaders.Add("X-Provider-Signature", invalidBase64Signature);
 
-        var response = await Client.PostAsJsonAsync(PaymentNotificationEndpoints.BaseEndpoint, request);
+        var response = await Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -85,7 +85,7 @@ public class HandlePaymentStatusChangedNotificationTests : BaseIntegrationTest
 
         Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
 
-        var response = await Client.PostAsJsonAsync(PaymentNotificationEndpoints.BaseEndpoint, request);
+        var response = await Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -101,7 +101,7 @@ public class HandlePaymentStatusChangedNotificationTests : BaseIntegrationTest
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
 
         Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
-        var response = await Client.PostAsJsonAsync(PaymentNotificationEndpoints.BaseEndpoint, request);
+        var response = await Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
     }
@@ -117,7 +117,7 @@ public class HandlePaymentStatusChangedNotificationTests : BaseIntegrationTest
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
 
         Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
-        var response = await Client.PostAsJsonAsync(PaymentNotificationEndpoints.BaseEndpoint, request);
+        var response = await Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }

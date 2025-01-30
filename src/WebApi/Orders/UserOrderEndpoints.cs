@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.Endpoints;
+namespace WebApi.Orders;
 
 /// <summary>
 /// Defines all endpoints related to user orders.
@@ -30,7 +30,7 @@ public sealed class UserOrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Customer Orders",
-                Description = "Retrieves all orders related to a customer. Required authentication as order owner or administrator."
+                Description = "Retrieves a customer orders. Requires authentication as order owner or administrator."
             })
             .RequireAuthorization();
 
@@ -40,7 +40,7 @@ public sealed class UserOrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Customer Order By Id",
-                Description = "Retrieves a customer's order by its identifier. Required authentication as order owner or administrator."
+                Description = "Retrieves a customer's order by its identifier. Requires authentication as order owner or administrator."
             })
             .RequireAuthorization();
     }

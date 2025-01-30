@@ -12,7 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.Endpoints;
+namespace WebApi.Categories;
 
 /// <summary>
 /// Defines the category-related endpoints.
@@ -29,7 +29,7 @@ public class CategoryEndpoints : ICarterModule
     {
         var categoryGroup = app
             .MapGroup(BaseEndpoint)
-            .WithTags("Products")
+            .WithTags("ProductCategories")
             .WithOpenApi();
 
         categoryGroup
@@ -77,7 +77,7 @@ public class CategoryEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Category By Identifier",
-                Description = "Retrieves a category by its identifier"
+                Description = "Retrieves a category by its identifier."
             });
     }
 

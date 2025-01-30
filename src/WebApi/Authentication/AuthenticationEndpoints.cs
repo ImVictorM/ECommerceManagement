@@ -7,7 +7,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace WebApi.Endpoints;
+namespace WebApi.Authentication;
 
 /// <summary>
 /// Wraps the routes related to authentication.
@@ -28,7 +28,7 @@ public sealed class AuthenticationEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Register",
-                Description = "This endpoint allows a new user to register for an account."
+                Description = "Allows a new user to register for an account."
             });
 
         authenticationGroup
@@ -51,9 +51,9 @@ public sealed class AuthenticationEndpoints : ICarterModule
 
         var result = await sender.Send(command);
 
-        var mappedResult = mapper.Map<AuthenticationResponse>(result);
+        var authenticationResponse = mapper.Map<AuthenticationResponse>(result);
 
-        return TypedResults.Created($"/users/{mappedResult.Id}", mappedResult);
+        return TypedResults.Created($"/users/{authenticationResponse.Id}", authenticationResponse);
     }
 
     private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> Login(

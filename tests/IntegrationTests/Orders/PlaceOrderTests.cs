@@ -5,7 +5,7 @@ using IntegrationTests.TestUtils.Seeds;
 
 using Domain.OrderAggregate.Enumerations;
 
-using WebApi.Endpoints;
+using WebApi.Orders;
 
 using Contracts.Orders;
 

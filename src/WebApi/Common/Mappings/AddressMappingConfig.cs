@@ -1,11 +1,13 @@
 using Contracts.Common;
-using Mapster;
+
 using SharedKernel.ValueObjects;
 
-namespace WebApi.Common.Mappings.Common;
+using Mapster;
+
+namespace WebApi.Common.Mappings;
 
 /// <summary>
-/// Configures the mapping between contract address and domain address.
+/// Configures the mappings between address objects.
 /// </summary>
 public class AddressMappingConfig : IRegister
 {

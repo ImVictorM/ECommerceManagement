@@ -13,12 +13,12 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.Endpoints;
+namespace WebApi.Products;
 
 /// <summary>
 /// Defines product-related routes.
 /// </summary>
-public class ProductsEndpoints : ICarterModule
+public class ProductEndpoints : ICarterModule
 {
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -44,7 +44,7 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Product By Identifier",
-                Description = "Retrieves an active product by its identifier. No authentication is required."
+                Description = "Retrieves an active product by its identifier."
             });
 
         productGroup
@@ -53,10 +53,9 @@ public class ProductsEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Products",
-                Description = @"Retrieves all active products.
-It will retrieve the first 20 products if no limit is specified.
-It is possible to filter the products by the specified categories appending &category={category_name} to the URL.
-No authentication is required."
+                Description = "Retrieves all active products. " +
+                "The first 20 products will be retrieved if no limit is specified. " +
+                "It is possible to filter the products specifying the category ids to the URL e.g &category={id_category}."
             });
 
         productGroup
@@ -75,7 +74,7 @@ No authentication is required."
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Deactivate Product",
-                Description = "Deactivates a product and set the inventory to 0 items. Admin authentication is required."
+                Description = "Deactivates a product and resets its inventory. Admin authentication is required."
             })
             .RequireAuthorization();
 

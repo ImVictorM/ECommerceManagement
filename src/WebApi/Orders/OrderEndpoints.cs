@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.Endpoints;
+namespace WebApi.Orders;
 
 /// <summary>
 /// Defines order-related endpoints.
@@ -36,7 +36,7 @@ public class OrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Place Order",
-                Description = "Places an order for a customer. Customer authentication required."
+                Description = "As a customer, places an order. Customer authentication is required."
             })
             .RequireAuthorization();
 
@@ -46,7 +46,7 @@ public class OrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Order By Id",
-                Description = "Retrieves an order by identifier. Administrators can access any order."
+                Description = "Retrieves an order by its identifier. Admin authentication is required."
             })
             .RequireAuthorization();
 
@@ -56,7 +56,7 @@ public class OrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Orders",
-                Description = "Retrieves all the orders. Administrator authentication required."
+                Description = "Retrieves all the orders. Admin authentication is required."
             })
             .RequireAuthorization();
     }

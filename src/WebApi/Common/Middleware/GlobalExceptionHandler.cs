@@ -7,27 +7,25 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace WebApi.Endpoints;
+namespace WebApi.Common.Middleware;
 
 /// <summary>
-/// Endpoints to handle errors.
+/// Middleware to handle exceptions globally.
 /// </summary>
-public sealed class ErrorEndpoints : ICarterModule
+public sealed class GlobalExceptionHandler : ICarterModule
 {
     /// <summary>
-    /// Base endpoint for handling errors.
+    /// The middleware base endpoint.
     /// </summary>
     public const string BaseEndpoint = "/error";
 
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var errorGroup = app.MapGroup(BaseEndpoint);
-
-        errorGroup.Map("/", HandleGlobalErrors);
+        app.Map(BaseEndpoint, Handle);
     }
 
-    private Results<ProblemHttpResult, ValidationProblem> HandleGlobalErrors(HttpContext httpContext)
+    private Results<ProblemHttpResult, ValidationProblem> Handle(HttpContext httpContext)
     {
         var exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
