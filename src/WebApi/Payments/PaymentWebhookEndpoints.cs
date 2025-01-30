@@ -1,9 +1,9 @@
-using Contracts.Notifications;
-
 using Application.Payments.Commands.UpdatePaymentStatus;
 using Application.Common.Security.Authentication;
 
 using WebApi.Common.Utilities;
+
+using Contracts.Payments;
 
 using Carter;
 using MapsterMapper;
@@ -64,7 +64,7 @@ public class PaymentWebhookEndpoints : ICarterModule
         //  Rewind the stream to the beginning for deserialization
         request.Body.Position = 0;
 
-        var notification = await JsonSerializerUtils.DeserializeFromWebAsync<PaymentStatusChangedNotification>(
+        var notification = await JsonSerializerUtils.DeserializeFromWebAsync<PaymentStatusChangedRequest>(
             requestBodyReader.BaseStream
         );
 

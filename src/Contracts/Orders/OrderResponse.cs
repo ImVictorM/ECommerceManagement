@@ -1,7 +1,7 @@
 namespace Contracts.Orders;
 
 /// <summary>
-/// Represents an order response.
+/// Represents an order simple response.
 /// </summary>
 /// <param name="Id">The order id.</param>
 /// <param name="OwnerId">The order owner id.</param>

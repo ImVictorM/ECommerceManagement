@@ -1,4 +1,4 @@
-namespace Contracts.Orders.Common;
+namespace Contracts.Common.PaymentMethods;
 
 /// <summary>
 /// Represents a debit card payment method.

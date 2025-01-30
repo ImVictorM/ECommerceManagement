@@ -1,7 +1,7 @@
 namespace Contracts.Authentication;
 
 /// <summary>
-/// Request type for registering a new user.
+/// Represents a request to register a new user.
 /// </summary>
 /// <param name="Name">The user name.</param>
 /// <param name="Email">The user email.</param>

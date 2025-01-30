@@ -1,7 +1,7 @@
 namespace Contracts.Common;
 
 /// <summary>
-/// Represents an address response.
+/// Represents an address request/response.
 /// </summary>
 /// <param name="PostalCode">The address postal code.</param>
 /// <param name="Street">The address street.</param>

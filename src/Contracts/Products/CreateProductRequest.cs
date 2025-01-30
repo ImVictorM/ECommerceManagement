@@ -1,7 +1,7 @@
 namespace Contracts.Products;
 
 /// <summary>
-/// Represents a request object containing a new product data.
+/// Represents a request to create a new product.
 /// </summary>
 /// <param name="Name">The new product name.</param>
 /// <param name="Description">The new product description.</param>
