@@ -6,12 +6,12 @@ using Contracts.Categories;
 
 using Mapster;
 
-namespace WebApi.Common.Mappings;
+namespace WebApi.Categories;
 
 /// <summary>
 /// Configures the mappings between category objects.
 /// </summary>
-public class CategoryMappingConfig : IRegister
+public class CategoryMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

@@ -9,7 +9,7 @@ namespace WebApi.Common.Mappings;
 /// <summary>
 /// Configures the mappings between discount objects.
 /// </summary>
-public class DiscountMappingConfig : IRegister
+public class DiscountMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

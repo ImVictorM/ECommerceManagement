@@ -9,12 +9,12 @@ using Contracts.Orders;
 
 using Mapster;
 
-namespace WebApi.Common.Mappings;
+namespace WebApi.Orders;
 
 /// <summary>
 /// Configures the mappings between order objects.
 /// </summary>
-public class OrderMappingConfig : IRegister
+public class OrderMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

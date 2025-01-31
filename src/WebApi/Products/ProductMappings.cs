@@ -7,12 +7,12 @@ using Contracts.Products;
 
 using Mapster;
 
-namespace WebApi.Common.Mappings;
+namespace WebApi.Products;
 
 /// <summary>
 /// Configures the mappings between product objects.
 /// </summary>
-public class ProductMappingConfig : IRegister
+public class ProductMappings : IRegister
 {
     /// <summary>
     /// Register mapping configurations related to products.

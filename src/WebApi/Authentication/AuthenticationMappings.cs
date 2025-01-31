@@ -6,12 +6,12 @@ using Contracts.Authentication;
 
 using Mapster;
 
-namespace WebApi.Common.Mappings;
+namespace WebApi.Authentication;
 
 /// <summary>
 /// Configures the mappings between authentication objects.
 /// </summary>
-public class AuthenticationMappingConfig : IRegister
+public class AuthenticationMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

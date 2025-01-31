@@ -1,13 +1,15 @@
 using Application.Payments.Commands.UpdatePaymentStatus;
+
 using Contracts.Payments;
+
 using Mapster;
 
-namespace WebApi.Common.Mappings;
+namespace WebApi.Payments;
 
 /// <summary>
 /// Configures the mappings between payment objects.
 /// </summary>
-public class PaymentMappingConfig : IRegister
+public class PaymentMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

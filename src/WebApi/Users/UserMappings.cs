@@ -6,12 +6,12 @@ using Contracts.Users;
 
 using Mapster;
 
-namespace WebApi.Common.Mappings;
+namespace WebApi.Users;
 
 /// <summary>
 /// Configures the mappings between user objects.
 /// </summary>
-public class UserMappingConfig : IRegister
+public class UserMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
