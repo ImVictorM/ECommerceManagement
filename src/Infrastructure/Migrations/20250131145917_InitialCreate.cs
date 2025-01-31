@@ -17,6 +17,21 @@ namespace Infrastructure.Migrations
                 name: "CouponRestrictionSequence");
 
             migrationBuilder.CreateTable(
+                name: "carriers",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_carriers", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "categories",
                 columns: table => new
                 {
@@ -136,6 +151,23 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_shipment_statuses", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "shipping_methods",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    estimated_delivery_days = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_shipping_methods", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -610,7 +642,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "product_feedbacks",
+                name: "product_feedback",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -627,21 +659,21 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_product_feedbacks", x => x.id);
+                    table.PrimaryKey("PK_product_feedback", x => x.id);
                     table.ForeignKey(
-                        name: "FK_product_feedbacks_orders_id_order",
+                        name: "FK_product_feedback_orders_id_order",
                         column: x => x.id_order,
                         principalTable: "orders",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_product_feedbacks_products_id_product",
+                        name: "FK_product_feedback_products_id_product",
                         column: x => x.id_product,
                         principalTable: "products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_product_feedbacks_users_id_user",
+                        name: "FK_product_feedback_users_id_user",
                         column: x => x.id_user,
                         principalTable: "users",
                         principalColumn: "id",
@@ -654,8 +686,9 @@ namespace Infrastructure.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    accountable = table.Column<string>(type: "text", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
+                    id_carrier = table.Column<long>(type: "bigint", nullable: false),
+                    id_shipping_method = table.Column<long>(type: "bigint", nullable: false),
                     id_shipment_status = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -663,6 +696,12 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_shipments", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_shipments_carriers_id_carrier",
+                        column: x => x.id_carrier,
+                        principalTable: "carriers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_shipments_orders_id_order",
                         column: x => x.id_order,
@@ -673,6 +712,12 @@ namespace Infrastructure.Migrations
                         name: "FK_shipments_shipment_statuses_id_shipment_status",
                         column: x => x.id_shipment_status,
                         principalTable: "shipment_statuses",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_shipments_shipping_methods_id_shipping_method",
+                        column: x => x.id_shipping_method,
+                        principalTable: "shipping_methods",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -698,26 +743,26 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "shipment_status_histories",
+                name: "shipment_tracking_entries",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_shipment_status = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    id_shipment_status = table.Column<long>(type: "bigint", nullable: false),
                     id_shipment = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_shipment_status_histories", x => x.id);
+                    table.PrimaryKey("PK_shipment_tracking_entries", x => x.id);
                     table.ForeignKey(
-                        name: "FK_shipment_status_histories_shipment_statuses_id_shipment_sta~",
+                        name: "FK_shipment_tracking_entries_shipment_statuses_id_shipment_sta~",
                         column: x => x.id_shipment_status,
                         principalTable: "shipment_statuses",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_shipment_status_histories_shipments_id_shipment",
+                        name: "FK_shipment_tracking_entries_shipments_id_shipment",
                         column: x => x.id_shipment,
                         principalTable: "shipments",
                         principalColumn: "id",
@@ -729,11 +774,11 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1L, "pending" },
-                    { 2L, "paid" },
-                    { 3L, "shipped" },
-                    { 4L, "delivered" },
-                    { 5L, "canceled" }
+                    { 1L, "Pending" },
+                    { 2L, "Paid" },
+                    { 3L, "Shipped" },
+                    { 4L, "Delivered" },
+                    { 5L, "Canceled" }
                 });
 
             migrationBuilder.InsertData(
@@ -755,8 +800,8 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1L, "admin" },
-                    { 2L, "customer" }
+                    { 1L, "Admin" },
+                    { 2L, "Customer" }
                 });
 
             migrationBuilder.InsertData(
@@ -764,11 +809,10 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1L, "pending" },
-                    { 2L, "shipped" },
-                    { 3L, "in_route" },
-                    { 4L, "delivered" },
-                    { 5L, "canceled" }
+                    { 1L, "Pending" },
+                    { 2L, "Shipped" },
+                    { 3L, "InRoute" },
+                    { 4L, "Delivered" }
                 });
 
             // password: admin123
@@ -882,19 +926,19 @@ namespace Infrastructure.Migrations
                 column: "id_payment_status");
 
             migrationBuilder.CreateIndex(
-                name: "IX_product_feedbacks_id_order",
-                table: "product_feedbacks",
+                name: "IX_product_feedback_id_order",
+                table: "product_feedback",
                 column: "id_order",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_product_feedbacks_id_product",
-                table: "product_feedbacks",
+                name: "IX_product_feedback_id_product",
+                table: "product_feedback",
                 column: "id_product");
 
             migrationBuilder.CreateIndex(
-                name: "IX_product_feedbacks_id_user",
-                table: "product_feedbacks",
+                name: "IX_product_feedback_id_user",
+                table: "product_feedback",
                 column: "id_user");
 
             migrationBuilder.CreateIndex(
@@ -989,20 +1033,25 @@ namespace Infrastructure.Migrations
                 column: "id_sale");
 
             migrationBuilder.CreateIndex(
-                name: "IX_shipment_status_histories_id_shipment",
-                table: "shipment_status_histories",
-                column: "id_shipment");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_shipment_status_histories_id_shipment_status",
-                table: "shipment_status_histories",
-                column: "id_shipment_status");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_shipment_statuses_name",
                 table: "shipment_statuses",
                 column: "name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_shipment_tracking_entries_id_shipment",
+                table: "shipment_tracking_entries",
+                column: "id_shipment");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_shipment_tracking_entries_id_shipment_status",
+                table: "shipment_tracking_entries",
+                column: "id_shipment_status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_shipments_id_carrier",
+                table: "shipments",
+                column: "id_carrier");
 
             migrationBuilder.CreateIndex(
                 name: "IX_shipments_id_order",
@@ -1014,6 +1063,11 @@ namespace Infrastructure.Migrations
                 name: "IX_shipments_id_shipment_status",
                 table: "shipments",
                 column: "id_shipment_status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_shipments_id_shipping_method",
+                table: "shipments",
+                column: "id_shipping_method");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_addresses_id_user",
@@ -1056,7 +1110,7 @@ namespace Infrastructure.Migrations
                 name: "payments");
 
             migrationBuilder.DropTable(
-                name: "product_feedbacks");
+                name: "product_feedback");
 
             migrationBuilder.DropTable(
                 name: "product_images");
@@ -1083,7 +1137,7 @@ namespace Infrastructure.Migrations
                 name: "sale_products_products");
 
             migrationBuilder.DropTable(
-                name: "shipment_status_histories");
+                name: "shipment_tracking_entries");
 
             migrationBuilder.DropTable(
                 name: "user_addresses");
@@ -1122,10 +1176,16 @@ namespace Infrastructure.Migrations
                 name: "coupons");
 
             migrationBuilder.DropTable(
+                name: "carriers");
+
+            migrationBuilder.DropTable(
                 name: "orders");
 
             migrationBuilder.DropTable(
                 name: "shipment_statuses");
+
+            migrationBuilder.DropTable(
+                name: "shipping_methods");
 
             migrationBuilder.DropTable(
                 name: "order_statuses");

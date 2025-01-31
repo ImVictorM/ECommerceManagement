@@ -3,7 +3,7 @@ using SharedKernel.Models;
 namespace Domain.ShipmentAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Shipment"/> aggregate root.
+/// Represents an identifier of a <see cref="Shipment"/> aggregate root.
 /// </summary>
 public sealed class ShipmentId : ValueObject
 {

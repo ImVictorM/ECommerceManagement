@@ -204,7 +204,7 @@ public abstract class BaseEnumeration : IComparable
     /// <param name="description">A description of the value for error messaging.</param>
     /// <param name="predicate">A predicate to evaluate for matching the enumeration.</param>
     /// <returns>The matching enumeration value.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when no matching enumeration value is found.</exception>
+    /// <exception cref="InvalidParseException">Thrown when no matching enumeration value is found.</exception>
     private static T Parse<T, K>(K value, string description, Func<T, bool> predicate)
         where T : BaseEnumeration
     {

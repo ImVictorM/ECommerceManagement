@@ -3,6 +3,10 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
 using Domain.ShipmentAggregate.Enumerations;
 using Domain.ShipmentAggregate.ValueObjects;
+using Domain.CarrierAggregate;
+using Domain.CarrierAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,13 +22,14 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
     public void Configure(EntityTypeBuilder<Shipment> builder)
     {
         ConfigureShipmentsTable(builder);
-        ConfigureOwnedShipmentStatusHistoriesTable(builder);
+        ConfigureOwnedShipmentTrackingEntriesTable(builder);
     }
 
     private static void ConfigureShipmentsTable(EntityTypeBuilder<Shipment> builder)
     {
         builder.ToTable("shipments");
 
+        // Configure PK
         builder.HasKey(shipment => shipment.Id);
 
         builder
@@ -36,6 +41,7 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
             .ValueGeneratedOnAdd()
             .IsRequired();
 
+        // Configure order
         builder
             .HasOne<Order>()
             .WithOne()
@@ -50,46 +56,82 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
             )
             .IsRequired();
 
+        // Configure carrier
+        builder
+            .HasOne<Carrier>()
+            .WithMany()
+            .HasForeignKey(s => s.CarrierId)
+            .IsRequired();
+
+        builder
+            .Property(s => s.CarrierId)
+            .HasConversion(id => id.Value, value => CarrierId.Create(value))
+            .IsRequired();
+
+        // Configure shipping method
+        builder
+            .HasOne<ShippingMethod>()
+            .WithMany()
+            .HasForeignKey(s => s.ShippingMethodId)
+            .IsRequired();
+
+        builder
+            .Property(s => s.ShippingMethodId)
+            .HasConversion(id => id.Value, value => ShippingMethodId.Create(value))
+            .IsRequired();
+
+        // Configure shipment status
+        builder
+            .Property("_shipmentStatusId")
+            .HasColumnName("id_shipment_status")
+            .IsRequired();
+
         builder
             .HasOne<ShipmentStatus>()
             .WithMany()
-            .HasForeignKey(s => s.ShipmentStatusId)
+            .HasForeignKey("_shipmentStatusId")
             .IsRequired();
 
-        builder
-            .Property(s => s.ShipmentStatusId)
-            .IsRequired();
+        builder.Ignore(s => s.ShipmentStatus);
     }
 
-    private static void ConfigureOwnedShipmentStatusHistoriesTable(EntityTypeBuilder<Shipment> builder)
+    private static void ConfigureOwnedShipmentTrackingEntriesTable(EntityTypeBuilder<Shipment> builder)
     {
-        builder.OwnsMany(s => s.ShipmentStatusHistories, shipmentStatusHistoryBuilder =>
+        builder.OwnsMany(s => s.ShipmentTrackingEntries, shipmentTrackingEntriesBuilder =>
         {
-            shipmentStatusHistoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+            shipmentTrackingEntriesBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            shipmentStatusHistoryBuilder.ToTable("shipment_status_histories");
+            shipmentTrackingEntriesBuilder.ToTable("shipment_tracking_entries");
 
-            shipmentStatusHistoryBuilder.Property<long>("id").ValueGeneratedOnAdd();
-            shipmentStatusHistoryBuilder.HasKey("id");
+            shipmentTrackingEntriesBuilder
+                .Property<long>("id")
+                .ValueGeneratedOnAdd();
 
-            shipmentStatusHistoryBuilder.WithOwner().HasForeignKey("id_shipment");
+            shipmentTrackingEntriesBuilder.HasKey("id");
 
-            shipmentStatusHistoryBuilder
+            shipmentTrackingEntriesBuilder
+                .WithOwner()
+                .HasForeignKey("id_shipment");
+
+            shipmentTrackingEntriesBuilder
                 .Property("id_shipment")
                 .IsRequired();
 
-            shipmentStatusHistoryBuilder
+            shipmentTrackingEntriesBuilder
+                .Property<long>("_shipmentStatusId")
+                .HasColumnName("id_shipment_status")
+                .IsRequired();
+
+            shipmentTrackingEntriesBuilder
                 .HasOne<ShipmentStatus>()
                 .WithMany()
-                .HasForeignKey(ssh => ssh.ShipmentStatusId)
+                .HasForeignKey("_shipmentStatusId")
                 .IsRequired();
 
-            shipmentStatusHistoryBuilder
-                .Property(ssh => ssh.ShipmentStatusId)
-                .IsRequired();
+            shipmentTrackingEntriesBuilder.Ignore(s => s.ShipmentStatus);
 
-            shipmentStatusHistoryBuilder
-                .Property(ssh => ssh.CreatedAt)
+            shipmentTrackingEntriesBuilder
+                .Property(s => s.CreatedAt)
                 .IsRequired();
         });
     }

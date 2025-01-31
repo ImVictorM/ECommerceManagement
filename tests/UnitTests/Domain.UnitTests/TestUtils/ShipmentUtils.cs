@@ -1,7 +1,7 @@
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
-
-using Bogus;
+using Domain.CarrierAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -10,22 +10,23 @@ namespace Domain.UnitTests.TestUtils;
 /// </summary>
 public static class ShipmentUtils
 {
-    private static readonly Faker _faker = new();
-
     /// <summary>
     /// Creates a new instance of the <see cref="Shipment"/> class.
     /// </summary>
     /// <param name="orderId">The order id.</param>
-    /// <param name="accountable">The accountable.</param>
+    /// <param name="carrierId">The carrier id.</param>
+    /// <param name="shippingMethodId">The shipping method id.</param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>
     public static Shipment CreateShipment(
         OrderId? orderId = null,
-        string? accountable = null
+        CarrierId? carrierId = null,
+        ShippingMethodId? shippingMethodId = null
     )
     {
         return Shipment.Create(
-            orderId ?? OrderId.Create(_faker.Random.Long()),
-            accountable ?? _faker.Name.FullName()
+            orderId ?? OrderId.Create(NumberUtils.CreateRandomLong()),
+            carrierId ?? CarrierId.Create(NumberUtils.CreateRandomLong()),
+            shippingMethodId ?? ShippingMethodId.Create(NumberUtils.CreateRandomLong())
        );
     }
 }

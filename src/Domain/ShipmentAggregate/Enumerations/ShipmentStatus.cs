@@ -1,4 +1,4 @@
-using SharedKernel.Extensions;
+using SharedKernel.Errors;
 using SharedKernel.Models;
 
 namespace Domain.ShipmentAggregate.Enumerations;
@@ -9,25 +9,21 @@ namespace Domain.ShipmentAggregate.Enumerations;
 public sealed class ShipmentStatus : BaseEnumeration
 {
     /// <summary>
-    /// Represents the pending status.
+    /// Represents a pending shipment status.
     /// </summary>
-    public static readonly ShipmentStatus Pending = new(1, nameof(Pending).ToLowerSnakeCase());
+    public static readonly ShipmentStatus Pending = new(1, nameof(Pending));
     /// <summary>
-    /// Represents the shipped status.
+    /// Represents a shipped shipment status.
     /// </summary>
-    public static readonly ShipmentStatus Shipped = new(2, nameof(Shipped).ToLowerSnakeCase());
+    public static readonly ShipmentStatus Shipped = new(2, nameof(Shipped));
     /// <summary>
-    /// Represents the in route status.
+    /// Represents an in-route shipment status.
     /// </summary>
-    public static readonly ShipmentStatus InRoute = new(3, nameof(InRoute).ToLowerSnakeCase());
+    public static readonly ShipmentStatus InRoute = new(3, nameof(InRoute));
     /// <summary>
-    /// Represents the delivered status.
+    /// Represents a delivered shipment status.
     /// </summary>
-    public static readonly ShipmentStatus Delivered = new(4, nameof(Delivered).ToLowerSnakeCase());
-    /// <summary>
-    /// Represents the canceled status.
-    /// </summary>
-    public static readonly ShipmentStatus Canceled = new(5, nameof(Canceled).ToLowerSnakeCase());
+    public static readonly ShipmentStatus Delivered = new(4, nameof(Delivered));
 
     private ShipmentStatus() { }
 
@@ -36,11 +32,39 @@ public sealed class ShipmentStatus : BaseEnumeration
     }
 
     /// <summary>
+    /// Retrieves the first shipment status.
+    /// </summary>
+    /// <returns>The first shipment status.</returns>
+    public static ShipmentStatus First()
+    {
+        return Pending;
+    }
+
+    /// <summary>
+    /// Advances the current status to the next.
+    /// </summary>
+    /// <returns>The next shipment status.</returns>
+    /// <exception cref="OutOfRangeException">Thrown when the next status does not exist.</exception>
+    public ShipmentStatus Advance()
+    {
+        var statuses = GetAll<ShipmentStatus>().OrderBy(s => s.Id).ToList();
+
+        var currentIndex = statuses.FindIndex(s => s == this);
+
+        if (currentIndex < 0 || currentIndex + 1 >= statuses.Count)
+        {
+            throw new OutOfRangeException($"Cannot advance shipment status from {Name}. No next status exists.");
+        }
+
+        return statuses[currentIndex + 1];
+    }
+
+    /// <summary>
     /// Gets all the predefined shipment statuses in a list format.
     /// </summary>
     /// <returns>All predefined shipment statuses.</returns>
-    public static IEnumerable<ShipmentStatus> List()
+    public static IReadOnlyList<ShipmentStatus> List()
     {
-        return GetAll<ShipmentStatus>();
+        return GetAll<ShipmentStatus>().ToList();
     }
 }
