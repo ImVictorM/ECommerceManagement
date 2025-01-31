@@ -7,6 +7,8 @@ using Domain.ProductAggregate;
 using Domain.SaleAggregate;
 using Domain.ShipmentAggregate;
 using Domain.UserAggregate;
+using Domain.CarrierAggregate;
+using Domain.ShippingMethodAggregate;
 using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
 
 using Infrastructure.Common.Persistence.Interceptors;
@@ -69,6 +71,14 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the payment aggregate context.
     /// </summary>
     public DbSet<Payment> Payments { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the carrier aggregate context.
+    /// </summary>
+    public DbSet<Carrier> Carriers { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the shipping method aggregate context.
+    /// </summary>
+    public DbSet<ShippingMethod> ShippingMethods { get; set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.

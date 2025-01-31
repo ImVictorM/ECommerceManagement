@@ -8,6 +8,8 @@ using Domain.CarrierAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate;
 using Domain.ShippingMethodAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -93,6 +95,8 @@ public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
             .IsRequired();
 
         builder.Ignore(s => s.ShipmentStatus);
+
+        builder.OwnsOne(order => order.DeliveryAddress, AddressNavigationBuilderConfigurations.Configure);
     }
 
     private static void ConfigureOwnedShipmentTrackingEntriesTable(EntityTypeBuilder<Shipment> builder)

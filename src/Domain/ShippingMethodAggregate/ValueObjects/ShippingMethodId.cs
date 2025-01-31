@@ -1,4 +1,7 @@
+using SharedKernel.Extensions;
 using SharedKernel.Models;
+
+using System.Globalization;
 
 namespace Domain.ShippingMethodAggregate.ValueObjects;
 
@@ -27,6 +30,22 @@ public sealed class ShippingMethodId : ValueObject
     public static ShippingMethodId Create(long value)
     {
         return new ShippingMethodId(value);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="ShippingMethodId"/> class.
+    /// </summary>
+    /// <param name="value">The identifier value.</param>
+    /// <returns>A new instance of the <see cref="ShippingMethodId"/> class with the specified identifier.</returns>
+    public static ShippingMethodId Create(string value)
+    {
+        return new ShippingMethodId(value.ToLongId());
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Value.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <inheritdoc/>

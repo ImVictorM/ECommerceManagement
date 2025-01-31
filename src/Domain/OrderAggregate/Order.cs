@@ -2,6 +2,7 @@ using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Errors;
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 using SharedKernel.Errors;
@@ -37,10 +38,6 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public long OrderStatusId { get; private set; }
     /// <summary>
-    /// Gets the order delivery address.
-    /// </summary>
-    public Address DeliveryAddress { get; private set; } = null!;
-    /// <summary>
     /// Gets the order products.
     /// </summary>
     public IReadOnlySet<OrderProduct> Products => _products;
@@ -56,18 +53,16 @@ public sealed class Order : AggregateRoot<OrderId>
     private Order() { }
 
     private Order(
-        UserId userId,
+        UserId ownerId,
         IEnumerable<OrderProduct> products,
         OrderStatus orderStatus,
         decimal total,
-        Address deliveryAddress,
         IEnumerable<OrderCoupon>? couponsApplied
     )
     {
-        OwnerId = userId;
+        OwnerId = ownerId;
         OrderStatusId = orderStatus.Id;
         Total = total;
-        DeliveryAddress = deliveryAddress;
         Description = "Order pending. Waiting for payment";
 
         _products.UnionWith(products);
@@ -88,6 +83,7 @@ public sealed class Order : AggregateRoot<OrderId>
     internal static Order Create(
         Guid requestId,
         UserId userId,
+        ShippingMethodId shippingMethodId,
         IEnumerable<OrderProduct> products,
         decimal total,
         IPaymentMethod paymentMethod,
@@ -102,15 +98,16 @@ public sealed class Order : AggregateRoot<OrderId>
             products,
             OrderStatus.Pending,
             total,
-            deliveryAddress,
             couponsApplied
         );
 
         order.AddDomainEvent(
             new OrderCreated(
                 requestId,
+                shippingMethodId,
                 order,
                 paymentMethod,
+                deliveryAddress,
                 billingAddress,
                 installments
             )

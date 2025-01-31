@@ -1,10 +1,13 @@
 using Domain.CarrierAggregate.ValueObjects;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.Enumerations;
+using Domain.ShipmentAggregate.Errors;
+using Domain.ShipmentAggregate.Events;
 using Domain.ShipmentAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate.ValueObjects;
 
 using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 namespace Domain.ShipmentAggregate;
 
@@ -37,6 +40,11 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
         private set => _shipmentStatusId = value.Id;
     }
     /// <summary>
+    /// Gets the shipment delivery address.
+    /// </summary>
+    public Address DeliveryAddress { get; private set; } = null!;
+
+    /// <summary>
     /// Gets the shipment tracking entries.
     /// </summary>
     public IReadOnlyList<ShipmentTrackingEntry> ShipmentTrackingEntries => _shipmentTrackingEntries.AsReadOnly();
@@ -46,12 +54,14 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     private Shipment(
         OrderId orderId,
         CarrierId carrierId,
-        ShippingMethodId shippingMethodId
+        ShippingMethodId shippingMethodId,
+        Address deliveryAddress
     )
     {
         OrderId = orderId;
         CarrierId = carrierId;
         ShippingMethodId = shippingMethodId;
+        DeliveryAddress = deliveryAddress;
 
         UpdateShipmentStatus(ShipmentStatus.First());
     }
@@ -61,18 +71,21 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// </summary>
     /// <param name="orderId">The shipment order id.</param>
     /// <param name="carrierId">The shipment carrier id.</param>
+    /// <param name="deliveryAddress">The shipment delivery address.</param>
     /// <param name="shippingMethodId">The shipping method.</param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>
     public static Shipment Create(
         OrderId orderId,
         CarrierId carrierId,
-        ShippingMethodId shippingMethodId
+        ShippingMethodId shippingMethodId,
+        Address deliveryAddress
     )
     {
         return new Shipment(
             orderId,
             carrierId,
-            shippingMethodId
+            shippingMethodId,
+            deliveryAddress
         );
     }
 
@@ -86,9 +99,27 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
         UpdateShipmentStatus(nextStatus);
     }
 
+    /// <summary>
+    /// Cancels the shipment.
+    /// </summary>
+    public void Cancel()
+    {
+        if (ShipmentStatus != ShipmentStatus.Pending)
+        {
+            throw new ShipmentCannotBeCanceledException();
+        }
+
+        UpdateShipmentStatus(ShipmentStatus.Canceled);
+    }
+
     private void UpdateShipmentStatus(ShipmentStatus status)
     {
         ShipmentStatus = status;
         _shipmentTrackingEntries.Add(ShipmentTrackingEntry.Create(ShipmentStatus));
+
+        if (ShipmentStatus == ShipmentStatus.Delivered)
+        {
+            AddDomainEvent(new ShipmentDelivered(this));
+        }
     }
 }

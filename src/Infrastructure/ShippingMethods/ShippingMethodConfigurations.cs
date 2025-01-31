@@ -30,7 +30,7 @@ public class ShippingMethodConfigurations : IEntityTypeConfiguration<ShippingMet
             .IsRequired();
 
         builder
-            .Property(s => s.Amount)
+            .Property(s => s.Price)
             .IsRequired();
 
         builder

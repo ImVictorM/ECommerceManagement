@@ -32,7 +32,7 @@ public class OrderCreatedAssignUserAddressesHandler : INotificationHandler<Order
 
         if (user != null)
         {
-            user.AssignAddress(notification.Order.DeliveryAddress, notification.BillingAddress);
+            user.AssignAddress(notification.DeliveryAddress, notification.BillingAddress);
 
             await _unitOfWork.SaveChangesAsync();
         }

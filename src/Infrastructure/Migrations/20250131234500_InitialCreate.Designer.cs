@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20250131145917_InitialCreate")]
+    [Migration("20250131234500_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -302,37 +302,37 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            Name = "pending"
+                            Name = "Pending"
                         },
                         new
                         {
                             Id = 2L,
-                            Name = "in_progress"
+                            Name = "InProgress"
                         },
                         new
                         {
                             Id = 3L,
-                            Name = "authorized"
+                            Name = "Authorized"
                         },
                         new
                         {
                             Id = 4L,
-                            Name = "approved"
+                            Name = "Approved"
                         },
                         new
                         {
                             Id = 5L,
-                            Name = "rejected"
+                            Name = "Rejected"
                         },
                         new
                         {
                             Id = 6L,
-                            Name = "canceled"
+                            Name = "Canceled"
                         },
                         new
                         {
                             Id = 7L,
-                            Name = "refunded"
+                            Name = "Refunded"
                         });
                 });
 
@@ -514,22 +514,32 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
+                            Id = -1L,
+                            Name = "Canceled"
+                        },
+                        new
+                        {
                             Id = 1L,
                             Name = "Pending"
                         },
                         new
                         {
                             Id = 2L,
-                            Name = "Shipped"
+                            Name = "Preparing"
                         },
                         new
                         {
                             Id = 3L,
-                            Name = "InRoute"
+                            Name = "Shipped"
                         },
                         new
                         {
                             Id = 4L,
+                            Name = "InRoute"
+                        },
+                        new
+                        {
+                            Id = 5L,
                             Name = "Delivered"
                         });
                 });
@@ -590,10 +600,6 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("amount");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -607,6 +613,10 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)")
                         .HasColumnName("name");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
+                        .HasColumnName("price");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -741,49 +751,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("SharedKernel.ValueObjects.Address", "DeliveryAddress", b1 =>
-                        {
-                            b1.Property<long>("OrderId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("city");
-
-                            b1.Property<string>("Neighborhood")
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("neighborhood");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("character varying(10)")
-                                .HasColumnName("postal_code");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("state");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("street");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
 
                     b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderCoupon", "CouponsApplied", b1 =>
                         {
@@ -936,9 +903,6 @@ namespace Infrastructure.Migrations
                         });
 
                     b.Navigation("CouponsApplied");
-
-                    b.Navigation("DeliveryAddress")
-                        .IsRequired();
 
                     b.Navigation("OrderStatusHistories");
 
@@ -1265,6 +1229,49 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("SharedKernel.ValueObjects.Address", "DeliveryAddress", b1 =>
+                        {
+                            b1.Property<long>("ShipmentId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("city");
+
+                            b1.Property<string>("Neighborhood")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("neighborhood");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("postal_code");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("state");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("street");
+
+                            b1.HasKey("ShipmentId");
+
+                            b1.ToTable("shipments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+                        });
+
                     b.OwnsMany("Domain.ShipmentAggregate.ValueObjects.ShipmentTrackingEntry", "ShipmentTrackingEntries", b1 =>
                         {
                             b1.Property<long>("id")
@@ -1303,6 +1310,9 @@ namespace Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("id_shipment");
                         });
+
+                    b.Navigation("DeliveryAddress")
+                        .IsRequired();
 
                     b.Navigation("ShipmentTrackingEntries");
                 });

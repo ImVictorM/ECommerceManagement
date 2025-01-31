@@ -16,6 +16,10 @@ using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
 using Application.Common.Persistence;
+using Domain.CarrierAggregate;
+using Domain.CarrierAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 namespace Infrastructure.Common.Persistence;
 
@@ -50,6 +54,12 @@ public sealed class UnitOfWork : IUnitOfWork
     /// <inheritdoc/>
     public IRepository<Shipment, ShipmentId> ShipmentRepository { get; }
 
+    /// <inheritdoc/>
+    public IRepository<Carrier, CarrierId> CarrierRepository { get; }
+
+    /// <inheritdoc/>
+    public IRepository<ShippingMethod, ShippingMethodId> ShippingMethodRepository { get; }
+
     /// <summary>
     /// Initiates a new instance of the <see cref="UnitOfWork"/> class.
     /// </summary>
@@ -62,6 +72,8 @@ public sealed class UnitOfWork : IUnitOfWork
     /// <param name="couponRepository">The coupon repository.</param>
     /// <param name="paymentRepository">The payment repository.</param>
     /// <param name="shipmentRepository">The shipment repository.</param>
+    /// <param name="carrierRepository">The carrier repository.</param>
+    /// <param name="shippingMethodRepository">The shipping method repository.</param>
     public UnitOfWork(
         ECommerceDbContext context,
         IRepository<User, UserId> userRepository,
@@ -71,7 +83,9 @@ public sealed class UnitOfWork : IUnitOfWork
         IRepository<Sale, SaleId> saleRepository,
         IRepository<Coupon, CouponId> couponRepository,
         IRepository<Payment, PaymentId> paymentRepository,
-        IRepository<Shipment, ShipmentId> shipmentRepository
+        IRepository<Shipment, ShipmentId> shipmentRepository,
+        IRepository<Carrier, CarrierId> carrierRepository,
+        IRepository<ShippingMethod, ShippingMethodId> shippingMethodRepository
     )
     {
         _context = context;
@@ -84,6 +98,8 @@ public sealed class UnitOfWork : IUnitOfWork
         CouponRepository = couponRepository;
         PaymentRepository = paymentRepository;
         ShipmentRepository = shipmentRepository;
+        CarrierRepository = carrierRepository;
+        ShippingMethodRepository = shippingMethodRepository;
     }
 
     /// <inheritdoc/>

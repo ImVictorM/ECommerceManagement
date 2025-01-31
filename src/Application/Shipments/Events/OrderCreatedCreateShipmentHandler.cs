@@ -1,7 +1,7 @@
-using Application.Common.Persistence;
-
 using Domain.OrderAggregate.Events;
 using Domain.ShipmentAggregate;
+
+using Application.Common.Persistence;
 
 using MediatR;
 
@@ -11,25 +11,29 @@ namespace Application.Shipments.Events;
 /// Handles the <see cref="OrderPaid"/> event by
 /// creating a shipment.
 /// </summary>
-public class OrderPaidShipmentPreparationHandler : INotificationHandler<OrderPaid>
+public class OrderCreatedCreateShipmentHandler : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderPaidShipmentPreparationHandler"/> class.
+    /// Initiates a new instance of the <see cref="OrderCreatedCreateShipmentHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderPaidShipmentPreparationHandler(IUnitOfWork unitOfWork)
+    public OrderCreatedCreateShipmentHandler(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
 
     /// <inheritdoc/>
-    public async Task Handle(OrderPaid notification, CancellationToken cancellationToken)
+    public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
     {
+        var shipmentCarrier = await _unitOfWork.CarrierRepository.FirstAsync();
+
         var shipment = Shipment.Create(
             notification.Order.Id,
-            "ECommerceManagementShipmentService"
+            shipmentCarrier.Id,
+            notification.ShippingMethodId,
+            notification.DeliveryAddress
         );
 
         await _unitOfWork.ShipmentRepository.AddAsync(shipment);

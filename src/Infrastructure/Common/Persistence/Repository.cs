@@ -49,6 +49,12 @@ public sealed class Repository<TEntity, TEntityId> : IRepository<TEntity, TEntit
     }
 
     /// <inheritdoc/>
+    public async Task<TEntity> FirstAsync()
+    {
+        return await _dbSet.FirstAsync();
+    }
+
+    /// <inheritdoc/>
     public async Task<TEntity?> FindByIdAsync(TEntityId id)
     {
         return await _dbSet.FindAsync(id);

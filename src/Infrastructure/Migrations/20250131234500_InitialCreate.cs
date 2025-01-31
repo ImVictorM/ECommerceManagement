@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -160,7 +161,7 @@ namespace Infrastructure.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
                     estimated_delivery_days = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -379,11 +380,6 @@ namespace Infrastructure.Migrations
                     id_owner = table.Column<long>(type: "bigint", nullable: false),
                     description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     id_order_status = table.Column<long>(type: "bigint", nullable: false),
-                    postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    street = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    neighborhood = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
-                    state = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    city = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -689,6 +685,11 @@ namespace Infrastructure.Migrations
                     id_order = table.Column<long>(type: "bigint", nullable: false),
                     id_carrier = table.Column<long>(type: "bigint", nullable: false),
                     id_shipping_method = table.Column<long>(type: "bigint", nullable: false),
+                    postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    street = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    neighborhood = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
+                    state = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    city = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     id_shipment_status = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -786,13 +787,13 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1L, "pending" },
-                    { 2L, "in_progress" },
-                    { 3L, "authorized" },
-                    { 4L, "approved" },
-                    { 5L, "rejected" },
-                    { 6L, "canceled" },
-                    { 7L, "refunded" }
+                    { 1L, "Pending" },
+                    { 2L, "InProgress" },
+                    { 3L, "Authorized" },
+                    { 4L, "Approved" },
+                    { 5L, "Rejected" },
+                    { 6L, "Canceled" },
+                    { 7L, "Refunded" }
                 });
 
             migrationBuilder.InsertData(
@@ -809,10 +810,12 @@ namespace Infrastructure.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
+                    { -1L, "Canceled" },
                     { 1L, "Pending" },
-                    { 2L, "Shipped" },
-                    { 3L, "InRoute" },
-                    { 4L, "Delivered" }
+                    { 2L, "Preparing" },
+                    { 3L, "Shipped" },
+                    { 4L, "InRoute" },
+                    { 5L, "Delivered" }
                 });
 
             // password: admin123
@@ -836,6 +839,17 @@ namespace Infrastructure.Migrations
                 values: [
                     1,
                     1,
+                ]
+            );
+
+            migrationBuilder.InsertData(
+                table: "carriers",
+                columns: ["id", "name", "created_at", "updated_at"],
+                values: [
+                    1,
+                    "ECommerceManagementCarrier",
+                    DateTimeOffset.UtcNow,
+                    DateTimeOffset.UtcNow,
                 ]
             );
 

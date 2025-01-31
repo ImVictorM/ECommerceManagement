@@ -1,3 +1,5 @@
+using Domain.ShipmentAggregate.Errors;
+
 using SharedKernel.Errors;
 using SharedKernel.Models;
 
@@ -9,21 +11,29 @@ namespace Domain.ShipmentAggregate.Enumerations;
 public sealed class ShipmentStatus : BaseEnumeration
 {
     /// <summary>
+    /// Represents a canceled shipment status.
+    /// </summary>
+    public static readonly ShipmentStatus Canceled = new(-1, nameof(Canceled));
+    /// <summary>
     /// Represents a pending shipment status.
     /// </summary>
     public static readonly ShipmentStatus Pending = new(1, nameof(Pending));
     /// <summary>
+    /// Represents a preparing shipment status.
+    /// </summary>
+    public static readonly ShipmentStatus Preparing = new(2, nameof(Preparing));
+    /// <summary>
     /// Represents a shipped shipment status.
     /// </summary>
-    public static readonly ShipmentStatus Shipped = new(2, nameof(Shipped));
+    public static readonly ShipmentStatus Shipped = new(3, nameof(Shipped));
     /// <summary>
     /// Represents an in-route shipment status.
     /// </summary>
-    public static readonly ShipmentStatus InRoute = new(3, nameof(InRoute));
+    public static readonly ShipmentStatus InRoute = new(4, nameof(InRoute));
     /// <summary>
     /// Represents a delivered shipment status.
     /// </summary>
-    public static readonly ShipmentStatus Delivered = new(4, nameof(Delivered));
+    public static readonly ShipmentStatus Delivered = new(5, nameof(Delivered));
 
     private ShipmentStatus() { }
 
@@ -45,8 +55,14 @@ public sealed class ShipmentStatus : BaseEnumeration
     /// </summary>
     /// <returns>The next shipment status.</returns>
     /// <exception cref="OutOfRangeException">Thrown when the next status does not exist.</exception>
+    /// <exception cref="ShipmentAlreadyCanceledException">Thrown when trying to advance a canceled shipment status.</exception>
     public ShipmentStatus Advance()
     {
+        if (this == Canceled)
+        {
+            throw new ShipmentAlreadyCanceledException();
+        }
+
         var statuses = GetAll<ShipmentStatus>().OrderBy(s => s.Id).ToList();
 
         var currentIndex = statuses.FindIndex(s => s == this);

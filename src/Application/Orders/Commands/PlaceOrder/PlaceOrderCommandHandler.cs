@@ -6,6 +6,7 @@ using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Factories;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 using MediatR;
@@ -43,6 +44,7 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
     {
         var currentUser = _identityProvider.GetCurrentUserIdentity();
         var ownerId = UserId.Create(currentUser.Id);
+        var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 
         var orderCouponsApplied = request.CouponAppliedIds?
                 .Select(CouponId.Create)
@@ -51,8 +53,9 @@ public sealed class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand
         var orderFactory = new OrderFactory(_orderService);
 
         var order = await orderFactory.CreateOrderAsync(
-            request.requestId,
+            request.RequestId,
             ownerId,
+            shippingMethodId,
             request.Products,
             request.PaymentMethod,
             request.BillingAddress,

@@ -16,7 +16,7 @@ public class ShippingMethod : AggregateRoot<ShippingMethodId>
     /// <summary>
     /// Gets the amount charged for the shipping.
     /// </summary>
-    public decimal Amount { get; private set; }
+    public decimal Price { get; private set; }
     /// <summary>
     /// Gets the static estimated delivery days.
     /// </summary>
@@ -26,12 +26,12 @@ public class ShippingMethod : AggregateRoot<ShippingMethodId>
 
     private ShippingMethod(
         string name,
-        decimal amount,
+        decimal price,
         int estimatedDeliveryDays
     )
     {
         Name = name;
-        Amount = amount;
+        Price = price;
         EstimatedDeliveryDays = estimatedDeliveryDays;
     }
 
@@ -39,15 +39,15 @@ public class ShippingMethod : AggregateRoot<ShippingMethodId>
     /// Creates a new instance of the <see cref="ShippingMethod"/> class.
     /// </summary>
     /// <param name="name">The shipping method name.</param>
-    /// <param name="amount">The amount charged for the shipping method.</param>
+    /// <param name="price">The amount charged for the shipping method.</param>
     /// <param name="estimatedDeliveryDays">A static estimated delivery days.</param>
     /// <returns>A new instance of the <see cref="ShippingMethod"/> class.</returns>
     public static ShippingMethod Create(
         string name,
-        decimal amount,
+        decimal price,
         int estimatedDeliveryDays
     )
     {
-        return new ShippingMethod(name, amount, estimatedDeliveryDays);
+        return new ShippingMethod(name, price, estimatedDeliveryDays);
     }
 }

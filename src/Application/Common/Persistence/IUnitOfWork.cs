@@ -14,6 +14,10 @@ using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
 using Domain.ShipmentAggregate.ValueObjects;
+using Domain.CarrierAggregate;
+using Domain.CarrierAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 namespace Application.Common.Persistence;
 
@@ -54,6 +58,14 @@ public interface IUnitOfWork : IDisposable
     /// Gets the shipment repository.
     /// </summary>
     public IRepository<Shipment, ShipmentId> ShipmentRepository { get; }
+    /// <summary>
+    /// Gets the shipment repository.
+    /// </summary>
+    public IRepository<Carrier, CarrierId> CarrierRepository { get; }
+    /// <summary>
+    /// Gets the shipping method repository.
+    /// </summary>
+    public IRepository<ShippingMethod, ShippingMethodId> ShippingMethodRepository { get; }
     /// <summary>
     /// Save all the operations done within the repositories.
     /// </summary>

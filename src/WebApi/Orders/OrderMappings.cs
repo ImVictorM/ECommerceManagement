@@ -19,9 +19,10 @@ public class OrderMappings : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<(Guid requestId, PlaceOrderRequest Request), PlaceOrderCommand>()
+        config.NewConfig<(Guid RequestId, PlaceOrderRequest Request), PlaceOrderCommand>()
             .MapWith(src => new PlaceOrderCommand(
-                src.requestId,
+                src.RequestId,
+                src.Request.ShippingMethodId,
                 src.Request.Products.Select(p => new OrderProductInput(p.ProductId, p.Quantity)),
                 src.Request.BillingAddress.Adapt<Address>(),
                 src.Request.DeliveryAddress.Adapt<Address>(),

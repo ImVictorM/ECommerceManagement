@@ -8,8 +8,6 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
-using Infrastructure.Common.Persistence.Configurations;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -72,8 +70,6 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .Property(order => order.Description)
             .HasMaxLength(200)
             .IsRequired();
-
-        builder.OwnsOne(order => order.DeliveryAddress, AddressNavigationBuilderConfigurations.Configure);
     }
 
     private static void ConfigureOwnedOrdersCouponsTable(EntityTypeBuilder<Order> builder)
