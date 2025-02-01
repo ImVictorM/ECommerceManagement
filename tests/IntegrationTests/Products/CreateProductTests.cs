@@ -34,8 +34,8 @@ public class CreateProductTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerType">The type of non-admin user attempting to create a product.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    [InlineData(SeedAvailableUsers.Customer)]
+    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
     public async Task CreateProduct_WhenUserAuthenticatedIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerType)
     {
         var request = CreateProductRequestUtils.CreateRequest();
@@ -85,7 +85,7 @@ public class CreateProductTests : BaseIntegrationTest
             ]
         );
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var postResponse = await Client.PostAsJsonAsync("/products", request);
         var resourceLocation = postResponse.Headers.Location;

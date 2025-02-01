@@ -46,8 +46,8 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     [Fact]
     public async Task GetCustomerOrders_WithoutSelfCustomer_ReturnsForbidden()
     {
-        var customerWithOrdersType = SeedAvailableUsers.Customer;
-        var otherCustomerType = SeedAvailableUsers.CustomerWithAddress;
+        var customerWithOrdersType = SeedAvailableUsers.CUSTOMER;
+        var otherCustomerType = SeedAvailableUsers.CUSTOMER_WITH_ADDRESS;
 
         var customerWithOrders = UserSeed.GetSeedUser(customerWithOrdersType);
 
@@ -62,13 +62,13 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userWithPermission">The user with either self or admin permissions.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.Customer)]
+    [InlineData(SeedAvailableUsers.ADMIN)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
     public async Task GetCustomerOrders_WithSelfOrAdminPermission_ReturnsTheOrders(
         SeedAvailableUsers userWithPermission
     )
     {
-        var customerWithOrdersType = SeedAvailableUsers.Customer;
+        var customerWithOrdersType = SeedAvailableUsers.CUSTOMER;
 
         var customerWithOrders = UserSeed.GetSeedUser(customerWithOrdersType);
         var expectedCustomerOrders = OrderSeed.GetUserOrders(customerWithOrders.Id);
@@ -93,7 +93,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     public async Task GetCustomerOrders_WithPermissionAndStatusFilter_ReturnsTheFilteredOrders(string status)
     {
         var statusId = BaseEnumeration.FromDisplayName<OrderStatus>(status).Id;
-        var customerWithOrdersType = SeedAvailableUsers.Customer;
+        var customerWithOrdersType = SeedAvailableUsers.CUSTOMER;
         var customerWithOrders = UserSeed.GetSeedUser(customerWithOrdersType);
         var expectedFilteredOrders = OrderSeed
             .GetUserOrders(customerWithOrders.Id)

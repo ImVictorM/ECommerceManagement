@@ -58,8 +58,8 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerUserType">The customer type to be authenticated.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    [InlineData(SeedAvailableUsers.Customer)]
+    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
     public async Task UpdateProductInventory_WhenUserIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerUserType)
     {
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
@@ -78,7 +78,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     {
         var notFoundId = "404";
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var response = await Client.PutAsJsonAsync($"/products/{notFoundId}/inventory", request);
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
@@ -106,7 +106,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         var request = UpdateProductInventoryRequestUtils.CreateRequest(quantityToIncrement: quantityToIncrement);
         var expectedQuantityAfterUpdate = initialQuantity + quantityToIncrement;
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var putResponse = await Client.PutAsJsonAsync($"/products/{product.Id}/inventory", request);
         var getResponse = await Client.GetAsync($"/products/{product.Id}");
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<ProductResponse>();

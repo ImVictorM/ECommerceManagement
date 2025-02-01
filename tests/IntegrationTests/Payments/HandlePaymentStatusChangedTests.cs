@@ -126,7 +126,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     {
         var existingOrder = OrderSeed.GetSeedOrder(SeedAvailableOrders.CUSTOMER_ORDER_PENDING);
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var order = await Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{existingOrder.Id}");
         var orderContent = await order.Content.ReadFromJsonAsync<OrderDetailedResponse>();

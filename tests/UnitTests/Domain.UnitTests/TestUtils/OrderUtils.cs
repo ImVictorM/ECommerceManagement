@@ -7,6 +7,7 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 using Domain.OrderAggregate.Enumerations;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
@@ -31,6 +32,7 @@ public static class OrderUtils
     /// <param name="requestId">The request identifier.</param>
     /// <param name="id">The order id.</param>
     /// <param name="ownerId">The order owner id.</param>
+    /// <param name="shippingMethodId">The shipping method id.</param>
     /// <param name="orderProducts">The order products to be processed.</param>
     /// <param name="paymentMethod">The order payment method.</param>
     /// <param name="billingAddress">The order billing address.</param>
@@ -44,6 +46,7 @@ public static class OrderUtils
         Guid? requestId = null,
         OrderId? id = null,
         UserId? ownerId = null,
+        ShippingMethodId? shippingMethodId = null,
         IEnumerable<IOrderProductReserved>? orderProducts = null,
         IPaymentMethod? paymentMethod = null,
         Address? billingAddress = null,
@@ -62,6 +65,7 @@ public static class OrderUtils
         var order = await factory.CreateOrderAsync(
             requestId ?? _faker.Random.Guid(),
             ownerId ?? UserId.Create(_faker.Random.Long()),
+            shippingMethodId ?? ShippingMethodId.Create(_faker.Random.Long()),
             products,
             paymentMethod ?? CreateMockPaymentMethod(),
             billingAddress ?? AddressUtils.CreateAddress(),
@@ -165,7 +169,7 @@ public static class OrderUtils
         mock.Setup(s => s.PrepareOrderProductsAsync(orderProducts))
             .Returns(preparedProducts.ToAsyncEnumerable());
 
-        mock.Setup(s => s.CalculateTotalAsync(It.IsAny<IEnumerable<OrderProduct>>(), It.IsAny<IEnumerable<OrderCoupon>>()))
+        mock.Setup(s => s.CalculateTotalAsync(preparedProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
             .ReturnsAsync(preparedProductsTotal);
 
         return mock.Object;

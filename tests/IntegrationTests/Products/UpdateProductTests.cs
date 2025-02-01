@@ -43,8 +43,8 @@ public class UpdateProductTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerUserType">The customer type to be authenticated.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    [InlineData(SeedAvailableUsers.Customer)]
+    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
     public async Task UpdateProduct_WhenUserIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerUserType)
     {
         await Client.LoginAs(customerUserType);
@@ -61,7 +61,7 @@ public class UpdateProductTests : BaseIntegrationTest
     public async Task UpdateProduct_WhenProductDoesNotExist_ReturnsNotFound()
     {
         var notFoundId = "404";
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var response = await Client.PutAsJsonAsync($"/products/{notFoundId}", UpdateProductRequestUtils.CreateRequest());
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
@@ -95,7 +95,7 @@ public class UpdateProductTests : BaseIntegrationTest
             images: [new Uri("tech-pencil.png", UriKind.Relative)]
         );
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var putResponse = await Client.PutAsJsonAsync($"/products/{productToUpdate.Id}", request);
         var getResponse = await Client.GetAsync($"/products/{productToUpdate.Id}");
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<ProductResponse>();

@@ -50,7 +50,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
         var existingCategory = CategorySeed.GetSeedCategory(SeedAvailableCategories.JEWELRY);
         var request = UpdateCategoryRequestUtils.CreateRequest();
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
         var response = await Client.PutAsJsonAsync($"{CategoryEndpoints.BaseEndpoint}/{existingCategory.Id}", request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -65,7 +65,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
         var categoryToBeUpdated = CategorySeed.GetSeedCategory(SeedAvailableCategories.JEWELRY);
         var request = UpdateCategoryRequestUtils.CreateRequest(name: "new_category_name");
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var updateResponse = await Client.PutAsJsonAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeUpdated.Id}", request);
         var getUpdatedCategoryResponse = await Client.GetAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeUpdated.Id}");

@@ -46,7 +46,7 @@ public class GetOrdersTests : BaseIntegrationTest
     [Fact]
     public async Task GetOrders_WithoutAdminRole_ReturnsForbidden()
     {
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
         var response = await Client.GetAsync("/orders");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -60,7 +60,7 @@ public class GetOrdersTests : BaseIntegrationTest
     {
         var expectedReturnedOrders = OrderSeed.ListOrders();
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.GetAsync("/orders");
 
         var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<OrderResponse>>();
@@ -83,7 +83,7 @@ public class GetOrdersTests : BaseIntegrationTest
 
         var expectedOrders = OrderSeed.ListOrders().Where(order => order.OrderStatusId == statusId).ToList();
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.GetAsync($"/orders?status={status}");
         var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<OrderResponse>>();
 

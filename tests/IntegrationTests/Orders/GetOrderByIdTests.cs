@@ -35,7 +35,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
     {
         var notFoundId = "404";
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{notFoundId}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
@@ -62,7 +62,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
     {
         var order = OrderSeed.GetSeedOrder(SeedAvailableOrders.CUSTOMER_ORDER_PENDING);
 
-        await Client.LoginAs(SeedAvailableUsers.CustomerWithAddress);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS);
         var response = await Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{order.Id}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -73,7 +73,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
     /// </summary>
     /// <param name="allowedUser">Allowed user types.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
+    [InlineData(SeedAvailableUsers.ADMIN)]
     public async Task GetOrderById_WhenUserIsAllowed_ReturnsOk(SeedAvailableUsers allowedUser)
     {
         var order = OrderSeed.GetSeedOrder(SeedAvailableOrders.CUSTOMER_ORDER_PENDING);

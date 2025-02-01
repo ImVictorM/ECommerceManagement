@@ -48,7 +48,7 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest();
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
         var response = await Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -62,7 +62,7 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest(name: "new_category");
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var createResponse = await Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
 
         var resourceLocation = createResponse.Headers.Location;

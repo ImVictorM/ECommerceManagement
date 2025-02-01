@@ -67,7 +67,7 @@ public class RegisterTests : BaseIntegrationTest
     [Fact]
     public async Task Register_WithDuplicatedEmail_ReturnsConflictErrorResponse()
     {
-        var existingUser = UserSeed.GetSeedUser(SeedAvailableUsers.Customer);
+        var existingUser = UserSeed.GetSeedUser(SeedAvailableUsers.CUSTOMER);
 
         var registerRequest = RegisterRequestUtils.CreateRequest(email: existingUser.Email.ToString());
 

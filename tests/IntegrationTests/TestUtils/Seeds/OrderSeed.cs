@@ -43,29 +43,32 @@ public static class OrderSeed
         {
             [SeedAvailableOrders.CUSTOMER_ORDER_PENDING] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-1),
-                ownerId: UserSeed.GetSeedUser(SeedAvailableUsers.Customer).Id,
+                ownerId: UserSeed.GetSeedUser(SeedAvailableUsers.CUSTOMER).Id,
                 orderProducts: [
                     new OrderProductInput(ProductSeed.GetSeedProduct(SeedAvailableProducts.TSHIRT).Id.ToString(), 1)
                 ],
-                installments: 1
+                installments: 1,
+                shippingMethodId: ShippingMethodSeed.GetSeedShippingMethod(SeedAvailableShippingMethods.FREE).Id
             ),
             [SeedAvailableOrders.CUSTOMER_ORDER_CANCELED] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-2),
-                ownerId: UserSeed.GetSeedUser(SeedAvailableUsers.Customer).Id,
+                ownerId: UserSeed.GetSeedUser(SeedAvailableUsers.CUSTOMER).Id,
                 orderProducts: [
                      new OrderProductInput(ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL).Id.ToString(), 1)
                 ],
                 installments: 1,
-                initialOrderStatus: OrderStatus.Canceled
+                initialOrderStatus: OrderStatus.Canceled,
+                shippingMethodId: ShippingMethodSeed.GetSeedShippingMethod(SeedAvailableShippingMethods.FREE).Id
             ),
             [SeedAvailableOrders.CUSTOMER_ORDER_PAID] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-3),
-                ownerId: UserSeed.GetSeedUser(SeedAvailableUsers.Customer).Id,
+                ownerId: UserSeed.GetSeedUser(SeedAvailableUsers.CUSTOMER).Id,
                 orderProducts: [
                      new OrderProductInput(ProductSeed.GetSeedProduct(SeedAvailableProducts.CHAIN_BRACELET).Id.ToString(), 1)
                 ],
                 installments: 1,
-                initialOrderStatus: OrderStatus.Paid
+                initialOrderStatus: OrderStatus.Paid,
+                shippingMethodId: ShippingMethodSeed.GetSeedShippingMethod(SeedAvailableShippingMethods.EXPRESS).Id
             )
         };
     }
@@ -79,7 +82,7 @@ public static class OrderSeed
         {
             return order;
         }
-        throw new InvalidOperationException("Order of type {orderType} has not been initialized.");
+        throw new InvalidOperationException($"Order of type {orderType} has not been initialized.");
     }
 
     /// <summary>

@@ -47,7 +47,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsAdmin_ReturnsSuccess()
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var response = await Client.GetAsync(BaseRequestUri);
 
@@ -60,7 +60,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsNotAdmin_ReturnsForbidden()
     {
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
 
         var response = await Client.GetAsync(BaseRequestUri);
 
@@ -90,7 +90,7 @@ public class GetAllUsersTests : BaseIntegrationTest
         ReadOnlyCollection<User> expectedUsers
     )
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var response = await Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();

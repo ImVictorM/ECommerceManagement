@@ -43,10 +43,10 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetCustomerOrderById_WithoutSelfCustomer_ReturnsForbidden()
     {
-        var customerWithOrdersType = SeedAvailableUsers.Customer;
+        var customerWithOrdersType = SeedAvailableUsers.CUSTOMER;
         var customerWithOrders = UserSeed.GetSeedUser(customerWithOrdersType);
         var customerOrder = OrderSeed.GetUserOrders(customerWithOrders.Id).First();
-        var otherCustomerType = SeedAvailableUsers.CustomerWithAddress;
+        var otherCustomerType = SeedAvailableUsers.CUSTOMER_WITH_ADDRESS;
 
         await Client.LoginAs(otherCustomerType);
         var response = await Client.GetAsync($"/users/{customerWithOrders.Id}/orders/{customerOrder.Id}");
@@ -62,7 +62,7 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     {
         var notFoundId = "404";
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.GetAsync($"/users/1/{notFoundId}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
@@ -73,13 +73,13 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userWithPermission">The user with either self or admin permissions.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.Customer)]
+    [InlineData(SeedAvailableUsers.ADMIN)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
     public async Task GetCustomerOrderById_WithSelfOrAdminPermission_ReturnsTheOrder(
         SeedAvailableUsers userWithPermission
     )
     {
-        var orderOwnerType = SeedAvailableUsers.Customer;
+        var orderOwnerType = SeedAvailableUsers.CUSTOMER;
         var orderOwner = UserSeed.GetSeedUser(orderOwnerType);
         var customerOrder = OrderSeed.GetUserOrders(orderOwner.Id).First();
 

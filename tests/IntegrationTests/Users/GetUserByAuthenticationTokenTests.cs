@@ -31,9 +31,9 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userType">The user type to be authenticated and queried.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.Customer)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
+    [InlineData(SeedAvailableUsers.ADMIN)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
+    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
     public async Task GetUserByAuthenticationToken_WhenUserIsAuthorizedByToken_ReturnsOk(SeedAvailableUsers userType)
     {
         var authenticatedUser = await Client.LoginAs(userType);

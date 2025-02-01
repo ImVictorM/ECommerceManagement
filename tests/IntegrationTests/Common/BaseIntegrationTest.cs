@@ -58,11 +58,13 @@ public class BaseIntegrationTest : IAsyncLifetime
 
         var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
 
+        await dbContext.Carriers.AddRangeAsync(CarrierSeed.ListCarriers());
         await dbContext.Categories.AddRangeAsync(CategorySeed.ListCategories());
         await dbContext.Users.AddRangeAsync(UserSeed.ListUsers());
         await dbContext.Products.AddRangeAsync(ProductSeed.ListProducts());
         await dbContext.Coupons.AddRangeAsync(CouponSeed.ListCoupons());
         await dbContext.Sales.AddRangeAsync(SaleSeed.ListSales());
+        await dbContext.ShippingMethods.AddRangeAsync(ShippingMethodSeed.ListShippingMethods());
 
         await OrderSeed.InitializeAsync();
         await dbContext.Orders.AddRangeAsync(OrderSeed.ListOrders());

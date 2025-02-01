@@ -10,6 +10,8 @@ using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.ProductAggregate.Errors;
+using Domain.ShippingMethodAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate;
 
 using SharedKernel.UnitTests.TestUtils;
 
@@ -27,6 +29,7 @@ public class OrderServiceTests
     private readonly OrderService _service;
     private readonly Mock<IProductService> _mockProductService;
     private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly Mock<IRepository<ShippingMethod, ShippingMethodId>> _mockShippingMethodRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
@@ -36,9 +39,11 @@ public class OrderServiceTests
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
+        _mockShippingMethodRepository = new Mock<IRepository<ShippingMethod, ShippingMethodId>>();
         _mockProductService = new Mock<IProductService>();
 
         _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
+        _mockUnitOfWork.Setup(uow => uow.ShippingMethodRepository).Returns(_mockShippingMethodRepository.Object);
 
         _service = new OrderService(_mockUnitOfWork.Object, _mockProductService.Object);
     }
@@ -59,10 +64,12 @@ public class OrderServiceTests
                 quantity: 2
             )
         ];
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(1));
+        var expectedTotal = orderProducts.Sum(p => p.CalculateTransactionPrice()) + shippingMethod.Price;
 
-        var expectedTotal = 25m;
+        _mockShippingMethodRepository.Setup(r => r.FindByIdAsync(shippingMethod.Id)).ReturnsAsync(shippingMethod);
 
-        var result = await _service.CalculateTotalAsync(orderProducts, null);
+        var result = await _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, null);
 
         result.Should().Be(expectedTotal);
     }
@@ -109,13 +116,17 @@ public class OrderServiceTests
             )
         };
 
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(1), price: 10m);
+
+        _mockShippingMethodRepository.Setup(r => r.FindByIdAsync(shippingMethod.Id)).ReturnsAsync(shippingMethod);
+
         _mockUnitOfWork
             .Setup(uow => uow.CouponRepository.FindAllAsync(It.IsAny<Expression<Func<Coupon, bool>>>()))
             .ReturnsAsync(couponsApplied);
 
-        var result = await _service.CalculateTotalAsync(orderProducts, orderCoupons);
+        var result = await _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, orderCoupons);
 
-        result.Should().Be(102.41m);
+        result.Should().Be(112.41m);
     }
 
     /// <summary>
@@ -143,14 +154,57 @@ public class OrderServiceTests
             ),
         };
 
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod();
+
+        _mockShippingMethodRepository.Setup(r => r.FindByIdAsync(shippingMethod.Id)).ReturnsAsync(shippingMethod);
+
         _mockUnitOfWork
             .Setup(uow => uow.CouponRepository.FindAllAsync(It.IsAny<Expression<Func<Coupon, bool>>>()))
             .ReturnsAsync(couponsApplied);
 
         await FluentActions
-            .Invoking(() => _service.CalculateTotalAsync(orderProducts, orderCoupons))
+            .Invoking(() => _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, orderCoupons))
             .Should()
             .ThrowAsync<InvalidCouponAppliedException>();
+    }
+
+    /// <summary>
+    /// Tests the calculation of the total price when invalid coupons are applied.
+    /// </summary>
+    [Fact]
+    public async Task CalculateTotal_WithInvalidShippingMethod_ThrowsError()
+    {
+        var orderProducts = new[]
+        {
+            OrderUtils.CreateOrderProduct(purchasedPrice: 50m, quantity: 1),
+            OrderUtils.CreateOrderProduct(purchasedPrice: 30m, quantity: 2)
+        };
+
+        var orderCoupons = new[]
+        {
+            OrderCoupon.Create(CouponId.Create(1)),
+        };
+
+        var couponsApplied = new[]
+        {
+            CouponUtils.CreateCoupon(
+                id: CouponId.Create(1),
+                active: false
+            ),
+        };
+
+        _mockShippingMethodRepository
+            .Setup(r => r.FindByIdAsync(It.IsAny<ShippingMethodId>()))
+            .ReturnsAsync((ShippingMethod?)null);
+
+        _mockUnitOfWork
+            .Setup(uow => uow.CouponRepository.FindAllAsync(It.IsAny<Expression<Func<Coupon, bool>>>()))
+            .ReturnsAsync(couponsApplied);
+
+        await FluentActions
+            .Invoking(() => _service.CalculateTotalAsync(orderProducts, ShippingMethodId.Create(1), orderCoupons))
+            .Should()
+            .ThrowAsync<InvalidShippingMethodException>();
     }
 
     /// <summary>

@@ -19,23 +19,23 @@ public enum SeedAvailableUsers
     /// <summary>
     /// The admin user.
     /// </summary>
-    Admin,
+    ADMIN,
     /// <summary>
     /// Other admin with different name and email.
     /// </summary>
-    OtherAdmin,
+    OTHER_ADMIN,
     /// <summary>
     /// A customer user.
     /// </summary>
-    Customer,
+    CUSTOMER,
     /// <summary>
     /// A customer user with an address.
     /// </summary>
-    CustomerWithAddress,
+    CUSTOMER_WITH_ADDRESS,
     /// <summary>
     /// A customer inactive user.
     /// </summary>
-    InactiveCustomer,
+    INACTIVE_CUSTOMER,
 }
 
 /// <summary>
@@ -49,7 +49,7 @@ public static class UserSeed
 
     private static readonly Dictionary<SeedAvailableUsers, (User User, string Password)> _users = new()
     {
-        [SeedAvailableUsers.Admin] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.ADMIN] = (UserUtils.CreateUser(
             id: UserId.Create(-1),
             name: "admin",
             roles: new HashSet<UserRole>() { UserRole.Create(Role.Admin.Id) },
@@ -57,7 +57,7 @@ public static class UserSeed
             passwordHash: _hasher.Hash(AdminPassword)
         ), AdminPassword),
 
-        [SeedAvailableUsers.OtherAdmin] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.OTHER_ADMIN] = (UserUtils.CreateUser(
             id: UserId.Create(-2),
             name: "other admin",
             roles: new HashSet<UserRole>() { UserRole.Create(Role.Admin.Id) },
@@ -65,7 +65,7 @@ public static class UserSeed
             passwordHash: _hasher.Hash(AdminPassword)
         ), AdminPassword),
 
-        [SeedAvailableUsers.Customer] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.CUSTOMER] = (UserUtils.CreateUser(
             id: UserId.Create(-3),
             name: "normal user",
             email: EmailUtils.CreateEmail("user_normal@email.com"),
@@ -73,7 +73,7 @@ public static class UserSeed
             passwordHash: _hasher.Hash(UserPassword)
         ), UserPassword),
 
-        [SeedAvailableUsers.CustomerWithAddress] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.CUSTOMER_WITH_ADDRESS] = (UserUtils.CreateUser(
             id: UserId.Create(-4),
             name: "user with address",
             email: EmailUtils.CreateEmail("user_address@email.com"),
@@ -82,7 +82,7 @@ public static class UserSeed
             passwordHash: _hasher.Hash(UserPassword)
         ), UserPassword),
 
-        [SeedAvailableUsers.InactiveCustomer] = (UserUtils.CreateUser(
+        [SeedAvailableUsers.INACTIVE_CUSTOMER] = (UserUtils.CreateUser(
             id: UserId.Create(-5),
             name: "inactive user",
             email: EmailUtils.CreateEmail("user_inactive@email.com"),

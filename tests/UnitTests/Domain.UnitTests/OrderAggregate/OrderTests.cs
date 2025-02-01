@@ -5,6 +5,7 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.Errors;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 using FluentAssertions;
 using Moq;
@@ -63,7 +64,7 @@ public class OrderTests
             .Returns(mockOrderProducts.ToAsyncEnumerable());
 
         mockOrderService
-            .Setup(s => s.CalculateTotalAsync(mockOrderProducts, It.IsAny<IEnumerable<OrderCoupon>>()))
+            .Setup(s => s.CalculateTotalAsync(mockOrderProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
             .ReturnsAsync(mockTotal);
 
         var actionResult = await FluentActions

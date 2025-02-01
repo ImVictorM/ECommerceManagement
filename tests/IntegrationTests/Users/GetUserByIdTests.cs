@@ -48,7 +48,7 @@ public class GetUserByIdTests : BaseIntegrationTest
     [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkWithUser(User user)
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.GetAsync($"/users/{user.Id}");
 
         var responseContent = await response.Content.ReadFromJsonAsync<UserResponse>();
@@ -65,7 +65,7 @@ public class GetUserByIdTests : BaseIntegrationTest
     [MemberData(nameof(AvailableUsers))]
     public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(User user)
     {
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
 
         var response = await Client.GetAsync($"/users/{user.Id}");
 
@@ -93,7 +93,7 @@ public class GetUserByIdTests : BaseIntegrationTest
     {
         var userNotFoundId = "5000";
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.GetAsync($"/users/{userNotFoundId}");
 
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();

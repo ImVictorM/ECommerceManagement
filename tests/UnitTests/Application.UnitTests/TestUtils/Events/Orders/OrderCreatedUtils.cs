@@ -1,6 +1,7 @@
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Events;
 using Domain.UnitTests.TestUtils;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
@@ -21,6 +22,7 @@ public static class OrderCreatedUtils
     /// Creates a new instance of the <see cref="OrderCreated"/> class.
     /// </summary>
     /// <param name="requestId">The current request id.</param>
+    /// <param name="shippingMethodId">The shipping method id.</param>
     /// <param name="order">The order created.</param>
     /// <param name="paymentMethod">The payment method.</param>
     /// <param name="billingAddress">The billing address.</param>
@@ -29,6 +31,7 @@ public static class OrderCreatedUtils
     /// <returns>A new instance of the <see cref="OrderCreated"/> class.</returns>
     public static async Task<OrderCreated> CreateEventAsync(
         Guid? requestId = null,
+        ShippingMethodId? shippingMethodId = null,
         Order? order = null,
         IPaymentMethod? paymentMethod = null,
         Address? billingAddress = null,
@@ -38,8 +41,10 @@ public static class OrderCreatedUtils
     {
         return new OrderCreated(
             requestId ?? _faker.Random.Guid(),
+            shippingMethodId ?? ShippingMethodId.Create(NumberUtils.CreateRandomLong()),
             order ?? await OrderUtils.CreateOrderAsync(),
             paymentMethod ?? OrderUtils.CreateMockPaymentMethod(),
+            deliveryAddress ?? AddressUtils.CreateAddress(),
             billingAddress ?? AddressUtils.CreateAddress(),
             installments
         );

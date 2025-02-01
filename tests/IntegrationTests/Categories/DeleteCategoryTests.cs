@@ -44,7 +44,7 @@ public class DeleteCategoryTests : BaseIntegrationTest
     {
         var existingCategory = CategorySeed.GetSeedCategory(SeedAvailableCategories.JEWELRY);
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
         var response = await Client.DeleteAsync($"{CategoryEndpoints.BaseEndpoint}/{existingCategory.Id}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -58,7 +58,7 @@ public class DeleteCategoryTests : BaseIntegrationTest
     {
         var categoryToBeDeleted = CategorySeed.GetSeedCategory(SeedAvailableCategories.JEWELRY);
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
         var deleteResponse = await Client.DeleteAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeDeleted.Id}");
         var getDeletedCategoryResponse = await Client.GetAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeDeleted.Id}");

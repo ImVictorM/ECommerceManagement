@@ -31,14 +31,14 @@ public class UpdateUserTests : BaseIntegrationTest
     /// Tests that a user with customer privileges is unable to update another user's information.
     /// </summary>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
+    [InlineData(SeedAvailableUsers.ADMIN)]
+    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
     public async Task UpdateUser_WhenCustomerTriesToUpdateSomeoneElse_ReturnsForbidden(SeedAvailableUsers otherUserType)
     {
         var otherUser = UserSeed.GetSeedUser(otherUserType);
         var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb name for another user");
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
 
         var response = await Client.PutAsJsonAsync($"users/{otherUser.Id}", request);
 
@@ -54,7 +54,7 @@ public class UpdateUserTests : BaseIntegrationTest
     {
         var request = UpdateUserRequestUtils.CreateRequest(name: "marcos rogério", phone: "19982748242", email: "marcao@email.com");
 
-        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.Customer);
+        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
         var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", request);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -74,10 +74,10 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenAdminTriesToUpdateAnotherAdmin_ReturnsForbidden()
     {
-        var otherAdmin = UserSeed.GetSeedUser(SeedAvailableUsers.OtherAdmin);
+        var otherAdmin = UserSeed.GetSeedUser(SeedAvailableUsers.OTHER_ADMIN);
         var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb admin");
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.PutAsJsonAsync($"users/{otherAdmin.Id}", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -89,10 +89,10 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenCustomerTriesToUpdateEmailWithExistingOne_ReturnsConflict()
     {
-        var anotherUserEmail = UserSeed.GetSeedUser(SeedAvailableUsers.CustomerWithAddress).Email;
+        var anotherUserEmail = UserSeed.GetSeedUser(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS).Email;
         var requestContainingAnotherUserEmail = UpdateUserRequestUtils.CreateRequest(email: anotherUserEmail.ToString());
 
-        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.Customer);
+        var userToBeUpdated = await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
         var updateResponse = await Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", requestContainingAnotherUserEmail);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -105,10 +105,10 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsNoContentAndUpdatesUser()
     {
-        var customerToBeUpdated = UserSeed.GetSeedUser(SeedAvailableUsers.Customer);
+        var customerToBeUpdated = UserSeed.GetSeedUser(SeedAvailableUsers.CUSTOMER);
         var request = UpdateUserRequestUtils.CreateRequest(name: "User new name", phone: "19982748242", email: "newemail@email.com");
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var updateResponse = await Client.PutAsJsonAsync($"users/{customerToBeUpdated.Id}", request);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);

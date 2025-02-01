@@ -51,8 +51,8 @@ public class PlaceOrderTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userWithoutCustomerRoleType">The user without the customer role.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.OtherAdmin)]
+    [InlineData(SeedAvailableUsers.ADMIN)]
+    [InlineData(SeedAvailableUsers.OTHER_ADMIN)]
     public async Task PlaceOrder_WhenUserDoesNotHaveCustomerRole_ReturnsForbidden(SeedAvailableUsers userWithoutCustomerRoleType)
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
@@ -69,15 +69,17 @@ public class PlaceOrderTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userWithCustomerRoleType">The customer.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Customer)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
+    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
     public async Task PlaceOrder_WhenParametersAreCorrectAndUserIsAuthorized_CreatesOrderAndReturnsCreated(SeedAvailableUsers userWithCustomerRoleType)
     {
         var pencil = ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL);
         var computer = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_ON_SALE);
         var couponApplied = CouponSeed.GetSeedCoupon(SeedAvailableCoupons.TECH_COUPON);
+        var shippingMethod = ShippingMethodSeed.GetSeedShippingMethod(SeedAvailableShippingMethods.EXPRESS);
 
         var request = PlaceOrderRequestUtils.CreateRequest(
+            shippingMethodId: shippingMethod.Id.ToString(),
             products:
             [
                 new OrderProductRequest(pencil.Id.ToString(), 1),
@@ -109,7 +111,7 @@ public class PlaceOrderTests : BaseIntegrationTest
         var expectedTotalPrice = DiscountService.ApplyDiscounts(
             expectedComputerTotal + expectedPencilTotal,
             [couponApplied.Discount]
-        );
+        ) + shippingMethod.Price;
 
         Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
         var orderOwner = await Client.LoginAs(userWithCustomerRoleType);
@@ -119,7 +121,7 @@ public class PlaceOrderTests : BaseIntegrationTest
 
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var getResourceResponse = await Client.GetAsync(resourceLocation);
         var createdResourceContent = await getResourceResponse.Content.ReadFromJsonAsync<OrderDetailedResponse>();
         createdResourceContent!.Status.Should().Be(OrderStatus.Pending.Name);
@@ -146,7 +148,7 @@ public class PlaceOrderTests : BaseIntegrationTest
             ]
         );
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        await Client.LoginAs(SeedAvailableUsers.CUSTOMER);
         Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
         var response = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();

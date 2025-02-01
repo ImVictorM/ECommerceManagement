@@ -16,6 +16,7 @@ public static class PlaceOrderRequestUtils
     /// <summary>
     /// Creates a new place order request object.
     /// </summary>
+    /// <param name="shippingMethodId">The shipping method id.</param>
     /// <param name="products">The order products.</param>
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
@@ -24,6 +25,7 @@ public static class PlaceOrderRequestUtils
     /// <param name="installments">The order installments.</param>
     /// <returns>A new place order object.</returns>
     public static PlaceOrderRequest CreateRequest(
+        string? shippingMethodId = null,
         IEnumerable<OrderProductRequest>? products = null,
         AddressContract? billingAddress = null,
         AddressContract? deliveryAddress = null,
@@ -37,6 +39,7 @@ public static class PlaceOrderRequestUtils
         );
 
         return new PlaceOrderRequest(
+            shippingMethodId ?? NumberUtils.CreateRandomLongAsString(),
             products ?? requestOrderProducts,
             billingAddress ?? AddressContractUtils.CreateAddress(),
             deliveryAddress ?? AddressContractUtils.CreateAddress(),

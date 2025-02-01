@@ -8,6 +8,7 @@ using Application.UnitTests.TestUtils.Behaviors;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 using FluentAssertions;
@@ -73,7 +74,7 @@ public class PlaceOrderCommandHandlerTests
             .Returns(orderProducts.ToAsyncEnumerable());
 
         _mockOrdersService
-            .Setup(s => s.CalculateTotalAsync(orderProducts, It.IsAny<IEnumerable<OrderCoupon>>()))
+            .Setup(s => s.CalculateTotalAsync(orderProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
             .ReturnsAsync(mockTotal);
 
         var mockCreatedId = OrderId.Create(2);

@@ -22,7 +22,7 @@ public static class PlaceOrderCommandUtils
     /// Creates a new instance of the <see cref="PlaceOrderCommand"/> class.
     /// </summary>
     /// <param name="requestId">The current request id.</param>
-    /// <param name="currentUserId">The owner id.</param>
+    /// <param name="shippingMethodId">The shipping method id.</param>
     /// <param name="orderProducts">The order products.</param>
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
@@ -32,7 +32,7 @@ public static class PlaceOrderCommandUtils
     /// <returns>A new instance of the <see cref="PlaceOrderCommand"/> class.</returns>
     public static PlaceOrderCommand CreateCommand(
         Guid? requestId = null,
-        string? currentUserId = null,
+        string? shippingMethodId = null,
         IEnumerable<OrderProductInput>? orderProducts = null,
         Address? billingAddress = null,
         Address? deliveryAddress = null,
@@ -43,6 +43,7 @@ public static class PlaceOrderCommandUtils
     {
         return new PlaceOrderCommand(
             requestId ?? _faker.Random.Guid(),
+            shippingMethodId ?? NumberUtils.CreateRandomLongAsString(),
             orderProducts ?? CreateOrderProductInputs(1),
             AddressUtils.CreateAddress(),
             AddressUtils.CreateAddress(),

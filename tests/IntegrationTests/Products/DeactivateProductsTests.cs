@@ -51,8 +51,8 @@ public class DeactivateProductsTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerType">The customer to be authenticated.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Customer)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
+    [InlineData(SeedAvailableUsers.CUSTOMER)]
+    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
     public async Task DeactivateProduct_WhenUserIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerType)
     {
         await Client.LoginAs(customerType);
@@ -69,7 +69,7 @@ public class DeactivateProductsTests : BaseIntegrationTest
     {
         var notFoundId = "404";
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var response = await Client.DeleteAsync($"/products/{notFoundId}");
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
@@ -90,7 +90,7 @@ public class DeactivateProductsTests : BaseIntegrationTest
         Product productToDeactivate
     )
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        await Client.LoginAs(SeedAvailableUsers.ADMIN);
         var responseDelete = await Client.DeleteAsync($"/products/{productToDeactivate.Id}");
         var responseGet = await Client.GetAsync($"/products/{productToDeactivate.Id}");
 
