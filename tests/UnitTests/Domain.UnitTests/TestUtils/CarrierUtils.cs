@@ -1,5 +1,6 @@
 using Domain.CarrierAggregate;
 using Domain.CarrierAggregate.ValueObjects;
+
 using SharedKernel.UnitTests.TestUtils.Extensions;
 
 namespace Domain.UnitTests.TestUtils;
@@ -16,7 +17,7 @@ public static class CarrierUtils
     /// <param name="name">The carrier name.</param>
     /// <returns>A new instance of the <see cref="Carrier"/> class.</returns>
     public static Carrier CreateCarrier(
-        CarrierId id,
+        CarrierId? id = null,
         string? name = null
     )
     {
