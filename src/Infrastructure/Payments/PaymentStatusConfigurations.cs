@@ -1,5 +1,7 @@
 using Domain.PaymentAggregate.Enumerations;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,10 +10,10 @@ namespace Infrastructure.Payments;
 /// <summary>
 /// Configures the <see cref="PaymentStatus"/> table.
 /// </summary>
-public class PaymentStatusConfigurations : IEntityTypeConfiguration<PaymentStatus>
+public class PaymentStatusConfigurations : EntityTypeConfigurationDependency<PaymentStatus>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<PaymentStatus> builder)
+    public override void Configure(EntityTypeBuilder<PaymentStatus> builder)
     {
         builder.ToTable("payment_statuses");
 

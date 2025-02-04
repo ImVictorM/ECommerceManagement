@@ -2,27 +2,64 @@ using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
 using Application.Common.Security.Authorization.Roles;
+using Application.Common.Security.Authentication;
 
 using Infrastructure.Common.Persistence.Configurations;
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
 using SharedKernel.ValueObjects;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Users;
 
 /// <summary>
 /// Configures the tables for the <see cref="User"/> aggregate.
 /// </summary>
-public sealed class UserConfigurations : IEntityTypeConfiguration<User>
+public sealed class UserConfigurations : EntityTypeConfigurationDependency<User>
 {
+    private sealed record UserData(
+        UserId Id,
+        string Name,
+        Email Email,
+        PasswordHash PasswordHash,
+        bool IsActive,
+        DateTimeOffset CreatedAt,
+        DateTimeOffset UpdatedAt
+    );
+
+    private readonly UserData _adminAccount;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="UserConfigurations"/> class.
+    /// </summary>
+    /// <param name="adminOptions">The default admin account options.</param>
+    /// <param name="passwordHasher">The password hasher to hash the admin password.</param>
+    public UserConfigurations(IOptions<AdminAccountSettings> adminOptions, IPasswordHasher passwordHasher)
+    {
+        var adminAccountSettings = adminOptions.Value;
+
+        _adminAccount = new UserData(
+            UserId.Create(1),
+            adminAccountSettings.Name,
+            Email.Create(adminAccountSettings.Email),
+            passwordHasher.Hash(adminAccountSettings.Password),
+            true,
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow
+        );
+    }
+
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<User> builder)
+    public override void Configure(EntityTypeBuilder<User> builder)
     {
         ConfigureUsersTable(builder);
         ConfigureOwnedUserAddressesTable(builder);
         ConfigureOwnedUsersRolesTable(builder);
+
+        builder.HasData(_adminAccount);
     }
 
     private static void ConfigureUsersTable(EntityTypeBuilder<User> builder)
@@ -98,7 +135,7 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
         });
     }
 
-    private static void ConfigureOwnedUsersRolesTable(EntityTypeBuilder<User> builder)
+    private void ConfigureOwnedUsersRolesTable(EntityTypeBuilder<User> builder)
     {
         builder.OwnsMany(user => user.UserRoles, userRolesBuilder =>
         {
@@ -124,6 +161,13 @@ public sealed class UserConfigurations : IEntityTypeConfiguration<User>
             userRolesBuilder
                 .Property("id_user")
                 .IsRequired();
+
+            userRolesBuilder.HasData(new
+            {
+                id = 1L,
+                id_user = _adminAccount.Id,
+                RoleId = Role.Admin.Id
+            });
         });
     }
 }

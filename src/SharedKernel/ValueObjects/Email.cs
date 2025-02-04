@@ -1,6 +1,7 @@
-using System.Net.Mail;
 using SharedKernel.Errors;
 using SharedKernel.Models;
+
+using System.Net.Mail;
 
 namespace SharedKernel.ValueObjects;
 
@@ -12,7 +13,9 @@ public sealed class Email : ValueObject
     /// <summary>
     /// Gets the email address.
     /// </summary>
-    public string Value { get; }
+    public string Value { get; } = null!;
+
+    private Email() { }
 
     private Email(string value)
     {

@@ -11,6 +11,9 @@ using Infrastructure.Security.Authentication;
 using Infrastructure.Security.Authentication.Settings;
 using Infrastructure.Common.Persistence;
 using Infrastructure.Common.Persistence.Interceptors;
+using Infrastructure.Users;
+using Infrastructure.Carriers;
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +50,8 @@ public static class ServicesRegistration
         services.AddPersistence(configuration, environment);
 
         services.AddScoped<IPaymentGateway, MockPaymentGateway>();
+        services.Configure<CarrierInternalSettings>(configuration.GetSection(CarrierInternalSettings.SectionName));
+        services.Configure<AdminAccountSettings>(configuration.GetSection(AdminAccountSettings.SectionName));
 
         services.AddSecurity(configuration);
 
@@ -79,6 +84,18 @@ public static class ServicesRegistration
 
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<PublishDomainEventsInterceptor>();
+
+        foreach
+        (var type in typeof(ECommerceDbContext).Assembly.DefinedTypes
+            .Where(t =>
+                !t.IsAbstract
+                && !t.IsGenericTypeDefinition
+                && typeof(EntityTypeConfigurationDependency).IsAssignableFrom(t)
+            )
+        )
+        {
+            services.AddScoped(typeof(EntityTypeConfigurationDependency), type);
+        }
 
         return services;
     }

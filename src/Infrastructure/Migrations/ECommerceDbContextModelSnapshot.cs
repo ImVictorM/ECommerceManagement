@@ -69,11 +69,28 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("email");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)")
                         .HasColumnName("name");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(11)
+                        .HasColumnType("character varying(11)")
+                        .HasColumnName("phone");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -81,7 +98,22 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("carriers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8922), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "carrier@email.com",
+                            Name = "ECommerceManagementCarrier",
+                            PasswordHash = "2AB9F1E1CD7021A4CFB833DC0AA408D742F2A42C24AA6BCB010717779372B7D0-5DBA0451842A6D3A8D52F4D61E71D4AC",
+                            Phone = "",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8924), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("Domain.CategoryAggregate.Category", b =>
@@ -674,6 +706,18 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9778), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "admin@email.com",
+                            IsActive = true,
+                            Name = "admin",
+                            PasswordHash = "31DD8179456F94EA43DDC8998D0B32E8303EF693A764581E432A63CBE300DE75-1BB36DB393A95CA85F4A579E568BBC4C",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9783), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CategoryRestriction", b =>
@@ -1401,6 +1445,14 @@ namespace Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("id_user");
+
+                            b1.HasData(
+                                new
+                                {
+                                    id = 1L,
+                                    RoleId = 1L,
+                                    id_user = 1L
+                                });
                         });
 
                     b.Navigation("UserAddresses");

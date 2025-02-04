@@ -6,6 +6,7 @@ using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
 
 using Infrastructure.Common.Persistence.Configurations;
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,10 +16,10 @@ namespace Infrastructure.Sales;
 /// <summary>
 /// Configures the tables for the <see cref="Sale"/> aggregate.
 /// </summary>
-public class SaleConfigurations : IEntityTypeConfiguration<Sale>
+public class SaleConfigurations : EntityTypeConfigurationDependency<Sale>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<Sale> builder)
+    public override void Configure(EntityTypeBuilder<Sale> builder)
     {
         ConfigureSalesTable(builder);
         ConfigureOwnedSaleProductsTable(builder);

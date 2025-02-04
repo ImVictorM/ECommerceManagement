@@ -9,6 +9,7 @@ using Domain.ShippingMethodAggregate;
 using Domain.ShippingMethodAggregate.ValueObjects;
 
 using Infrastructure.Common.Persistence.Configurations;
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,10 +19,10 @@ namespace Infrastructure.Shipments;
 /// <summary>
 /// Configures the tables for the <see cref="Shipment"/> aggregate.
 /// </summary>
-public sealed class ShipmentConfigurations : IEntityTypeConfiguration<Shipment>
+public sealed class ShipmentConfigurations : EntityTypeConfigurationDependency<Shipment>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<Shipment> builder)
+    public override void Configure(EntityTypeBuilder<Shipment> builder)
     {
         ConfigureShipmentsTable(builder);
         ConfigureOwnedShipmentTrackingEntriesTable(builder);

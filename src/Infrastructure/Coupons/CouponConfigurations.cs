@@ -1,17 +1,21 @@
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
+
 using Infrastructure.Common.Persistence.Configurations;
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
 /// <summary>
 /// Configures the tables for the <see cref="Coupon"/> aggregate.
 /// </summary>
-public class CouponConfigurations : IEntityTypeConfiguration<Coupon>
+public class CouponConfigurations : EntityTypeConfigurationDependency<Coupon>
 {
     /// <inheritdoc/>
-    public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Coupon> builder)
+    public override void Configure(EntityTypeBuilder<Coupon> builder)
     {
         builder.ToTable("coupons");
 

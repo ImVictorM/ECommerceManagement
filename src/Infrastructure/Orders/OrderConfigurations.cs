@@ -8,6 +8,8 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,10 +18,10 @@ namespace Infrastructure.Orders;
 /// <summary>
 /// Configures the tables for the <see cref="Order"/> aggregate.
 /// </summary>
-public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
+public sealed class OrderConfigurations : EntityTypeConfigurationDependency<Order>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<Order> builder)
+    public override void Configure(EntityTypeBuilder<Order> builder)
     {
         ConfigureOrdersTable(builder);
         ConfigureOwnedOrdersCouponsTable(builder);

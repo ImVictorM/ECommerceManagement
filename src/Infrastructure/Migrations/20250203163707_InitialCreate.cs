@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -24,6 +23,9 @@ namespace Infrastructure.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    email = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    password_hash = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    phone = table.Column<string>(type: "character varying(11)", maxLength: 11, nullable: true),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -771,6 +773,11 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "carriers",
+                columns: new[] { "id", "created_at", "email", "name", "password_hash", "phone", "updated_at" },
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8922), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "2AB9F1E1CD7021A4CFB833DC0AA408D742F2A42C24AA6BCB010717779372B7D0-5DBA0451842A6D3A8D52F4D61E71D4AC", "", new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8924), new TimeSpan(0, 0, 0, 0, 0)) });
+
+            migrationBuilder.InsertData(
                 table: "order_statuses",
                 columns: new[] { "id", "name" },
                 values: new object[,]
@@ -818,40 +825,21 @@ namespace Infrastructure.Migrations
                     { 5L, "Delivered" }
                 });
 
-            // password: admin123
             migrationBuilder.InsertData(
                 table: "users",
-                columns: ["id", "name", "email", "password_hash", "is_active", "created_at", "updated_at"],
-                values: [
-                    1,
-                    "admin",
-                    "admin@email.com",
-                    "6333824CC074E187E261A0CBBD91F9741B4D38A26E1519A93B4244BEAFC933B9-4FDE231393F2C8AECC2B26F356E3D89E",
-                    true,
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
+                columns: new[] { "id", "created_at", "email", "is_active", "name", "password_hash", "phone", "updated_at" },
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9778), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "31DD8179456F94EA43DDC8998D0B32E8303EF693A764581E432A63CBE300DE75-1BB36DB393A95CA85F4A579E568BBC4C", null, new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9783), new TimeSpan(0, 0, 0, 0, 0)) });
 
             migrationBuilder.InsertData(
                 table: "users_roles",
-                columns: ["id_role", "id_user"],
-                values: [
-                    1,
-                    1,
-                ]
-            );
+                columns: new[] { "id", "id_role", "id_user" },
+                values: new object[] { 1L, 1L, 1L });
 
-            migrationBuilder.InsertData(
+            migrationBuilder.CreateIndex(
+                name: "IX_carriers_email",
                 table: "carriers",
-                columns: ["id", "name", "created_at", "updated_at"],
-                values: [
-                    1,
-                    "ECommerceManagementCarrier",
-                    DateTimeOffset.UtcNow,
-                    DateTimeOffset.UtcNow,
-                ]
-            );
+                column: "email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_categories_name",

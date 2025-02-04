@@ -1,6 +1,8 @@
 using Domain.ShippingMethodAggregate;
 using Domain.ShippingMethodAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,10 +11,10 @@ namespace Infrastructure.ShippingMethods;
 /// <summary>
 /// Configures the tables for the <see cref="ShippingMethod"/> aggregate.
 /// </summary>
-public class ShippingMethodConfigurations : IEntityTypeConfiguration<ShippingMethod>
+public class ShippingMethodConfigurations : EntityTypeConfigurationDependency<ShippingMethod>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<ShippingMethod> builder)
+    public override void Configure(EntityTypeBuilder<ShippingMethod> builder)
     {
         builder.ToTable("shipping_methods");
 
