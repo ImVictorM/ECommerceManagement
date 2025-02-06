@@ -8,7 +8,7 @@ using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Http;
 
 using Contracts.Authentication;
-using RegisterRequest = Contracts.Authentication.RegisterRequest;
+using RegisterCustomerRequest = Contracts.Authentication.RegisterCustomerRequest;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -19,18 +19,18 @@ using Xunit.Abstractions;
 namespace IntegrationTests.Authentication;
 
 /// <summary>
-/// Integration tests for the register process.
+/// Integration tests for the register customer feature.
 /// </summary>
-public class RegisterTests : BaseIntegrationTest
+public class RegisterCustomerTests : BaseIntegrationTest
 {
     private readonly IDataSeed<UserSeedType, User> _userSeed;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="RegisterTests"/> class.
+    /// Initiates a new instance of the <see cref="RegisterCustomerTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public RegisterTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public RegisterCustomerTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
         _userSeed = SeedManager.GetSeed<UserSeedType, User>();
     }
@@ -40,9 +40,9 @@ public class RegisterTests : BaseIntegrationTest
     /// </summary>
     public static readonly IEnumerable<object[]> ValidRequests =
     [
-        [RegisterRequestUtils.CreateRequest(email: "testing1@email.com")],
-        [RegisterRequestUtils.CreateRequest(email: "testing2@email.com", name: "Testing name")],
-        [RegisterRequestUtils.CreateRequest(email: "testing3@email.com", password: "Super_secret_pass123")],
+        [RegisterCustomerRequestUtils.CreateRequest(email: "testing1@email.com")],
+        [RegisterCustomerRequestUtils.CreateRequest(email: "testing2@email.com", name: "Testing name")],
+        [RegisterCustomerRequestUtils.CreateRequest(email: "testing3@email.com", password: "Super_secret_pass123")],
     ];
 
     /// <summary>
@@ -52,9 +52,9 @@ public class RegisterTests : BaseIntegrationTest
     /// <param name="registerRequest">The request object.</param>
     [Theory]
     [MemberData(nameof(ValidRequests))]
-    public async Task Register_WithValidParameters_CreatesNewUserAndAuthenticateThem(RegisterRequest registerRequest)
+    public async Task RegisterCustomer_WithValidParameters_CreatesNewUserAndAuthenticateThem(RegisterCustomerRequest registerRequest)
     {
-        var loginRequest = new LoginRequest(registerRequest.Email, registerRequest.Password);
+        var loginRequest = new LoginUserRequest(registerRequest.Email, registerRequest.Password);
 
         var registerHttpResponse = await RequestService.Client.PostAsJsonAsync("/auth/register", registerRequest);
         var loginHttpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", loginRequest);
@@ -72,11 +72,11 @@ public class RegisterTests : BaseIntegrationTest
     /// Tests creating a user with duplicated email returns a conflict error.
     /// </summary>
     [Fact]
-    public async Task Register_WithDuplicatedEmail_ReturnsConflictErrorResponse()
+    public async Task RegisterCustomer_WithDuplicatedEmail_ReturnsConflictErrorResponse()
     {
         var existingUser = _userSeed.GetByType(UserSeedType.CUSTOMER);
 
-        var registerRequest = RegisterRequestUtils.CreateRequest(email: existingUser.Email.ToString());
+        var registerRequest = RegisterCustomerRequestUtils.CreateRequest(email: existingUser.Email.ToString());
 
         await RequestService.Client.PostAsJsonAsync("/auth/register", registerRequest);
 

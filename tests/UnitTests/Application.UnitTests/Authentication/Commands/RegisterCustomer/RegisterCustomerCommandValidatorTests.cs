@@ -1,25 +1,25 @@
-using Application.Authentication.Commands.Register;
+using Application.Authentication.Commands.RegisterCustomer;
 using Application.UnitTests.Authentication.Commands.TestUtils;
 using Application.UnitTests.TestUtils.ValidationData;
 
 using FluentAssertions;
 using FluentValidation.TestHelper;
 
-namespace Application.UnitTests.Authentication.Commands.Register;
+namespace Application.UnitTests.Authentication.Commands.RegisterCustomer;
 
 /// <summary>
-/// Unit tests for the <see cref="RegisterCommandValidator"/> validator.
+/// Unit tests for the <see cref="RegisterCustomerCommandValidator"/> validator.
 /// </summary>
-public class RegisterCommandValidatorTests
+public class RegisterCustomerCommandValidatorTests
 {
-    private readonly RegisterCommandValidator _validator;
+    private readonly RegisterCustomerCommandValidator _validator;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="RegisterCommandValidatorTests"/> class.
+    /// Initiates a new instance of the <see cref="RegisterCustomerCommandValidatorTests"/> class.
     /// </summary>
-    public RegisterCommandValidatorTests()
+    public RegisterCustomerCommandValidatorTests()
     {
-        _validator = new RegisterCommandValidator();
+        _validator = new RegisterCustomerCommandValidator();
     }
 
     /// <summary>
@@ -67,12 +67,12 @@ public class RegisterCommandValidatorTests
     /// <param name="expectedErrorMessages">The expected error messages.</param>
     [Theory]
     [MemberData(nameof(ValidationTestData.Name.InvalidNames), MemberType = typeof(ValidationTestData.Name))]
-    public void ValidateRegisterCommand_WhenNameIsInvalid_ShouldHaveValidationError(
+    public void ValidateRegisterCustomerCommand_WhenNameIsInvalid_ShouldHaveValidationError(
         string name,
         IEnumerable<string> expectedErrorMessages
     )
     {
-        var command = RegisterCommandUtils.CreateCommand(name: name);
+        var command = RegisterCustomerCommandUtils.CreateCommand(name: name);
 
         var result = _validator.TestValidate(command);
 
@@ -91,12 +91,12 @@ public class RegisterCommandValidatorTests
     /// <param name="expectedErrorMessages">The expected error messages.</param>
     [Theory]
     [MemberData(nameof(ValidationTestData.Email.InvalidEmails), MemberType = typeof(ValidationTestData.Email))]
-    public void ValidateRegisterCommand_WhenEmailIsInvalid_ShouldHaveValidationError(
+    public void ValidateRegisterCustomerCommand_WhenEmailIsInvalid_ShouldHaveValidationError(
         string email,
         IEnumerable<string> expectedErrorMessages
     )
     {
-        var command = RegisterCommandUtils.CreateCommand(email: email);
+        var command = RegisterCustomerCommandUtils.CreateCommand(email: email);
 
         var result = _validator.TestValidate(command);
 
@@ -115,12 +115,12 @@ public class RegisterCommandValidatorTests
     /// <param name="expectedErrorMessages">The expected error messages.</param>
     [Theory]
     [MemberData(nameof(InvalidPasswords))]
-    public void ValidateRegisterCommand_WhenPasswordIsInvalid_ShouldHaveValidationError(
+    public void ValidateRegisterCustomerCommand_WhenPasswordIsInvalid_ShouldHaveValidationError(
         string password,
         IEnumerable<string> expectedErrorMessages
     )
     {
-        var command = RegisterCommandUtils.CreateCommand(password: password);
+        var command = RegisterCustomerCommandUtils.CreateCommand(password: password);
 
         var result = _validator.TestValidate(command);
 

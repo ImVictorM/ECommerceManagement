@@ -2,17 +2,17 @@ using Application.Common.Validation;
 
 using FluentValidation;
 
-namespace Application.Authentication.Commands.Register;
+namespace Application.Authentication.Commands.RegisterCustomer;
 
 /// <summary>
-/// Validates the <see cref="RegisterCommand"/> inputs.
+/// Validates the <see cref="RegisterCustomerCommand"/> inputs.
 /// </summary>
-public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
+public class RegisterCustomerCommandValidator : AbstractValidator<RegisterCustomerCommand>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterCommandValidator"/> class.
+    /// Initializes a new instance of the <see cref="RegisterCustomerCommandValidator"/> class.
     /// </summary>
-    public RegisterCommandValidator()
+    public RegisterCustomerCommandValidator()
     {
         RuleFor(x => x.Name).IsValidUserName();
 

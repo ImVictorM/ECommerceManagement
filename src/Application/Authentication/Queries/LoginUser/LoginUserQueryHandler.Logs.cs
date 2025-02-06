@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
 
-namespace Application.Authentication.Queries.Login;
+namespace Application.Authentication.Queries.LoginUser;
 
-public partial class LoginQueryHandler
+public partial class LoginUserQueryHandler
 {
-    private readonly ILogger<LoginQueryHandler> _logger;
+    private readonly ILogger<LoginUserQueryHandler> _logger;
 
     [LoggerMessage(
         EventId = 1,

@@ -16,18 +16,18 @@ using Microsoft.Extensions.DependencyInjection;
 namespace IntegrationTests.Authentication;
 
 /// <summary>
-/// Integration tests for the login feature.
+/// Integration tests for the user log in feature.
 /// </summary>
-public class LoginTests : BaseIntegrationTest
+public class LoginUserTests : BaseIntegrationTest
 {
     private readonly ICredentialsProvider<UserSeedType> _credentialsProvider;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="LoginTests"/> class.
+    /// Initiates a new instance of the <see cref="LoginUserTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public LoginTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public LoginUserTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
         _credentialsProvider = factory.Services.GetRequiredService<ICredentialsProvider<UserSeedType>>();
     }
@@ -41,10 +41,10 @@ public class LoginTests : BaseIntegrationTest
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
     [InlineData(UserSeedType.ADMIN)]
     [InlineData(UserSeedType.OTHER_ADMIN)]
-    public async Task Login_WhenCredentialsAreValidAndUserIsActive_AuthenticateTheUserCorrectly(UserSeedType userActiveType)
+    public async Task LoginUser_WhenCredentialsAreValidAndUserIsActive_AuthenticateTheUserCorrectly(UserSeedType userActiveType)
     {
         var activeUserCredentials = _credentialsProvider.GetCredentials(userActiveType);
-        var request = new LoginRequest(activeUserCredentials.Email, activeUserCredentials.Password);
+        var request = new LoginUserRequest(activeUserCredentials.Email, activeUserCredentials.Password);
 
         var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
@@ -61,10 +61,10 @@ public class LoginTests : BaseIntegrationTest
     /// <param name="userInactiveType">An inactive user type.</param>
     [Theory]
     [InlineData(UserSeedType.CUSTOMER_INACTIVE)]
-    public async Task Login_WhenCredentialsAreValidAndUserIsInactive_ReturnsBadRequest(UserSeedType userInactiveType)
+    public async Task LoginUser_WhenCredentialsAreValidAndUserIsInactive_ReturnsBadRequest(UserSeedType userInactiveType)
     {
         var inactiveUserCredentials = _credentialsProvider.GetCredentials(userInactiveType);
-        var request = new LoginRequest(inactiveUserCredentials.Email, inactiveUserCredentials.Password);
+        var request = new LoginUserRequest(inactiveUserCredentials.Email, inactiveUserCredentials.Password);
 
         var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
@@ -80,10 +80,10 @@ public class LoginTests : BaseIntegrationTest
     /// Verifies it returns a bad request when email is incorrect.
     /// </summary>
     [Fact]
-    public async Task Login_WhenEmailIsIncorrect_ReturnsBadRequest()
+    public async Task LoginUser_WhenEmailIsIncorrect_ReturnsBadRequest()
     {
         var credentials = _credentialsProvider.GetCredentials(UserSeedType.CUSTOMER);
-        var request = new LoginRequest("incorrect_email@email.com", credentials.Password);
+        var request = new LoginUserRequest("incorrect_email@email.com", credentials.Password);
 
         var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
@@ -99,10 +99,10 @@ public class LoginTests : BaseIntegrationTest
     /// Verifies it returns a bad request when password is incorrect.
     /// </summary>
     [Fact]
-    public async Task Login_WhenPasswordIsIncorrect_ReturnsBadRequest()
+    public async Task LoginUser_WhenPasswordIsIncorrect_ReturnsBadRequest()
     {
         var credentials = _credentialsProvider.GetCredentials(UserSeedType.CUSTOMER);
-        var request = new LoginRequest(credentials.Email, "IncorrectPassword123");
+        var request = new LoginUserRequest(credentials.Email, "IncorrectPassword123");
 
         var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();

@@ -1,5 +1,5 @@
 using Application.Authentication.Errors;
-using Application.Authentication.Queries.Login;
+using Application.Authentication.Queries.LoginUser;
 using Application.UnitTests.Authentication.Queries.TestUtils;
 using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
@@ -18,16 +18,16 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Application.UnitTests.Authentication.Queries.Login;
+namespace Application.UnitTests.Authentication.Queries.LoginUser;
 
 /// <summary>
-/// Unit tests for the <see cref="LoginQueryHandler"/> class.
+/// Unit tests for the <see cref="LoginUserQueryHandler"/> class.
 /// </summary>
-public class LoginQueryHandlerTests
+public class LoginUserQueryHandlerTests
 {
     private const string LoginDefaultErrorMessage = "User email or password is incorrect";
 
-    private readonly LoginQueryHandler _handler;
+    private readonly LoginUserQueryHandler _handler;
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
@@ -38,15 +38,15 @@ public class LoginQueryHandlerTests
     /// </summary>
     public static readonly IEnumerable<object[]> ValidLoginQueries =
     [
-        [LoginQueryUtils.CreateQuery()],
-        [LoginQueryUtils.CreateQuery(email: "seven_777@email.com")],
-        [LoginQueryUtils.CreateQuery(password: "supersecret123")]
+        [LoginUserQueryUtils.CreateQuery()],
+        [LoginUserQueryUtils.CreateQuery(email: "seven_777@email.com")],
+        [LoginUserQueryUtils.CreateQuery(password: "supersecret123")]
     ];
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="LoginQueryHandlerTests"/> class.
+    /// Initiates a new instance of the <see cref="LoginUserQueryHandlerTests"/> class.
     /// </summary>
-    public LoginQueryHandlerTests()
+    public LoginUserQueryHandlerTests()
     {
         _mockJwtTokenService = new Mock<IJwtTokenService>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -55,11 +55,11 @@ public class LoginQueryHandlerTests
 
         _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
 
-        _handler = new LoginQueryHandler(
+        _handler = new LoginUserQueryHandler(
             _mockPasswordHasher.Object,
             _mockJwtTokenService.Object,
             _mockUnitOfWork.Object,
-            new Mock<ILogger<LoginQueryHandler>>().Object
+            new Mock<ILogger<LoginUserQueryHandler>>().Object
         );
     }
 
@@ -69,7 +69,7 @@ public class LoginQueryHandlerTests
     /// <param name="query">The login query.</param>
     [Theory]
     [MemberData(nameof(ValidLoginQueries))]
-    public async Task HandleLoginQuery_WhenCredentialsAreValid_ReturnsTokenAndUser(LoginQuery query)
+    public async Task HandleLoginUserQuery_WhenCredentialsAreValid_ReturnsTokenAndUser(LoginUserQuery query)
     {
         var generatedToken = "generated-token";
 
@@ -105,13 +105,13 @@ public class LoginQueryHandlerTests
     /// Tests when the user is not found by email in the database.
     /// </summary>
     [Fact]
-    public async Task HandleLoginQuery_WhenEmailIsIncorrect_ThrowsError()
+    public async Task HandleLoginUserQuery_WhenEmailIsIncorrect_ThrowsError()
     {
         _mockUserRepository
             .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
             .ReturnsAsync((User?)null);
 
-        var query = LoginQueryUtils.CreateQuery();
+        var query = LoginUserQueryUtils.CreateQuery();
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
@@ -124,7 +124,7 @@ public class LoginQueryHandlerTests
     /// Tests if it is not possible to authenticate an user with invalid password.
     /// </summary>
     [Fact]
-    public async Task HandleLoginQuery_WhenEmailIsCorrectAndPasswordIsIncorrect_ThrowsError()
+    public async Task HandleLoginUserQuery_WhenEmailIsCorrectAndPasswordIsIncorrect_ThrowsError()
     {
         _mockUserRepository
             .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
@@ -134,7 +134,7 @@ public class LoginQueryHandlerTests
             .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
             .Returns(false);
 
-        var query = LoginQueryUtils.CreateQuery();
+        var query = LoginUserQueryUtils.CreateQuery();
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
@@ -147,7 +147,7 @@ public class LoginQueryHandlerTests
     /// Tests if it is not possible to authenticate an inactive user.
     /// </summary>
     [Fact]
-    public async Task HandleLoginQuery_WhenUserIsInactive_ThrowsError()
+    public async Task HandleLoginUserQuery_WhenUserIsInactive_ThrowsError()
     {
         var userInactive = UserUtils.CreateUser(active: false);
 
@@ -155,7 +155,7 @@ public class LoginQueryHandlerTests
             .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
             .ReturnsAsync(userInactive);
 
-        var query = LoginQueryUtils.CreateQuery();
+        var query = LoginUserQueryUtils.CreateQuery();
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))

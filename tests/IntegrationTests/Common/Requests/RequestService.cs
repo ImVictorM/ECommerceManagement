@@ -44,7 +44,7 @@ public sealed class RequestService : IRequestService
     {
         var credentials = _credentialsProvider.GetCredentials(userType);
 
-        var request = new LoginRequest(credentials.Email, credentials.Password);
+        var request = new LoginUserRequest(credentials.Email, credentials.Password);
 
         var response = await Client.PostAsJsonAsync("/auth/login", request);
 

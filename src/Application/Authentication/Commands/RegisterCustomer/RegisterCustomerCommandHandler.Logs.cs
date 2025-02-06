@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
 
-namespace Application.Authentication.Commands.Register;
+namespace Application.Authentication.Commands.RegisterCustomer;
 
-public partial class RegisterCommandHandler
+public partial class RegisterCustomerCommandHandler
 {
-    private readonly ILogger<RegisterCommandHandler> _logger;
+    private readonly ILogger<RegisterCustomerCommandHandler> _logger;
 
     [LoggerMessage(
         EventId = 1,

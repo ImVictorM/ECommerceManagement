@@ -13,30 +13,30 @@ using SharedKernel.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Authentication.Queries.Login;
+namespace Application.Authentication.Queries.LoginUser;
 
 /// <summary>
-/// Query handler for the <see cref="LoginQuery"/> query.
+/// Query handler for the <see cref="LoginUserQuery"/> query.
 /// Handles user authentication.
 /// </summary>
-public partial class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
+public partial class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, AuthenticationResult>
 {
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LoginQueryHandler"/> class.
+    /// Initializes a new instance of the <see cref="LoginUserQueryHandler"/> class.
     /// </summary>
     /// <param name="jwtTokenGenerator">Token service.</param>
     /// <param name="passwordHasher">Password hash service.</param>
     /// <param name="unitOfWork">The unity of work.</param>
     /// <param name="logger">The query handler logger.</param>
-    public LoginQueryHandler(
+    public LoginUserQueryHandler(
         IPasswordHasher passwordHasher,
         IJwtTokenService jwtTokenGenerator,
         IUnitOfWork unitOfWork,
-        ILogger<LoginQueryHandler> logger
+        ILogger<LoginUserQueryHandler> logger
     )
     {
         _passwordHasher = passwordHasher;
@@ -46,7 +46,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
     }
 
     /// <inheritdoc/>
-    public async Task<AuthenticationResult> Handle(LoginQuery query, CancellationToken cancellationToken)
+    public async Task<AuthenticationResult> Handle(LoginUserQuery query, CancellationToken cancellationToken)
     {
         var inputEmail = Email.Create(query.Email);
 
@@ -79,7 +79,7 @@ public partial class LoginQueryHandler : IRequestHandler<LoginQuery, Authenticat
         return token;
     }
 
-    private bool IsUserPasswordCorrect(LoginQuery query, User user)
+    private bool IsUserPasswordCorrect(LoginUserQuery query, User user)
     {
         return _passwordHasher.Verify(query.Password, user.PasswordHash);
     }

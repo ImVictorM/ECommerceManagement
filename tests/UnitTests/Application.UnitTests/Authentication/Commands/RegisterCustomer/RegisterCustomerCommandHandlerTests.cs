@@ -1,4 +1,4 @@
-using Application.Authentication.Commands.Register;
+using Application.Authentication.Commands.RegisterCustomer;
 using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
@@ -19,23 +19,23 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Application.UnitTests.Authentication.Commands.Register;
+namespace Application.UnitTests.Authentication.Commands.RegisterCustomer;
 
 /// <summary>
-/// Unit tests for the <see cref="RegisterCommandHandler"/> class.
+/// Unit tests for the <see cref="RegisterCustomerCommandHandler"/> class.
 /// </summary>
-public class RegisterCommandHandlerTests
+public class RegisterCustomerCommandHandlerTests
 {
-    private readonly RegisterCommandHandler _handler;
+    private readonly RegisterCustomerCommandHandler _handler;
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="RegisterCommandHandlerTests"/> class.
+    /// Initiates a new instance of the <see cref="RegisterCustomerCommandHandlerTests"/> class.
     /// </summary>
-    public RegisterCommandHandlerTests()
+    public RegisterCustomerCommandHandlerTests()
     {
         _mockJwtTokenService = new Mock<IJwtTokenService>();
         _mockPasswordHasher = new Mock<IPasswordHasher>();
@@ -44,11 +44,11 @@ public class RegisterCommandHandlerTests
 
         _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
 
-        _handler = new RegisterCommandHandler(
+        _handler = new RegisterCustomerCommandHandler(
             _mockJwtTokenService.Object,
             _mockPasswordHasher.Object,
             _mockUnitOfWork.Object,
-            new Mock<ILogger<RegisterCommandHandler>>().Object
+            new Mock<ILogger<RegisterCustomerCommandHandler>>().Object
         );
     }
 
@@ -57,10 +57,10 @@ public class RegisterCommandHandlerTests
     /// </summary>
     public static IEnumerable<object[]> ValidRegisterCommands =>
     [
-        [RegisterCommandUtils.CreateCommand()],
-        [RegisterCommandUtils.CreateCommand(name: "Apparently not jack")],
-        [RegisterCommandUtils.CreateCommand(password: "super-secret123")],
-        [RegisterCommandUtils.CreateCommand(email: "my_email@email.com")],
+        [RegisterCustomerCommandUtils.CreateCommand()],
+        [RegisterCustomerCommandUtils.CreateCommand(name: "Apparently not jack")],
+        [RegisterCustomerCommandUtils.CreateCommand(password: "super-secret123")],
+        [RegisterCustomerCommandUtils.CreateCommand(email: "my_email@email.com")],
     ];
 
     /// <summary>
@@ -69,7 +69,7 @@ public class RegisterCommandHandlerTests
     /// <param name="registerCommand">The register command.</param>
     [Theory]
     [MemberData(nameof(ValidRegisterCommands))]
-    public async Task HandleRegisterCommand_WhenUserIsValid_ShouldCreateAndReturnUserPlusAuthenticationToken(RegisterCommand registerCommand)
+    public async Task HandleRegisterCustomerCommand_WhenUserIsValid_ShouldCreateAndReturnUserPlusAuthenticationToken(RegisterCustomerCommand registerCommand)
     {
         var generatedToken = "generated-token";
         var createdUserId = UserId.Create(2);
@@ -110,7 +110,7 @@ public class RegisterCommandHandlerTests
     /// Tests if it throws an error when a user with the same email already exists.
     /// </summary>
     [Fact]
-    public async Task HandleRegisterCommand_WhenUserWithEmailAlreadyExists_ThrowsError()
+    public async Task HandleRegisterCustomerCommand_WhenUserWithEmailAlreadyExists_ThrowsError()
     {
         var testEmail = EmailUtils.CreateEmail();
 
@@ -118,7 +118,7 @@ public class RegisterCommandHandlerTests
             .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
             .ReturnsAsync(UserUtils.CreateUser(email: testEmail));
 
-        var registerCommand = RegisterCommandUtils.CreateCommand(email: testEmail.ToString());
+        var registerCommand = RegisterCustomerCommandUtils.CreateCommand(email: testEmail.ToString());
 
         await FluentActions.Invoking(() => _handler.Handle(registerCommand, default))
            .Should()

@@ -14,30 +14,30 @@ using SharedKernel.ValueObjects;
 using Microsoft.Extensions.Logging;
 using MediatR;
 
-namespace Application.Authentication.Commands.Register;
+namespace Application.Authentication.Commands.RegisterCustomer;
 
 /// <summary>
-/// Command handler for the command <see cref="RegisterCommand"/>.
+/// Command handler for the command <see cref="RegisterCustomerCommand"/>.
 /// Handles user registration.
 /// </summary>
-public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthenticationResult>
+public partial class RegisterCustomerCommandHandler : IRequestHandler<RegisterCustomerCommand, AuthenticationResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IPasswordHasher _passwordHasher;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterCommandHandler"/> class.
+    /// Initializes a new instance of the <see cref="RegisterCustomerCommandHandler"/> class.
     /// </summary>
     /// <param name="jwtTokenGenerator">Token service.</param>
     /// <param name="passwordHasher">Password hash service.</param>
     /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="logger">The register logger.</param>
-    public RegisterCommandHandler(
+    public RegisterCustomerCommandHandler(
         IJwtTokenService jwtTokenGenerator,
         IPasswordHasher passwordHasher,
         IUnitOfWork unitOfWork,
-        ILogger<RegisterCommandHandler> logger
+        ILogger<RegisterCustomerCommandHandler> logger
     )
     {
         _jwtTokenService = jwtTokenGenerator;
@@ -47,7 +47,7 @@ public partial class RegisterCommandHandler : IRequestHandler<RegisterCommand, A
     }
 
     /// <inheritdoc/>
-    public async Task<AuthenticationResult> Handle(RegisterCommand command, CancellationToken cancellationToken)
+    public async Task<AuthenticationResult> Handle(RegisterCustomerCommand command, CancellationToken cancellationToken)
     {
         LogHandlingRegisterCommand(command.Email);
 

@@ -1,13 +1,11 @@
 namespace Contracts.Authentication;
 
 /// <summary>
-/// Represents a request to register a new user.
+/// Represents a request to log in an user.
 /// </summary>
-/// <param name="Name">The user name.</param>
 /// <param name="Email">The user email.</param>
 /// <param name="Password">The user password.</param>
-public record RegisterRequest(
-    string Name,
+public record LoginUserRequest(
     string Email,
     string Password
 );

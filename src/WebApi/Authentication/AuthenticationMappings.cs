@@ -1,6 +1,6 @@
-using Application.Authentication.Commands.Register;
+using Application.Authentication.Commands.RegisterCustomer;
+using Application.Authentication.Queries.LoginUser;
 using Application.Authentication.DTOs;
-using Application.Authentication.Queries.Login;
 
 using Contracts.Authentication;
 
@@ -16,8 +16,8 @@ public class AuthenticationMappings : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<RegisterRequest, RegisterCommand>();
-        config.NewConfig<LoginRequest, LoginQuery>();
+        config.NewConfig<RegisterCustomerRequest, RegisterCustomerCommand>();
+        config.NewConfig<LoginUserRequest, LoginUserQuery>();
         config.NewConfig<AuthenticationResult, AuthenticationResponse>()
             .Map(dest => dest.Id, src => src.User.Id.ToString())
             .Map(dest => dest, src => src.User)
