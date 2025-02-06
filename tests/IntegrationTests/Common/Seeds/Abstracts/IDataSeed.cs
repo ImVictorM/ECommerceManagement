@@ -16,5 +16,6 @@ public interface IDataSeed<TEnum, TEntity> : ISeed
     /// <summary>
     /// Lists all seed entities.
     /// </summary>
-    IReadOnlyList<TEntity> ListAll();
+    /// <param name="filter">A filter to be applied to the entities.</param>
+    IReadOnlyList<TEntity> ListAll(Func<TEntity, bool>? filter = null);
 }

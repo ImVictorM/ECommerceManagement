@@ -51,9 +51,11 @@ public abstract class DataSeed<TEnum, TEntity> : IDataSeed<TEnum, TEntity>
     /// Lists all seed entities.
     /// </summary>
     /// <returns>A list containing all entities.</returns>
-    public virtual IReadOnlyList<TEntity> ListAll()
+    public virtual IReadOnlyList<TEntity> ListAll(Func<TEntity, bool>? filter = null)
     {
-        return Data.Values.ToList();
+        return filter != null
+            ? Data.Values.Where(filter).ToList()
+            : Data.Values.ToList();
     }
 
     /// <inheritdoc/>

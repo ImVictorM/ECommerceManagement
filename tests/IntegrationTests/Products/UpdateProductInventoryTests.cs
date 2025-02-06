@@ -1,11 +1,13 @@
-using IntegrationTests.Common;
-using IntegrationTests.Products.TestUtils;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Seeds;
+using Domain.ProductAggregate;
 
 using Contracts.Products;
 
-using Domain.ProductAggregate;
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Products;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.Products.TestUtils;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -20,6 +22,8 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class UpdateProductInventoryTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateProductInventoryTests"/> class.
     /// </summary>
@@ -27,17 +31,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public UpdateProductInventoryTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
-    }
-
-    /// <summary>
-    /// Provides pairs of products and a random quantity to add to the product inventory.
-    /// </summary>
-    public static IEnumerable<object[]> ProductAndQuantityToIncrementPairs()
-    {
-        foreach (var product in ProductSeed.ListProducts(p => p.IsActive))
-        {
-            yield return new object[] { product, new Random().Next(1, 51) };
-        }
+        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
     }
 
     /// <summary>
@@ -48,7 +42,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     {
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
 
-        var response = await Client.PutAsJsonAsync("/products/1/inventory", request);
+        var response = await RequestService.Client.PutAsJsonAsync("/products/1/inventory", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -58,14 +52,14 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerUserType">The customer type to be authenticated.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
-    [InlineData(SeedAvailableUsers.CUSTOMER)]
-    public async Task UpdateProductInventory_WhenUserIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerUserType)
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    [InlineData(UserSeedType.CUSTOMER)]
+    public async Task UpdateProductInventory_WhenUserIsNotAdmin_ReturnsForbidden(UserSeedType customerUserType)
     {
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
 
-        await Client.LoginAs(customerUserType);
-        var response = await Client.PutAsJsonAsync("/products/1/inventory", request);
+        await RequestService.LoginAsAsync(customerUserType);
+        var response = await RequestService.Client.PutAsJsonAsync("/products/1/inventory", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -78,13 +72,13 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     {
         var notFoundId = "404";
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
-        await Client.LoginAs(SeedAvailableUsers.ADMIN);
 
-        var response = await Client.PutAsJsonAsync($"/products/{notFoundId}/inventory", request);
-        var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.PutAsJsonAsync($"/products/{notFoundId}/inventory", request);
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
+        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
         responseContent.Detail.Should().Be($"It was not possible to increment the inventory of the product with id {notFoundId} because the product does not exist");
     }
@@ -93,26 +87,29 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     /// Tests when the user is admin and the quantity to add in the inventory is valid the product inventory is updated and the response is no content.
     /// Also fetches the product by id to test if the quantity in inventory was indeed updated.
     /// </summary>
-    /// <param name="product">The product to update the inventory.</param>
+    /// <param name="productType">The product type to update the inventory.</param>
     /// <param name="quantityToIncrement">The quantity to add to the inventory.</param>
     [Theory]
-    [MemberData(nameof(ProductAndQuantityToIncrementPairs))]
+    [InlineData(ProductSeedType.PENCIL, 20)]
+    [InlineData(ProductSeedType.COMPUTER_ON_SALE, 5)]
+    [InlineData(ProductSeedType.CHAIN_BRACELET, 900)]
     public async Task UpdateProductInventory_WhenUserIsAdminAndQuantityToAddIsValid_UpdatesInventoryAndReturnsNoContent(
-        Product product,
+        ProductSeedType productType,
         int quantityToIncrement
     )
     {
+        var product = _seedProduct.GetByType(productType);
         var initialQuantity = product.Inventory.QuantityAvailable;
         var request = UpdateProductInventoryRequestUtils.CreateRequest(quantityToIncrement: quantityToIncrement);
         var expectedQuantityAfterUpdate = initialQuantity + quantityToIncrement;
 
-        await Client.LoginAs(SeedAvailableUsers.ADMIN);
-        var putResponse = await Client.PutAsJsonAsync($"/products/{product.Id}/inventory", request);
-        var getResponse = await Client.GetAsync($"/products/{product.Id}");
-        var getResponseContent = await getResponse.Content.ReadFromJsonAsync<ProductResponse>();
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var putResponse = await RequestService.Client.PutAsJsonAsync($"/products/{product.Id}/inventory", request);
+        var getResponse = await RequestService.Client.GetAsync($"/products/{product.Id}");
+        var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<ProductResponse>();
 
         putResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        getResponseContent!.QuantityAvailable.Should().Be(expectedQuantityAfterUpdate);
+        getResponseContent.QuantityAvailable.Should().Be(expectedQuantityAfterUpdate);
     }
 }

@@ -1,9 +1,16 @@
-using System.Net.Http.Json;
+using Domain.CategoryAggregate;
+using Domain.ProductAggregate;
+
 using Contracts.Products;
-using FluentAssertions;
+
 using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Categories;
+using IntegrationTests.Common.Seeds.Products;
+using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Products;
-using IntegrationTests.TestUtils.Seeds;
+
+using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Products;
@@ -13,13 +20,18 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class GetAllProductsTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetProductByIdTests"/> class.
+    /// Initiates a new instance of the <see cref="GetAllProductsTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
     public GetAllProductsTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
+        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
     }
 
     /// <summary>
@@ -28,13 +40,13 @@ public class GetAllProductsTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllProducts_WhenGettingAllProducts_ReturnsOkContainingTheActiveProducts()
     {
-        var activeProduct = ProductSeed.ListProducts(product => product.IsActive);
+        var activeProduct = _seedProduct.ListAll(product => product.IsActive);
 
-        var response = await Client.GetAsync("/products");
-        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<ProductResponse>>();
+        var response = await RequestService.Client.GetAsync("/products");
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent!.EnsureCorrespondsTo(activeProduct);
+        responseContent.EnsureCorrespondsTo(activeProduct);
     }
 
     /// <summary>
@@ -44,11 +56,11 @@ public class GetAllProductsTests : BaseIntegrationTest
     public async Task GetAllProducts_WhenGettingProductsWithLimitParameter_ReturnsOkContainingProductsSubset()
     {
         var limit = 2;
-        var response = await Client.GetAsync($"/products?limit={limit}");
-        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<ProductResponse>>();
+        var response = await RequestService.Client.GetAsync($"/products?limit={limit}");
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent!.Count().Should().Be(limit);
+        responseContent.Count().Should().Be(limit);
     }
 
     /// <summary>
@@ -57,15 +69,15 @@ public class GetAllProductsTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllProducts_WithCategoryFilter_ReturnsOkContainingCorrectProducts()
     {
-        var fashionCategory = CategorySeed.GetSeedCategory(SeedAvailableCategories.FASHION);
+        var fashionCategory = _seedCategory.GetByType(CategorySeedType.FASHION);
 
-        var response = await Client.GetAsync($"/products?category={fashionCategory.Id}");
+        var response = await RequestService.Client.GetAsync($"/products?category={fashionCategory.Id}");
 
-        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<ProductResponse>>();
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-        foreach (var product in responseContent!)
+        foreach (var product in responseContent)
         {
             product.Categories.Should().Contain(fashionCategory.Name);
         }

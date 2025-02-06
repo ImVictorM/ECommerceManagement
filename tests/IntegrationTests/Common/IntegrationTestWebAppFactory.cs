@@ -1,14 +1,9 @@
 using Infrastructure.Common.Persistence;
 
-using IntegrationTests.Common.Seeds;
-using IntegrationTests.Common.Seeds.Abstracts;
-
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Configuration;
 using Testcontainers.PostgreSql;
 using System.Data.Common;
@@ -101,37 +96,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<ECommerceDbContext>));
-
-            services.AddDbContext<ECommerceDbContext>(options =>
-            {
-                options.UseNpgsql(_dbConnection);
-            });
-
-            var assembly = typeof(IntegrationTestWebAppFactory).Assembly;
-
-            var seedTypes = assembly.DefinedTypes
-                .Where(t =>
-                    !t.IsAbstract
-                    && !t.IsGenericTypeDefinition
-                    && typeof(ISeed).IsAssignableFrom(t)
-                )
-                .Select(typeInfo => typeInfo.AsType())
-                .ToList();
-
-            foreach (var type in seedTypes)
-            {
-                services.AddSingleton(type, type);
-                services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(ISeed), type));
-
-                var dataSeedType = type
-                    .GetInterfaces()
-                    .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDataSeed<,>));
-
-                services.AddSingleton(dataSeedType, sp => sp.GetRequiredService(type));
-            }
-
-            services.AddSingleton<ISeedManager, SeedManager>();
+            services.AddTestServices(_configuration, _dbConnection, this);
         });
     }
 

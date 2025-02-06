@@ -1,6 +1,7 @@
 using Contracts.Authentication;
-using FluentAssertions;
 using RegisterRequest = Contracts.Authentication.RegisterRequest;
+
+using FluentAssertions;
 
 namespace IntegrationTests.TestUtils.Extensions.Authentication;
 

@@ -4,7 +4,6 @@ using Domain.SaleAggregate.ValueObjects;
 using Domain.ProductAggregate;
 
 using SharedKernel.UnitTests.TestUtils;
-using SharedKernel.Services;
 
 using Infrastructure.Common.Persistence;
 
@@ -51,22 +50,6 @@ public sealed class SaleSeed : DataSeed<SaleSeedType, Sale>
                 productsExcludeFromSale: new HashSet<ProductReference>()
             )
         };
-    }
-
-    /// <summary>
-    /// Calculates the expected product price after applying the product sales.
-    /// </summary>
-    /// <param name="product">The product.</param>
-    /// <returns>The total applying sales.</returns>
-    public decimal CalculateExpectedPriceAfterApplyingSales(Product product)
-    {
-        var productCategoryIds = product.ProductCategories.Select(c => c.CategoryId).ToHashSet();
-
-        var saleProduct = SaleProduct.Create(product.Id, productCategoryIds);
-
-        var discounts = Data.Values.Where(s => s.IsProductInSale(saleProduct)).Select(s => s.Discount);
-
-        return DiscountService.ApplyDiscounts(product.BasePrice, discounts.ToArray());
     }
 
     /// <inheritdoc/>

@@ -1,11 +1,16 @@
+using Domain.UserAggregate;
+using Domain.OrderAggregate;
+using Domain.UserAggregate.ValueObjects;
+
 using Contracts.Orders;
 
 using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Seeds;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.Common.Seeds.Orders;
+using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Orders;
+using IntegrationTests.TestUtils.Extensions.Http;
 
-using System.Net.Http.Json;
 using FluentAssertions;
 using Xunit.Abstractions;
 
@@ -16,6 +21,9 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class GetCustomerOrderByIdTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCustomerOrderByIdTests"/> class.
     /// </summary>
@@ -24,6 +32,8 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     public GetCustomerOrderByIdTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output)
         : base(factory, output)
     {
+        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
     }
 
     /// <summary>
@@ -32,7 +42,7 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetCustomerOrderById_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var response = await Client.GetAsync("/users/1/orders/1");
+        var response = await RequestService.Client.GetAsync("/users/1/orders/1");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -43,13 +53,13 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetCustomerOrderById_WithoutSelfCustomer_ReturnsForbidden()
     {
-        var customerWithOrdersType = SeedAvailableUsers.CUSTOMER;
-        var customerWithOrders = UserSeed.GetSeedUser(customerWithOrdersType);
-        var customerOrder = OrderSeed.GetUserOrders(customerWithOrders.Id).First();
-        var otherCustomerType = SeedAvailableUsers.CUSTOMER_WITH_ADDRESS;
+        var customerWithOrdersType = UserSeedType.CUSTOMER;
+        var otherCustomerType = UserSeedType.CUSTOMER_WITH_ADDRESS;
+        var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
+        var customerOrder = GetCustomerFistOrder(customerWithOrders.Id);
 
-        await Client.LoginAs(otherCustomerType);
-        var response = await Client.GetAsync($"/users/{customerWithOrders.Id}/orders/{customerOrder.Id}");
+        await RequestService.LoginAsAsync(otherCustomerType);
+        var response = await RequestService.Client.GetAsync($"/users/{customerWithOrders.Id}/orders/{customerOrder.Id}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -62,8 +72,8 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     {
         var notFoundId = "404";
 
-        await Client.LoginAs(SeedAvailableUsers.ADMIN);
-        var response = await Client.GetAsync($"/users/1/{notFoundId}");
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.GetAsync($"/users/1/{notFoundId}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -73,21 +83,27 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userWithPermission">The user with either self or admin permissions.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.ADMIN)]
-    [InlineData(SeedAvailableUsers.CUSTOMER)]
+    [InlineData(UserSeedType.ADMIN)]
+    [InlineData(UserSeedType.CUSTOMER)]
     public async Task GetCustomerOrderById_WithSelfOrAdminPermission_ReturnsTheOrder(
-        SeedAvailableUsers userWithPermission
+        UserSeedType userWithPermission
     )
     {
-        var orderOwnerType = SeedAvailableUsers.CUSTOMER;
-        var orderOwner = UserSeed.GetSeedUser(orderOwnerType);
-        var customerOrder = OrderSeed.GetUserOrders(orderOwner.Id).First();
+        var orderOwnerType = UserSeedType.CUSTOMER;
+        var orderOwner = _seedUser.GetByType(orderOwnerType);
+        var customerOrder = GetCustomerFistOrder(orderOwner.Id);
 
-        await Client.LoginAs(userWithPermission);
-        var response = await Client.GetAsync($"/users/{orderOwner.Id}/orders/{customerOrder.Id}");
-        var responseContent = await response.Content.ReadFromJsonAsync<OrderDetailedResponse>();
+        await RequestService.LoginAsAsync(userWithPermission);
+        var response = await RequestService.Client.GetAsync($"/users/{orderOwner.Id}/orders/{customerOrder.Id}");
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<OrderDetailedResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(customerOrder);
+    }
+
+    private Order GetCustomerFistOrder(UserId ownerId)
+    {
+        return _seedOrder
+            .ListAll(o => o.OwnerId == ownerId)[0];
     }
 }

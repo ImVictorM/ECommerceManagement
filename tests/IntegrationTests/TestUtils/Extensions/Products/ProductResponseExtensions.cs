@@ -1,5 +1,7 @@
 using Contracts.Products;
+
 using Domain.ProductAggregate;
+
 using FluentAssertions;
 
 namespace IntegrationTests.TestUtils.Extensions.Products;

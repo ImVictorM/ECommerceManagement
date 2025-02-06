@@ -1,5 +1,6 @@
 using Infrastructure.Common.Persistence;
 
+using IntegrationTests.Common.Requests.Abstracts;
 using IntegrationTests.Common.Seeds.Abstracts;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -16,11 +17,6 @@ public class BaseIntegrationTest : IAsyncLifetime
     private readonly IntegrationTestWebAppFactory _factory;
 
     /// <summary>
-    /// Gets an HTTP client to make requests.
-    /// </summary>
-    public HttpClient Client { get; }
-
-    /// <summary>
     /// Gets a helper to log some data to the console.
     /// </summary>
     public ITestOutputHelper Output { get; }
@@ -31,6 +27,11 @@ public class BaseIntegrationTest : IAsyncLifetime
     public ISeedManager SeedManager { get; }
 
     /// <summary>
+    /// Gets the request service.
+    /// </summary>
+    public IRequestService RequestService { get; }
+
+    /// <summary>
     /// Initiates a new instance of the <see cref="BaseIntegrationTest"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
@@ -39,10 +40,10 @@ public class BaseIntegrationTest : IAsyncLifetime
     {
         _factory = factory;
         Output = output;
-        Client = factory.CreateClient();
 
         using var scope = _factory.Services.CreateScope();
         SeedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
+        RequestService = scope.ServiceProvider.GetRequiredService<IRequestService>();
     }
 
     /// <inheritdoc/>

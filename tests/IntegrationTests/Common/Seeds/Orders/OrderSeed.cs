@@ -7,7 +7,6 @@ using Domain.ProductAggregate;
 using Domain.ShippingMethodAggregate;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
-using Domain.UserAggregate.ValueObjects;
 
 using Infrastructure.Common.Persistence;
 
@@ -92,16 +91,6 @@ public sealed class OrderSeed : AsyncDataSeed<OrderSeedType, Order>
         {
             Data[key] = value;
         }
-    }
-
-    /// <summary>
-    /// Retrieves all the seed orders associated with a specific user.
-    /// </summary>
-    /// <param name="ownerId">The user id.</param>
-    /// <returns>A read-only list of orders belonging to the specified user.</returns>
-    public IReadOnlyList<Order> GetUserOrders(UserId ownerId)
-    {
-        return Data.Values.Where(o => o.OwnerId == ownerId).ToList();
     }
 
     /// <inheritdoc/>

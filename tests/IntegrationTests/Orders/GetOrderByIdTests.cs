@@ -1,13 +1,16 @@
-using Contracts.Orders;
+using Domain.OrderAggregate;
 
-using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Extensions.Orders;
-using IntegrationTests.TestUtils.Seeds;
+using Contracts.Orders;
 
 using WebApi.Orders;
 
-using System.Net.Http.Json;
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Orders;
+using IntegrationTests.TestUtils.Extensions.Orders;
+using IntegrationTests.TestUtils.Extensions.Http;
+
 using FluentAssertions;
 using Xunit.Abstractions;
 
@@ -18,13 +21,16 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class GetOrderByIdTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+
     /// <summary>
-    /// Initiates a new instance of the <see cref="PlaceOrderTests"/> class.
+    /// Initiates a new instance of the <see cref="GetOrderByIdTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
     public GetOrderByIdTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
     }
 
     /// <summary>
@@ -35,8 +41,8 @@ public class GetOrderByIdTests : BaseIntegrationTest
     {
         var notFoundId = "404";
 
-        await Client.LoginAs(SeedAvailableUsers.ADMIN);
-        var response = await Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{notFoundId}");
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{notFoundId}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -47,9 +53,9 @@ public class GetOrderByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetOrderById_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
-        var existingOrder = OrderSeed.GetSeedOrder(SeedAvailableOrders.CUSTOMER_ORDER_PENDING);
+        var existingOrder = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
 
-        var response = await Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{existingOrder.Id}");
+        var response = await RequestService.Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{existingOrder.Id}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -60,10 +66,10 @@ public class GetOrderByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetOrderById_WhenUserIsNotAllowedToReadOrder_ReturnsForbidden()
     {
-        var order = OrderSeed.GetSeedOrder(SeedAvailableOrders.CUSTOMER_ORDER_PENDING);
+        var order = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
 
-        await Client.LoginAs(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS);
-        var response = await Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{order.Id}");
+        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER_WITH_ADDRESS);
+        var response = await RequestService.Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{order.Id}");
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -73,14 +79,14 @@ public class GetOrderByIdTests : BaseIntegrationTest
     /// </summary>
     /// <param name="allowedUser">Allowed user types.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.ADMIN)]
-    public async Task GetOrderById_WhenUserIsAllowed_ReturnsOk(SeedAvailableUsers allowedUser)
+    [InlineData(UserSeedType.ADMIN)]
+    public async Task GetOrderById_WhenUserIsAllowed_ReturnsOk(UserSeedType allowedUser)
     {
-        var order = OrderSeed.GetSeedOrder(SeedAvailableOrders.CUSTOMER_ORDER_PENDING);
+        var order = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
 
-        await Client.LoginAs(allowedUser);
-        var response = await Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{order.Id}");
-        var responseContent = await response.Content.ReadFromJsonAsync<OrderDetailedResponse>();
+        await RequestService.LoginAsAsync(allowedUser);
+        var response = await RequestService.Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{order.Id}");
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<OrderDetailedResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(order);

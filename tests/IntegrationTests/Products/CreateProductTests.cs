@@ -1,10 +1,14 @@
-using IntegrationTests.Common;
-using IntegrationTests.Products.TestUtils;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Extensions.Products;
-using IntegrationTests.TestUtils.Seeds;
+using Domain.CategoryAggregate;
 
 using Contracts.Products;
+
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Categories;
+using IntegrationTests.Products.TestUtils;
+using IntegrationTests.TestUtils.Extensions.Products;
+using IntegrationTests.TestUtils.Extensions.Http;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -19,6 +23,8 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class CreateProductTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="CreateProductTests"/> class.
     /// </summary>
@@ -26,6 +32,7 @@ public class CreateProductTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public CreateProductTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
     }
 
     /// <summary>
@@ -34,14 +41,14 @@ public class CreateProductTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerType">The type of non-admin user attempting to create a product.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.CUSTOMER_WITH_ADDRESS)]
-    [InlineData(SeedAvailableUsers.CUSTOMER)]
-    public async Task CreateProduct_WhenUserAuthenticatedIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerType)
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    [InlineData(UserSeedType.CUSTOMER)]
+    public async Task CreateProduct_WhenUserAuthenticatedIsNotAdmin_ReturnsForbidden(UserSeedType customerType)
     {
         var request = CreateProductRequestUtils.CreateRequest();
 
-        await Client.LoginAs(customerType);
-        var response = await Client.PostAsJsonAsync("/products", request);
+        await RequestService.LoginAsAsync(customerType);
+        var response = await RequestService.Client.PostAsJsonAsync("/products", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -55,7 +62,7 @@ public class CreateProductTests : BaseIntegrationTest
     {
         var request = CreateProductRequestUtils.CreateRequest();
 
-        var response = await Client.PostAsJsonAsync("/products", request);
+        var response = await RequestService.Client.PostAsJsonAsync("/products", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -69,8 +76,8 @@ public class CreateProductTests : BaseIntegrationTest
     {
         var productCategories = new[]
         {
-            CategorySeed.GetSeedCategory(SeedAvailableCategories.BOOKS_STATIONERY),
-            CategorySeed.GetSeedCategory(SeedAvailableCategories.TECHNOLOGY)
+           _seedCategory.GetByType(CategorySeedType.BOOKS_STATIONERY),
+            _seedCategory.GetByType(CategorySeedType.TECHNOLOGY)
         };
 
         var request = CreateProductRequestUtils.CreateRequest(
@@ -85,16 +92,16 @@ public class CreateProductTests : BaseIntegrationTest
             ]
         );
 
-        await Client.LoginAs(SeedAvailableUsers.ADMIN);
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var postResponse = await Client.PostAsJsonAsync("/products", request);
+        var postResponse = await RequestService.Client.PostAsJsonAsync("/products", request);
         var resourceLocation = postResponse.Headers.Location;
-        var getResponse = await Client.GetAsync(resourceLocation);
-        var getResponseContent = await getResponse.Content.ReadFromJsonAsync<ProductResponse>();
+        var getResponse = await RequestService.Client.GetAsync(resourceLocation);
+        var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<ProductResponse>();
 
         postResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        getResponseContent!.EnsureCreatedFromRequest(request);
-        getResponseContent!.Categories.Should().BeEquivalentTo(productCategories.Select(c => c.Name));
+        getResponseContent.EnsureCreatedFromRequest(request);
+        getResponseContent.Categories.Should().BeEquivalentTo(productCategories.Select(c => c.Name));
     }
 }
