@@ -7,12 +7,12 @@ using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Constants;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
+using Xunit.Abstractions;
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Xunit.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace IntegrationTests.Authentication;
 

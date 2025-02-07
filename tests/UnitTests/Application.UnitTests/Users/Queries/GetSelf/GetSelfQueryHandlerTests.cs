@@ -9,6 +9,7 @@ using Domain.UnitTests.TestUtils;
 
 using SharedKernel.ValueObjects;
 
+using Microsoft.Extensions.Logging;
 using FluentAssertions;
 using Moq;
 
@@ -35,7 +36,11 @@ public class GetSelfQueryHandlerTests
 
         _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
 
-        _handler = new GetSelfQueryHandler(_mockIdentityProvider.Object, _mockUnitOfWork.Object);
+        _handler = new GetSelfQueryHandler(
+            _mockIdentityProvider.Object,
+            _mockUnitOfWork.Object,
+            new Mock<ILogger<GetSelfQueryHandler>>().Object
+        );
     }
 
     /// <summary>

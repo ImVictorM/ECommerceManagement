@@ -25,8 +25,6 @@ namespace Application.UnitTests.Authentication.Queries.LoginUser;
 /// </summary>
 public class LoginUserQueryHandlerTests
 {
-    private const string LoginDefaultErrorMessage = "User email or password is incorrect";
-
     private readonly LoginUserQueryHandler _handler;
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
@@ -117,7 +115,7 @@ public class LoginUserQueryHandlerTests
             .Invoking(() => _handler.Handle(query, default))
             .Should()
             .ThrowAsync<AuthenticationFailedException>()
-            .WithMessage(LoginDefaultErrorMessage);
+            .WithMessage(AuthenticationErrorMessages.AuthenticationFailed);
     }
 
     /// <summary>
@@ -140,7 +138,7 @@ public class LoginUserQueryHandlerTests
             .Invoking(() => _handler.Handle(query, default))
             .Should()
             .ThrowAsync<AuthenticationFailedException>()
-            .WithMessage(LoginDefaultErrorMessage);
+            .WithMessage(AuthenticationErrorMessages.AuthenticationFailed);
     }
 
     /// <summary>
@@ -161,6 +159,6 @@ public class LoginUserQueryHandlerTests
             .Invoking(() => _handler.Handle(query, default))
             .Should()
             .ThrowAsync<AuthenticationFailedException>()
-            .WithMessage(LoginDefaultErrorMessage);
+            .WithMessage(AuthenticationErrorMessages.AuthenticationFailed);
     }
 }

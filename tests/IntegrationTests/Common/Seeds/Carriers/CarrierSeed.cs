@@ -23,11 +23,15 @@ public sealed class CarrierSeed : DataSeed<CarrierSeedType, Carrier>
     /// <summary>
     /// Initiates a new instance of the <see cref="CarrierSeed"/> class.
     /// </summary>
-    public CarrierSeed(IPasswordHasher passwordHasher) : base(CreateSeedData(passwordHasher))
+    public CarrierSeed(IPasswordHasher passwordHasher, ICredentialsProvider<CarrierSeedType> credentialsProvider)
+        : base(CreateSeedData(passwordHasher, credentialsProvider))
     {
     }
 
-    private static Dictionary<CarrierSeedType, Carrier> CreateSeedData(IPasswordHasher passwordHasher)
+    private static Dictionary<CarrierSeedType, Carrier> CreateSeedData(
+        IPasswordHasher passwordHasher,
+        ICredentialsProvider<CarrierSeedType> credentialsProvider
+    )
     {
         return new()
         {
@@ -35,8 +39,8 @@ public sealed class CarrierSeed : DataSeed<CarrierSeedType, Carrier>
             (
                 id: CarrierId.Create(-1),
                 name: "ECommerceManagementCarrier",
-                email: Email.Create("carrier@email.com"),
-                passwordHash: passwordHasher.Hash("carrier123"),
+                email: Email.Create(credentialsProvider.GetCredentials(CarrierSeedType.INTERNAL).Email),
+                passwordHash: passwordHasher.Hash(credentialsProvider.GetCredentials(CarrierSeedType.INTERNAL).Password),
                 phone: "19859284294"
             )
         };

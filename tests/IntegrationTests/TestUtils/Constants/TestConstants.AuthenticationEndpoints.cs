@@ -8,12 +8,16 @@ public static partial class TestConstants
     public static class AuthenticationEndpoints
     {
         /// <summary>
-        /// The register customer endpoint.
+        /// Endpoint to register a customer.
         /// </summary>
         public const string RegisterCustomer = "/auth/register/users/customers";
         /// <summary>
-        /// The login user endpoint.
+        /// Endpoint to log in an user.
         /// </summary>
         public const string LoginUser = "/auth/login/users";
+        /// <summary>
+        /// Endpoint to log in a carrier.
+        /// </summary>
+        public const string LoginCarrier = "/auth/login/carriers";
     }
 }
