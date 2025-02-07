@@ -1,5 +1,3 @@
-using Application.Common.PaymentGateway;
-
 using Domain.OrderAggregate;
 
 namespace Application.Orders.DTOs;
@@ -9,7 +7,9 @@ namespace Application.Orders.DTOs;
 /// </summary>
 /// <param name="Order">The order.</param>
 /// <param name="Payment">The order payment.</param>
+/// <param name="Shipment">The order shipment.</param>
 public record OrderDetailedResult(
     Order Order,
-    PaymentResponse? Payment
+    OrderPaymentResult Payment,
+    OrderShipmentResult Shipment
 );

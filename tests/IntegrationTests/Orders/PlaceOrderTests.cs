@@ -1,6 +1,7 @@
 using Domain.ProductAggregate;
 using Domain.CouponAggregate;
 using Domain.ShippingMethodAggregate;
+using Domain.ShipmentAggregate.Enumerations;
 using Domain.SaleAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.OrderAggregate.Enumerations;
@@ -153,6 +154,12 @@ public class PlaceOrderTests : BaseIntegrationTest
         createdResourceContent.OwnerId.Should().Be(orderOwner.Id.ToString());
         createdResourceContent.Total.Should().Be(expectedTotalPrice);
         createdResourceContent.Payment.Should().NotBeNull();
+        createdResourceContent.Shipment.Should().NotBeNull();
+        createdResourceContent.Shipment.Status.Should().Be(ShipmentStatus.Pending.Name);
+        createdResourceContent.Shipment.DeliveryAddress.Should().BeEquivalentTo(request.DeliveryAddress);
+        createdResourceContent.Shipment.ShippingMethod.Name.Should().Be(shippingMethod.Name);
+        createdResourceContent.Shipment.ShippingMethod.Price.Should().Be(shippingMethod.Price);
+        createdResourceContent.Shipment.ShippingMethod.EstimatedDeliveryDays.Should().Be(shippingMethod.EstimatedDeliveryDays);
     }
 
     /// <summary>

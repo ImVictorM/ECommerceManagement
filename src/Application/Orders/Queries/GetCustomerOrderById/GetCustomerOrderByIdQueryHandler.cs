@@ -58,23 +58,32 @@ public sealed partial class GetCustomerOrderByIdQueryHandler : IRequestHandler<G
 
         var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(payment => payment.OrderId == orderId);
 
-        PaymentResponse? paymentDetails = null;
+        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment!.Id.ToString());
 
-        if (orderPayment == null)
-        {
-            LogOrderPaymentNotFound();
-        }
-        else
-        {
-            LogOrderPaymentFound();
+        var orderShipment = await _unitOfWork.ShipmentRepository.FindOneOrDefaultAsync(shipment => shipment.OrderId == order.Id);
 
-            paymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment.Id.ToString());
+        var orderShippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(orderShipment!.ShippingMethodId);
 
-            LogPaymentDetailsFetched();
-        }
-
-        LogReturningResult();
-
-        return new OrderDetailedResult(order, paymentDetails);
+        return new OrderDetailedResult(
+            order,
+            new OrderPaymentResult(
+                orderPayment.Id,
+                orderPaymentDetails.Amount,
+                orderPaymentDetails.Installments,
+                orderPaymentDetails.Status.Name,
+                orderPaymentDetails.Details,
+                orderPaymentDetails.PaymentMethod
+            ),
+            new OrderShipmentResult(
+                orderShipment.Id,
+                orderShipment.ShipmentStatus.Name,
+                orderShipment.DeliveryAddress,
+                new OrderShippingMethodResult(
+                    orderShippingMethod!.Name,
+                    orderShippingMethod.Price,
+                    orderShippingMethod.EstimatedDeliveryDays
+                )
+            )
+        );
     }
 }
