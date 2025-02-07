@@ -1,8 +1,7 @@
+using Application.Common.Security.Authentication;
+
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
-
-using Application.Common.Security.Authorization.Roles;
-using Application.Common.Security.Authentication;
 
 using Infrastructure.Common.Persistence.Configurations;
 using Infrastructure.Common.Persistence.Configurations.Abstracts;
@@ -151,10 +150,17 @@ public sealed class UserConfigurations : EntityTypeConfigurationDependency<User>
             userRolesBuilder.HasKey("id");
 
             userRolesBuilder
+                .Property("_roleId")
+                .HasColumnName("id_role")
+                .IsRequired();
+
+            userRolesBuilder
                 .HasOne<Role>()
                 .WithMany()
-                .HasForeignKey(ur => ur.RoleId)
+                .HasForeignKey("_roleId")
                 .IsRequired();
+
+            userRolesBuilder.Ignore(ur => ur.Role);
 
             userRolesBuilder.WithOwner().HasForeignKey("id_user");
 
@@ -166,7 +172,7 @@ public sealed class UserConfigurations : EntityTypeConfigurationDependency<User>
             {
                 id = 1L,
                 id_user = _adminAccount.Id,
-                RoleId = Role.Admin.Id
+                _roleId = Role.Admin.Id
             });
         });
     }

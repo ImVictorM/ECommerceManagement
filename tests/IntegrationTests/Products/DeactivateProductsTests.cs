@@ -4,6 +4,7 @@ using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Constants;
 
 using FluentAssertions;
 using System.Net;
@@ -36,7 +37,9 @@ public class DeactivateProductsTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateProduct_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
-        var response = await RequestService.Client.DeleteAsync("/products/1");
+        var endpoint = TestConstants.ProductEndpoints.DeactivateProduct("1");
+
+        var response = await RequestService.Client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -50,8 +53,10 @@ public class DeactivateProductsTests : BaseIntegrationTest
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
     public async Task DeactivateProduct_WhenUserIsNotAdmin_ReturnsForbidden(UserSeedType customerType)
     {
+        var endpoint = TestConstants.ProductEndpoints.DeactivateProduct("1");
+
         await RequestService.LoginAsAsync(customerType);
-        var response = await RequestService.Client.DeleteAsync("/products/1");
+        var response = await RequestService.Client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -63,9 +68,10 @@ public class DeactivateProductsTests : BaseIntegrationTest
     public async Task DeactivateProduct_WhenProductDoesNotExist_ReturnNotFound()
     {
         var notFoundId = "404";
+        var endpoint = TestConstants.ProductEndpoints.DeactivateProduct(notFoundId);
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.DeleteAsync($"/products/{notFoundId}");
+        var response = await RequestService.Client.DeleteAsync(endpoint);
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -88,10 +94,12 @@ public class DeactivateProductsTests : BaseIntegrationTest
     )
     {
         var productToBeDeactivate = _seedProduct.GetByType(productToBeDeactivatedType);
+        var deactivateProductEndpoint = TestConstants.ProductEndpoints.DeactivateProduct(productToBeDeactivate.Id.ToString());
+        var getProductByIdEndpoint = TestConstants.ProductEndpoints.GetProductById(productToBeDeactivate.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseDelete = await RequestService.Client.DeleteAsync($"/products/{productToBeDeactivate.Id}");
-        var responseGet = await RequestService.Client.GetAsync($"/products/{productToBeDeactivate.Id}");
+        var responseDelete = await RequestService.Client.DeleteAsync(deactivateProductEndpoint);
+        var responseGet = await RequestService.Client.GetAsync(getProductByIdEndpoint);
 
         responseDelete.StatusCode.Should().Be(HttpStatusCode.NoContent);
         responseGet.StatusCode.Should().Be(HttpStatusCode.NotFound);

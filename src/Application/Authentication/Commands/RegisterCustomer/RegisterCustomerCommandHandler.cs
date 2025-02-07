@@ -1,8 +1,6 @@
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
-using Domain.UserAggregate.ValueObjects;
 
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
@@ -63,14 +61,10 @@ public partial class RegisterCustomerCommandHandler : IRequestHandler<RegisterCu
 
         var passwordHash = _passwordHasher.Hash(command.Password);
 
-        var user = User.Create(
+        var user = User.CreateCustomer(
             command.Name,
             inputEmail,
-            passwordHash,
-            new HashSet<UserRole>()
-            {
-                UserRole.Create(Role.Customer.Id)
-            }
+            passwordHash
         );
 
         LogUserCreatedWithCustomerRole();
@@ -81,17 +75,18 @@ public partial class RegisterCustomerCommandHandler : IRequestHandler<RegisterCu
 
         LogUserSavedSuccessfully(user.Email.Value);
 
-        var availableRoles = Role.List().ToDictionary(r => r.Id);
-
         var token = _jwtTokenService.GenerateToken(
             new IdentityUser(
                 user.Id.ToString(),
-                user.UserRoles.Select(r => availableRoles[r.RoleId].Name).ToList()
+                user.UserRoles.Select(ur => ur.Role).ToList()
             )
         );
 
         LogTokenGeneratedSuccessfully();
 
-        return new AuthenticationResult(user, token);
+        return new AuthenticationResult(
+            new AuthenticatedIdentity(user.Id.ToString(), user.Name, user.Email.ToString(), user.Phone),
+            token
+        );
     }
 }

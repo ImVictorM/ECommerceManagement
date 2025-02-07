@@ -18,37 +18,79 @@ public static class UserUtils
 
     /// <summary>
     /// Creates a new instance of the <see cref="User"/> class.
+    /// Creates a new customer.
     /// </summary>
     /// <param name="id">The user id.</param>
     /// <param name="name">The user name.</param>
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="phone">The user phone.</param>
-    /// <param name="roles">The user roles.</param>
     /// <param name="email">The user email.</param>
     /// <param name="addresses">The user addresses.</param>
     /// <param name="active">Defines if the user should be inactive.</param>
     /// <returns>A new instance of the <see cref="User"/> class.</returns>
-    public static User CreateUser(
+    public static User CreateCustomer(
         UserId? id = null,
         string? name = null,
         Email? email = null,
         PasswordHash? passwordHash = null,
         string? phone = null,
-        IReadOnlySet<UserRole>? roles = null,
         IReadOnlySet<Address>? addresses = null,
         bool active = true
     )
     {
-        var user = User.Create(
+        var user = User.CreateCustomer(
             name ?? CreateUserName(),
             email ?? EmailUtils.CreateEmail(),
             passwordHash ?? PasswordHashUtils.Create(),
-            roles ?? new HashSet<UserRole>()
-            {
-                UserRole.Create(1),
-            },
             phone
         );
+
+        if (id != null)
+        {
+            user.SetIdUsingReflection(id);
+        }
+
+        if (addresses != null)
+        {
+            user.AssignAddress([.. addresses]);
+        }
+
+        if (!active)
+        {
+            user.Deactivate();
+        }
+
+        return user;
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="User"/> class.
+    /// Creates a new administrator.
+    /// </summary>
+    /// <param name="id">The user id.</param>
+    /// <param name="name">The user name.</param>
+    /// <param name="passwordHash">The user password hash.</param>
+    /// <param name="phone">The user phone.</param>
+    /// <param name="email">The user email.</param>
+    /// <param name="addresses">The user addresses.</param>
+    /// <param name="active">Defines if the user should be inactive.</param>
+    /// <returns>A new instance of the <see cref="User"/> class.</returns>
+    public static User CreateAdmin(
+        UserId? id = null,
+        string? name = null,
+        Email? email = null,
+        PasswordHash? passwordHash = null,
+        string? phone = null,
+        IReadOnlySet<Address>? addresses = null,
+        bool active = true
+    )
+    {
+        var user = User.CreateAdmin(
+           name ?? CreateUserName(),
+           email ?? EmailUtils.CreateEmail(),
+           passwordHash ?? PasswordHashUtils.Create(),
+           phone
+       );
 
         if (id != null)
         {
@@ -83,12 +125,12 @@ public static class UserUtils
     /// <param name="count">The quantity of users to be created.</param>
     /// <param name="active">Specify if the created users should be active or inactive.</param>
     /// <returns>A list of unique users.</returns>
-    public static IEnumerable<User> CreateUsers(int count = 1, bool active = true)
+    public static IEnumerable<User> CreateCustomers(int count = 1, bool active = true)
     {
         var users = Enumerable
             .Range(0, count)
             .Select(index =>
-                CreateUser(
+                CreateCustomer(
                     id: UserId.Create(index + 1),
                     active: active
                 )

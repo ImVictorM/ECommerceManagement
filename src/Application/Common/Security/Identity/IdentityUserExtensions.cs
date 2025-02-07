@@ -1,4 +1,4 @@
-using Application.Common.Security.Authorization.Roles;
+using SharedKernel.ValueObjects;
 
 namespace Application.Common.Security.Identity;
 
@@ -14,8 +14,6 @@ public static class IdentityUserExtensions
     /// <returns>A bool value indicating if the current user is an administrator.</returns>
     public static bool IsAdmin(this IdentityUser user)
     {
-        var roles = user.Roles.Select(RoleUtils.FromDisplayName);
-
-        return roles.HasAdminRole();
+        return user.Roles.Any(role => role == Role.Admin);
     }
 }

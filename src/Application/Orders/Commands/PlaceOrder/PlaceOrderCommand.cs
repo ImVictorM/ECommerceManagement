@@ -1,6 +1,5 @@
 using Application.Common.DTOs;
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 using Application.Orders.DTOs;
 
 using SharedKernel.Interfaces;

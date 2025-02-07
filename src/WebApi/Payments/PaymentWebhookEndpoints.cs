@@ -18,10 +18,7 @@ namespace WebApi.Payments;
 /// </summary>
 public class PaymentWebhookEndpoints : ICarterModule
 {
-    /// <summary>
-    /// The base endpoint for payment webhooks.
-    /// </summary>
-    public const string BaseEndpoint = "webhooks/payments";
+    private const string BaseEndpoint = "webhooks/payments";
 
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)

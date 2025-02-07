@@ -50,7 +50,7 @@ public class OrderCreatedProcessPaymentHandlerTests
     public async Task HandleOrderCreated_WhenEventIsFired_AuthorizesAndCreatesPayment()
     {
         var payerId = UserId.Create(1);
-        var payer = UserUtils.CreateUser(id: payerId);
+        var payer = UserUtils.CreateCustomer(id: payerId);
         var order = await OrderUtils.CreateOrderAsync(ownerId: payerId);
 
         var paymentResponse = PaymentResponseUtils.CreateResponse();

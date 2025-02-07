@@ -24,38 +24,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.HasSequence("CouponRestrictionSequence");
 
-            modelBuilder.Entity("Application.Common.Security.Authorization.Roles.Role", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            Name = "Customer"
-                        });
-                });
-
             modelBuilder.Entity("Domain.CarrierAggregate.Carrier", b =>
                 {
                     b.Property<long>("Id")
@@ -96,10 +64,16 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<long>("_roleId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_role");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("_roleId");
 
                     b.ToTable("carriers", (string)null);
 
@@ -107,12 +81,13 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8922), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7716), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "carrier@email.com",
                             Name = "ECommerceManagementCarrier",
-                            PasswordHash = "2AB9F1E1CD7021A4CFB833DC0AA408D742F2A42C24AA6BCB010717779372B7D0-5DBA0451842A6D3A8D52F4D61E71D4AC",
+                            PasswordHash = "AACE47AD3448036C245ED568DD8456F0019EE2E525A87989AE351C38DF19F1C6-C329F1E800BCFA9D65B06952B352E3C8",
                             Phone = "",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8924), new TimeSpan(0, 0, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7722), new TimeSpan(0, 0, 0, 0, 0)),
+                            _roleId = 3L
                         });
                 });
 
@@ -283,9 +258,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("description");
 
-                    b.Property<long>("OrderStatusId")
+                    b.Property<long>("OrderStatus")
                         .HasColumnType("bigint")
-                        .HasColumnName("id_order_status");
+                        .HasColumnName("order_status");
 
                     b.Property<long>("OwnerId")
                         .HasColumnType("bigint")
@@ -299,11 +274,15 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<long>("_orderStatusId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_order_status");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderStatusId");
-
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("_orderStatusId");
 
                     b.ToTable("orders", (string)null);
                 });
@@ -711,12 +690,49 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9778), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1224), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@email.com",
                             IsActive = true,
                             Name = "admin",
-                            PasswordHash = "31DD8179456F94EA43DDC8998D0B32E8303EF693A764581E432A63CBE300DE75-1BB36DB393A95CA85F4A579E568BBC4C",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9783), new TimeSpan(0, 0, 0, 0, 0))
+                            PasswordHash = "723FEA43BBD7A66F2130D6E62F416A6CFAE570EA19A6E0BB5FBFF188F2C3E7E1-00FA5FC6360F50C23B2B992D93456698",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1231), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
+            modelBuilder.Entity("SharedKernel.ValueObjects.Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Name = "Customer"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Name = "Carrier"
                         });
                 });
 
@@ -732,6 +748,15 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
                     b.ToTable("restriction_products", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.CarrierAggregate.Carrier", b =>
+                {
+                    b.HasOne("SharedKernel.ValueObjects.Role", null)
+                        .WithMany()
+                        .HasForeignKey("_roleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.CouponAggregate.Abstracts.CouponRestriction", b =>
@@ -781,15 +806,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
-                    b.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
-                        .WithMany()
-                        .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.UserAggregate.User", null)
                         .WithMany()
                         .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
+                        .WithMany()
+                        .HasForeignKey("_orderStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -904,7 +929,7 @@ namespace Infrastructure.Migrations
                             b1.Navigation("ProductCategoryIds");
                         });
 
-                    b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderStatusHistory", "OrderStatusHistories", b1 =>
+                    b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderTrackingEntry", "OrderTrackingEntries", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -917,7 +942,7 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
 
-                            b1.Property<long>("OrderStatusId")
+                            b1.Property<long>("_orderStatusId")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_order_status");
 
@@ -927,15 +952,15 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("id");
 
-                            b1.HasIndex("OrderStatusId");
+                            b1.HasIndex("_orderStatusId");
 
                             b1.HasIndex("id_order");
 
-                            b1.ToTable("order_status_histories", (string)null);
+                            b1.ToTable("order_tracking_entries", (string)null);
 
                             b1.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
                                 .WithMany()
-                                .HasForeignKey("OrderStatusId")
+                                .HasForeignKey("_orderStatusId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
@@ -945,7 +970,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CouponsApplied");
 
-                    b.Navigation("OrderStatusHistories");
+                    b.Navigation("OrderTrackingEntries");
 
                     b.Navigation("Products");
                 });
@@ -1421,7 +1446,7 @@ namespace Infrastructure.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
 
-                            b1.Property<long>("RoleId")
+                            b1.Property<long>("_roleId")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_role");
 
@@ -1431,15 +1456,15 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("id");
 
-                            b1.HasIndex("RoleId");
+                            b1.HasIndex("_roleId");
 
                             b1.HasIndex("id_user");
 
                             b1.ToTable("users_roles", (string)null);
 
-                            b1.HasOne("Application.Common.Security.Authorization.Roles.Role", null)
+                            b1.HasOne("SharedKernel.ValueObjects.Role", null)
                                 .WithMany()
-                                .HasForeignKey("RoleId")
+                                .HasForeignKey("_roleId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
@@ -1450,7 +1475,7 @@ namespace Infrastructure.Migrations
                                 new
                                 {
                                     id = 1L,
-                                    RoleId = 1L,
+                                    _roleId = 1L,
                                     id_user = 1L
                                 });
                         });

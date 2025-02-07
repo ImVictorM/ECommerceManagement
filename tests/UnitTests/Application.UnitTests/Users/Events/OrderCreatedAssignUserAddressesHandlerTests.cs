@@ -42,7 +42,7 @@ public class OrderCreatedAssignUserAddressesHandlerTests
     [Fact]
     public async Task HandleOrderCreated_WithExistingUser_AssignsTheBillingAndDeliveryAddressesToTheUser()
     {
-        var user = UserUtils.CreateUser(id: UserId.Create(1));
+        var user = UserUtils.CreateCustomer(id: UserId.Create(1));
 
         var deliveryAddress = AddressUtils.CreateAddress();
         var billingAddress = AddressUtils.CreateAddress();

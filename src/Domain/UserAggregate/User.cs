@@ -68,31 +68,58 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
+    /// Initializes a new instance of the <see cref="User"/> class,
+    /// Creating a new customer user.
     /// </summary>
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="phone">The user phone (optional).</param>
-    /// <param name="roles">The user initial roles to be associated.</param>
     /// <param name="passwordHash">The user password hash.</param>
-    public static User Create(
+    public static User CreateCustomer(
         string name,
         Email email,
         PasswordHash passwordHash,
-        IReadOnlySet<UserRole> roles,
         string? phone = null
     )
     {
 
-        var user = new User(
+        return new User(
             name,
             email,
             passwordHash,
-            roles,
+            new HashSet<UserRole>()
+            {
+                UserRole.Create(Role.Customer)
+            },
             phone
         );
+    }
 
-        return user;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="User"/> class,
+    /// Creating a new admin user.
+    /// </summary>
+    /// <param name="name">The user name.</param>
+    /// <param name="email">The user email.</param>
+    /// <param name="phone">The user phone (optional).</param>
+    /// <param name="passwordHash">The user password hash.</param>
+    public static User CreateAdmin(
+        string name,
+        Email email,
+        PasswordHash passwordHash,
+        string? phone = null
+     )
+    {
+        return new User(
+            name,
+            email,
+            passwordHash,
+            new HashSet<UserRole>()
+            {
+                UserRole.Create(Role.Admin)
+            },
+            phone
+        );
     }
 
     /// <summary>
@@ -101,7 +128,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <param name="name">The new user name.</param>
     /// <param name="phone">The new user phone.</param>
     /// <param name="email">The new user email.</param>
-    public void Update(
+    public void UpdateDetails(
         string? name = null,
         string? phone = null,
         Email? email = null)
@@ -112,12 +139,12 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     }
 
     /// <summary>
-    /// Adds a role to the user.
+    /// Verifies if the current user is an administrator.
     /// </summary>
-    /// <param name="role">The role.</param>
-    public void AssignRole(UserRole role)
+    /// <returns>A bool value indicating if the user is an administrator.</returns>
+    public bool IsAdmin()
     {
-        _userRoles.Add(role);
+        return UserRoles.Any(ur => ur.Role == Role.Admin);
     }
 
     /// <inheritdoc/>

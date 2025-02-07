@@ -4,6 +4,7 @@ using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Users;
+using IntegrationTests.TestUtils.Constants;
 
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -16,8 +17,6 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
 {
-    private const string RequestUri = "/users/self";
-
     /// <summary>
     /// Initiates a new instance of the <see cref="GetUserByAuthenticationTokenTests"/> class.
     /// </summary>
@@ -38,8 +37,9 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     public async Task GetUserByAuthenticationToken_WhenUserIsAuthorizedByToken_ReturnsOk(UserSeedType userType)
     {
         var authenticatedUser = await RequestService.LoginAsAsync(userType);
+        var endpoint = TestConstants.UserEndpoints.GetUserByAuthenticationToken;
 
-        var response = await RequestService.Client.GetAsync(RequestUri);
+        var response = await RequestService.Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<UserResponse>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -53,7 +53,9 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     [Fact]
     public async Task GetUserByAuthenticationToken_WhenAuthorizationIsNotGiven_ReturnsUnauthorized()
     {
-        var response = await RequestService.Client.GetAsync(RequestUri);
+        var endpoint = TestConstants.UserEndpoints.GetUserByAuthenticationToken;
+
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -64,8 +66,10 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     [Fact]
     public async Task GetUserByAuthenticationToken_WhenTokenIsInvalid_ReturnsUnauthorized()
     {
+        var endpoint = TestConstants.UserEndpoints.GetUserByAuthenticationToken;
+
         RequestService.Client.SetJwtBearerAuthorizationHeader("token");
-        var response = await RequestService.Client.GetAsync(RequestUri);
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

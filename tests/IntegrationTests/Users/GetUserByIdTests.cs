@@ -5,6 +5,7 @@ using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Users;
+using IntegrationTests.TestUtils.Constants;
 
 using Contracts.Users;
 
@@ -43,9 +44,10 @@ public class GetUserByIdTests : BaseIntegrationTest
     public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkWithUser(UserSeedType userType)
     {
         var userToGet = _seedUser.GetByType(userType);
+        var endpoint = TestConstants.UserEndpoints.GetUserById(userToGet.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync($"/users/{userToGet.Id}");
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<UserResponse>();
 
@@ -63,9 +65,10 @@ public class GetUserByIdTests : BaseIntegrationTest
     public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(UserSeedType userType)
     {
         var userToGet = _seedUser.GetByType(userType);
+        var endpoint = TestConstants.UserEndpoints.GetUserById(userToGet.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.GetAsync($"/users/{userToGet.Id}");
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -76,7 +79,9 @@ public class GetUserByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetUserById_WhenAuthenticationTokenIsNotGiven_ReturnsUnauthorized()
     {
-        var response = await RequestService.Client.GetAsync("/users/1");
+        var endpoint = TestConstants.UserEndpoints.GetUserById("1");
+
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -88,9 +93,10 @@ public class GetUserByIdTests : BaseIntegrationTest
     public async Task GetUserById_WhenUserDoesNotExist_ReturnsNotFound()
     {
         var userNotFoundId = "5000";
+        var endpoint = TestConstants.UserEndpoints.GetUserById(userNotFoundId);
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync($"/users/{userNotFoundId}");
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 

@@ -5,6 +5,7 @@ using Contracts.Authentication;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -46,7 +47,10 @@ public class LoginUserTests : BaseIntegrationTest
         var activeUserCredentials = _credentialsProvider.GetCredentials(userActiveType);
         var request = new LoginUserRequest(activeUserCredentials.Email, activeUserCredentials.Password);
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
+        var httpResponse = await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.LoginUser,
+            request
+        );
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -66,7 +70,10 @@ public class LoginUserTests : BaseIntegrationTest
         var inactiveUserCredentials = _credentialsProvider.GetCredentials(userInactiveType);
         var request = new LoginUserRequest(inactiveUserCredentials.Email, inactiveUserCredentials.Password);
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
+        var httpResponse = await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.LoginUser,
+            request
+        );
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -85,7 +92,10 @@ public class LoginUserTests : BaseIntegrationTest
         var credentials = _credentialsProvider.GetCredentials(UserSeedType.CUSTOMER);
         var request = new LoginUserRequest("incorrect_email@email.com", credentials.Password);
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
+        var httpResponse = await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.LoginUser,
+            request
+        );
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -104,7 +114,10 @@ public class LoginUserTests : BaseIntegrationTest
         var credentials = _credentialsProvider.GetCredentials(UserSeedType.CUSTOMER);
         var request = new LoginUserRequest(credentials.Email, "IncorrectPassword123");
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", request);
+        var httpResponse = await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.LoginUser,
+            request
+        );
         var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);

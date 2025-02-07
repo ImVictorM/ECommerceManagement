@@ -1,11 +1,10 @@
 using Domain.CategoryAggregate;
 
-using WebApi.Categories;
-
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
+using IntegrationTests.TestUtils.Constants;
 
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -37,7 +36,9 @@ public class DeleteCategoryTests : BaseIntegrationTest
     {
         var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
 
-        var response = await RequestService.Client.DeleteAsync($"{CategoryEndpoints.BaseEndpoint}/{existingCategory.Id}");
+        var response = await RequestService.Client.DeleteAsync(
+            TestConstants.CategoryEndpoints.DeleteCategory(existingCategory.Id.ToString())
+        );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -51,7 +52,10 @@ public class DeleteCategoryTests : BaseIntegrationTest
         var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
 
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.DeleteAsync($"{CategoryEndpoints.BaseEndpoint}/{existingCategory.Id}");
+
+        var response = await RequestService.Client.DeleteAsync(
+            TestConstants.CategoryEndpoints.DeleteCategory(existingCategory.Id.ToString())
+        );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -66,8 +70,10 @@ public class DeleteCategoryTests : BaseIntegrationTest
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var deleteResponse = await RequestService.Client.DeleteAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeDeleted.Id}");
-        var getDeletedCategoryResponse = await RequestService.Client.GetAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeDeleted.Id}");
+        var deleteResponse = await RequestService.Client
+            .DeleteAsync(TestConstants.CategoryEndpoints.DeleteCategory(categoryToBeDeleted.Id.ToString()));
+        var getDeletedCategoryResponse = await RequestService.Client
+            .GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(categoryToBeDeleted.Id.ToString()));
 
         deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         getDeletedCategoryResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);

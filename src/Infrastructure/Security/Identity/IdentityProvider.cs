@@ -1,5 +1,8 @@
 using Application.Common.Security.Identity;
 
+using SharedKernel.Models;
+using SharedKernel.ValueObjects;
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +38,10 @@ public class IdentityProvider : IIdentityProvider
     public IdentityUser GetCurrentUserIdentity()
     {
         var id = GetSingleClaimValue(JwtRegisteredClaimNames.Sub);
-        var roles = GetClaimValues(ClaimTypes.Role);
+
+        var roles = GetClaimValues(ClaimTypes.Role)
+            .Select(BaseEnumeration.FromDisplayName<Role>)
+            .ToList();
 
         return new IdentityUser(id, roles);
     }

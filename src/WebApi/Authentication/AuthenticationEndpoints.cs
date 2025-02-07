@@ -1,8 +1,10 @@
-using Application.Authentication.Commands.Register;
-using Application.Authentication.Queries.Login;
+using Application.Authentication.Commands.RegisterCustomer;
+using Application.Authentication.Queries.LoginUser;
+using Application.Authentication.Queries.LoginCarrier;
+
+using Contracts.Authentication;
 
 using Carter;
-using Contracts.Authentication;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -23,31 +25,40 @@ public sealed class AuthenticationEndpoints : ICarterModule
             .WithOpenApi();
 
         authenticationGroup
-            .MapPost("/register", Register)
-            .WithName("Register")
+            .MapPost("/register/users/customers", RegisterCustomer)
+            .WithName("RegisterCustomer")
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Register",
-                Description = "Allows a new user to register for an account."
+                Summary = "Register Customer",
+                Description = "Allows a new customer user to register for an account."
             });
 
         authenticationGroup
-            .MapPost("/login", Login)
-            .WithName("Login")
+            .MapPost("/login/users", LoginUser)
+            .WithName("LoginUser")
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Login",
-                Description = "Users can log in using their email and password."
+                Summary = "Login User",
+                Description = "Allows a user to log in using their email and password."
+            });
+
+        authenticationGroup
+            .MapPost("/login/carriers", LoginCarrier)
+            .WithName("LoginCarrier")
+            .WithOpenApi(operation => new(operation)
+            {
+                Summary = "Login Carrier",
+                Description = "Allows a carrier to log in using their email and password."
             });
     }
 
-    private async Task<Results<Created<AuthenticationResponse>, BadRequest, Conflict>> Register(
-        RegisterRequest request,
+    private async Task<Results<Created<AuthenticationResponse>, BadRequest, Conflict>> RegisterCustomer(
+        RegisterCustomerRequest request,
         ISender sender,
         IMapper mapper
     )
     {
-        var command = mapper.Map<RegisterCommand>(request);
+        var command = mapper.Map<RegisterCustomerCommand>(request);
 
         var result = await sender.Send(command);
 
@@ -56,13 +67,26 @@ public sealed class AuthenticationEndpoints : ICarterModule
         return TypedResults.Created($"/users/{authenticationResponse.Id}", authenticationResponse);
     }
 
-    private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> Login(
-        LoginRequest request,
+    private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> LoginUser(
+        LoginUserRequest request,
         ISender sender,
         IMapper mapper
     )
     {
-        var query = mapper.Map<LoginQuery>(request);
+        var query = mapper.Map<LoginUserQuery>(request);
+
+        var result = await sender.Send(query);
+
+        return TypedResults.Ok(mapper.Map<AuthenticationResponse>(result));
+    }
+
+    private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> LoginCarrier(
+        LoginCarrierRequest request,
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var query = mapper.Map<LoginCarrierQuery>(request);
 
         var result = await sender.Send(query);
 

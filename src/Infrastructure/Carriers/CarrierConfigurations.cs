@@ -25,7 +25,8 @@ public class CarrierConfigurations : EntityTypeConfigurationDependency<Carrier>
         PasswordHash PasswordHash,
         string? Phone,
         DateTimeOffset CreatedAt,
-        DateTimeOffset UpdatedAt
+        DateTimeOffset UpdatedAt,
+        long _roleId
     );
 
     private readonly CarrierData _defaultInternalCarrier;
@@ -46,7 +47,8 @@ public class CarrierConfigurations : EntityTypeConfigurationDependency<Carrier>
             passwordHasher.Hash(carrierSettings.Password),
             carrierSettings.Phone,
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow
+            DateTimeOffset.UtcNow,
+            Role.Carrier.Id
         );
     }
 
@@ -56,6 +58,19 @@ public class CarrierConfigurations : EntityTypeConfigurationDependency<Carrier>
         builder.ToTable("carriers");
 
         builder.HasKey(c => c.Id);
+
+        builder
+            .Property<long>("_roleId")
+            .HasColumnName("id_role")
+            .IsRequired();
+
+        builder
+            .HasOne<Role>()
+            .WithMany()
+            .HasForeignKey("_roleId")
+            .IsRequired();
+
+        builder.Ignore(c => c.Role);
 
         builder
             .Property(c => c.Id)

@@ -7,6 +7,7 @@ using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.Users.TestUtils;
+using IntegrationTests.TestUtils.Constants;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -42,9 +43,10 @@ public class UpdateUserTests : BaseIntegrationTest
     {
         var otherUser = _seedUser.GetByType(otherUserType);
         var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb name for another user");
+        var endpoint = TestConstants.UserEndpoints.UpdateUser(otherUser.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PutAsJsonAsync($"users/{otherUser.Id}", request);
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -59,7 +61,8 @@ public class UpdateUserTests : BaseIntegrationTest
         var request = UpdateUserRequestUtils.CreateRequest(name: "marcos rogério", phone: "19982748242", email: "marcao@email.com");
 
         var userToBeUpdated = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var updateResponse = await RequestService.Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", request);
+        var endpoint = TestConstants.UserEndpoints.UpdateUser(userToBeUpdated.Id.ToString());
+        var updateResponse = await RequestService.Client.PutAsJsonAsync(endpoint, request);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
@@ -80,9 +83,10 @@ public class UpdateUserTests : BaseIntegrationTest
     {
         var otherAdmin = _seedUser.GetByType(UserSeedType.OTHER_ADMIN);
         var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb admin");
+        var endpoint = TestConstants.UserEndpoints.UpdateUser(otherAdmin.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PutAsJsonAsync($"users/{otherAdmin.Id}", request);
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -97,7 +101,8 @@ public class UpdateUserTests : BaseIntegrationTest
         var requestContainingAnotherUserEmail = UpdateUserRequestUtils.CreateRequest(email: anotherUserEmail.ToString());
 
         var userToBeUpdated = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var updateResponse = await RequestService.Client.PutAsJsonAsync($"users/{userToBeUpdated.Id}", requestContainingAnotherUserEmail);
+        var endpoint = TestConstants.UserEndpoints.UpdateUser(userToBeUpdated.Id.ToString());
+        var updateResponse = await RequestService.Client.PutAsJsonAsync(endpoint, requestContainingAnotherUserEmail);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
@@ -111,15 +116,16 @@ public class UpdateUserTests : BaseIntegrationTest
     {
         var customerToBeUpdated = _seedUser.GetByType(UserSeedType.CUSTOMER);
         var request = UpdateUserRequestUtils.CreateRequest(name: "User new name", phone: "19982748242", email: "newemail@email.com");
+        var updateEndpoint = TestConstants.UserEndpoints.UpdateUser(customerToBeUpdated.Id.ToString());
+        var getEndpoint = TestConstants.UserEndpoints.GetUserById(customerToBeUpdated.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var updateResponse = await RequestService.Client.PutAsJsonAsync($"users/{customerToBeUpdated.Id}", request);
+        var updateResponse = await RequestService.Client.PutAsJsonAsync(updateEndpoint, request);
 
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-
-        var getResponse = await RequestService.Client.GetAsync($"users/{customerToBeUpdated.Id}");
+        var getResponse = await RequestService.Client.GetAsync(getEndpoint);
         var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<UserResponse>();
 
+        updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         getResponseContent.Should().NotBeNull();
         getResponseContent.Name.Should().Be(request.Name);
         getResponseContent.Phone.Should().Be(request.Phone);

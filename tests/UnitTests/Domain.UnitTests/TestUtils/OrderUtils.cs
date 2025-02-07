@@ -81,14 +81,14 @@ public static class OrderUtils
 
         if (initialOrderStatus is not null)
         {
-            var statusIdProperty = typeof(Order).GetProperty(
-                nameof(Order.OrderStatusId),
+            var statusProperty = typeof(Order).GetProperty(
+                nameof(Order.OrderStatus),
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
             );
 
-            if (statusIdProperty != null && statusIdProperty.CanWrite)
+            if (statusProperty != null && statusProperty.CanWrite)
             {
-                statusIdProperty.SetValue(order, initialOrderStatus.Id);
+                statusProperty.SetValue(order, initialOrderStatus);
             }
         }
 

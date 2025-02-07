@@ -73,7 +73,7 @@ public class LoginUserQueryHandlerTests
     {
         var generatedToken = "generated-token";
 
-        var user = UserUtils.CreateUser(
+        var user = UserUtils.CreateCustomer(
             id: UserId.Create(1),
             email: EmailUtils.CreateEmail(query.Email)
         );
@@ -94,7 +94,7 @@ public class LoginUserQueryHandlerTests
 
         result.Should().NotBeNull();
 
-        result.User.Email.ToString().Should().Be(query.Email);
+        result.AuthenticatedIdentity.Email.ToString().Should().Be(query.Email);
 
         result.Token.Should().Be(generatedToken);
 
@@ -128,7 +128,7 @@ public class LoginUserQueryHandlerTests
     {
         _mockUserRepository
             .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
-            .ReturnsAsync(UserUtils.CreateUser());
+            .ReturnsAsync(UserUtils.CreateCustomer());
 
         _mockPasswordHasher
             .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
@@ -149,7 +149,7 @@ public class LoginUserQueryHandlerTests
     [Fact]
     public async Task HandleLoginUserQuery_WhenUserIsInactive_ThrowsError()
     {
-        var userInactive = UserUtils.CreateUser(active: false);
+        var userInactive = UserUtils.CreateCustomer(active: false);
 
         _mockUserRepository
             .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))

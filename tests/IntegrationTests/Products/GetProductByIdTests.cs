@@ -11,6 +11,7 @@ using Contracts.Products;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
+using IntegrationTests.TestUtils.Constants;
 
 namespace IntegrationTests.Products;
 
@@ -38,8 +39,9 @@ public class GetProductByIdTests : BaseIntegrationTest
     public async Task GetProductById_WhenProductExists_RetrievesItAndReturnsOk()
     {
         var productToFetch = _seedProduct.GetByType(ProductSeedType.COMPUTER_ON_SALE);
+        var endpoint = TestConstants.ProductEndpoints.GetProductById(productToFetch.Id.ToString());
 
-        var response = await RequestService.Client.GetAsync($"/products/{productToFetch.Id}");
+        var response = await RequestService.Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProductResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -53,9 +55,10 @@ public class GetProductByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetProductById_WhenProductDoesNotExists_ReturnsNotFound()
     {
-        var invalidProductId = 9999;
+        var invalidProductId = "9999";
+        var endpoint = TestConstants.ProductEndpoints.GetProductById(invalidProductId);
 
-        var response = await RequestService.Client.GetAsync($"/products/{invalidProductId}");
+        var response = await RequestService.Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
@@ -70,8 +73,9 @@ public class GetProductByIdTests : BaseIntegrationTest
     public async Task GetProductById_WhenProductIsInactive_ReturnsNotFound()
     {
         var productInactive = _seedProduct.GetByType(ProductSeedType.JACKET_INACTIVE);
+        var endpoint = TestConstants.ProductEndpoints.GetProductById(productInactive.Id.ToString());
 
-        var response = await RequestService.Client.GetAsync($"/products/{productInactive.Id}");
+        var response = await RequestService.Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);

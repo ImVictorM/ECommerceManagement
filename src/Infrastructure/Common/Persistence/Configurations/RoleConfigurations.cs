@@ -1,11 +1,11 @@
-using Application.Common.Security.Authorization.Roles;
-
 using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
+using SharedKernel.ValueObjects;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Security.Authorization.Roles;
+namespace Infrastructure.Common.Persistence.Configurations;
 
 /// <summary>
 ///  Configures the <see cref="Role"/> table.

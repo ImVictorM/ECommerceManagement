@@ -13,6 +13,7 @@ using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Orders;
+using IntegrationTests.TestUtils.Constants;
 
 using FluentAssertions;
 using Xunit.Abstractions;
@@ -44,7 +45,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     [Fact]
     public async Task GetCustomerOrders_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var response = await RequestService.Client.GetAsync("/users/1/orders");
+        var response = await RequestService.Client.GetAsync(TestConstants.CustomerOrderEndpoints.GetCustomerOrders("1"));
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -57,11 +58,11 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     {
         var customerWithOrdersType = UserSeedType.CUSTOMER;
         var otherCustomerType = UserSeedType.CUSTOMER_WITH_ADDRESS;
-
         var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
+        var endpoint = TestConstants.CustomerOrderEndpoints.GetCustomerOrders(customerWithOrders.Id.ToString());
 
         await RequestService.LoginAsAsync(otherCustomerType);
-        var response = await RequestService.Client.GetAsync($"/users/{customerWithOrders.Id}/orders");
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -81,9 +82,10 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
 
         var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
         var expectedCustomerOrders = GetUserOrders(customerWithOrders.Id);
+        var endpoint = TestConstants.CustomerOrderEndpoints.GetCustomerOrders(customerWithOrders.Id.ToString());
 
         await RequestService.LoginAsAsync(userWithPermission);
-        var response = await RequestService.Client.GetAsync($"/users/{customerWithOrders.Id}/orders");
+        var response = await RequestService.Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -105,9 +107,10 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
         var customerWithOrdersType = UserSeedType.CUSTOMER;
         var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
         var expectedFilteredOrders = GetUserOrderByStatus(customerWithOrders.Id, status);
+        var endpoint = TestConstants.CustomerOrderEndpoints.GetCustomerOrders(customerWithOrders.Id.ToString());
 
         await RequestService.LoginAsAsync(customerWithOrdersType);
-        var response = await RequestService.Client.GetAsync($"/users/{customerWithOrders.Id}/orders?status={statusName}");
+        var response = await RequestService.Client.GetAsync($"{endpoint}?status={statusName}");
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -123,6 +126,6 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     private IReadOnlyList<Order> GetUserOrderByStatus(UserId ownerId, OrderStatus status)
     {
         return _seedOrder
-            .ListAll(o => o.OwnerId == ownerId && o.OrderStatusId == status.Id);
+            .ListAll(o => o.OwnerId == ownerId && o.OrderStatus == status);
     }
 }

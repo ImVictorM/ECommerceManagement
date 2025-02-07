@@ -7,6 +7,7 @@ using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Users;
+using IntegrationTests.TestUtils.Constants;
 
 using FluentAssertions;
 using Xunit.Abstractions;
@@ -36,8 +37,10 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsAdmin_ReturnsSuccess()
     {
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
+
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync("/users");
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
     }
@@ -48,8 +51,10 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsNotAdmin_ReturnsForbidden()
     {
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
+
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.GetAsync("/users");
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -60,7 +65,9 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenNotAuthenticated_ReturnsUnauthorized()
     {
-        var response = await RequestService.Client.GetAsync("/users");
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
+
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -77,7 +84,7 @@ public class GetAllUsersTests : BaseIntegrationTest
         bool? activeFilter
     )
     {
-        var endpoint = "/users";
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
         var expectedUsers = GetUsersFilteredByActive(activeFilter);
 
         if (activeFilter != null)

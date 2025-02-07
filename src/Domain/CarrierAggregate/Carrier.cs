@@ -10,6 +10,8 @@ namespace Domain.CarrierAggregate;
 /// </summary>
 public sealed class Carrier : AggregateRoot<CarrierId>
 {
+    private long _roleId;
+
     /// <summary>
     /// Gets the carrier name.
     /// </summary>
@@ -23,6 +25,14 @@ public sealed class Carrier : AggregateRoot<CarrierId>
     /// </summary>
     public PasswordHash PasswordHash { get; private set; } = null!;
     /// <summary>
+    /// Gets the carrier role.
+    /// </summary>
+    public Role Role
+    {
+        get => BaseEnumeration.FromValue<Role>(_roleId);
+        private set => _roleId = value.Id;
+    }
+    /// <summary>
     /// Gets the carrier phone.
     /// </summary>
     public string? Phone { get; private set; }
@@ -35,6 +45,8 @@ public sealed class Carrier : AggregateRoot<CarrierId>
         Email = email;
         PasswordHash = passwordHash;
         Phone = phone;
+
+        Role = Role.Carrier;
     }
 
     /// <summary>

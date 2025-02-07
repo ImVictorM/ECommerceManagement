@@ -1,5 +1,3 @@
-using Application.Common.Extensions;
-
 using Contracts.Orders;
 
 using Domain.OrderAggregate;
@@ -30,7 +28,7 @@ public static class OrderResponseExtensions
 
             responseOrder.Should().NotBeNull();
             responseOrder.OwnerId.Should().Be(expected.OwnerId.ToString());
-            responseOrder.Status.Should().Be(expected.GetStatusDescription());
+            responseOrder.Status.Should().Be(expected.OrderStatus.Name);
             responseOrder.Description.Should().Be(expected.Description);
             responseOrder.Total.Should().Be(expected.Total);
         }

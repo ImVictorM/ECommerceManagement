@@ -1,6 +1,6 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
+using SharedKernel.ValueObjects;
 
 namespace Application.UnitTests.Common.Security.Authorization.TestUtils;
 

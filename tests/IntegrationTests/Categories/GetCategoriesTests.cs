@@ -2,12 +2,11 @@ using Domain.CategoryAggregate;
 
 using Contracts.Categories;
 
-using WebApi.Categories;
-
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using FluentAssertions;
 using Xunit.Abstractions;
@@ -41,7 +40,7 @@ public class GetCategoriesTests : BaseIntegrationTest
             .ListAll()
             .Select(c => new CategoryResponse(c.Id.ToString(), c.Name));
 
-        var response = await RequestService.Client.GetAsync($"{CategoryEndpoints.BaseEndpoint}");
+        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.GetCategories);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<CategoryResponse>>();
 
         responseContent.Should().BeEquivalentTo(expectedCategories);

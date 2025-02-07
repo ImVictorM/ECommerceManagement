@@ -1,6 +1,5 @@
 using Application.Common.Persistence;
 using Application.Common.Security.Authorization.Policies;
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
 using Application.Common.Security.Authorization.Requests;
 using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestUtils;
@@ -8,6 +7,8 @@ using static Application.UnitTests.Common.Security.Authorization.TestUtils.Reque
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
+
+using SharedKernel.ValueObjects;
 
 using FluentAssertions;
 using Moq;
@@ -44,7 +45,7 @@ public class RestrictedDeactivationPolicyTests
     {
         var userId = "1";
         var request = new TestRequestWithoutAuthUserRelated(userId);
-        var currentCustomerUser = new IdentityUser(userId, [Role.Customer.Name]);
+        var currentCustomerUser = new IdentityUser(userId, [Role.Customer]);
 
         var result = await _policy.IsAuthorizedAsync(request, currentCustomerUser);
 
@@ -59,7 +60,7 @@ public class RestrictedDeactivationPolicyTests
     {
         var userId = "1";
         var request = new TestRequestWithoutAuthUserRelated(userId);
-        var currentAdminUser = new IdentityUser(userId, [Role.Admin.Name]);
+        var currentAdminUser = new IdentityUser(userId, [Role.Admin]);
 
         var result = await _policy.IsAuthorizedAsync(request, currentAdminUser);
 
@@ -78,12 +79,9 @@ public class RestrictedDeactivationPolicyTests
 
         var request = new TestRequestWithoutAuthUserRelated(userToBeDeactivatedId.ToString());
 
-        var currentUser = new IdentityUser(currentAdminUserId.ToString(), [Role.Admin.Name]);
+        var currentUser = new IdentityUser(currentAdminUserId.ToString(), [Role.Admin]);
 
-        var userToBeDeactivated = UserUtils.CreateUser(id: userToBeDeactivatedId, roles: new HashSet<UserRole>()
-        {
-            UserRole.Create(Role.Customer.Id)
-        });
+        var userToBeDeactivated = UserUtils.CreateCustomer(id: userToBeDeactivatedId);
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(userToBeDeactivatedId))
@@ -106,12 +104,9 @@ public class RestrictedDeactivationPolicyTests
 
         var request = new TestRequestWithoutAuthUserRelated(otherAdminToBeDeactivatedId.ToString());
 
-        var currentUser = new IdentityUser(currentAdminUser.ToString(), [Role.Admin.Name]);
+        var currentUser = new IdentityUser(currentAdminUser.ToString(), [Role.Admin]);
 
-        var otherAdminToBeDeactivated = UserUtils.CreateUser(id: otherAdminToBeDeactivatedId, roles: new HashSet<UserRole>()
-        {
-            UserRole.Create(Role.Admin.Id)
-        });
+        var otherAdminToBeDeactivated = UserUtils.CreateAdmin(id: otherAdminToBeDeactivatedId);
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(otherAdminToBeDeactivatedId))
@@ -134,7 +129,7 @@ public class RestrictedDeactivationPolicyTests
 
         var request = new TestRequestWithoutAuthUserRelated(nonExistingUserId.ToString());
 
-        var currentUser = new IdentityUser(currentAdminUserId.ToString(), [Role.Admin.Name]);
+        var currentUser = new IdentityUser(currentAdminUserId.ToString(), [Role.Admin]);
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(nonExistingUserId))

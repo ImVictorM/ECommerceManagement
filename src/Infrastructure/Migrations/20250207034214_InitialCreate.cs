@@ -17,24 +17,6 @@ namespace Infrastructure.Migrations
                 name: "CouponRestrictionSequence");
 
             migrationBuilder.CreateTable(
-                name: "carriers",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    email = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
-                    password_hash = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    phone = table.Column<string>(type: "character varying(11)", maxLength: 11, nullable: true),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_carriers", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "categories",
                 columns: table => new
                 {
@@ -295,6 +277,31 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "carriers",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    email = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    password_hash = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    phone = table.Column<string>(type: "character varying(11)", maxLength: 11, nullable: true),
+                    id_role = table.Column<long>(type: "bigint", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_carriers", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_carriers_roles_id_role",
+                        column: x => x.id_role,
+                        principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "sale_categories_categories",
                 columns: table => new
                 {
@@ -381,6 +388,7 @@ namespace Infrastructure.Migrations
                     total = table.Column<decimal>(type: "numeric", nullable: false),
                     id_owner = table.Column<long>(type: "bigint", nullable: false),
                     description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    order_status = table.Column<long>(type: "bigint", nullable: false),
                     id_order_status = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -531,26 +539,26 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "order_status_histories",
+                name: "order_tracking_entries",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    id_order_status = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    id_order_status = table.Column<long>(type: "bigint", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_order_status_histories", x => x.id);
+                    table.PrimaryKey("PK_order_tracking_entries", x => x.id);
                     table.ForeignKey(
-                        name: "FK_order_status_histories_order_statuses_id_order_status",
+                        name: "FK_order_tracking_entries_order_statuses_id_order_status",
                         column: x => x.id_order_status,
                         principalTable: "order_statuses",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_order_status_histories_orders_id_order",
+                        name: "FK_order_tracking_entries_orders_id_order",
                         column: x => x.id_order,
                         principalTable: "orders",
                         principalColumn: "id",
@@ -773,11 +781,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "carriers",
-                columns: new[] { "id", "created_at", "email", "name", "password_hash", "phone", "updated_at" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8922), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "2AB9F1E1CD7021A4CFB833DC0AA408D742F2A42C24AA6BCB010717779372B7D0-5DBA0451842A6D3A8D52F4D61E71D4AC", "", new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 615, DateTimeKind.Unspecified).AddTicks(8924), new TimeSpan(0, 0, 0, 0, 0)) });
-
-            migrationBuilder.InsertData(
                 table: "order_statuses",
                 columns: new[] { "id", "name" },
                 values: new object[,]
@@ -809,7 +812,8 @@ namespace Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1L, "Admin" },
-                    { 2L, "Customer" }
+                    { 2L, "Customer" },
+                    { 3L, "Carrier" }
                 });
 
             migrationBuilder.InsertData(
@@ -828,7 +832,12 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "id", "created_at", "email", "is_active", "name", "password_hash", "phone", "updated_at" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9778), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "31DD8179456F94EA43DDC8998D0B32E8303EF693A764581E432A63CBE300DE75-1BB36DB393A95CA85F4A579E568BBC4C", null, new DateTimeOffset(new DateTime(2025, 2, 3, 16, 37, 5, 601, DateTimeKind.Unspecified).AddTicks(9783), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1224), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "723FEA43BBD7A66F2130D6E62F416A6CFAE570EA19A6E0BB5FBFF188F2C3E7E1-00FA5FC6360F50C23B2B992D93456698", null, new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1231), new TimeSpan(0, 0, 0, 0, 0)) });
+
+            migrationBuilder.InsertData(
+                table: "carriers",
+                columns: new[] { "id", "created_at", "email", "name", "password_hash", "phone", "updated_at", "id_role" },
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7716), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "AACE47AD3448036C245ED568DD8456F0019EE2E525A87989AE351C38DF19F1C6-C329F1E800BCFA9D65B06952B352E3C8", "", new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7722), new TimeSpan(0, 0, 0, 0, 0)), 3L });
 
             migrationBuilder.InsertData(
                 table: "users_roles",
@@ -840,6 +849,11 @@ namespace Infrastructure.Migrations
                 table: "carriers",
                 column: "email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_carriers_id_role",
+                table: "carriers",
+                column: "id_role");
 
             migrationBuilder.CreateIndex(
                 name: "IX_categories_name",
@@ -865,20 +879,20 @@ namespace Infrastructure.Migrations
                 column: "id_order_product");
 
             migrationBuilder.CreateIndex(
-                name: "IX_order_status_histories_id_order",
-                table: "order_status_histories",
-                column: "id_order");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_order_status_histories_id_order_status",
-                table: "order_status_histories",
-                column: "id_order_status");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_order_statuses_name",
                 table: "order_statuses",
                 column: "name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_order_tracking_entries_id_order",
+                table: "order_tracking_entries",
+                column: "id_order");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_order_tracking_entries_id_order_status",
+                table: "order_tracking_entries",
+                column: "id_order_status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_orders_id_order_status",
@@ -1103,7 +1117,7 @@ namespace Infrastructure.Migrations
                 name: "order_product_category_ids");
 
             migrationBuilder.DropTable(
-                name: "order_status_histories");
+                name: "order_tracking_entries");
 
             migrationBuilder.DropTable(
                 name: "orders_coupons");
@@ -1169,9 +1183,6 @@ namespace Infrastructure.Migrations
                 name: "shipments");
 
             migrationBuilder.DropTable(
-                name: "roles");
-
-            migrationBuilder.DropTable(
                 name: "products");
 
             migrationBuilder.DropTable(
@@ -1188,6 +1199,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "shipping_methods");
+
+            migrationBuilder.DropTable(
+                name: "roles");
 
             migrationBuilder.DropTable(
                 name: "order_statuses");

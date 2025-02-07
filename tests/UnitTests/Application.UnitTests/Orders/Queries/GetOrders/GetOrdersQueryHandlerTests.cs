@@ -8,9 +8,10 @@ using Domain.OrderAggregate;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate.ValueObjects;
 
+using SharedKernel.Interfaces;
+
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedKernel.Interfaces;
 using FluentAssertions;
 
 namespace Application.UnitTests.Orders.Queries.GetOrders;
@@ -87,7 +88,7 @@ public class GetOrdersQueryHandlerTests
             )
         };
 
-        var ordersPending = orders.Where(o => o.OrderStatusId == OrderStatus.Pending.Id);
+        var ordersPending = orders.Where(o => o.OrderStatus == OrderStatus.Pending);
 
         _mockOrderRepository
             .Setup(repo => repo.FindSatisfyingAsync(

@@ -1,5 +1,4 @@
 using Application.Authentication.Commands.RegisterCustomer;
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
@@ -13,6 +12,7 @@ using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 
 using SharedKernel.UnitTests.TestUtils;
+using SharedKernel.ValueObjects;
 
 using System.Linq.Expressions;
 using FluentAssertions;
@@ -91,18 +91,25 @@ public class RegisterCustomerCommandHandlerTests
         var result = await _handler.Handle(registerCommand, default);
 
         result.Should().NotBeNull();
-        result.User.Id.Should().Be(createdUserId);
-        result.User.Name.Should().Be(registerCommand.Name);
-        result.User.Email.Value.Should().Be(registerCommand.Email);
-        result.User.UserRoles.Count.Should().Be(1);
-        result.User.UserRoles.First().RoleId.Should().Be(Role.Customer.Id);
-        result.User.UserAddresses.Count.Should().Be(0);
+        result.AuthenticatedIdentity.Id.Should().Be(createdUserId.ToString());
+        result.AuthenticatedIdentity.Name.Should().Be(registerCommand.Name);
+        result.AuthenticatedIdentity.Email.Should().Be(registerCommand.Email);
         result.Token.Should().Be(generatedToken);
-        result.User.IsActive.Should().BeTrue();
 
         _mockPasswordHasher.Verify(m => m.Hash(registerCommand.Password), Times.Once);
-        _mockJwtTokenService.Verify(m => m.GenerateToken(It.IsAny<IdentityUser>()), Times.Once);
-        _mockUserRepository.Verify(m => m.AddAsync(result.User), Times.Once);
+
+        _mockJwtTokenService.Verify(m => m.GenerateToken(It.Is<IdentityUser>(i =>
+            i.Id == createdUserId.ToString()
+            && i.Roles.Count == 1
+            && i.Roles[0] == Role.Customer
+        )), Times.Once);
+
+        _mockUserRepository.Verify(m => m.AddAsync(It.Is<User>(u =>
+            u.Id == createdUserId
+            && u.Name == registerCommand.Name
+            && u.Email.ToString() == registerCommand.Email
+        )), Times.Once);
+
         _mockUnitOfWork.Verify(m => m.SaveChangesAsync(), Times.Once);
     }
 
@@ -116,7 +123,7 @@ public class RegisterCustomerCommandHandlerTests
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
-            .ReturnsAsync(UserUtils.CreateUser(email: testEmail));
+            .ReturnsAsync(UserUtils.CreateCustomer(email: testEmail));
 
         var registerCommand = RegisterCustomerCommandUtils.CreateCommand(email: testEmail.ToString());
 

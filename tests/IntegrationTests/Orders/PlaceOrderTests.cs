@@ -5,8 +5,6 @@ using Domain.SaleAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.OrderAggregate.Enumerations;
 
-using WebApi.Orders;
-
 using Contracts.Orders;
 
 using SharedKernel.Services;
@@ -20,6 +18,7 @@ using IntegrationTests.Common.Seeds.Sales;
 using IntegrationTests.Common.Seeds.Coupons;
 using IntegrationTests.Orders.TestUtils;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -59,8 +58,9 @@ public class PlaceOrderTests : BaseIntegrationTest
     public async Task PlaceOrder_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
 
-        var response = await RequestService.Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -75,10 +75,11 @@ public class PlaceOrderTests : BaseIntegrationTest
     public async Task PlaceOrder_WhenUserDoesNotHaveCustomerRole_ReturnsForbidden(UserSeedType userWithoutCustomerRoleType)
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
 
         RequestService.Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
         await RequestService.LoginAsAsync(userWithoutCustomerRoleType);
-        var response = await RequestService.Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -132,9 +133,11 @@ public class PlaceOrderTests : BaseIntegrationTest
             [couponApplied.Discount]
         ) + shippingMethod.Price;
 
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
+
         RequestService.Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
         var orderOwner = await RequestService.LoginAsAsync(userWithCustomerRoleType);
-        var createResponse = await RequestService.Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var createResponse = await RequestService.Client.PostAsJsonAsync(endpoint, request);
         var resourceLocation = createResponse.Headers.Location;
 
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -167,9 +170,11 @@ public class PlaceOrderTests : BaseIntegrationTest
             ]
         );
 
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
+
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
         RequestService.Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
-        var response = await RequestService.Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

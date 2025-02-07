@@ -1,37 +1,43 @@
 using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 namespace Domain.UserAggregate.ValueObjects;
 
 /// <summary>
-/// Represent user related roles.
+/// Represent a user role.
 /// </summary>
 public sealed class UserRole : ValueObject
 {
+    private readonly long _roleId;
+
     /// <summary>
-    /// Gets the role identifier.
+    /// Gets the role.
     /// </summary>
-    public long RoleId { get; }
+    public Role Role
+    {
+        get => BaseEnumeration.FromValue<Role>(_roleId);
+    }
 
     private UserRole() { }
 
-    private UserRole(long roleId)
+    private UserRole(Role role)
     {
-        RoleId = roleId;
+        _roleId = role.Id;
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="UserRole"/> class.
     /// </summary>
-    /// <param name="roleId">The user role id.</param>
+    /// <param name="role">The role.</param>
     /// <returns>A new instance of the <see cref="UserRole"/> class.</returns>
-    public static UserRole Create(long roleId)
+    public static UserRole Create(Role role)
     {
-        return new UserRole(roleId);
+        return new UserRole(role);
     }
 
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return RoleId;
+        yield return _roleId;
     }
 }

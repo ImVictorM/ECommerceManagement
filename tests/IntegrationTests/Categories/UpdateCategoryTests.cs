@@ -2,14 +2,13 @@ using Domain.CategoryAggregate;
 
 using Contracts.Categories;
 
-using WebApi.Categories;
-
 using IntegrationTests.Categories.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -44,7 +43,10 @@ public class UpdateCategoryTests : BaseIntegrationTest
         var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
         var request = UpdateCategoryRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PutAsJsonAsync($"{CategoryEndpoints.BaseEndpoint}/{existingCategory.Id}", request);
+        var response = await RequestService.Client.PutAsJsonAsync(
+            TestConstants.CategoryEndpoints.UpdateCategory(existingCategory.Id.ToString()),
+            request
+        );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -59,7 +61,10 @@ public class UpdateCategoryTests : BaseIntegrationTest
         var request = UpdateCategoryRequestUtils.CreateRequest();
 
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PutAsJsonAsync($"{CategoryEndpoints.BaseEndpoint}/{existingCategory.Id}", request);
+        var response = await RequestService.Client.PutAsJsonAsync(
+            TestConstants.CategoryEndpoints.UpdateCategory(existingCategory.Id.ToString()),
+            request
+        );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -76,9 +81,9 @@ public class UpdateCategoryTests : BaseIntegrationTest
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
         var updateResponse = await RequestService.Client
-            .PutAsJsonAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeUpdated.Id}", request);
+            .PutAsJsonAsync(TestConstants.CategoryEndpoints.UpdateCategory(categoryToBeUpdated.Id.ToString()), request);
         var getUpdatedCategoryResponse = await RequestService.Client
-            .GetAsync($"{CategoryEndpoints.BaseEndpoint}/{categoryToBeUpdated.Id}");
+            .GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(categoryToBeUpdated.Id.ToString()));
 
         var updatedCategory = await getUpdatedCategoryResponse.Content.ReadRequiredFromJsonAsync<CategoryResponse>();
 

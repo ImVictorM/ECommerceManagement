@@ -5,8 +5,6 @@ using Domain.OrderAggregate;
 using Contracts.Payments;
 using Contracts.Orders;
 
-using WebApi.Orders;
-using WebApi.Payments;
 using WebApi.Common.Utilities;
 
 using IntegrationTests.Common;
@@ -14,6 +12,7 @@ using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
@@ -49,8 +48,9 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     public async Task HandlePaymentStatusChanged_WithoutSignatureHeader_ReturnsBadRequest()
     {
         var request = new PaymentStatusChangedRequest("1", "Authorized");
+        var endpoint = TestConstants.PaymentEndpoints.PaymentStatusChanged;
 
-        var response = await RequestService.Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -62,12 +62,11 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     public async Task HandlePaymentStatusChanged_WithIncorrectSignature_ReturnsUnauthorized()
     {
         var request = new PaymentStatusChangedRequest("1", "Authorized");
-
         var invalidBase64Signature = Convert.ToBase64String(Encoding.UTF8.GetBytes("xyz"));
+        var endpoint = TestConstants.PaymentEndpoints.PaymentStatusChanged;
 
         RequestService.Client.DefaultRequestHeaders.Add("X-Provider-Signature", invalidBase64Signature);
-
-        var response = await RequestService.Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -79,12 +78,11 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     public async Task HandlePaymentStatusChanged_WhenPaymentIsNotFound_ReturnsNotFound()
     {
         var request = new PaymentStatusChangedRequest("404", "Authorized");
-
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
+        var endpoint = TestConstants.PaymentEndpoints.PaymentStatusChanged;
 
         RequestService.Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
-
-        var response = await RequestService.Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -98,9 +96,10 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
         var existingPayment = await GetExistingOrderPayment();
         var request = new PaymentStatusChangedRequest(existingPayment.PaymentId, "Authorized");
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
+        var endpoint = TestConstants.PaymentEndpoints.PaymentStatusChanged;
 
         RequestService.Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
-        var response = await RequestService.Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
     }
@@ -114,9 +113,10 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
         var invalidStatus = "invalid_status";
         var request = new PaymentStatusChangedRequest("1", invalidStatus);
         var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
+        var endpoint = TestConstants.PaymentEndpoints.PaymentStatusChanged;
 
         RequestService.Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
-        var response = await RequestService.Client.PostAsJsonAsync(PaymentWebhookEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -124,9 +124,10 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     private async Task<OrderPaymentResponse> GetExistingOrderPayment()
     {
         var existingOrder = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
+        var endpoint = TestConstants.OrderEndpoints.GetOrderById(existingOrder.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var order = await RequestService.Client.GetAsync($"{OrderEndpoints.BaseEndpoint}/{existingOrder.Id}");
+        var order = await RequestService.Client.GetAsync(endpoint);
 
         var orderContent = await order.Content.ReadRequiredFromJsonAsync<OrderDetailedResponse>();
 

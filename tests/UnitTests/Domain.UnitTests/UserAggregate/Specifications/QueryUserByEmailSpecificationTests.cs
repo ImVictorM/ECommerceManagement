@@ -19,7 +19,7 @@ public class QueryUserByEmailSpecificationTests
     public void QueryUserByEmailSpecification_WhenEmailMatches_ReturnsTrue()
     {
         var email = EmailUtils.CreateEmail("test@example.com");
-        var user = UserUtils.CreateUser(email: email);
+        var user = UserUtils.CreateCustomer(email: email);
 
         var specification = new QueryUserByEmailSpecification(email);
 
@@ -35,7 +35,7 @@ public class QueryUserByEmailSpecificationTests
     public void QueryUserByEmailSpecification_WhenEmailDoesNotMatch_ReturnsFalse()
     {
         var email = EmailUtils.CreateEmail("test@example.com");
-        var user = UserUtils.CreateUser(email: EmailUtils.CreateEmail("other@example.com"));
+        var user = UserUtils.CreateCustomer(email: EmailUtils.CreateEmail("other@example.com"));
 
         var specification = new QueryUserByEmailSpecification(email);
 

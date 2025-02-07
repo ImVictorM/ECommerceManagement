@@ -1,4 +1,3 @@
-using Application.Common.Extensions;
 using Application.Users.Commands.UpdateUser;
 using Application.Users.DTOs;
 
@@ -19,7 +18,7 @@ public class UserMappings : IRegister
         config.NewConfig<UserResult, UserResponse>()
             .Map(dest => dest.Id, src => src.User.Id.ToString())
             .Map(dest => dest.Email, src => src.User.Email.ToString())
-            .Map(dest => dest.Roles, src => src.User.UserRoles.GetRoleNames())
+            .Map(dest => dest.Roles, src => src.User.UserRoles.Select(ur => ur.Role.Name))
             .Map(dest => dest.Addresses, src => src.User.UserAddresses)
             .Map(dest => dest, src => src.User);
 

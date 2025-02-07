@@ -1,5 +1,7 @@
 using Application.Common.Security.Authorization.Policies;
-using Application.Common.Security.Authorization.Roles;
+
+using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 using System.Reflection;
 
@@ -57,7 +59,7 @@ public sealed class AuthorizeAttribute : Attribute
 
         var requiredRoles = attributes
             .Where(attr => !string.IsNullOrWhiteSpace(attr.RoleName))
-            .Select(attr => attr.RoleName!)
+            .Select(attr => BaseEnumeration.FromDisplayName<Role>(attr.RoleName!))
             .ToList();
 
         var requiredPolicies = attributes
@@ -79,7 +81,7 @@ public sealed class AuthorizeAttribute : Attribute
     {
         try
         {
-            RoleUtils.FromDisplayName(roleName);
+            BaseEnumeration.FromDisplayName<Role>(roleName);
 
             return true;
         }

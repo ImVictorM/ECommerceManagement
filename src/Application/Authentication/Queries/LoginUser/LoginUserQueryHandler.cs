@@ -6,7 +6,6 @@ using Application.Authentication.Errors;
 using Application.Common.Persistence;
 using Application.Common.Security.Authentication;
 using Application.Common.Security.Identity;
-using Application.Common.Extensions;
 
 using SharedKernel.ValueObjects;
 
@@ -67,12 +66,18 @@ public partial class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, Aut
 
         LogSuccessfullyAuthenticatedUser(query.Email);
 
-        return new AuthenticationResult(user, token);
+        return new AuthenticationResult(
+            new AuthenticatedIdentity(user.Id.ToString(), user.Name, user.Email.ToString(), user.Phone),
+            token
+        );
     }
 
     private string GenerateToken(User user)
     {
-        var userIdentity = new IdentityUser(user.Id.ToString(), user.UserRoles.GetRoleNames());
+        var userIdentity = new IdentityUser(
+            user.Id.ToString(),
+            user.UserRoles.Select(ur => ur.Role).ToList()
+        );
 
         var token = _jwtTokenService.GenerateToken(userIdentity);
 

@@ -41,8 +41,8 @@ public class JwtTokenService : IJwtTokenService
         ];
 
         claims.AddRange(
-            from roleName in user.Roles
-            select new Claim(ClaimTypes.Role, roleName)
+            from role in user.Roles
+            select new Claim(ClaimTypes.Role, role.Name)
         );
 
         var securityToken = new JwtSecurityToken(

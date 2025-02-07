@@ -14,13 +14,13 @@ namespace WebApi.Orders;
 /// <summary>
 /// Defines all endpoints related to user orders.
 /// </summary>
-public sealed class UserOrderEndpoints : ICarterModule
+public sealed class CustomerOrderEndpoints : ICarterModule
 {
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         var userOrderGroup = app
-            .MapGroup("users/{userId:long}/orders")
+            .MapGroup("users/customers/{userId:long}/orders")
             .WithTags("Orders")
             .WithOpenApi();
 

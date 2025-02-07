@@ -1,11 +1,10 @@
 using Contracts.Categories;
 
-using WebApi.Categories;
-
 using IntegrationTests.Categories.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -35,7 +34,7 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -49,7 +48,7 @@ public class CreateCategoryTests : BaseIntegrationTest
         var request = CreateCategoryRequestUtils.CreateRequest();
 
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -63,7 +62,7 @@ public class CreateCategoryTests : BaseIntegrationTest
         var request = CreateCategoryRequestUtils.CreateRequest(name: "new_category");
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var createResponse = await RequestService.Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
+        var createResponse = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
         var resourceLocation = createResponse.Headers.Location;
         var getCreatedResponse = await RequestService.Client.GetAsync(resourceLocation);
         var createdCategory = await getCreatedResponse.Content.ReadRequiredFromJsonAsync<CategoryResponse>();

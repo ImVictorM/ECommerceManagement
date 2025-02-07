@@ -8,6 +8,7 @@ using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.Products.TestUtils;
+using IntegrationTests.TestUtils.Constants;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -41,8 +42,9 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     public async Task UpdateProductInventory_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
+        var endpoint = TestConstants.ProductEndpoints.UpdateProductInventory("1");
 
-        var response = await RequestService.Client.PutAsJsonAsync("/products/1/inventory", request);
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -57,9 +59,10 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     public async Task UpdateProductInventory_WhenUserIsNotAdmin_ReturnsForbidden(UserSeedType customerUserType)
     {
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
+        var endpoint = TestConstants.ProductEndpoints.UpdateProductInventory("1");
 
         await RequestService.LoginAsAsync(customerUserType);
-        var response = await RequestService.Client.PutAsJsonAsync("/products/1/inventory", request);
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -72,9 +75,10 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     {
         var notFoundId = "404";
         var request = UpdateProductInventoryRequestUtils.CreateRequest();
+        var endpoint = TestConstants.ProductEndpoints.UpdateProductInventory(notFoundId);
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PutAsJsonAsync($"/products/{notFoundId}/inventory", request);
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, request);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -102,10 +106,12 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         var initialQuantity = product.Inventory.QuantityAvailable;
         var request = UpdateProductInventoryRequestUtils.CreateRequest(quantityToIncrement: quantityToIncrement);
         var expectedQuantityAfterUpdate = initialQuantity + quantityToIncrement;
+        var updateEndpoint = TestConstants.ProductEndpoints.UpdateProductInventory(product.Id.ToString());
+        var getEndpoint = TestConstants.ProductEndpoints.GetProductById(product.Id.ToString());
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var putResponse = await RequestService.Client.PutAsJsonAsync($"/products/{product.Id}/inventory", request);
-        var getResponse = await RequestService.Client.GetAsync($"/products/{product.Id}");
+        var putResponse = await RequestService.Client.PutAsJsonAsync(updateEndpoint, request);
+        var getResponse = await RequestService.Client.GetAsync(getEndpoint);
         var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<ProductResponse>();
 
         putResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);

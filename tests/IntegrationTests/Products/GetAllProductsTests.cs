@@ -9,6 +9,7 @@ using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Products;
+using IntegrationTests.TestUtils.Constants;
 
 using FluentAssertions;
 using Xunit.Abstractions;
@@ -41,8 +42,9 @@ public class GetAllProductsTests : BaseIntegrationTest
     public async Task GetAllProducts_WhenGettingAllProducts_ReturnsOkContainingTheActiveProducts()
     {
         var activeProduct = _seedProduct.ListAll(product => product.IsActive);
+        var endpoint = TestConstants.ProductEndpoints.GetAllProducts;
 
-        var response = await RequestService.Client.GetAsync("/products");
+        var response = await RequestService.Client.GetAsync(endpoint);
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -56,7 +58,9 @@ public class GetAllProductsTests : BaseIntegrationTest
     public async Task GetAllProducts_WhenGettingProductsWithLimitParameter_ReturnsOkContainingProductsSubset()
     {
         var limit = 2;
-        var response = await RequestService.Client.GetAsync($"/products?limit={limit}");
+        var endpoint = TestConstants.ProductEndpoints.GetAllProducts;
+
+        var response = await RequestService.Client.GetAsync($"{endpoint}?limit={limit}");
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -70,9 +74,9 @@ public class GetAllProductsTests : BaseIntegrationTest
     public async Task GetAllProducts_WithCategoryFilter_ReturnsOkContainingCorrectProducts()
     {
         var fashionCategory = _seedCategory.GetByType(CategorySeedType.FASHION);
+        var endpoint = TestConstants.ProductEndpoints.GetAllProducts;
 
-        var response = await RequestService.Client.GetAsync($"/products?category={fashionCategory.Id}");
-
+        var response = await RequestService.Client.GetAsync($"{endpoint}?category={fashionCategory.Id}");
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);

@@ -1,6 +1,6 @@
 using SharedKernel.Models;
 
-namespace Application.Common.Security.Authorization.Roles;
+namespace SharedKernel.ValueObjects;
 
 /// <summary>
 /// Represents a role.
@@ -16,6 +16,11 @@ public sealed class Role : BaseEnumeration
     /// Represents the customer role.
     /// </summary>
     public static readonly Role Customer = new(2, nameof(Customer));
+
+    /// <summary>
+    /// Represents the carrier role.
+    /// </summary>
+    public static readonly Role Carrier = new(3, nameof(Carrier));
 
     private Role() { }
 

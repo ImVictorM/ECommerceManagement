@@ -2,11 +2,12 @@ using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Users.Queries.GetSelf;
 using Application.Users.Errors;
-using Application.Common.Security.Authorization.Roles;
 
 using Domain.UserAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UnitTests.TestUtils;
+
+using SharedKernel.ValueObjects;
 
 using FluentAssertions;
 using Moq;
@@ -43,15 +44,11 @@ public class GetSelfQueryHandlerTests
     [Fact]
     public async Task HandleGetSelfQuery_WhenUserExists_ReturnsUserResult()
     {
-        var currentUserIdentity = new IdentityUser("1", [Role.Customer.Name]);
+        var currentUserIdentity = new IdentityUser("1", [Role.Customer]);
         var currentUserId = UserId.Create(currentUserIdentity.Id);
 
-        var user = UserUtils.CreateUser(
-            id: UserId.Create(currentUserIdentity.Id),
-            roles: new HashSet<UserRole>()
-            {
-                UserRole.Create(Role.Customer.Id)
-            }
+        var user = UserUtils.CreateCustomer(
+            id: UserId.Create(currentUserIdentity.Id)
         );
 
         _mockIdentityProvider
@@ -75,7 +72,7 @@ public class GetSelfQueryHandlerTests
     [Fact]
     public async Task HandleGetSelfQuery_WhenUserDoesNotExist_ThrowsException()
     {
-        var currentUserIdentity = new IdentityUser("1", [Role.Customer.Name]);
+        var currentUserIdentity = new IdentityUser("1", [Role.Customer]);
         var currentUserId = UserId.Create(currentUserIdentity.Id);
 
         _mockIdentityProvider

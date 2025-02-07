@@ -1,6 +1,5 @@
 using Application.Orders.Commands.PlaceOrder;
 using Application.Orders.DTOs;
-using Application.Common.Extensions;
 
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
@@ -36,7 +35,7 @@ public class OrderMappings : IRegister
             .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
             .Map(dest => dest.Total, src => src.Order.Total)
             .Map(dest => dest.Description, src => src.Order.Description)
-            .Map(dest => dest.Status, src => src.Order.GetStatusDescription())
+            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name)
             .Map(dest => dest.Products, src => src.Order.Products)
             .Map(dest => dest.Payment, src => src.Payment == null ? null : new OrderPaymentResponse(
                 src.Payment.PaymentId,
@@ -52,7 +51,7 @@ public class OrderMappings : IRegister
             .Map(dest => dest.Id, src => src.Order.Id.ToString())
             .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
             .Map(dest => dest.Description, src => src.Order.Description)
-            .Map(dest => dest.Status, src => src.Order.GetStatusDescription())
+            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name)
             .Map(dest => dest.Total, src => src.Order.Total);
     }
 }

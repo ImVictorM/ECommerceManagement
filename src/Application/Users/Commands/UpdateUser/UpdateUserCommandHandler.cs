@@ -62,7 +62,7 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
 
         LogUpdatingUser();
 
-        userToUpdate.Update(
+        userToUpdate.UpdateDetails(
             name: request.Name,
             email: inputEmail,
             phone: request.Phone

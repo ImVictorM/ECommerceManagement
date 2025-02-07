@@ -5,6 +5,7 @@ using Domain.UserAggregate;
 using IntegrationTests.Common.Requests.Abstracts;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Constants;
 using IntegrationTests.TestUtils.Extensions.Http;
 
 using System.Net.Http.Json;
@@ -46,7 +47,7 @@ public sealed class RequestService : IRequestService
 
         var request = new LoginUserRequest(credentials.Email, credentials.Password);
 
-        var response = await Client.PostAsJsonAsync("/auth/login", request);
+        var response = await Client.PostAsJsonAsync(TestConstants.AuthenticationEndpoints.LoginUser, request);
 
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
 

@@ -6,6 +6,7 @@ using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Authentication;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using Contracts.Authentication;
 using RegisterCustomerRequest = Contracts.Authentication.RegisterCustomerRequest;
@@ -23,6 +24,7 @@ namespace IntegrationTests.Authentication;
 /// </summary>
 public class RegisterCustomerTests : BaseIntegrationTest
 {
+    
     private readonly IDataSeed<UserSeedType, User> _userSeed;
 
     /// <summary>
@@ -56,8 +58,14 @@ public class RegisterCustomerTests : BaseIntegrationTest
     {
         var loginRequest = new LoginUserRequest(registerRequest.Email, registerRequest.Password);
 
-        var registerHttpResponse = await RequestService.Client.PostAsJsonAsync("/auth/register", registerRequest);
-        var loginHttpResponse = await RequestService.Client.PostAsJsonAsync("/auth/login", loginRequest);
+        var registerHttpResponse = await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.RegisterCustomer,
+            registerRequest
+        );
+        var loginHttpResponse = await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.LoginUser,
+            loginRequest
+        );
 
         var loginHttpResponseContent = await loginHttpResponse.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
         var registerHttpResponseContent = await registerHttpResponse.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
@@ -78,9 +86,16 @@ public class RegisterCustomerTests : BaseIntegrationTest
 
         var registerRequest = RegisterCustomerRequestUtils.CreateRequest(email: existingUser.Email.ToString());
 
-        await RequestService.Client.PostAsJsonAsync("/auth/register", registerRequest);
+        await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.RegisterCustomer,
+            registerRequest
+        );
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync("/auth/register", registerRequest);
+        var httpResponse = await RequestService.Client.PostAsJsonAsync(
+            TestConstants.AuthenticationEndpoints.RegisterCustomer,
+            registerRequest
+        );
+
         var responseContent = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         httpResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);

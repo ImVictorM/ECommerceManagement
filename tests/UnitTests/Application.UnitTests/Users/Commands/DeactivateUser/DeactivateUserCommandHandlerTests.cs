@@ -44,7 +44,7 @@ public class DeactivateUserCommandHandlerTests
     [Fact]
     public async Task HandleDeactivateUser_WhenUserExists_DeactivateItAndSave()
     {
-        var userToBeDeactivated = UserUtils.CreateUser(active: true);
+        var userToBeDeactivated = UserUtils.CreateCustomer(active: true);
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))

@@ -44,7 +44,7 @@ public class GetUserByIdQueryHandlerTests
     [Fact]
     public async Task HandleGetUserById_WhenUserExists_ReturnsUser()
     {
-        var mockUser = UserUtils.CreateUser();
+        var mockUser = UserUtils.CreateCustomer();
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))

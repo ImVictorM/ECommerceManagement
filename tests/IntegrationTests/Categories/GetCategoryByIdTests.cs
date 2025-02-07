@@ -6,8 +6,7 @@ using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.TestUtils.Extensions.Http;
-
-using WebApi.Categories;
+using IntegrationTests.TestUtils.Constants;
 
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -39,7 +38,7 @@ public class GetCategoryByIdTests : BaseIntegrationTest
     {
         var missingCategoryId = "111111";
 
-        var response = await RequestService.Client.GetAsync($"{CategoryEndpoints.BaseEndpoint}/{missingCategoryId}");
+        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(missingCategoryId));
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -52,7 +51,7 @@ public class GetCategoryByIdTests : BaseIntegrationTest
     {
         var existingCategory = _seedCategory.GetByType(CategorySeedType.TECHNOLOGY);
 
-        var response = await RequestService.Client.GetAsync($"{CategoryEndpoints.BaseEndpoint}/{existingCategory.Id}");
+        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.DeleteCategory(existingCategory.Id.ToString()));
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<CategoryResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);

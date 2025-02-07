@@ -1,10 +1,9 @@
-using Application.Common.Security.Authorization.Roles;
-
 using SharedKernel.Models;
+using SharedKernel.ValueObjects;
 
 using FluentAssertions;
 
-namespace Application.UnitTests.Common.Security.Authorization.Roles;
+namespace SharedKernel.UnitTests.ValueObjects;
 
 /// <summary>
 /// Unit tests for the <see cref="Role"/> class.

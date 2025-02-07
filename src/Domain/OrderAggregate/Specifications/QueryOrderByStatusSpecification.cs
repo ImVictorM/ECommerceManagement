@@ -22,7 +22,7 @@ public sealed class QueryOrderByStatusSpecification : CompositeQuerySpecificatio
     public QueryOrderByStatusSpecification(OrderStatus? status = null)
     {
         Criteria = status is not null
-            ? order => order.OrderStatusId == status.Id
+            ? order => order.OrderStatus == status
             : _ => true;
     }
 }

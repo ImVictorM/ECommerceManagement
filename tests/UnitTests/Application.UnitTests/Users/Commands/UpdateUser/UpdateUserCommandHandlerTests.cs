@@ -48,7 +48,7 @@ public class UpdateUserCommandHandlerTests
     [Fact]
     public async Task HandleUpdateUser_WhenUserExists_UpdateTheUserCorrectly()
     {
-        var userToBeUpdated = UserUtils.CreateUser();
+        var userToBeUpdated = UserUtils.CreateCustomer();
         var command = UpdateUserCommandUtils.CreateCommand(name: "new name", phone: "19958274823");
 
         _mockUserRepository
@@ -89,8 +89,8 @@ public class UpdateUserCommandHandlerTests
     {
         var userToBeUpdatedNewEmail = EmailUtils.CreateEmail("existing_email@email.com");
 
-        var userToBeUpdated = UserUtils.CreateUser();
-        var conflictingUser = UserUtils.CreateUser(email: userToBeUpdatedNewEmail);
+        var userToBeUpdated = UserUtils.CreateCustomer();
+        var conflictingUser = UserUtils.CreateCustomer(email: userToBeUpdatedNewEmail);
         var updateRequest = UpdateUserCommandUtils.CreateCommand(email: userToBeUpdatedNewEmail.ToString());
 
         _mockUserRepository

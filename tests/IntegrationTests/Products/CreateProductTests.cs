@@ -9,6 +9,7 @@ using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Products.TestUtils;
 using IntegrationTests.TestUtils.Extensions.Products;
 using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -46,9 +47,10 @@ public class CreateProductTests : BaseIntegrationTest
     public async Task CreateProduct_WhenUserAuthenticatedIsNotAdmin_ReturnsForbidden(UserSeedType customerType)
     {
         var request = CreateProductRequestUtils.CreateRequest();
+        var endpoint = TestConstants.ProductEndpoints.CreateProduct;
 
         await RequestService.LoginAsAsync(customerType);
-        var response = await RequestService.Client.PostAsJsonAsync("/products", request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -61,8 +63,9 @@ public class CreateProductTests : BaseIntegrationTest
     public async Task CreateProduct_WhenUserIsNotAuthenticated_ReturnsUnauthorize()
     {
         var request = CreateProductRequestUtils.CreateRequest();
+        var endpoint = TestConstants.ProductEndpoints.CreateProduct;
 
-        var response = await RequestService.Client.PostAsJsonAsync("/products", request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -92,9 +95,10 @@ public class CreateProductTests : BaseIntegrationTest
             ]
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var endpoint = TestConstants.ProductEndpoints.CreateProduct;
 
-        var postResponse = await RequestService.Client.PostAsJsonAsync("/products", request);
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var postResponse = await RequestService.Client.PostAsJsonAsync(endpoint, request);
         var resourceLocation = postResponse.Headers.Location;
         var getResponse = await RequestService.Client.GetAsync(resourceLocation);
         var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<ProductResponse>();

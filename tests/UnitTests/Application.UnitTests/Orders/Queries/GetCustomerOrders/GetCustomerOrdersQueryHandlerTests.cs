@@ -92,7 +92,7 @@ public class GetCustomerOrdersQueryHandlerTests
             )
         };
 
-        var ordersPending = orders.Where(o => o.OrderStatusId == OrderStatus.Pending.Id);
+        var ordersPending = orders.Where(o => o.OrderStatus == OrderStatus.Pending);
 
         _mockOrderRepository
             .Setup(repo => repo.FindSatisfyingAsync(
