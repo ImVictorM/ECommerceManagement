@@ -39,7 +39,7 @@ public sealed class AuthenticationEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Login User",
-                Description = "Allows a user to log in using their email and password."
+                Description = "Allows a user to log in using their email and password. Inactive users cannot log in"
             });
 
         authenticationGroup

@@ -1,8 +1,8 @@
 @base_endpoint = http://localhost:8000/auth
 
-### Allows a new user to register for an account.
+### Allows a new customer user to register for an account.
 ### Returns a 204 CREATED response in case of success.
-POST {{base_endpoint}}/register
+POST {{base_endpoint}}/register/users/customers
 Content-Type: application/json
 
 {
@@ -11,9 +11,9 @@ Content-Type: application/json
 	"password": "victor123!"
 }
 
-### Login as the new user. Inactive users cannot log in.
+### Allows a user to log in using their email and password. Inactive users cannot log in.
 ### Returns a 200 OK response in case of success.
-POST {{base_endpoint}}/login
+POST {{base_endpoint}}/login/users
 Content-Type: application/json
 
 {
@@ -23,10 +23,20 @@ Content-Type: application/json
 
 ### Log in as an administrator.
 ### Returns a 200 OK response in case of success.
-POST {{base_endpoint}}/login
+POST {{base_endpoint}}/login/users
 Content-Type: application/json
 
 {
   "email": "admin@email.com",
 	"password": "admin123"
+}
+
+### Log in as the internal carrier
+### Returns a 200 ok response in case of success.
+POST {{base_endpoint}}/login/carriers
+Content-Type: application/json
+
+{
+  "email": "carrier@email.com",
+	"password": "carrier123"
 }
