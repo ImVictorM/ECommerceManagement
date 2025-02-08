@@ -38,7 +38,8 @@ public sealed class ShipmentCarrierPolicy<TRequest> : IPolicy<TRequest>
 
         if (shipment == null)
         {
-            return false;
+            // Let the use case handle scenarios where the shipment is null
+            return true;
         }
 
         return shipment.CarrierId == carrierId;

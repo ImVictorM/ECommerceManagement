@@ -37,6 +37,7 @@ public static class ServicesRegistration
         services.AddScoped(typeof(SelfOrAdminPolicy<>));
         services.AddScoped(typeof(RestrictedDeactivationPolicy<>));
         services.AddScoped(typeof(RestrictedUpdatePolicy<>));
+        services.AddScoped(typeof(ShipmentCarrierPolicy<>));
 
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));

@@ -32,6 +32,12 @@ public static class RequestUtils
     public record TestRequestWithoutAuthUserRelated(string UserId) : ITestRequest, IUserSpecificResource;
 
     /// <summary>
+    /// Represents a shipment related request without authorization attributes.
+    /// </summary>
+    /// <param name="ShipmentId">The shipment id.</param>
+    public record TestRequestWithoutAuthShipmentRelated(string ShipmentId) : ITestRequest, IShipmentSpecificResource;
+
+    /// <summary>
     /// Represents a request with a role authorization attribute.
     /// </summary>
     [Authorize(roleName: nameof(Role.Admin))]
