@@ -2,6 +2,7 @@ using Application.Common.Persistence;
 using Application.Shipments.Errors;
 
 using Domain.ShipmentAggregate.ValueObjects;
+using Domain.ShipmentAggregate.Enumerations;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
@@ -45,6 +46,11 @@ public sealed partial class AdvanceShipmentStatusCommandHandler : IRequestHandle
             throw new ShipmentNotFoundException(
                 "It was not possible to advance the shipment status because the shipment was not found"
             );
+        }
+
+        if (shipment.ShipmentStatus == ShipmentStatus.Pending)
+        {
+            throw new AdvancePendingShipmentStatusException();
         }
 
         LogCurrentShipmentStatus(shipment.ShipmentStatus.Name);
