@@ -42,10 +42,29 @@ public class AdvanceShipmentStatusCommandHandlerTests
     }
 
     /// <summary>
-    /// Verifies the shipment status advances when the shipment exists.
+    /// Verifies the shipment status advances when the shipment exists and is not pending.
     /// </summary>
     [Fact]
-    public async Task HandleAdvanceShipmentStatus_WithExistingShipment_AdvancesStatusToTheNextState()
+    public async Task HandleAdvanceShipmentStatus_WithExistingPreparingShipment_AdvancesStatusToTheNextState()
+    {
+        var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
+        var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), initialShipmentStatus: ShipmentStatus.Preparing);
+
+        _mockShipmentRepository
+            .Setup(r => r.FindByIdAsync(It.IsAny<ShipmentId>()))
+            .ReturnsAsync(shipment);
+
+        await _handler.Handle(command, default);
+
+        shipment.ShipmentStatus.Should().Be(ShipmentStatus.Shipped);
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+    }
+
+    /// <summary>
+    /// Verifies an error is thrown when trying to advance a pending shipment manually.
+    /// </summary>
+    [Fact]
+    public async Task HandleAdvanceShipmentStatus_WithExistingPendingShipment_ThrowsError()
     {
         var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
         var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1));
@@ -54,10 +73,10 @@ public class AdvanceShipmentStatusCommandHandlerTests
             .Setup(r => r.FindByIdAsync(It.IsAny<ShipmentId>()))
             .ReturnsAsync(shipment);
 
-        await _handler.Handle(command, default);
-
-        shipment.ShipmentStatus.Should().Be(ShipmentStatus.Preparing);
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        await FluentActions
+            .Invoking(() => _handler.Handle(command, default))
+            .Should()
+            .ThrowAsync<AdvancePendingShipmentStatusException>();
     }
 
     /// <summary>

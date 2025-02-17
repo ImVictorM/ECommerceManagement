@@ -3,6 +3,7 @@ using Domain.ShipmentAggregate;
 using Domain.CarrierAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.ShipmentAggregate.ValueObjects;
+using Domain.ShipmentAggregate.Enumerations;
 
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -23,13 +24,15 @@ public static class ShipmentUtils
     /// <param name="carrierId">The carrier id.</param>
     /// <param name="shippingMethodId">The shipping method id.</param>
     /// <param name="deliveryAddress">The delivery address.</param>
+    /// <param name="initialShipmentStatus">The initial shipment status. The default is <see cref="ShipmentStatus.Pending"/>.</param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>
     public static Shipment CreateShipment(
         ShipmentId? id = null,
         OrderId? orderId = null,
         CarrierId? carrierId = null,
         ShippingMethodId? shippingMethodId = null,
-        Address? deliveryAddress = null
+        Address? deliveryAddress = null,
+        ShipmentStatus? initialShipmentStatus = null
     )
     {
         var shipment = Shipment.Create(
@@ -42,6 +45,19 @@ public static class ShipmentUtils
         if (id != null)
         {
             shipment.SetIdUsingReflection(id);
+        }
+
+        if (initialShipmentStatus is not null)
+        {
+            var statusProperty = typeof(Shipment).GetProperty(
+                nameof(Shipment.ShipmentStatus),
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
+            );
+
+            if (statusProperty != null && statusProperty.CanWrite)
+            {
+                statusProperty.SetValue(shipment, initialShipmentStatus);
+            }
         }
 
         return shipment;
