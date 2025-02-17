@@ -52,4 +52,46 @@ public class ShippingMethodTests
         shippingMethod.Price.Should().BeGreaterThanOrEqualTo(0);
         shippingMethod.EstimatedDeliveryDays.Should().BeGreaterThan(0);
     }
+
+    /// <summary>
+    /// Verifies it is possible to completely update a shipping method.
+    /// </summary>
+    [Fact]
+    public void UpdateShippingMethod_WithCompleteUpdate_UpdatesTheShippingMethodCompletely()
+    {
+        var newName = "SuperFastShipping";
+        var newPrice = 50m;
+        var newEstimatedDeliveryDays = 1;
+
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod();
+
+        shippingMethod.Update(
+            name: newName,
+            price: newPrice,
+            estimatedDeliveryDays: newEstimatedDeliveryDays
+        );
+
+        shippingMethod.Name.Should().Be(newName);
+        shippingMethod.Price.Should().Be(newPrice);
+        shippingMethod.EstimatedDeliveryDays.Should().Be(newEstimatedDeliveryDays);
+    }
+
+    /// <summary>
+    /// Verifies it is possible to partially update a shipping method.
+    /// </summary>
+    [Fact]
+    public void UpdateShippingMethod_WithPartialUpdate_UpdatesTheShippingMethodPartially()
+    {
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod();
+
+        var newName = "SuperFastShipping";
+        var initialEstimatedDeliveryDays = shippingMethod.EstimatedDeliveryDays;
+        var initialPrice = shippingMethod.Price;
+
+        shippingMethod.Update(name: newName);
+
+        shippingMethod.Name.Should().Be(newName);
+        shippingMethod.Price.Should().Be(initialPrice);
+        shippingMethod.EstimatedDeliveryDays.Should().Be(initialEstimatedDeliveryDays);
+    }
 }
