@@ -64,7 +64,7 @@ public class DeleteCategoryTests : BaseIntegrationTest
     /// Tests deleting a category with admin role deletes the category correctly.
     /// </summary>
     [Fact]
-    public async Task DeleteCategory_WithAdminPermission_ReturnsCreate()
+    public async Task DeleteCategory_WithAdminPermission_ReturnsNoContentAndDeletesIt()
     {
         var categoryToBeDeleted = _seedCategory.GetByType(CategorySeedType.JEWELRY);
 

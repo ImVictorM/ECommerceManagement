@@ -57,7 +57,7 @@ public class CreateCategoryTests : BaseIntegrationTest
     /// Tests creating a category with admin role creates the category correctly.
     /// </summary>
     [Fact]
-    public async Task CreateCategory_WithAdminPermission_ReturnsCreate()
+    public async Task CreateCategory_WithAdminPermission_ReturnsCreated()
     {
         var request = CreateCategoryRequestUtils.CreateRequest(name: "new_category");
 

@@ -73,7 +73,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
     /// Tests updating a category with admin role updates the category correctly.
     /// </summary>
     [Fact]
-    public async Task UpdateCategory_WithAdminPermission_ReturnsCreate()
+    public async Task UpdateCategory_WithAdminPermission_ReturnsNoContentAndUpdatesIt()
     {
         var categoryToBeUpdated = _seedCategory.GetByType(CategorySeedType.JEWELRY);
         var request = UpdateCategoryRequestUtils.CreateRequest(name: "new_category_name");

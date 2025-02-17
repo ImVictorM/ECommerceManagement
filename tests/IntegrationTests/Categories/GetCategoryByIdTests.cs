@@ -51,7 +51,7 @@ public class GetCategoryByIdTests : BaseIntegrationTest
     {
         var existingCategory = _seedCategory.GetByType(CategorySeedType.TECHNOLOGY);
 
-        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.DeleteCategory(existingCategory.Id.ToString()));
+        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(existingCategory.Id.ToString()));
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<CategoryResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
