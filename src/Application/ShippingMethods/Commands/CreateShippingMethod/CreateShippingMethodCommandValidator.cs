@@ -13,7 +13,7 @@ public class CreateShippingMethodCommandValidator : AbstractValidator<CreateShip
     public CreateShippingMethodCommandValidator()
     {
         RuleFor(x => x.Name).NotEmpty();
-        RuleFor(x => x.Price).GreaterThan(0m);
+        RuleFor(x => x.Price).GreaterThanOrEqualTo(0m);
         RuleFor(x => x.EstimatedDeliveryDays).GreaterThanOrEqualTo(1);
     }
 }

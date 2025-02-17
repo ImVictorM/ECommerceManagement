@@ -39,19 +39,19 @@ public class UpdateShippingMethodCommandValidatorTests
     }
 
     /// <summary>
-    /// Tests when the price of a shipping method is not greater than zero the price should have validation errors.
+    /// Tests when the price of a shipping method is not greater than or equal to zero the price should have validation errors.
     /// </summary>
     /// <param name="invalidPrice">The invalid price.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.NonPositiveNumbers), MemberType = typeof(ValidationTestData))]
-    public void ValidateUpdateShippingMethodCommand_WhenPriceIsNotGreaterThanZero_ShouldHaveValidationErrors(int invalidPrice)
+    [MemberData(nameof(ValidationTestData.NegativeNumbers), MemberType = typeof(ValidationTestData))]
+    public void ValidateUpdateShippingMethodCommand_WhenPriceIsNotGreaterThanOrEqualToZero_ShouldHaveValidationErrors(int invalidPrice)
     {
         var command = UpdateShippingMethodCommandUtils.CreateCommand(price: invalidPrice);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Price).WithErrorMessage("'Price' must be greater than '0'.");
+        result.ShouldHaveValidationErrorFor(c => c.Price).WithErrorMessage("'Price' must be greater than or equal to '0'.");
     }
 
     /// <summary>
