@@ -1,0 +1,42 @@
+@base_endpoint = http://localhost:8000/shipping/methods
+
+@token = insert-token-here
+
+@id_shipping_method = 2
+
+### Creates a new shipping method. Admin authentication is required.
+### Returns a 201 CREATED response in case of success.
+POST {{base_endpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "FreeDelivery",
+  "price": 0,
+  "estimatedDeliveryDays": 7
+}
+
+### Updates a shipping method. Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+PUT {{base_endpoint}}/{{id_shipping_method}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "ExpressDelivery",
+  "price": 15,
+  "estimatedDeliveryDays": 3
+}
+
+### Deletes a shipping method by its identifier. Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+DELETE {{base_endpoint}}/{{id_shipping_method}}
+Authorization: Bearer {{token}}
+
+### Retrieves a shipping method by its identifier.
+### Returns a 200 OK response containing the shipping method in case of success.
+GET {{base_endpoint}}/{{id_shipping_method}}
+
+### Retrieves all the available shipping methods.
+### Returns a 200 OK response containing all the available shipping methods in case of success.
+GET {{base_endpoint}}
