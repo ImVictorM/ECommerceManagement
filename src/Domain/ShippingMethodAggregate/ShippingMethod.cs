@@ -50,4 +50,21 @@ public class ShippingMethod : AggregateRoot<ShippingMethodId>
     {
         return new ShippingMethod(name, price, estimatedDeliveryDays);
     }
+
+    /// <summary>
+    /// Partially or fully updates the shipping method.
+    /// </summary>
+    /// <param name="name">The new shipping method name.</param>
+    /// <param name="price">The new shipping method price.</param>
+    /// <param name="estimatedDeliveryDays">The new shipping method estimated delivery days.</param>
+    public void Update(
+        string? name = null,
+        decimal? price = null,
+        int? estimatedDeliveryDays = null
+    )
+    {
+        Name = name ?? Name;
+        Price = price ?? Price;
+        EstimatedDeliveryDays = estimatedDeliveryDays ?? EstimatedDeliveryDays;
+    }
 }
