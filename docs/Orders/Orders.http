@@ -1,9 +1,9 @@
 @token_customer = insert-token-here
 @token_admin = insert-token-here
-@order_id = 1
-@order_owner_id = 2
+@id_order = 1
+@id_order_owner = 2
 @base_orders_endpoint = http://localhost:8000/orders
-@base_user_orders_endpoint = http://localhost:8000/users/{{order_owner_id}}/orders
+@base_customer_orders_endpoint = http://localhost:8000/users/customers/{{id_order_owner}}/orders
 
 ### Places an order for a customer. Customer authentication is required.
 ### Returns a 201 CREATED response in case of success.
@@ -13,9 +13,10 @@ Authorization: Bearer {{token_customer}}
 X-Idempotency-Key: dc6f84e4-0afb-42d4-b72a-261974c3d010
 
 {
+  "shippingMethodId": "2",
   "products": [
     {
-      "productId": "2",
+      "productId": "1",
       "quantity": 2
     }
   ],
@@ -36,6 +37,7 @@ X-Idempotency-Key: dc6f84e4-0afb-42d4-b72a-261974c3d010
   "paymentMethod": {
     "type": "credit_card"
   },
+  "couponAppliedIds": [],
   "installments": 1
 }
 
@@ -46,15 +48,15 @@ Authorization: Bearer {{token_admin}}
 
 ### Retrieves an order by its identifier. Admin authentication is required.
 ### Returns an 200 OK response in case of success.
-GET {{base_orders_endpoint}}/{{order_id}}
+GET {{base_orders_endpoint}}/{{id_order}}
 Authorization: Bearer {{token_admin}}
 
 ### Retrieves all orders related to a customer. Self or admin authentication is required.
 ### Returns a 200 OK response in case of success.
-GET {{base_user_orders_endpoint}}
+GET {{base_customer_orders_endpoint}}
 Authorization: Bearer {{token_admin}}
 
 ### Retrieves a customer's order by its identifier. Self or admin authentication is required.
 ### Returns a 200 OK response in case of success.
-GET  {{base_user_orders_endpoint}}/{{order_id}}
+GET  {{base_customer_orders_endpoint}}/{{id_order}}
 Authorization: Bearer {{token_admin}}
