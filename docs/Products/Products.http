@@ -1,39 +1,6 @@
 @base_endpoint = http://localhost:8000/products
 @token = insert-token-here
 @product_id = 2
-@category_id = 1
-
-### Creates a new product category. Admin authentication is required.
-### Returns an 201 CREATED response in case of success.
-POST {{base_endpoint}}/categories
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "name": "fashion"
-}
-
-### Deletes an existing category. Admin authentication is required.
-### Returns an 204 NO_CONTENT in case of success.
-DELETE {{base_endpoint}}/categories/{{category_id}}
-Authorization: Bearer {{token}}
-
-### Updates an existing category name. Admin authentication is required.
-### Returns a 204 NO_CONTENT response in case of success.
-PUT {{base_endpoint}}/categories/{{category_id}}
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "name": "sports_outdoor"
-}
-
-### Retrieves all available product categories. No authentication is required.
-### Returns an 200 OK response in case of success.
-GET {{base_endpoint}}/categories
-
-### Retrieves a category by its identifier. No authentication is required.
-GET {{base_endpoint}}/categories/{{category_id}}
 
 ### Creates a new product. Admin authentication is required.
 ### Returns a 201 CREATED response in case of success.
