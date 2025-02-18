@@ -32,7 +32,6 @@ POST "/webhooks/payments"
 - 401 UNAUTHORIZED: The provided signature is invalid.
 - 400 BAD_REQUEST: The request body is invalid or missing required fields.
 
-Notes:
-
-Signature Validation: The X-Provider-Signature header must contain a valid signature generated using an HMAC algorithm. Both internal and the payment gateway algorithm must share the same secret key.<br/>
-Payment Statuses: Supported values for paymentStatus should align with the predefined statuses in the system.
+> Notes: <br>
+> Signature Validation: The X-Provider-Signature header must contain a valid signature generated using an HMAC algorithm. Both internal and the payment gateway algorithm must share the same secret key.<br/>
+> Payment Statuses: Supported values for paymentStatus should align with the predefined statuses in the system.
