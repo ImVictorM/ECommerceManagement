@@ -5,7 +5,6 @@ using Domain.UserAggregate;
 using SharedKernel.ValueObjects;
 
 using FluentAssertions;
-using Application.Common.Extensions;
 
 namespace IntegrationTests.TestUtils.Extensions.Users;
 
@@ -25,7 +24,7 @@ public static class UserResponseExtensions
         response.Email.Should().Be(expectedUser.Email.ToString());
         response.Name.Should().Be(expectedUser.Name);
         response.Roles.Count().Should().Be(expectedUser.UserRoles.Count);
-        response.Roles.Should().BeEquivalentTo(expectedUser.UserRoles.GetRoleNames());
+        response.Roles.Should().BeEquivalentTo(expectedUser.UserRoles.Select(ur => ur.Role.Name));
         response.Phone.Should().BeEquivalentTo(expectedUser.Phone);
         response.Addresses.Count().Should().Be(expectedUser.UserAddresses.Count);
         response.Addresses.Should().BeEquivalentTo(expectedUser.UserAddresses, opts => opts.ComparingByMembers<Address>());

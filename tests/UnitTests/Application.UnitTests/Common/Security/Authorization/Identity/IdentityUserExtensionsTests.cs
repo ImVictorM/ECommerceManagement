@@ -1,5 +1,6 @@
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
+
+using SharedKernel.ValueObjects;
 
 using FluentAssertions;
 
@@ -16,15 +17,15 @@ public class IdentityUserExtensionsTests
     public static readonly IEnumerable<object[]> IdentityUsersWithExpectedIsAdminResult =
     [
         [
-            new IdentityUser("1", [Role.Admin.Name, Role.Customer.Name]),
+            new IdentityUser("1", [Role.Admin, Role.Customer]),
             true,
         ],
         [
-            new IdentityUser("1", [Role.Customer.Name]),
+            new IdentityUser("1", [Role.Customer]),
             false,
         ],
         [
-            new IdentityUser("1", [Role.Admin.Name]),
+            new IdentityUser("1", [Role.Admin]),
             true,
         ]
     ];

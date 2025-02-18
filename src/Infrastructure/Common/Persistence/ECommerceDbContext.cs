@@ -7,9 +7,12 @@ using Domain.ProductAggregate;
 using Domain.SaleAggregate;
 using Domain.ShipmentAggregate;
 using Domain.UserAggregate;
+using Domain.CarrierAggregate;
+using Domain.ShippingMethodAggregate;
 using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
 
 using Infrastructure.Common.Persistence.Interceptors;
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
 using SharedKernel.Extensions;
 using SharedKernel.Interfaces;
@@ -28,6 +31,7 @@ public class ECommerceDbContext : DbContext
 {
     private const string KeyPrefix = "id";
     private readonly IEnumerable<IInterceptor> _interceptors;
+    private readonly IEnumerable<EntityTypeConfigurationDependency> _configurations;
 
     /// <summary>
     /// Gets or sets the category aggregate context.
@@ -69,6 +73,14 @@ public class ECommerceDbContext : DbContext
     /// Gets or sets the payment aggregate context.
     /// </summary>
     public DbSet<Payment> Payments { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the carrier aggregate context.
+    /// </summary>
+    public DbSet<Carrier> Carriers { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the shipping method aggregate context.
+    /// </summary>
+    public DbSet<ShippingMethod> ShippingMethods { get; set; } = null!;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.
@@ -76,22 +88,28 @@ public class ECommerceDbContext : DbContext
     /// <param name="options">The db context options.</param>
     /// <param name="auditInterceptor">The audit interceptor.</param>
     /// <param name="publishDomainEventInterceptor">The publish domain events interceptor.</param>
+    /// <param name="configurations">The entity type configurations.</param>
     public ECommerceDbContext(
         DbContextOptions<ECommerceDbContext> options,
         AuditInterceptor auditInterceptor,
-        PublishDomainEventsInterceptor publishDomainEventInterceptor
+        PublishDomainEventsInterceptor publishDomainEventInterceptor,
+        IEnumerable<EntityTypeConfigurationDependency> configurations
     )
         : base(options)
     {
         _interceptors = [auditInterceptor, publishDomainEventInterceptor];
+        _configurations = configurations;
     }
 
     /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Ignore<List<IDomainEvent>>()
-            .ApplyConfigurationsFromAssembly(typeof(ECommerceDbContext).Assembly);
+        modelBuilder.Ignore<List<IDomainEvent>>();
+
+        foreach (var entityTypeConfiguration in _configurations)
+        {
+            entityTypeConfiguration.Configure(modelBuilder);
+        }
 
         NormalizeColumnNames(modelBuilder);
 

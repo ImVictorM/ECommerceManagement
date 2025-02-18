@@ -1,10 +1,14 @@
+using Domain.ProductAggregate;
+
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Products;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Constants;
+
+using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
-using Domain.ProductAggregate;
-using FluentAssertions;
-using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Seeds;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
@@ -15,6 +19,8 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class DeactivateProductsTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="DeactivateProductsTests"/> class.
     /// </summary>
@@ -22,17 +28,7 @@ public class DeactivateProductsTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public DeactivateProductsTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
-    }
-
-    /// <summary>
-    /// List of products contained in the database.
-    /// </summary>
-    public static IEnumerable<object[]> ActiveProducts()
-    {
-        foreach (var product in ProductSeed.ListProducts(p => p.IsActive))
-        {
-            yield return new object[] { product };
-        }
+        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
     }
 
     /// <summary>
@@ -41,7 +37,9 @@ public class DeactivateProductsTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateProduct_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
-        var response = await Client.DeleteAsync("/products/1");
+        var endpoint = TestConstants.ProductEndpoints.DeactivateProduct("1");
+
+        var response = await RequestService.Client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -51,12 +49,14 @@ public class DeactivateProductsTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerType">The customer to be authenticated.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Customer)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    public async Task DeactivateProduct_WhenUserIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerType)
+    [InlineData(UserSeedType.CUSTOMER)]
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    public async Task DeactivateProduct_WhenUserIsNotAdmin_ReturnsForbidden(UserSeedType customerType)
     {
-        await Client.LoginAs(customerType);
-        var response = await Client.DeleteAsync("/products/1");
+        var endpoint = TestConstants.ProductEndpoints.DeactivateProduct("1");
+
+        await RequestService.LoginAsAsync(customerType);
+        var response = await RequestService.Client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -68,9 +68,10 @@ public class DeactivateProductsTests : BaseIntegrationTest
     public async Task DeactivateProduct_WhenProductDoesNotExist_ReturnNotFound()
     {
         var notFoundId = "404";
+        var endpoint = TestConstants.ProductEndpoints.DeactivateProduct(notFoundId);
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var response = await Client.DeleteAsync($"/products/{notFoundId}");
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.DeleteAsync(endpoint);
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -83,16 +84,22 @@ public class DeactivateProductsTests : BaseIntegrationTest
     /// Tests that when the product is deactivate the response is no content.
     /// Also checks if the product was made inaccessible by trying to fetch it.
     /// </summary>
-    /// <param name="productToDeactivate">The product to be deactivated.</param>
+    /// <param name="productToBeDeactivatedType">The product to be deactivated type.</param>
     [Theory]
-    [MemberData(nameof(ActiveProducts))]
-    public async Task DeactivateProduct_WhenProductExistAndUserHasPermission_DeactivatesAndMakesItInaccessible(
-        Product productToDeactivate
+    [InlineData(ProductSeedType.PENCIL)]
+    [InlineData(ProductSeedType.COMPUTER_ON_SALE)]
+    [InlineData(ProductSeedType.TSHIRT)]
+    public async Task DeactivateProduct_WhenProductExistsAndUserHasPermission_DeactivatesAndMakesItInaccessible(
+        ProductSeedType productToBeDeactivatedType
     )
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var responseDelete = await Client.DeleteAsync($"/products/{productToDeactivate.Id}");
-        var responseGet = await Client.GetAsync($"/products/{productToDeactivate.Id}");
+        var productToBeDeactivate = _seedProduct.GetByType(productToBeDeactivatedType);
+        var deactivateProductEndpoint = TestConstants.ProductEndpoints.DeactivateProduct(productToBeDeactivate.Id.ToString());
+        var getProductByIdEndpoint = TestConstants.ProductEndpoints.GetProductById(productToBeDeactivate.Id.ToString());
+
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var responseDelete = await RequestService.Client.DeleteAsync(deactivateProductEndpoint);
+        var responseGet = await RequestService.Client.GetAsync(getProductByIdEndpoint);
 
         responseDelete.StatusCode.Should().Be(HttpStatusCode.NoContent);
         responseGet.StatusCode.Should().Be(HttpStatusCode.NotFound);

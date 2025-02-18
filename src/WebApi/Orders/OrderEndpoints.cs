@@ -17,10 +17,7 @@ namespace WebApi.Orders;
 /// </summary>
 public class OrderEndpoints : ICarterModule
 {
-    /// <summary>
-    /// The base endpoint to access order resources.
-    /// </summary>
-    public const string BaseEndpoint = "orders";
+    private const string BaseEndpoint = "orders";
 
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)

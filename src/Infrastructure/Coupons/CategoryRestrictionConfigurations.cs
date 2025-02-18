@@ -4,6 +4,8 @@ using Domain.CouponAggregate.ValueObjects.Restrictions;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,10 +14,10 @@ namespace Infrastructure.Coupons;
 /// <summary>
 /// Configures the <see cref="CategoryRestriction"/> restriction tables.
 /// </summary>
-public class CategoryRestrictionConfigurations : IEntityTypeConfiguration<CategoryRestriction>
+public class CategoryRestrictionConfigurations : EntityTypeConfigurationDependency<CategoryRestriction>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<CategoryRestriction> builder)
+    public override void Configure(EntityTypeBuilder<CategoryRestriction> builder)
     {
         builder.ToTable("restriction_categories");
 

@@ -1,6 +1,5 @@
 using Application.Common.Persistence;
 using Application.Common.Security.Authorization.Policies;
-using Application.Common.Security.Authorization.Roles;
 using Application.Common.Security.Identity;
 using Application.Common.Security.Authorization.Requests;
 using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestUtils;
@@ -8,6 +7,8 @@ using static Application.UnitTests.Common.Security.Authorization.TestUtils.Reque
 using Domain.UserAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UnitTests.TestUtils;
+
+using SharedKernel.ValueObjects;
 
 using Moq;
 using FluentAssertions;
@@ -44,9 +45,9 @@ public class RestrictedUpdatePolicyTests
     {
         var userId = UserId.Create("1");
         var request = new TestRequestWithoutAuthUserRelated(userId.ToString());
-        var currentUser = new IdentityUser(userId.ToString(), [Role.Customer.Name]);
+        var currentUser = new IdentityUser(userId.ToString(), [Role.Customer]);
 
-        var user = UserUtils.CreateUser(id: userId);
+        var user = UserUtils.CreateCustomer(id: userId);
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(userId))
@@ -67,12 +68,9 @@ public class RestrictedUpdatePolicyTests
         var nonAdminUserId = UserId.Create("2");
 
         var request = new TestRequestWithoutAuthUserRelated(nonAdminUserId.ToString());
-        var adminUser = new IdentityUser(adminId.ToString(), [Role.Admin.Name]);
+        var adminUser = new IdentityUser(adminId.ToString(), [Role.Admin]);
 
-        var nonAdminUser = UserUtils.CreateUser(id: nonAdminUserId, roles: new HashSet<UserRole>()
-        {
-            UserRole.Create(Role.Customer.Id)
-        });
+        var nonAdminUser = UserUtils.CreateCustomer(id: nonAdminUserId);
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(nonAdminUserId))
@@ -93,12 +91,9 @@ public class RestrictedUpdatePolicyTests
         var otherAdminId = UserId.Create("2");
 
         var request = new TestRequestWithoutAuthUserRelated(otherAdminId.ToString());
-        var adminUser = new IdentityUser(adminId.ToString(), [Role.Admin.Name]);
+        var adminUser = new IdentityUser(adminId.ToString(), [Role.Admin]);
 
-        var otherAdminUser = UserUtils.CreateUser(id: otherAdminId, roles: new HashSet<UserRole>()
-        {
-            UserRole.Create(Role.Admin.Id)
-        });
+        var otherAdminUser = UserUtils.CreateAdmin(id: otherAdminId);
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(otherAdminId))
@@ -119,7 +114,7 @@ public class RestrictedUpdatePolicyTests
         var nonExistingUserId = UserId.Create("9999");
 
         var request = new TestRequestWithoutAuthUserRelated(nonExistingUserId.ToString());
-        var adminUser = new IdentityUser(adminId.ToString(), [Role.Admin.Name]);
+        var adminUser = new IdentityUser(adminId.ToString(), [Role.Admin]);
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(nonExistingUserId))

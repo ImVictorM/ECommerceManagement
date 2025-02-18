@@ -1,5 +1,6 @@
-using Bogus;
 using Contracts.Common;
+
+using Bogus;
 
 namespace IntegrationTests.TestUtils.Contracts;
 

@@ -44,7 +44,7 @@ public class GetAllUsersQueryHandlerTests
     [Fact]
     public async Task HandleGetAllUsers_WhenFilteringForUsersThatIsActive_QueryOnlyActiveUsers()
     {
-        var mockActiveUsers = UserUtils.CreateUsers(count: 5, active: true);
+        var mockActiveUsers = UserUtils.CreateCustomers(count: 5, active: true);
 
         _mockUserRepository
             .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
@@ -64,7 +64,7 @@ public class GetAllUsersQueryHandlerTests
     [Fact]
     public async Task HandleGetAllUsers_WhenFilteringForUsersThatIsInactive_QueryOnlyInactiveUsers()
     {
-        var mockInactiveUsers = UserUtils.CreateUsers(count: 5, active: false);
+        var mockInactiveUsers = UserUtils.CreateCustomers(count: 5, active: false);
 
         _mockUserRepository
             .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
@@ -84,7 +84,7 @@ public class GetAllUsersQueryHandlerTests
     [Fact]
     public async Task HandleGetAllUsers_WhenGettingAllUsersWithoutFilter_QueryAllTheUsers()
     {
-        var mockAllUsers = UserUtils.CreateUsers(count: 5);
+        var mockAllUsers = UserUtils.CreateCustomers(count: 5);
 
         _mockUserRepository
             .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<User, bool>>>()))

@@ -56,7 +56,7 @@ public class PaymentApprovedMarkOrderAsPaidHandlerTests
 
         await _handler.Handle(notification, default);
 
-        order.OrderStatusId.Should().Be(OrderStatus.Paid.Id);
+        order.OrderStatus.Should().Be(OrderStatus.Paid);
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 

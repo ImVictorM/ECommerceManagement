@@ -5,6 +5,7 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.Errors;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 using FluentAssertions;
 using Moq;
@@ -63,7 +64,7 @@ public class OrderTests
             .Returns(mockOrderProducts.ToAsyncEnumerable());
 
         mockOrderService
-            .Setup(s => s.CalculateTotalAsync(mockOrderProducts, It.IsAny<IEnumerable<OrderCoupon>>()))
+            .Setup(s => s.CalculateTotalAsync(mockOrderProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
             .ReturnsAsync(mockTotal);
 
         var actionResult = await FluentActions
@@ -80,11 +81,11 @@ public class OrderTests
         order.OwnerId.Should().NotBeNull();
         order.Total.Should().Be(mockTotal);
         order.Description.Should().Be("Order pending. Waiting for payment");
-        order.OrderStatusId.Should().Be(OrderStatus.Pending.Id);
+        order.OrderStatus.Should().Be(OrderStatus.Pending);
         order.DomainEvents.Should().HaveCount(1);
         order.DomainEvents.Should().ContainItemsAssignableTo<OrderCreated>();
-        order.OrderStatusHistories.Should().HaveCount(1);
-        order.OrderStatusHistories.First().OrderStatusId.Should().Be(OrderStatus.Pending.Id);
+        order.OrderTrackingEntries.Should().HaveCount(1);
+        order.OrderTrackingEntries.First().OrderStatus.Should().Be(OrderStatus.Pending);
         order.Products.Should().BeEquivalentTo(mockOrderProducts);
     }
 
@@ -99,10 +100,10 @@ public class OrderTests
 
         order.Cancel(reasonToCancel);
 
-        order.OrderStatusId.Should().Be(OrderStatus.Canceled.Id);
+        order.OrderStatus.Should().Be(OrderStatus.Canceled);
         order.Description.Should().Be(reasonToCancel);
-        order.OrderStatusHistories.Count.Should().Be(2);
-        order.OrderStatusHistories.Should().Contain(osh => osh.OrderStatusId == OrderStatus.Canceled.Id);
+        order.OrderTrackingEntries.Count.Should().Be(2);
+        order.OrderTrackingEntries.Should().Contain(o => o.OrderStatus == OrderStatus.Canceled);
         order.DomainEvents.Should().ContainItemsAssignableTo<OrderCanceled>();
     }
 
@@ -134,8 +135,8 @@ public class OrderTests
         order.MarkAsPaid();
 
         order.DomainEvents.Should().ContainItemsAssignableTo<OrderPaid>();
-        order.OrderStatusId.Should().Be(OrderStatus.Paid.Id);
-        order.OrderStatusHistories.Should().Contain(osh => osh.OrderStatusId == OrderStatus.Paid.Id);
+        order.OrderStatus.Should().Be(OrderStatus.Paid);
+        order.OrderTrackingEntries.Should().Contain(o => o.OrderStatus == OrderStatus.Paid);
     }
 
     /// <summary>

@@ -1,4 +1,3 @@
-using Application.Common.Extensions;
 using Application.Common.Persistence;
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Identity;

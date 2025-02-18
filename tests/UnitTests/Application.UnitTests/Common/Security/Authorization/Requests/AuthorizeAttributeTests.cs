@@ -1,9 +1,9 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 using static Application.UnitTests.Common.Security.Authorization.TestUtils.RequestUtils;
 
 using FluentAssertions;
+using SharedKernel.ValueObjects;
 
 namespace Application.UnitTests.Common.Security.Authorization.Requests;
 
@@ -79,7 +79,7 @@ public class AuthorizeAttributeTests
     {
         var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(TestRequestWithRoleAuthorization));
 
-        metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin.Name);
+        metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin);
         metadata.Policies.Should().BeEmpty();
     }
 
@@ -103,7 +103,7 @@ public class AuthorizeAttributeTests
     {
         var metadata = AuthorizeAttribute.GetAuthorizationMetadata(typeof(TestRequestWithMultipleAuthorization));
 
-        metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin.Name);
+        metadata.Roles.Should().ContainSingle().Which.Should().Be(Role.Admin);
         metadata.Policies.Should().ContainSingle().Which.Should().Be(typeof(SelfOrAdminPolicy<IUserSpecificResource>));
     }
 

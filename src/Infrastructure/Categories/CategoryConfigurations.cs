@@ -1,6 +1,8 @@
 using Domain.CategoryAggregate;
 using Domain.CategoryAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,10 +11,10 @@ namespace Infrastructure.Categories;
 /// <summary>
 /// Configures the tables for the <see cref="Category"/> aggregate.
 /// </summary>
-public class CategoryConfigurations : IEntityTypeConfiguration<Category>
+public class CategoryConfigurations : EntityTypeConfigurationDependency<Category>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<Category> builder)
+    public override void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.ToTable("categories");
 

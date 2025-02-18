@@ -22,7 +22,7 @@ public class MockPaymentGateway : IPaymentGateway
             PaymentMethod: "credit_card",
             Amount: 120m,
             Installments: 1,
-            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("pending"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("Pending"),
             Details: "does not matter",
             Captured: true
         );
@@ -34,7 +34,7 @@ public class MockPaymentGateway : IPaymentGateway
         await Task.CompletedTask;
 
         return new PaymentStatusResponse(
-            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("approved"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("Approved"),
             Details: "accredited",
             Captured: true
         );
@@ -46,7 +46,7 @@ public class MockPaymentGateway : IPaymentGateway
         await Task.CompletedTask;
 
         return new PaymentStatusResponse(
-            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("canceled"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("Canceled"),
             Details: "by collector",
             Captured: false
         );
@@ -61,7 +61,7 @@ public class MockPaymentGateway : IPaymentGateway
             RefundId: Guid.NewGuid().ToString(),
             PaymentId: paymentId,
             Amount: amount,
-            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("approved"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("Approved"),
             Reason: "does not matter",
             RefundMode: "standard"
         );
@@ -77,7 +77,7 @@ public class MockPaymentGateway : IPaymentGateway
             PaymentMethod: "credit_card",
             Amount: 120m,
             Installments: 1,
-            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("pending"),
+            Status: BaseEnumeration.FromDisplayName<PaymentStatus>("Pending"),
             Details: "does not matter",
             Captured: true
         );

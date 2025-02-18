@@ -27,6 +27,7 @@ Field Rules:
 
 ```json
 {
+  "shippingMethodId": "2",
   "products": [
     {
       "productId": "2",
@@ -50,6 +51,7 @@ Field Rules:
   "paymentMethod": {
     "type": "credit_card"
   },
+  "couponAppliedIds": [],
   "installments": 1
 }
 ```
@@ -122,7 +124,39 @@ GET "/orders/{{id_order}}"
   "ownerId": "2",
   "description": "Order pending. Waiting for payment",
   "status": "Pending",
-  "total": 400
+  "total": 400,
+  "products": [
+    {
+      "productId": "1",
+      "quantity": 2,
+      "basePrice": 200,
+      "purchasedPrice": 200
+    }
+  ],
+  "payment": {
+    "paymentId": "4ea52d00-ef1e-48d7-bc0a-86a97dfb59c3",
+    "amount": 400,
+    "installments": 1,
+    "status": "Pending",
+    "description": "does not matter",
+    "paymentType": "credit_card"
+  },
+  "shipment": {
+    "shipmentId": "1",
+    "status": "Pending",
+    "deliveryAddress": {
+      "postalCode": "47305",
+      "street": "2856 Overlook Drive",
+      "state": "IN",
+      "city": "Muncie",
+      "neighborhood": "Grove Street, home"
+    },
+    "shippingMethod": {
+      "name": "FreeDelivery",
+      "price": 0,
+      "estimatedDeliveryDays": 7
+    }
+  }
 }
 ```
 
@@ -136,7 +170,7 @@ Retrieves all orders related to a customer. Self or admin authentication is requ
 Can receive an optional status parameter to filter the orders.
 
 ```js
-GET "/users/{{id_user}}/orders?status=pending"
+GET "/users/customers/{{id_user}}/orders?status=pending"
 ```
 
 #### Headers
@@ -174,7 +208,7 @@ GET "/users/{{id_user}}/orders?status=pending"
 Retrieves a customer's order by its identifier. Self or admin authentication is required.
 
 ```js
-GET "/users/{{id_user}}/orders/{{id_order}}"
+GET "/users/customers/{{id_user}}/orders/{{id_order}}"
 ```
 
 #### Headers
@@ -191,7 +225,39 @@ GET "/users/{{id_user}}/orders/{{id_order}}"
   "ownerId": "2",
   "description": "Order pending. Waiting for payment",
   "status": "Pending",
-  "total": 400
+  "total": 400,
+  "products": [
+    {
+      "productId": "1",
+      "quantity": 2,
+      "basePrice": 200,
+      "purchasedPrice": 200
+    }
+  ],
+  "payment": {
+    "paymentId": "4ea52d00-ef1e-48d7-bc0a-86a97dfb59c3",
+    "amount": 400,
+    "installments": 1,
+    "status": "Pending",
+    "description": "does not matter",
+    "paymentType": "credit_card"
+  },
+  "shipment": {
+    "shipmentId": "1",
+    "status": "Pending",
+    "deliveryAddress": {
+      "postalCode": "47305",
+      "street": "2856 Overlook Drive",
+      "state": "IN",
+      "city": "Muncie",
+      "neighborhood": "Grove Street, home"
+    },
+    "shippingMethod": {
+      "name": "FreeDelivery",
+      "price": 0,
+      "estimatedDeliveryDays": 7
+    }
+  }
 }
 ```
 

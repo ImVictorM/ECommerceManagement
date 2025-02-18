@@ -2,6 +2,8 @@ using Domain.CategoryAggregate;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,10 +12,10 @@ namespace Infrastructure.Products;
 /// <summary>
 /// Configures the tables for the <see cref="Product"/> aggregate.
 /// </summary>
-public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
+public sealed class ProductConfigurations : EntityTypeConfigurationDependency<Product>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<Product> builder)
+    public override void Configure(EntityTypeBuilder<Product> builder)
     {
         ConfigureProductsTable(builder);
         ConfigureOwnedInventoriesTable(builder);

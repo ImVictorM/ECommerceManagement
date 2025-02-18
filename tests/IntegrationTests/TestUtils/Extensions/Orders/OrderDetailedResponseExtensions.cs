@@ -1,4 +1,3 @@
-using Application.Common.Extensions;
 using Contracts.Orders;
 
 using Domain.OrderAggregate;
@@ -23,7 +22,7 @@ public static class OrderDetailedResponseExtensions
         response!.Id.Should().Be(expectedOrder.Id.ToString());
         response.OwnerId.Should().Be(expectedOrder.OwnerId.ToString());
         response.Description.Should().Be(expectedOrder.Description);
-        response.Status.Should().Be(expectedOrder.GetStatusDescription());
+        response.Status.Should().Be(expectedOrder.OrderStatus.Name);
         response.Payment.Should().NotBeNull();
 
         var responseProducts = response.Products.ToDictionary(p => p.ProductId);

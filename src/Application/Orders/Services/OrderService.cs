@@ -8,6 +8,7 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 using SharedKernel.Services;
 
@@ -38,19 +39,23 @@ public class OrderService : IOrderService
     /// <inheritdoc/>
     public async Task<decimal> CalculateTotalAsync(
         IEnumerable<OrderProduct> orderProducts,
+        ShippingMethodId shippingMethodId,
         IEnumerable<OrderCoupon>? couponsApplied
     )
     {
-        var total = orderProducts.Sum(p => p.CalculateTransactionPrice());
+        var shippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(shippingMethodId)
+            ?? throw new InvalidShippingMethodException();
 
-        if (couponsApplied == null)
+        var productsTotal = orderProducts.Sum(p => p.CalculateTransactionPrice());
+
+        if (couponsApplied != null)
         {
-            return total;
+            productsTotal = await CalculateTotalApplyingCouponsAsync(orderProducts, couponsApplied, productsTotal);
         }
 
-        var totalAfterCouponDiscounts = await CalculateTotalApplyingCouponsAsync(orderProducts, couponsApplied, total);
+        var total = productsTotal + shippingMethod.Price;
 
-        return totalAfterCouponDiscounts;
+        return total;
     }
 
     private async Task<decimal> CalculateTotalApplyingCouponsAsync(

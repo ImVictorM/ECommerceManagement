@@ -1,6 +1,7 @@
 using Infrastructure.Common.Persistence;
 
-using IntegrationTests.TestUtils.Seeds;
+using IntegrationTests.Common.Requests.Abstracts;
+using IntegrationTests.Common.Seeds.Abstracts;
 
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
@@ -16,14 +17,19 @@ public class BaseIntegrationTest : IAsyncLifetime
     private readonly IntegrationTestWebAppFactory _factory;
 
     /// <summary>
-    /// Gets an HTTP client to make requests.
-    /// </summary>
-    public HttpClient Client { get; init; }
-
-    /// <summary>
     /// Gets a helper to log some data to the console.
     /// </summary>
-    public ITestOutputHelper Output { get; init; }
+    public ITestOutputHelper Output { get; }
+
+    /// <summary>
+    /// Gets the seed manager for test data initialization.
+    /// </summary>
+    public ISeedManager SeedManager { get; }
+
+    /// <summary>
+    /// Gets the request service.
+    /// </summary>
+    public IRequestService RequestService { get; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="BaseIntegrationTest"/> class.
@@ -34,12 +40,16 @@ public class BaseIntegrationTest : IAsyncLifetime
     {
         _factory = factory;
         Output = output;
-        Client = factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        SeedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
+        RequestService = scope.ServiceProvider.GetRequiredService<IRequestService>();
     }
 
     /// <inheritdoc/>
     public async Task InitializeAsync()
     {
+        await _factory.ResetDatabaseAsync();
         await SeedDataAsync();
     }
 
@@ -52,21 +62,12 @@ public class BaseIntegrationTest : IAsyncLifetime
     /// <summary>
     /// Seeds the database.
     /// </summary>
-    public async Task SeedDataAsync()
+    private async Task SeedDataAsync()
     {
-        using var scope = _factory.Services.CreateAsyncScope();
+        using var scope = _factory.Services.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
 
-        await dbContext.Categories.AddRangeAsync(CategorySeed.ListCategories());
-        await dbContext.Users.AddRangeAsync(UserSeed.ListUsers());
-        await dbContext.Products.AddRangeAsync(ProductSeed.ListProducts());
-        await dbContext.Coupons.AddRangeAsync(CouponSeed.ListCoupons());
-        await dbContext.Sales.AddRangeAsync(SaleSeed.ListSales());
-
-        await OrderSeed.InitializeAsync();
-        await dbContext.Orders.AddRangeAsync(OrderSeed.ListOrders());
-
-        await dbContext.SaveChangesAsync();
+        await SeedManager.SeedAsync(dbContext);
     }
 }

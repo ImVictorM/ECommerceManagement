@@ -1,6 +1,5 @@
 using Application.Common.DTOs;
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 using Application.Orders.DTOs;
 
 using SharedKernel.Interfaces;
@@ -11,7 +10,8 @@ namespace Application.Orders.Commands.PlaceOrder;
 /// <summary>
 /// Represents a command to place an order.
 /// </summary>s
-/// <param name="requestId">The current request identifier.</param>
+/// <param name="RequestId">The current request identifier.</param>
+/// <param name="ShippingMethodId">The shipping method identifier.</param>
 /// <param name="Products">The order products.</param>
 /// <param name="BillingAddress">The order billing address.</param>
 /// <param name="DeliveryAddress">The order delivery address.</param>
@@ -20,7 +20,8 @@ namespace Application.Orders.Commands.PlaceOrder;
 /// <param name="CouponAppliedIds">The coupon ids applied.</param>
 [Authorize(roleName: nameof(Role.Customer))]
 public record PlaceOrderCommand(
-    Guid requestId,
+    Guid RequestId,
+    string ShippingMethodId,
     IEnumerable<OrderProductInput> Products,
     Address BillingAddress,
     Address DeliveryAddress,

@@ -1,6 +1,6 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
+using SharedKernel.ValueObjects;
 
 namespace Application.UnitTests.Common.Security.Authorization.TestUtils;
 
@@ -30,6 +30,12 @@ public static class RequestUtils
     /// </summary>
     /// <param name="UserId">The user id.</param>
     public record TestRequestWithoutAuthUserRelated(string UserId) : ITestRequest, IUserSpecificResource;
+
+    /// <summary>
+    /// Represents a shipment related request without authorization attributes.
+    /// </summary>
+    /// <param name="ShipmentId">The shipment id.</param>
+    public record TestRequestWithoutAuthShipmentRelated(string ShipmentId) : ITestRequest, IShipmentSpecificResource;
 
     /// <summary>
     /// Represents a request with a role authorization attribute.

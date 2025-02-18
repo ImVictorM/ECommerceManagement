@@ -39,13 +39,32 @@ public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery
 
         var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(payment => payment.OrderId == order.Id);
 
-        if (orderPayment == null)
-        {
-            return new OrderDetailedResult(order, null);
-        }
+        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment!.Id.ToString());
 
-        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment.Id.ToString());
+        var orderShipment = await _unitOfWork.ShipmentRepository.FindOneOrDefaultAsync(shipment => shipment.OrderId == order.Id);
 
-        return new OrderDetailedResult(order, orderPaymentDetails);
+        var orderShippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(orderShipment!.ShippingMethodId);
+
+        return new OrderDetailedResult(
+            order,
+            new OrderPaymentResult(
+                orderPayment.Id,
+                orderPaymentDetails.Amount,
+                orderPaymentDetails.Installments,
+                orderPaymentDetails.Status.Name,
+                orderPaymentDetails.Details,
+                orderPaymentDetails.PaymentMethod
+            ),
+            new OrderShipmentResult(
+                orderShipment.Id,
+                orderShipment.ShipmentStatus.Name,
+                orderShipment.DeliveryAddress,
+                new OrderShippingMethodResult(
+                    orderShippingMethod!.Name,
+                    orderShippingMethod.Price,
+                    orderShippingMethod.EstimatedDeliveryDays
+                )
+            )
+        );
     }
 }

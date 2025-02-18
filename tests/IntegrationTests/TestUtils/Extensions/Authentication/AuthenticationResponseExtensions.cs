@@ -1,6 +1,7 @@
 using Contracts.Authentication;
+using RegisterCustomerRequest = Contracts.Authentication.RegisterCustomerRequest;
+
 using FluentAssertions;
-using RegisterRequest = Contracts.Authentication.RegisterRequest;
 
 namespace IntegrationTests.TestUtils.Extensions.Authentication;
 
@@ -14,7 +15,7 @@ public static class AuthenticationResponseExtensions
     /// </summary>
     /// <param name="response">The response object.</param>
     /// <param name="request">The request object.</param>
-    public static void EnsureCreatedFromRequest(this AuthenticationResponse response, RegisterRequest request)
+    public static void EnsureCreatedFromRequest(this AuthenticationResponse response, RegisterCustomerRequest request)
     {
         response.Should().NotBeNull();
         response!.Token.Should().NotBeNullOrWhiteSpace();

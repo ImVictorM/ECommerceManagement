@@ -24,6 +24,73 @@ namespace Infrastructure.Migrations
 
             modelBuilder.HasSequence("CouponRestrictionSequence");
 
+            modelBuilder.Entity("Domain.CarrierAggregate.Carrier", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(11)
+                        .HasColumnType("character varying(11)")
+                        .HasColumnName("phone");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<long>("_roleId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_role");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("_roleId");
+
+                    b.ToTable("carriers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7716), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "carrier@email.com",
+                            Name = "ECommerceManagementCarrier",
+                            PasswordHash = "AACE47AD3448036C245ED568DD8456F0019EE2E525A87989AE351C38DF19F1C6-C329F1E800BCFA9D65B06952B352E3C8",
+                            Phone = "",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7722), new TimeSpan(0, 0, 0, 0, 0)),
+                            _roleId = 3L
+                        });
+                });
+
             modelBuilder.Entity("Domain.CategoryAggregate.Category", b =>
                 {
                     b.Property<long>("Id")
@@ -148,27 +215,27 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            Name = "pending"
+                            Name = "Pending"
                         },
                         new
                         {
                             Id = 2L,
-                            Name = "paid"
+                            Name = "Paid"
                         },
                         new
                         {
                             Id = 3L,
-                            Name = "shipped"
+                            Name = "Shipped"
                         },
                         new
                         {
                             Id = 4L,
-                            Name = "delivered"
+                            Name = "Delivered"
                         },
                         new
                         {
                             Id = 5L,
-                            Name = "canceled"
+                            Name = "Canceled"
                         });
                 });
 
@@ -191,9 +258,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("description");
 
-                    b.Property<long>("OrderStatusId")
+                    b.Property<long>("OrderStatus")
                         .HasColumnType("bigint")
-                        .HasColumnName("id_order_status");
+                        .HasColumnName("order_status");
 
                     b.Property<long>("OwnerId")
                         .HasColumnType("bigint")
@@ -207,11 +274,15 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<long>("_orderStatusId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_order_status");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderStatusId");
-
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("_orderStatusId");
 
                     b.ToTable("orders", (string)null);
                 });
@@ -239,37 +310,37 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            Name = "pending"
+                            Name = "Pending"
                         },
                         new
                         {
                             Id = 2L,
-                            Name = "in_progress"
+                            Name = "InProgress"
                         },
                         new
                         {
                             Id = 3L,
-                            Name = "authorized"
+                            Name = "Authorized"
                         },
                         new
                         {
                             Id = 4L,
-                            Name = "approved"
+                            Name = "Approved"
                         },
                         new
                         {
                             Id = 5L,
-                            Name = "rejected"
+                            Name = "Rejected"
                         },
                         new
                         {
                             Id = 6L,
-                            Name = "canceled"
+                            Name = "Canceled"
                         },
                         new
                         {
                             Id = 7L,
-                            Name = "refunded"
+                            Name = "Refunded"
                         });
                 });
 
@@ -404,7 +475,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("product_feedbacks", (string)null);
+                    b.ToTable("product_feedback", (string)null);
                 });
 
             modelBuilder.Entity("Domain.SaleAggregate.Sale", b =>
@@ -429,7 +500,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("sales", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ShipmentAggregate.Entities.ShipmentStatus", b =>
+            modelBuilder.Entity("Domain.ShipmentAggregate.Enumerations.ShipmentStatus", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint")
@@ -451,28 +522,33 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
+                            Id = -1L,
+                            Name = "Canceled"
+                        },
+                        new
+                        {
                             Id = 1L,
-                            Name = "pending"
+                            Name = "Pending"
                         },
                         new
                         {
                             Id = 2L,
-                            Name = "shipped"
+                            Name = "Preparing"
                         },
                         new
                         {
                             Id = 3L,
-                            Name = "in_route"
+                            Name = "Shipped"
                         },
                         new
                         {
                             Id = 4L,
-                            Name = "delivered"
+                            Name = "InRoute"
                         },
                         new
                         {
                             Id = 5L,
-                            Name = "canceled"
+                            Name = "Delivered"
                         });
                 });
 
@@ -485,10 +561,9 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Accountable")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("accountable");
+                    b.Property<long>("CarrierId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_carrier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -498,9 +573,58 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_order");
 
-                    b.Property<long>("ShipmentStatusId")
+                    b.Property<long>("ShippingMethodId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_shipping_method");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<long>("_shipmentStatusId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_shipment_status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarrierId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("ShippingMethodId");
+
+                    b.HasIndex("_shipmentStatusId");
+
+                    b.ToTable("shipments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.ShippingMethodAggregate.ShippingMethod", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("EstimatedDeliveryDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("estimated_delivery_days");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
+                        .HasColumnName("price");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -508,12 +632,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
-                    b.HasIndex("ShipmentStatusId");
-
-                    b.ToTable("shipments", (string)null);
+                    b.ToTable("shipping_methods", (string)null);
                 });
 
             modelBuilder.Entity("Domain.UserAggregate.User", b =>
@@ -566,9 +685,21 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1224), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "admin@email.com",
+                            IsActive = true,
+                            Name = "admin",
+                            PasswordHash = "723FEA43BBD7A66F2130D6E62F416A6CFAE570EA19A6E0BB5FBFF188F2C3E7E1-00FA5FC6360F50C23B2B992D93456698",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1231), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
-            modelBuilder.Entity("SharedKernel.Authorization.Role", b =>
+            modelBuilder.Entity("SharedKernel.ValueObjects.Role", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint")
@@ -591,12 +722,17 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            Name = "admin"
+                            Name = "Admin"
                         },
                         new
                         {
                             Id = 2L,
-                            Name = "customer"
+                            Name = "Customer"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Name = "Carrier"
                         });
                 });
 
@@ -612,6 +748,15 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
                     b.ToTable("restriction_products", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.CarrierAggregate.Carrier", b =>
+                {
+                    b.HasOne("SharedKernel.ValueObjects.Role", null)
+                        .WithMany()
+                        .HasForeignKey("_roleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.CouponAggregate.Abstracts.CouponRestriction", b =>
@@ -661,60 +806,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.OrderAggregate.Order", b =>
                 {
-                    b.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
-                        .WithMany()
-                        .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.UserAggregate.User", null)
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("SharedKernel.ValueObjects.Address", "DeliveryAddress", b1 =>
-                        {
-                            b1.Property<long>("OrderId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("city");
-
-                            b1.Property<string>("Neighborhood")
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("neighborhood");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("character varying(10)")
-                                .HasColumnName("postal_code");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("state");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasMaxLength(120)
-                                .HasColumnType("character varying(120)")
-                                .HasColumnName("street");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
+                    b.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
+                        .WithMany()
+                        .HasForeignKey("_orderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderCoupon", "CouponsApplied", b1 =>
                         {
@@ -827,7 +929,7 @@ namespace Infrastructure.Migrations
                             b1.Navigation("ProductCategoryIds");
                         });
 
-                    b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderStatusHistory", "OrderStatusHistories", b1 =>
+                    b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderTrackingEntry", "OrderTrackingEntries", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -840,7 +942,7 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
 
-                            b1.Property<long>("OrderStatusId")
+                            b1.Property<long>("_orderStatusId")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_order_status");
 
@@ -850,15 +952,15 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("id");
 
-                            b1.HasIndex("OrderStatusId");
+                            b1.HasIndex("_orderStatusId");
 
                             b1.HasIndex("id_order");
 
-                            b1.ToTable("order_status_histories", (string)null);
+                            b1.ToTable("order_tracking_entries", (string)null);
 
                             b1.HasOne("Domain.OrderAggregate.Enumerations.OrderStatus", null)
                                 .WithMany()
-                                .HasForeignKey("OrderStatusId")
+                                .HasForeignKey("_orderStatusId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
@@ -868,10 +970,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CouponsApplied");
 
-                    b.Navigation("DeliveryAddress")
-                        .IsRequired();
-
-                    b.Navigation("OrderStatusHistories");
+                    b.Navigation("OrderTrackingEntries");
 
                     b.Navigation("Products");
                 });
@@ -1172,19 +1271,74 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>
                 {
+                    b.HasOne("Domain.CarrierAggregate.Carrier", null)
+                        .WithMany()
+                        .HasForeignKey("CarrierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.OrderAggregate.Order", null)
                         .WithOne()
                         .HasForeignKey("Domain.ShipmentAggregate.Shipment", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.ShipmentAggregate.Entities.ShipmentStatus", null)
+                    b.HasOne("Domain.ShippingMethodAggregate.ShippingMethod", null)
                         .WithMany()
-                        .HasForeignKey("ShipmentStatusId")
+                        .HasForeignKey("ShippingMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Domain.ShipmentAggregate.ValueObjects.ShipmentStatusHistory", "ShipmentStatusHistories", b1 =>
+                    b.HasOne("Domain.ShipmentAggregate.Enumerations.ShipmentStatus", null)
+                        .WithMany()
+                        .HasForeignKey("_shipmentStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("SharedKernel.ValueObjects.Address", "DeliveryAddress", b1 =>
+                        {
+                            b1.Property<long>("ShipmentId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("city");
+
+                            b1.Property<string>("Neighborhood")
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("neighborhood");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("postal_code");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("state");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(120)
+                                .HasColumnType("character varying(120)")
+                                .HasColumnName("street");
+
+                            b1.HasKey("ShipmentId");
+
+                            b1.ToTable("shipments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+                        });
+
+                    b.OwnsMany("Domain.ShipmentAggregate.ValueObjects.ShipmentTrackingEntry", "ShipmentTrackingEntries", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1197,7 +1351,7 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("created_at");
 
-                            b1.Property<long>("ShipmentStatusId")
+                            b1.Property<long>("_shipmentStatusId")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_shipment_status");
 
@@ -1207,15 +1361,15 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("id");
 
-                            b1.HasIndex("ShipmentStatusId");
+                            b1.HasIndex("_shipmentStatusId");
 
                             b1.HasIndex("id_shipment");
 
-                            b1.ToTable("shipment_status_histories", (string)null);
+                            b1.ToTable("shipment_tracking_entries", (string)null);
 
-                            b1.HasOne("Domain.ShipmentAggregate.Entities.ShipmentStatus", null)
+                            b1.HasOne("Domain.ShipmentAggregate.Enumerations.ShipmentStatus", null)
                                 .WithMany()
-                                .HasForeignKey("ShipmentStatusId")
+                                .HasForeignKey("_shipmentStatusId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
@@ -1223,7 +1377,10 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_shipment");
                         });
 
-                    b.Navigation("ShipmentStatusHistories");
+                    b.Navigation("DeliveryAddress")
+                        .IsRequired();
+
+                    b.Navigation("ShipmentTrackingEntries");
                 });
 
             modelBuilder.Entity("Domain.UserAggregate.User", b =>
@@ -1289,7 +1446,7 @@ namespace Infrastructure.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
 
-                            b1.Property<long>("RoleId")
+                            b1.Property<long>("_roleId")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id_role");
 
@@ -1299,20 +1456,28 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("id");
 
-                            b1.HasIndex("RoleId");
+                            b1.HasIndex("_roleId");
 
                             b1.HasIndex("id_user");
 
                             b1.ToTable("users_roles", (string)null);
 
-                            b1.HasOne("SharedKernel.Authorization.Role", null)
+                            b1.HasOne("SharedKernel.ValueObjects.Role", null)
                                 .WithMany()
-                                .HasForeignKey("RoleId")
+                                .HasForeignKey("_roleId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("id_user");
+
+                            b1.HasData(
+                                new
+                                {
+                                    id = 1L,
+                                    _roleId = 1L,
+                                    id_user = 1L
+                                });
                         });
 
                     b.Navigation("UserAddresses");

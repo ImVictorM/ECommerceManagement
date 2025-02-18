@@ -1,0 +1,60 @@
+using Domain.UnitTests.TestUtils;
+using Domain.SaleAggregate;
+using Domain.SaleAggregate.ValueObjects;
+using Domain.ProductAggregate;
+
+using SharedKernel.UnitTests.TestUtils;
+
+using Infrastructure.Common.Persistence;
+
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Products;
+
+namespace IntegrationTests.Common.Seeds.Sales;
+
+/// <summary>
+/// Provides seed data for sales in the database.
+/// </summary>
+public sealed class SaleSeed : DataSeed<SaleSeedType, Sale>
+{
+    /// <inheritdoc/>
+    public override int Order { get; }
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="SaleSeed"/> class.
+    /// </summary>
+    /// <param name="productSeed">The product seed.</param>
+    public SaleSeed(IDataSeed<ProductSeedType, Product> productSeed) : base(CreateSeedData(productSeed))
+    {
+        Order = productSeed.Order + 20;
+    }
+
+    private static Dictionary<SaleSeedType, Sale> CreateSeedData(IDataSeed<ProductSeedType, Product> productSeed)
+    {
+        return new()
+        {
+            [SaleSeedType.COMPUTER_SALE] = SaleUtils.CreateSale
+            (
+                id: SaleId.Create(-1),
+                discount: DiscountUtils.CreateDiscount(
+                    percentage: PercentageUtils.Create(10),
+                    description: "computer discount",
+                    startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                    endingDate: DateTimeOffset.UtcNow.AddDays(5)
+                ),
+                categoriesInSale: new HashSet<CategoryReference>() { },
+                productsInSale: new HashSet<ProductReference>()
+                {
+                    ProductReference.Create(productSeed.GetByType(ProductSeedType.COMPUTER_ON_SALE).Id)
+                },
+                productsExcludeFromSale: new HashSet<ProductReference>()
+            )
+        };
+    }
+
+    /// <inheritdoc/>
+    public override async Task SeedAsync(ECommerceDbContext context)
+    {
+        await context.Sales.AddRangeAsync(ListAll());
+    }
+}

@@ -8,7 +8,10 @@ using Application.UnitTests.TestUtils.Behaviors;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+
+using SharedKernel.ValueObjects;
 
 using FluentAssertions;
 using Moq;
@@ -51,7 +54,7 @@ public class PlaceOrderCommandHandlerTests
     [Fact]
     public async Task HandlePlaceOrder_WhenRequestIsValid_CreatesOrder()
     {
-        var mockIdentityUser = new IdentityUser("1", ["customer"]);
+        var mockIdentityUser = new IdentityUser("1", [Role.Customer]);
         var reservedProducts = OrderUtils.CreateReservedProducts(3).ToList();
         var orderProducts = reservedProducts
             .Select(rp => OrderUtils.CreateOrderProduct(productId: rp.ProductId, quantity: rp.Quantity))
@@ -73,7 +76,7 @@ public class PlaceOrderCommandHandlerTests
             .Returns(orderProducts.ToAsyncEnumerable());
 
         _mockOrdersService
-            .Setup(s => s.CalculateTotalAsync(orderProducts, It.IsAny<IEnumerable<OrderCoupon>>()))
+            .Setup(s => s.CalculateTotalAsync(orderProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
             .ReturnsAsync(mockTotal);
 
         var mockCreatedId = OrderId.Create(2);

@@ -28,6 +28,15 @@ public static class NumberUtils
     /// <returns>A random long number as string.</returns>
     public static string CreateRandomLongAsString()
     {
-        return _faker.Random.Long().ToString(CultureInfo.InvariantCulture);
+        return CreateRandomLong().ToString(CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
+    /// Creates a random long number.
+    /// </summary>
+    /// <returns>A random long number.</returns>
+    public static long CreateRandomLong()
+    {
+        return _faker.Random.Long();
     }
 }

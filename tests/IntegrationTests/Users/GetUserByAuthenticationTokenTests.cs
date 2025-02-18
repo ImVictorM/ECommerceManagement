@@ -1,12 +1,14 @@
-using System.Net;
-using System.Net.Http.Json;
 using Contracts.Users;
-using FluentAssertions;
+
 using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Users;
-using IntegrationTests.TestUtils.Seeds;
+using IntegrationTests.TestUtils.Constants;
+
 using Xunit.Abstractions;
+using FluentAssertions;
+using System.Net;
 
 namespace IntegrationTests.Users;
 
@@ -15,8 +17,6 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
 {
-    private const string RequestUri = "/users/self";
-
     /// <summary>
     /// Initiates a new instance of the <see cref="GetUserByAuthenticationTokenTests"/> class.
     /// </summary>
@@ -31,21 +31,20 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userType">The user type to be authenticated and queried.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.Customer)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    public async Task GetUserByAuthenticationToken_WhenUserIsAuthorizedByToken_ReturnsOk(SeedAvailableUsers userType)
+    [InlineData(UserSeedType.ADMIN)]
+    [InlineData(UserSeedType.CUSTOMER)]
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    public async Task GetUserByAuthenticationToken_WhenUserIsAuthorizedByToken_ReturnsOk(UserSeedType userType)
     {
-        var authenticatedUser = await Client.LoginAs(userType);
+        var authenticatedUser = await RequestService.LoginAsAsync(userType);
+        var endpoint = TestConstants.UserEndpoints.GetUserByAuthenticationToken;
 
-        var response = await Client.GetAsync(RequestUri);
+        var response = await RequestService.Client.GetAsync(endpoint);
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<UserResponse>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var responseContent = await response.Content.ReadFromJsonAsync<UserResponse>();
-
         responseContent.Should().NotBeNull();
-        responseContent!.EnsureUserCorrespondsTo(authenticatedUser);
+        responseContent.EnsureUserCorrespondsTo(authenticatedUser);
     }
 
     /// <summary>
@@ -54,7 +53,9 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     [Fact]
     public async Task GetUserByAuthenticationToken_WhenAuthorizationIsNotGiven_ReturnsUnauthorized()
     {
-        var response = await Client.GetAsync(RequestUri);
+        var endpoint = TestConstants.UserEndpoints.GetUserByAuthenticationToken;
+
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -65,9 +66,10 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
     [Fact]
     public async Task GetUserByAuthenticationToken_WhenTokenIsInvalid_ReturnsUnauthorized()
     {
-        Client.SetJwtBearerAuthorizationHeader("token");
+        var endpoint = TestConstants.UserEndpoints.GetUserByAuthenticationToken;
 
-        var response = await Client.GetAsync(RequestUri);
+        RequestService.Client.SetJwtBearerAuthorizationHeader("token");
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

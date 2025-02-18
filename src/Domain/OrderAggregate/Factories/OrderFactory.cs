@@ -1,6 +1,7 @@
 using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 using SharedKernel.Interfaces;
@@ -29,6 +30,7 @@ public class OrderFactory
     /// </summary>
     /// <param name="requestId">The current request identifier.</param>
     /// <param name="ownerId">The order owner id.</param>
+    /// <param name="shippingMethodId">The shipping method id.</param>
     /// <param name="products">The order products.</param>
     /// <param name="paymentMethod">The order payment method.</param>
     /// <param name="billingAddress">The order payment billing address.</param>
@@ -39,6 +41,7 @@ public class OrderFactory
     public async Task<Order> CreateOrderAsync(
         Guid requestId,
         UserId ownerId,
+        ShippingMethodId shippingMethodId,
         IEnumerable<IOrderProductReserved> products,
         IPaymentMethod paymentMethod,
         Address billingAddress,
@@ -49,11 +52,12 @@ public class OrderFactory
     {
         var orderProductsWithPrice = await _orderService.PrepareOrderProductsAsync(products).ToListAsync();
 
-        var total = await _orderService.CalculateTotalAsync(orderProductsWithPrice, couponsApplied);
+        var total = await _orderService.CalculateTotalAsync(orderProductsWithPrice, shippingMethodId, couponsApplied);
 
         return Order.Create(
             requestId,
             ownerId,
+            shippingMethodId,
             orderProductsWithPrice,
             total,
             paymentMethod,

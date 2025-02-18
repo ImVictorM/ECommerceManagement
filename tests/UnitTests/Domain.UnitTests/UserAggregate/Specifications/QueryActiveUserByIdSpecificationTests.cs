@@ -18,7 +18,7 @@ public class QueryActiveUserByIdSpecificationTests
     public void QueryActiveUserByIdSpecification_WhenUserIsActiveAndIdMatches_ReturnsTrue()
     {
         var userId = UserId.Create(1);
-        var user = UserUtils.CreateUser(userId, active: true);
+        var user = UserUtils.CreateCustomer(userId, active: true);
 
         var specification = new QueryActiveUserByIdSpecification(userId);
 
@@ -34,7 +34,7 @@ public class QueryActiveUserByIdSpecificationTests
     public void QueryActiveUserByIdSpecification_WhenUserIsNotActive_ReturnsFalse()
     {
         var userId = UserId.Create(1);
-        var user = UserUtils.CreateUser(userId, active: false);
+        var user = UserUtils.CreateCustomer(userId, active: false);
 
         var specification = new QueryActiveUserByIdSpecification(userId);
 
@@ -50,7 +50,7 @@ public class QueryActiveUserByIdSpecificationTests
     public void QueryActiveUserByIdSpecification_WhenIdDoesNotMatch_ReturnsFalse()
     {
         var userId = UserId.Create(1);
-        var user = UserUtils.CreateUser(UserId.Create(2), active: true);
+        var user = UserUtils.CreateCustomer(UserId.Create(2), active: true);
 
         var specification = new QueryActiveUserByIdSpecification(userId);
 

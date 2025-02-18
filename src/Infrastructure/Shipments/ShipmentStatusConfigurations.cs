@@ -1,5 +1,7 @@
 using Domain.ShipmentAggregate.Enumerations;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,10 +10,10 @@ namespace Infrastructure.Shipments;
 /// <summary>
 /// Configures the <see cref="ShipmentStatus"/> table.
 /// </summary>
-public sealed class ShipmentStatusConfigurations : IEntityTypeConfiguration<ShipmentStatus>
+public sealed class ShipmentStatusConfigurations : EntityTypeConfigurationDependency<ShipmentStatus>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<ShipmentStatus> builder)
+    public override void Configure(EntityTypeBuilder<ShipmentStatus> builder)
     {
         ConfigureShipmentStatusesTable(builder);
     }

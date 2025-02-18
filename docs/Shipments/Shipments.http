@@ -1,0 +1,8 @@
+@base_endpoint = http://localhost:8000/shipments
+@id_shipment = 1
+@token_carrier = insert-carrier-token-here
+
+### Advances a shipment status to the next state. Carrier authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+PATCH {{base_endpoint}}/{{id_shipment}}/status
+Authorization: Bearer {{token_carrier}}

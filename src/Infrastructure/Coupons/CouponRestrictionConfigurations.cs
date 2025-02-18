@@ -1,6 +1,8 @@
 using Domain.CouponAggregate.Abstracts;
 using Domain.CouponAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,10 +11,10 @@ namespace Infrastructure.Coupons;
 /// <summary>
 /// Configures the <see cref="CouponRestriction"/> abstract using the Type-per-concrete strategy.
 /// </summary>
-public class CouponRestrictionConfigurations : IEntityTypeConfiguration<CouponRestriction>
+public class CouponRestrictionConfigurations : EntityTypeConfigurationDependency<CouponRestriction>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<CouponRestriction> builder)
+    public override void Configure(EntityTypeBuilder<CouponRestriction> builder)
     {
         builder.UseTpcMappingStrategy();
 

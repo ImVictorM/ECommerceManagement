@@ -10,6 +10,7 @@ namespace Contracts.Orders;
 /// <param name="Total">The order total.</param>
 /// <param name="Products">The order products.</param>
 /// <param name="Payment">The order payment.</param>
+/// <param name="Shipment">The order shipment.</param>
 public record OrderDetailedResponse(
     string Id,
     string OwnerId,
@@ -17,5 +18,6 @@ public record OrderDetailedResponse(
     string Status,
     decimal Total,
     IEnumerable<OrderProductResponse> Products,
-    OrderPaymentResponse? Payment
+    OrderPaymentResponse Payment,
+    OrderShipmentResponse Shipment
 );

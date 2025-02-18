@@ -1,7 +1,7 @@
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 
 using MediatR;
+using SharedKernel.ValueObjects;
 
 namespace Application.Categories.Commands.UpdateCategory;
 

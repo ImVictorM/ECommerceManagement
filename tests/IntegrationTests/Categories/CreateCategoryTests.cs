@@ -2,10 +2,9 @@ using Contracts.Categories;
 
 using IntegrationTests.Categories.TestUtils;
 using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Seeds;
-
-using WebApi.Categories;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -35,7 +34,7 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest();
 
-        var response = await Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -48,8 +47,8 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest();
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
-        var response = await Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
+        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -58,19 +57,18 @@ public class CreateCategoryTests : BaseIntegrationTest
     /// Tests creating a category with admin role creates the category correctly.
     /// </summary>
     [Fact]
-    public async Task CreateCategory_WithAdminPermission_ReturnsCreate()
+    public async Task CreateCategory_WithAdminPermission_ReturnsCreated()
     {
         var request = CreateCategoryRequestUtils.CreateRequest(name: "new_category");
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var createResponse = await Client.PostAsJsonAsync(CategoryEndpoints.BaseEndpoint, request);
-
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var createResponse = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
         var resourceLocation = createResponse.Headers.Location;
-        var getCreatedResponse = await Client.GetAsync(resourceLocation);
-        var createdCategory = await getCreatedResponse.Content.ReadFromJsonAsync<CategoryResponse>();
+        var getCreatedResponse = await RequestService.Client.GetAsync(resourceLocation);
+        var createdCategory = await getCreatedResponse.Content.ReadRequiredFromJsonAsync<CategoryResponse>();
 
         createResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
-        createdCategory!.Id.Should().NotBeNullOrWhiteSpace();
+        createdCategory.Id.Should().NotBeNullOrWhiteSpace();
         createdCategory.Name.Should().Be(request.Name);
     }
 }

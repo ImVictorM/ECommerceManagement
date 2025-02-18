@@ -1,3 +1,5 @@
+using SharedKernel.ValueObjects;
+
 namespace Application.Common.Security.Identity;
 
 /// <summary>
@@ -7,5 +9,5 @@ namespace Application.Common.Security.Identity;
 /// <param name="Roles">The user roles.</param>
 public record IdentityUser(
     string Id,
-    IReadOnlyList<string> Roles
+    IReadOnlyList<Role> Roles
 );

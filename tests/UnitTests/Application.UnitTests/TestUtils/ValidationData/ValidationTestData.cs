@@ -23,4 +23,14 @@ public static partial class ValidationTestData
         [0],
         [-1]
     ];
+
+    /// <summary>
+    /// List of negative numbers.
+    /// </summary>
+    public static IEnumerable<object[]> NegativeNumbers =>
+    [
+        [-100],
+        [-500],
+        [-1]
+    ];
 }

@@ -1,5 +1,7 @@
 using Domain.OrderAggregate.Enumerations;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,10 +10,10 @@ namespace Infrastructure.Orders;
 /// <summary>
 /// Configures the <see cref="OrderStatus"/> table.
 /// </summary>
-public sealed class OrderStatusConfigurations : IEntityTypeConfiguration<OrderStatus>
+public sealed class OrderStatusConfigurations : EntityTypeConfigurationDependency<OrderStatus>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<OrderStatus> builder)
+    public override void Configure(EntityTypeBuilder<OrderStatus> builder)
     {
         builder.ToTable("order_statuses");
 

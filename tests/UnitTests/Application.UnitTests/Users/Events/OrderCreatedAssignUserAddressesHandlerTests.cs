@@ -42,17 +42,22 @@ public class OrderCreatedAssignUserAddressesHandlerTests
     [Fact]
     public async Task HandleOrderCreated_WithExistingUser_AssignsTheBillingAndDeliveryAddressesToTheUser()
     {
-        var user = UserUtils.CreateUser(id: UserId.Create(1));
+        var user = UserUtils.CreateCustomer(id: UserId.Create(1));
 
         var deliveryAddress = AddressUtils.CreateAddress();
         var billingAddress = AddressUtils.CreateAddress();
 
         var order = await OrderUtils.CreateOrderAsync(
             ownerId: user.Id,
-            deliveryAddress: deliveryAddress
+            deliveryAddress: deliveryAddress,
+            billingAddress: billingAddress
         );
 
-        var notification = await OrderCreatedUtils.CreateEventAsync(order: order, billingAddress: billingAddress);
+        var notification = await OrderCreatedUtils.CreateEventAsync(
+            order: order,
+            billingAddress: billingAddress,
+            deliveryAddress: deliveryAddress
+        );
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<User>>()))

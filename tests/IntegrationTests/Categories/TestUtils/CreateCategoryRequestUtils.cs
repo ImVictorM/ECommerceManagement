@@ -1,4 +1,5 @@
 using Contracts.Categories;
+
 using Domain.UnitTests.TestUtils;
 
 namespace IntegrationTests.Categories.TestUtils;

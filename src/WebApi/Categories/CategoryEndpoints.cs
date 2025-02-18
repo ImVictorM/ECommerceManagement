@@ -19,10 +19,7 @@ namespace WebApi.Categories;
 /// </summary>
 public class CategoryEndpoints : ICarterModule
 {
-    /// <summary>
-    /// The base endpoint for the category resources.
-    /// </summary>
-    public const string BaseEndpoint = "/products/categories";
+    private const string BaseEndpoint = "/products/categories";
 
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)

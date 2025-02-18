@@ -2,6 +2,7 @@ using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Errors;
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 using SharedKernel.Errors;
@@ -16,8 +17,9 @@ namespace Domain.OrderAggregate;
 /// </summary>
 public sealed class Order : AggregateRoot<OrderId>
 {
+    private long _orderStatusId;
     private readonly HashSet<OrderProduct> _products = [];
-    private readonly HashSet<OrderStatusHistory> _orderStatusHistories = [];
+    private readonly HashSet<OrderTrackingEntry> _orderTrackingEntries = [];
     private readonly HashSet<OrderCoupon> _couponsApplied = [];
 
     /// <summary>
@@ -33,21 +35,21 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public string Description { get; private set; } = null!;
     /// <summary>
-    /// Gets the order status identifier.
+    /// Gets the order status.
     /// </summary>
-    public long OrderStatusId { get; private set; }
-    /// <summary>
-    /// Gets the order delivery address.
-    /// </summary>
-    public Address DeliveryAddress { get; private set; } = null!;
+    public OrderStatus OrderStatus
+    {
+        get => BaseEnumeration.FromValue<OrderStatus>(_orderStatusId);
+        private set => _orderStatusId = value.Id;
+    }
     /// <summary>
     /// Gets the order products.
     /// </summary>
     public IReadOnlySet<OrderProduct> Products => _products;
     /// <summary>
-    /// Gets the order status history.
+    /// Gets the order tracking entries.
     /// </summary>
-    public IReadOnlySet<OrderStatusHistory> OrderStatusHistories => _orderStatusHistories;
+    public IReadOnlySet<OrderTrackingEntry> OrderTrackingEntries => _orderTrackingEntries;
     /// <summary>
     /// Gets the order coupons applied.
     /// </summary>
@@ -56,23 +58,22 @@ public sealed class Order : AggregateRoot<OrderId>
     private Order() { }
 
     private Order(
-        UserId userId,
+        UserId ownerId,
         IEnumerable<OrderProduct> products,
-        OrderStatus orderStatus,
         decimal total,
-        Address deliveryAddress,
         IEnumerable<OrderCoupon>? couponsApplied
     )
     {
-        OwnerId = userId;
-        OrderStatusId = orderStatus.Id;
+        OwnerId = ownerId;
         Total = total;
-        DeliveryAddress = deliveryAddress;
         Description = "Order pending. Waiting for payment";
 
         _products.UnionWith(products);
 
-        _orderStatusHistories.Add(OrderStatusHistory.Create(orderStatus.Id));
+        var initialOrderStatus = OrderStatus.Pending;
+
+        _orderStatusId = initialOrderStatus.Id;
+        _orderTrackingEntries.Add(OrderTrackingEntry.Create(initialOrderStatus));
 
         if (couponsApplied != null)
         {
@@ -88,6 +89,7 @@ public sealed class Order : AggregateRoot<OrderId>
     internal static Order Create(
         Guid requestId,
         UserId userId,
+        ShippingMethodId shippingMethodId,
         IEnumerable<OrderProduct> products,
         decimal total,
         IPaymentMethod paymentMethod,
@@ -100,17 +102,17 @@ public sealed class Order : AggregateRoot<OrderId>
         var order = new Order(
             userId,
             products,
-            OrderStatus.Pending,
             total,
-            deliveryAddress,
             couponsApplied
         );
 
         order.AddDomainEvent(
             new OrderCreated(
                 requestId,
+                shippingMethodId,
                 order,
                 paymentMethod,
+                deliveryAddress,
                 billingAddress,
                 installments
             )
@@ -124,7 +126,7 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public void Cancel(string reason)
     {
-        if (OrderStatusId != OrderStatus.Pending.Id)
+        if (OrderStatus != OrderStatus.Pending)
         {
             throw new InvalidOrderCancellationException();
         }
@@ -138,7 +140,7 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public void MarkAsPaid()
     {
-        if (OrderStatusId != OrderStatus.Pending.Id)
+        if (OrderStatus != OrderStatus.Pending)
         {
             throw new InvalidOrderStateForPaymentException();
         }
@@ -149,8 +151,8 @@ public sealed class Order : AggregateRoot<OrderId>
 
     private void UpdateOrderStatus(OrderStatus status, string description)
     {
-        OrderStatusId = status.Id;
+        _orderStatusId = status.Id;
         Description = description;
-        _orderStatusHistories.Add(OrderStatusHistory.Create(status.Id));
+        _orderTrackingEntries.Add(OrderTrackingEntry.Create(status));
     }
 }

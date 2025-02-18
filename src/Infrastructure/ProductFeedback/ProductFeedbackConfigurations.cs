@@ -7,6 +7,8 @@ using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,10 +17,10 @@ namespace Infrastructure.ProductFeedback;
 /// <summary>
 /// Configures the tables for the <see cref="DomainProductFeedback"/> aggregate.
 /// </summary>
-public sealed class ProductFeedbackConfigurations : IEntityTypeConfiguration<DomainProductFeedback>
+public sealed class ProductFeedbackConfigurations : EntityTypeConfigurationDependency<DomainProductFeedback>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<DomainProductFeedback> builder)
+    public override void Configure(EntityTypeBuilder<DomainProductFeedback> builder)
     {
         ConfigureProductFeedbacksTable(builder);
     }

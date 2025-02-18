@@ -1,14 +1,14 @@
-using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Extensions.Users;
-using IntegrationTests.TestUtils.Seeds;
+using Domain.UserAggregate;
 
 using Contracts.Users;
 
-using Domain.UserAggregate;
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Extensions.Users;
+using IntegrationTests.TestUtils.Constants;
 
-using System.Collections.ObjectModel;
-using System.Net.Http.Json;
 using FluentAssertions;
 using Xunit.Abstractions;
 
@@ -19,7 +19,7 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class GetAllUsersTests : BaseIntegrationTest
 {
-    private const string BaseRequestUri = "/users";
+    private readonly IDataSeed<UserSeedType, User> _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetAllUsersTests"/> class.
@@ -28,17 +28,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public GetAllUsersTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
-    }
-
-    /// <summary>
-    /// A list of request URIs and the corresponding users it should return.
-    /// </summary>
-    /// <returns>A list of URIs and users.</returns>
-    public static IEnumerable<object[]> RequestUriWithExpectedUsers()
-    {
-        yield return new object[] { "/users?active=true", UserSeed.ListUsers(u => u.IsActive).ToList().AsReadOnly() };
-        yield return new object[] { "/users?active=false", UserSeed.ListUsers(u => !u.IsActive).ToList().AsReadOnly() };
-        yield return new object[] { "/users", UserSeed.ListUsers().ToList().AsReadOnly() };
+        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
     }
 
     /// <summary>
@@ -47,9 +37,10 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsAdmin_ReturnsSuccess()
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
 
-        var response = await Client.GetAsync(BaseRequestUri);
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
     }
@@ -60,9 +51,10 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenRequesterIsNotAdmin_ReturnsForbidden()
     {
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
 
-        var response = await Client.GetAsync(BaseRequestUri);
+        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -73,32 +65,51 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WhenNotAuthenticated_ReturnsUnauthorized()
     {
-        var response = await Client.GetAsync(BaseRequestUri);
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
+
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
-    /// Tests if it returns a correct list of users when the requester is an authenticated administrator.
+    /// Verifies a correct list of users is returned when the requester is an authenticated administrator.
     /// </summary>
-    /// <param name="endpoint">The uri to be called. May contain parameters.</param>
-    /// <param name="expectedUsers">The expected user list.</param>
+    /// <param name="activeFilter">The active filter.</param>
     [Theory]
-    [MemberData(nameof(RequestUriWithExpectedUsers))]
+    [InlineData(true)]
+    [InlineData(false)]
+    [InlineData(null)]
     public async Task GetAllUsers_WhenAuthorizedAndFilteringTheUsers_ReturnsOkContainingUsersQueried(
-        string endpoint,
-        ReadOnlyCollection<User> expectedUsers
+        bool? activeFilter
     )
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        var endpoint = TestConstants.UserEndpoints.GetAllUsers;
+        var expectedUsers = GetUsersFilteredByActive(activeFilter);
 
-        var response = await Client.GetAsync(endpoint);
-        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
+        if (activeFilter != null)
+        {
+            endpoint += $"?active={activeFilter}";
+        }
+
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.GetAsync(endpoint);
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<UserResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent.Should().NotBeNull();
-        responseContent!.Count().Should().Be(expectedUsers.Count);
-        responseContent!.Select(u => u.Id).Should().BeEquivalentTo(expectedUsers.Select(eu => eu.Id.ToString()));
-        responseContent!.EnsureUsersCorrespondTo(expectedUsers);
+        responseContent.Count().Should().Be(expectedUsers.Count);
+        responseContent.Select(u => u.Id).Should().BeEquivalentTo(expectedUsers.Select(eu => eu.Id.ToString()));
+        responseContent.EnsureUsersCorrespondTo(expectedUsers);
+    }
+
+    private IReadOnlyList<User> GetUsersFilteredByActive(bool? activeFilter)
+    {
+        if (activeFilter == null)
+        {
+            return _seedUser.ListAll();
+        }
+
+        return _seedUser.ListAll(u => u.IsActive == activeFilter);
     }
 }

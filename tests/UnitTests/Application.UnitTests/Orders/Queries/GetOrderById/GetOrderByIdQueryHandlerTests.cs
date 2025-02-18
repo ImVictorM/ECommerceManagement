@@ -8,6 +8,10 @@ using Application.UnitTests.TestUtils.PaymentGateway;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
+using Domain.ShipmentAggregate.ValueObjects;
+using Domain.ShipmentAggregate;
+using Domain.ShippingMethodAggregate.ValueObjects;
+using Domain.ShippingMethodAggregate;
 using Domain.PaymentAggregate.ValueObjects;
 using Domain.PaymentAggregate;
 
@@ -27,6 +31,8 @@ public class GetOrderByIdQueryHandlerTests
     private readonly Mock<IRepository<Payment, PaymentId>> _mockPaymentRepository;
     private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
     private readonly Mock<IPaymentGateway> _mockPaymentGateway;
+    private readonly Mock<IRepository<Shipment, ShipmentId>> _mockShipmentRepository;
+    private readonly Mock<IRepository<ShippingMethod, ShippingMethodId>> _mockShippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandlerTests"/> class.
@@ -35,12 +41,16 @@ public class GetOrderByIdQueryHandlerTests
     {
         _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
         _mockPaymentGateway = new Mock<IPaymentGateway>();
+        _mockShippingMethodRepository = new Mock<IRepository<ShippingMethod, ShippingMethodId>>();
+        _mockShipmentRepository = new Mock<IRepository<Shipment, ShipmentId>>();
         _mockPaymentRepository = new Mock<IRepository<Payment, PaymentId>>();
 
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _mockUnitOfWork.Setup(uow => uow.PaymentRepository).Returns(_mockPaymentRepository.Object);
         _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
+        _mockUnitOfWork.Setup(uow => uow.ShipmentRepository).Returns(_mockShipmentRepository.Object);
+        _mockUnitOfWork.Setup(uow => uow.ShippingMethodRepository).Returns(_mockShippingMethodRepository.Object);
 
         _handler = new GetOrderByIdQueryHandler(_mockUnitOfWork.Object, _mockPaymentGateway.Object);
     }
@@ -49,7 +59,7 @@ public class GetOrderByIdQueryHandlerTests
     /// Verifies that the handler returns the order details when the order and payment exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetOrderByIdQuery_WhenOrderAndPaymentExists_OrderWithPayment()
+    public async Task HandleGetOrderByIdQuery_WithExistingOrder_ReturnsOrderDetails()
     {
         var query = GetOrderByIdQueryUtils.CreateQuery();
 
@@ -63,6 +73,8 @@ public class GetOrderByIdQueryHandlerTests
         );
 
         var paymentResponse = PaymentResponseUtils.CreateResponse();
+        var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), orderId: orderId);
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: shipment.ShippingMethodId);
 
         _mockOrderRepository
             .Setup(r => r.FindByIdAsync(orderId))
@@ -76,37 +88,29 @@ public class GetOrderByIdQueryHandlerTests
             .Setup(p => p.GetPaymentByIdAsync(orderPayment.Id.ToString()))
             .ReturnsAsync(paymentResponse);
 
-        var result = await _handler.Handle(query, default);
+        _mockShipmentRepository
+            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Shipment, bool>>>()))
+            .ReturnsAsync(shipment);
 
-        result.Should().NotBeNull();
-        result.Order.Should().BeEquivalentTo(order);
-        result.Payment.Should().BeEquivalentTo(paymentResponse);
-    }
-
-    /// <summary>
-    /// Verifies that the handler returns order details without payment when no payment is found.
-    /// </summary>
-    [Fact]
-    public async Task HandleGetOrderByIdQuery_WhenOrderExistsButPaymentNot_ReturnsOrderWithoutPayment()
-    {
-        var query = GetOrderByIdQueryUtils.CreateQuery();
-        var orderId = OrderId.Create(query.OrderId);
-
-        var order = await OrderUtils.CreateOrderAsync(id: orderId);
-
-        _mockOrderRepository
-            .Setup(repo => repo.FindByIdAsync(orderId))
-            .ReturnsAsync(order);
-
-        _mockPaymentRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Payment, bool>>>()))
-            .ReturnsAsync((Payment)null!);
+        _mockShippingMethodRepository
+            .Setup(r => r.FindByIdAsync(shipment.ShippingMethodId))
+            .ReturnsAsync(shippingMethod);
 
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
         result.Order.Should().BeEquivalentTo(order);
-        result.Payment.Should().BeNull();
+        result.Payment.PaymentId.Should().Be(orderPayment.Id);
+        result.Payment.Amount.Should().Be(paymentResponse.Amount);
+        result.Payment.Status.Should().Be(paymentResponse.Status.Name);
+        result.Payment.PaymentMethod.Should().Be(paymentResponse.PaymentMethod);
+        result.Payment.Details.Should().Be(paymentResponse.Details);
+        result.Shipment.ShipmentId.Should().Be(shipment.Id);
+        result.Shipment.Status.Should().Be(shipment.ShipmentStatus.Name);
+        result.Shipment.DeliveryAddress.Should().Be(shipment.DeliveryAddress);
+        result.Shipment.ShippingMethod.Name.Should().Be(shippingMethod.Name);
+        result.Shipment.ShippingMethod.EstimatedDeliveryDays.Should().Be(shippingMethod.EstimatedDeliveryDays);
+        result.Shipment.ShippingMethod.Price.Should().Be(shippingMethod.Price);
     }
 
     /// <summary>

@@ -1,8 +1,12 @@
-using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Seeds;
+using Domain.UserAggregate;
 
 using Contracts.Users;
+
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.TestUtils.Constants;
+using IntegrationTests.TestUtils.Extensions.Http;
 
 using System.Net.Http.Json;
 using FluentAssertions;
@@ -16,6 +20,8 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class DeactivateUserTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<UserSeedType, User> _seedUser;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="DeactivateUserTests"/> class.
     /// </summary>
@@ -23,6 +29,7 @@ public class DeactivateUserTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public DeactivateUserTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
     }
 
     /// <summary>
@@ -31,14 +38,15 @@ public class DeactivateUserTests : BaseIntegrationTest
     /// </summary>
     /// <param name="otherUserType">The other user type the customer is trying to deactivate.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    [InlineData(SeedAvailableUsers.Admin)]
-    public async Task DeactivateUser_WhenCustomerTriesToDeactivateAnotherUser_ReturnsForbidden(SeedAvailableUsers otherUserType)
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    [InlineData(UserSeedType.ADMIN)]
+    public async Task DeactivateUser_WhenCustomerTriesToDeactivateAnotherUser_ReturnsForbidden(UserSeedType otherUserType)
     {
-        var otherUser = UserSeed.GetSeedUser(otherUserType);
+        var otherUser = _seedUser.GetByType(otherUserType);
+        var endpoint = TestConstants.UserEndpoints.DeactivateUser(otherUser.Id.ToString());
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
-        var response = await Client.DeleteAsync($"/users/{otherUser.Id}");
+        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await RequestService.Client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -50,10 +58,11 @@ public class DeactivateUserTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateUser_WhenAdminTriesToDeactivateAnotherAdmin_ReturnsForbidden()
     {
-        var otherAdmin = UserSeed.GetSeedUser(SeedAvailableUsers.OtherAdmin);
+        var otherAdmin = _seedUser.GetByType(UserSeedType.OTHER_ADMIN);
+        var endpoint = TestConstants.UserEndpoints.DeactivateUser(otherAdmin.Id.ToString());
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var response = await Client.DeleteAsync($"/users/{otherAdmin.Id}");
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -65,8 +74,10 @@ public class DeactivateUserTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateUser_WhenAdminTriesToDeactivateThemselves_ReturnsForbidden()
     {
-        var authenticatedAdmin = await Client.LoginAs(SeedAvailableUsers.Admin);
-        var response = await Client.DeleteAsync($"/users/{authenticatedAdmin.Id}");
+        var authenticatedAdmin = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var endpoint = TestConstants.UserEndpoints.DeactivateUser(authenticatedAdmin.Id.ToString());
+
+        var response = await RequestService.Client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
@@ -77,21 +88,23 @@ public class DeactivateUserTests : BaseIntegrationTest
     /// </summary>
     /// <param name="seedCustomerType">The type of customer the admin is trying to deactivate.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Customer)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    public async Task DeactivateUser_WhenAdminTriesToDeactivateAnotherUser_DeactivateTheUserAndReturnsNoContent(SeedAvailableUsers seedCustomerType)
+    [InlineData(UserSeedType.CUSTOMER)]
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    public async Task DeactivateUser_WhenAdminTriesToDeactivateAnotherUser_DeactivateTheUserAndReturnsNoContent(UserSeedType seedCustomerType)
     {
-        var customerToDeactivate = UserSeed.GetSeedUser(seedCustomerType);
+        var customerToDeactivate = _seedUser.GetByType(seedCustomerType);
+        var deactivateEndpoint = TestConstants.UserEndpoints.DeactivateUser(customerToDeactivate.Id.ToString());
+        var listDeactivateUsersEndpoint = $"{TestConstants.UserEndpoints.GetAllUsers}?active=false";
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var responseDeactivate = await Client.DeleteAsync($"/users/{customerToDeactivate.Id}");
-        var responseGetInactiveUsers = await Client.GetAsync($"/users?active=false");
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var responseDeactivate = await RequestService.Client.DeleteAsync(deactivateEndpoint);
+        var responseGetInactiveUsers = await RequestService.Client.GetAsync(listDeactivateUsersEndpoint);
 
-        var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
+        var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadRequiredFromJsonAsync<IEnumerable<UserResponse>>();
 
         responseDeactivate.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         responseGetInactiveUsers.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseGetInactiveUsersContent!.Select(u => u.Id).Should().Contain(customerToDeactivate.Id.ToString());
+        responseGetInactiveUsersContent.Select(u => u.Id).Should().Contain(customerToDeactivate.Id.ToString());
     }
 
     /// <summary>
@@ -101,11 +114,14 @@ public class DeactivateUserTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateUser_WhenCustomerTriesToDeactivateThemselves_DeactivateThemAndReturnsNoContent()
     {
-        var customer = await Client.LoginAs(SeedAvailableUsers.Customer);
-        var responseDeactivate = await Client.DeleteAsync($"/users/{customer.Id}");
+        var customer = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var deactivateEndpoint = TestConstants.UserEndpoints.DeactivateUser(customer.Id.ToString());
+        var listDeactivateUsersEndpoint = $"{TestConstants.UserEndpoints.GetAllUsers}?active=false";
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var responseGetInactiveUsers = await Client.GetAsync($"/users?active=false");
+        var responseDeactivate = await RequestService.Client.DeleteAsync(deactivateEndpoint);
+
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var responseGetInactiveUsers = await RequestService.Client.GetAsync(listDeactivateUsersEndpoint);
 
         var responseGetInactiveUsersContent = await responseGetInactiveUsers.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
 

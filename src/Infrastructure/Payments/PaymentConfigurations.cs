@@ -4,6 +4,8 @@ using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.Enumerations;
 using Domain.PaymentAggregate.ValueObjects;
 
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,10 +14,10 @@ namespace Infrastructure.Payments;
 /// <summary>
 /// Configures the tables for the <see cref="Payment"/> aggregate.
 /// </summary>
-public class PaymentConfigurations : IEntityTypeConfiguration<Payment>
+public class PaymentConfigurations : EntityTypeConfigurationDependency<Payment>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<Payment> builder)
+    public override void Configure(EntityTypeBuilder<Payment> builder)
     {
         builder.ToTable("payments");
 

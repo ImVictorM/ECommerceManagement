@@ -1,3 +1,5 @@
+using SharedKernel.ValueObjects;
+
 namespace Application.Common.Security.Authorization;
 
 /// <summary>
@@ -5,5 +7,5 @@ namespace Application.Common.Security.Authorization;
 /// </summary>
 /// <param name="Roles">The required roles for the request.</param>
 /// <param name="Policies">The required policies for the request.</param>
-public record AuthorizationMetadata(IReadOnlyList<string> Roles, IReadOnlyList<Type> Policies);
+public record AuthorizationMetadata(IReadOnlyList<Role> Roles, IReadOnlyList<Type> Policies);
 

@@ -5,12 +5,12 @@
 The Authentication feature enables users to register as customers and provides a secure mechanism for general users to authenticate themselves.
 Upon successful authentication, a JSON Web Token (JWT) is generated, allowing users to securely access protected endpoints throughout the system.
 
-### Register
+### Register Customer
 
-Allows a new user to register for an account as a customer.
+Allows a new customer user to register for an account.
 
 ```js
-POST "/auth/register"
+POST "/auth/register/users/customers"
 ```
 
 #### Headers
@@ -48,13 +48,13 @@ Field Rules:
 }
 ```
 
-### Login
+### Login User
 
-Users can log in using their email and password.<br/>
+Allows a user to log in using their email and password.<br/>
 PS: Inactive users cannot log in.
 
 ```js
-POST "/auth/login"
+POST "/auth/login/users"
 ```
 
 #### Headers
@@ -84,6 +84,47 @@ Field Rules:
   "id": "1",
   "name": "Victor Figueiredo Mendes",
   "email": "victor7@email.com",
+  "token": "eyJhbGciOiJIUzI1N...adQssw5c"
+}
+```
+
+- 400 BAD_REQUEST: The email or password is incorrect.
+
+### Login Carrier
+
+Allows a carrier to log in using their email and password.
+
+```js
+POST "/auth/login/carriers"
+```
+
+#### Headers
+
+- `Content-Type: application/json`
+
+#### Request Format
+
+Field Rules:
+
+- email - must not be empty
+- password - must not be empty
+
+```json
+{
+  "email": "carrier@email.com",
+  "password": "carrier123"
+}
+```
+
+#### Response Format
+
+- 200 OK: The user email an password were correct and the carrier was authenticated.
+
+```json
+{
+  "id": "1",
+  "name": "ECommerceManagementCarrier",
+  "email": "carrier@email.com",
   "token": "eyJhbGciOiJIUzI1N...adQssw5c"
 }
 ```

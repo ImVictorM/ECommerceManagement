@@ -1,13 +1,17 @@
+using Domain.ProductAggregate;
+
 using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Products;
+using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Products;
-using IntegrationTests.TestUtils.Seeds;
+using IntegrationTests.TestUtils.Extensions.Http;
 
 using Contracts.Products;
 
-using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
+using IntegrationTests.TestUtils.Constants;
 
 namespace IntegrationTests.Products;
 
@@ -16,6 +20,8 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class GetProductByIdTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="GetProductByIdTests"/> class.
     /// </summary>
@@ -23,16 +29,8 @@ public class GetProductByIdTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public GetProductByIdTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
     }
-
-    /// <summary>
-    /// List of ids that correspond to inactive or products that does not exist.
-    /// </summary>
-    public static readonly IEnumerable<object[]> NotFoundProductIds =
-    [
-        [ProductSeed.GetSeedProduct(SeedAvailableProducts.INACTIVE_JACKET).Id.Value],
-        [404],
-    ];
 
     /// <summary>
     /// Tests when the product with the specified id exists the response code is OK and the response content is correct.
@@ -40,29 +38,49 @@ public class GetProductByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetProductById_WhenProductExists_RetrievesItAndReturnsOk()
     {
-        var productToFetch = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_ON_SALE);
+        var productToFetch = _seedProduct.GetByType(ProductSeedType.COMPUTER_ON_SALE);
+        var endpoint = TestConstants.ProductEndpoints.GetProductById(productToFetch.Id.ToString());
 
-        var response = await Client.GetAsync($"/products/{productToFetch.Id}");
-        var responseContent = await response.Content.ReadFromJsonAsync<ProductResponse>();
+        var response = await RequestService.Client.GetAsync(endpoint);
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProductResponse>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-        responseContent!.EnsureCorrespondsTo(productToFetch);
+        responseContent.EnsureCorrespondsTo(productToFetch);
     }
 
     /// <summary>
-    /// Tests when the product with the specified id does not exist or is inactive the response code is NOT_FOUND and the response content is correct.
+    /// Tests when the product with the specified id does not exist the response code is NOT_FOUND and the response content is correct.
     /// </summary>
-    [Theory]
-    [MemberData(nameof(NotFoundProductIds))]
-    public async Task GetProductById_WhenProductDoesNotExistsOrIsInactive_ReturnsNotFound(long notFoundId)
+    [Fact]
+    public async Task GetProductById_WhenProductDoesNotExists_ReturnsNotFound()
     {
-        var response = await Client.GetAsync($"/products/{notFoundId}");
-        var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        var invalidProductId = "9999";
+        var endpoint = TestConstants.ProductEndpoints.GetProductById(invalidProductId);
+
+        var response = await RequestService.Client.GetAsync(endpoint);
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
-        responseContent!.Status.Should().Be((int)System.Net.HttpStatusCode.NotFound);
+        responseContent.Status.Should().Be((int)System.Net.HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
-        responseContent.Detail.Should().Be($"The product with id {notFoundId} does not exist");
+        responseContent.Detail.Should().Be($"The product with id {invalidProductId} does not exist");
+    }
+    /// <summary>
+    /// Tests when the product with the specified id is inactive the response code is NOT_FOUND and the response content is correct.
+    /// </summary>
+    [Fact]
+    public async Task GetProductById_WhenProductIsInactive_ReturnsNotFound()
+    {
+        var productInactive = _seedProduct.GetByType(ProductSeedType.JACKET_INACTIVE);
+        var endpoint = TestConstants.ProductEndpoints.GetProductById(productInactive.Id.ToString());
+
+        var response = await RequestService.Client.GetAsync(endpoint);
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
+
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        responseContent.Status.Should().Be((int)System.Net.HttpStatusCode.NotFound);
+        responseContent.Title.Should().Be("Product Not Found");
+        responseContent.Detail.Should().Be($"The product with id {productInactive.Id} does not exist");
     }
 }

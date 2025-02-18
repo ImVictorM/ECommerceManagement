@@ -55,7 +55,7 @@ public class PaymentCanceledCancelOrderHandlerTests
 
         await _handler.Handle(notification, default);
 
-        order.OrderStatusId.Should().Be(OrderStatus.Canceled.Id);
+        order.OrderStatus.Should().Be(OrderStatus.Canceled);
         order.Description.Should().Be("The payment was canceled");
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }

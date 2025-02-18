@@ -1,14 +1,15 @@
+using Domain.UserAggregate;
+
 using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Users;
-using IntegrationTests.TestUtils.Seeds;
+using IntegrationTests.TestUtils.Constants;
 
 using Contracts.Users;
 
-using Domain.UserAggregate;
-
 using System.Net;
-using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
@@ -20,16 +21,7 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class GetUserByIdTests : BaseIntegrationTest
 {
-    /// <summary>
-    /// A list of users contained in the test database.
-    /// </summary>
-    public static IEnumerable<object[]> AvailableUsers()
-    {
-        foreach (var user in UserSeed.ListUsers())
-        {
-            yield return new object[] { user };
-        }
-    }
+    private readonly IDataSeed<UserSeedType, User> _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetUserByIdTests"/> class.
@@ -38,36 +30,45 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public GetUserByIdTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
     }
 
     /// <summary>
     /// Tests if it is possible to get an user authenticated as administrator.
     /// </summary>
-    /// <param name="user">The user to get.</param>
+    /// <param name="userType">The user type to get.</param>
     [Theory]
-    [MemberData(nameof(AvailableUsers))]
-    public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkWithUser(User user)
+    [InlineData(UserSeedType.OTHER_ADMIN)]
+    [InlineData(UserSeedType.CUSTOMER)]
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkWithUser(UserSeedType userType)
     {
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var response = await Client.GetAsync($"/users/{user.Id}");
+        var userToGet = _seedUser.GetByType(userType);
+        var endpoint = TestConstants.UserEndpoints.GetUserById(userToGet.Id.ToString());
 
-        var responseContent = await response.Content.ReadFromJsonAsync<UserResponse>();
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.GetAsync(endpoint);
+
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<UserResponse>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        responseContent!.EnsureUserCorrespondsTo(user);
+        responseContent.EnsureUserCorrespondsTo(userToGet);
     }
 
     /// <summary>
     /// Tests if a customer cannot use this resource.
     /// </summary>
-    /// <param name="user">The user to be queried.</param>
+    /// <param name="userType">The user type to be queried.</param>
     [Theory]
-    [MemberData(nameof(AvailableUsers))]
-    public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(User user)
+    [InlineData(UserSeedType.ADMIN)]
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    public async Task GetUserById_WhenRequesterIsNormalCustomer_ReturnForbidden(UserSeedType userType)
     {
-        await Client.LoginAs(SeedAvailableUsers.Customer);
+        var userToGet = _seedUser.GetByType(userType);
+        var endpoint = TestConstants.UserEndpoints.GetUserById(userToGet.Id.ToString());
 
-        var response = await Client.GetAsync($"/users/{user.Id}");
+        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -75,12 +76,12 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// <summary>
     /// Tests if it is not possible to query for an user without authentication.
     /// </summary>
-    /// <param name="user">The user to be queried.</param>
-    [Theory]
-    [MemberData(nameof(AvailableUsers))]
-    public async Task GetUserById_WhenAuthenticationTokenIsNotGiven_ReturnsUnauthorized(User user)
+    [Fact]
+    public async Task GetUserById_WhenAuthenticationTokenIsNotGiven_ReturnsUnauthorized()
     {
-        var response = await Client.GetAsync($"/users/{user.Id}");
+        var endpoint = TestConstants.UserEndpoints.GetUserById("1");
+
+        var response = await RequestService.Client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -89,17 +90,18 @@ public class GetUserByIdTests : BaseIntegrationTest
     /// Tests when the user being queried does not exist the response is NOT_FOUND and the error content is correct.
     /// </summary>
     [Fact]
-    public async Task GetUserById_WhenUserDoesNotExist_ReturnsBadRequest()
+    public async Task GetUserById_WhenUserDoesNotExist_ReturnsNotFound()
     {
         var userNotFoundId = "5000";
+        var endpoint = TestConstants.UserEndpoints.GetUserById(userNotFoundId);
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var response = await Client.GetAsync($"/users/{userNotFoundId}");
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.GetAsync(endpoint);
 
-        var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
+        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("User Not Found");
         responseContent.Detail.Should().Be($"User with id {userNotFoundId} was not found");
     }

@@ -1,15 +1,25 @@
-using IntegrationTests.Common;
-using IntegrationTests.Orders.TestUtils;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Seeds;
-
+using Domain.ProductAggregate;
+using Domain.CouponAggregate;
+using Domain.ShippingMethodAggregate;
+using Domain.ShipmentAggregate.Enumerations;
+using Domain.SaleAggregate.ValueObjects;
+using Domain.SaleAggregate;
 using Domain.OrderAggregate.Enumerations;
-
-using WebApi.Orders;
 
 using Contracts.Orders;
 
 using SharedKernel.Services;
+
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Products;
+using IntegrationTests.Common.Seeds.ShippingMethods;
+using IntegrationTests.Common.Seeds.Sales;
+using IntegrationTests.Common.Seeds.Coupons;
+using IntegrationTests.Orders.TestUtils;
+using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -24,6 +34,11 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class PlaceOrderTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+    private readonly IDataSeed<CouponSeedType, Coupon> _seedCoupon;
+    private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
+    private readonly IDataSeed<SaleSeedType, Sale> _seedSale;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="PlaceOrderTests"/> class.
     /// </summary>
@@ -31,6 +46,10 @@ public class PlaceOrderTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public PlaceOrderTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
+        _seedCoupon = SeedManager.GetSeed<CouponSeedType, Coupon>();
+        _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedSale = SeedManager.GetSeed<SaleSeedType, Sale>();
     }
 
     /// <summary>
@@ -40,8 +59,9 @@ public class PlaceOrderTests : BaseIntegrationTest
     public async Task PlaceOrder_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
 
-        var response = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -51,15 +71,16 @@ public class PlaceOrderTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userWithoutCustomerRoleType">The user without the customer role.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Admin)]
-    [InlineData(SeedAvailableUsers.OtherAdmin)]
-    public async Task PlaceOrder_WhenUserDoesNotHaveCustomerRole_ReturnsForbidden(SeedAvailableUsers userWithoutCustomerRoleType)
+    [InlineData(UserSeedType.ADMIN)]
+    [InlineData(UserSeedType.OTHER_ADMIN)]
+    public async Task PlaceOrder_WhenUserDoesNotHaveCustomerRole_ReturnsForbidden(UserSeedType userWithoutCustomerRoleType)
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
 
-        Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
-        await Client.LoginAs(userWithoutCustomerRoleType);
-        var response = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        RequestService.Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
+        await RequestService.LoginAsAsync(userWithoutCustomerRoleType);
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -69,15 +90,17 @@ public class PlaceOrderTests : BaseIntegrationTest
     /// </summary>
     /// <param name="userWithCustomerRoleType">The customer.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.Customer)]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    public async Task PlaceOrder_WhenParametersAreCorrectAndUserIsAuthorized_CreatesOrderAndReturnsCreated(SeedAvailableUsers userWithCustomerRoleType)
+    [InlineData(UserSeedType.CUSTOMER)]
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    public async Task PlaceOrder_WhenParametersAreCorrectAndUserIsAuthorized_CreatesOrderAndReturnsCreated(UserSeedType userWithCustomerRoleType)
     {
-        var pencil = ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL);
-        var computer = ProductSeed.GetSeedProduct(SeedAvailableProducts.COMPUTER_ON_SALE);
-        var couponApplied = CouponSeed.GetSeedCoupon(SeedAvailableCoupons.TECH_COUPON);
+        var pencil = _seedProduct.GetByType(ProductSeedType.PENCIL);
+        var computer = _seedProduct.GetByType(ProductSeedType.COMPUTER_ON_SALE);
+        var couponApplied = _seedCoupon.GetByType(CouponSeedType.TECH_COUPON);
+        var shippingMethod = _seedShippingMethod.GetByType(ShippingMethodSeedType.EXPRESS);
 
         var request = PlaceOrderRequestUtils.CreateRequest(
+            shippingMethodId: shippingMethod.Id.ToString(),
             products:
             [
                 new OrderProductRequest(pencil.Id.ToString(), 1),
@@ -93,14 +116,14 @@ public class PlaceOrderTests : BaseIntegrationTest
             pencil.Id.ToString(),
             1,
             pencil.BasePrice,
-            SaleSeed.CalculateExpectedPriceAfterApplyingSales(pencil)
+            CalculateExpectedPriceAfterApplyingSales(pencil)
         );
 
         var expectedCreatedComputerResponse = new OrderProductResponse(
             computer.Id.ToString(),
             2,
             computer.BasePrice,
-            SaleSeed.CalculateExpectedPriceAfterApplyingSales(computer)
+            CalculateExpectedPriceAfterApplyingSales(computer)
         );
 
         var expectedComputerTotal = expectedCreatedComputerResponse.PurchasedPrice * expectedCreatedComputerResponse.Quantity;
@@ -109,26 +132,34 @@ public class PlaceOrderTests : BaseIntegrationTest
         var expectedTotalPrice = DiscountService.ApplyDiscounts(
             expectedComputerTotal + expectedPencilTotal,
             [couponApplied.Discount]
-        );
+        ) + shippingMethod.Price;
 
-        Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
-        var orderOwner = await Client.LoginAs(userWithCustomerRoleType);
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
 
-        var createResponse = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        RequestService.Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
+        var orderOwner = await RequestService.LoginAsAsync(userWithCustomerRoleType);
+        var createResponse = await RequestService.Client.PostAsJsonAsync(endpoint, request);
         var resourceLocation = createResponse.Headers.Location;
 
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var getResourceResponse = await Client.GetAsync(resourceLocation);
-        var createdResourceContent = await getResourceResponse.Content.ReadFromJsonAsync<OrderDetailedResponse>();
-        createdResourceContent!.Status.Should().Be(OrderStatus.Pending.Name);
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var getResourceResponse = await RequestService.Client.GetAsync(resourceLocation);
+        var createdResourceContent = await getResourceResponse.Content.ReadRequiredFromJsonAsync<OrderDetailedResponse>();
+
+        createdResourceContent.Status.Should().Be(OrderStatus.Pending.Name);
         createdResourceContent.Should().NotBeNull();
         createdResourceContent.Products.Should().Contain(expectedCreatedPencilResponse);
         createdResourceContent.Products.Should().Contain(expectedCreatedComputerResponse);
         createdResourceContent.OwnerId.Should().Be(orderOwner.Id.ToString());
         createdResourceContent.Total.Should().Be(expectedTotalPrice);
         createdResourceContent.Payment.Should().NotBeNull();
+        createdResourceContent.Shipment.Should().NotBeNull();
+        createdResourceContent.Shipment.Status.Should().Be(ShipmentStatus.Pending.Name);
+        createdResourceContent.Shipment.DeliveryAddress.Should().BeEquivalentTo(request.DeliveryAddress);
+        createdResourceContent.Shipment.ShippingMethod.Name.Should().Be(shippingMethod.Name);
+        createdResourceContent.Shipment.ShippingMethod.Price.Should().Be(shippingMethod.Price);
+        createdResourceContent.Shipment.ShippingMethod.EstimatedDeliveryDays.Should().Be(shippingMethod.EstimatedDeliveryDays);
     }
 
     /// <summary>
@@ -137,7 +168,7 @@ public class PlaceOrderTests : BaseIntegrationTest
     [Fact]
     public async Task PlaceOrder_WhenSomeOfTheProductsDoesNotHaveAvailableItemsInInventory_ReturnsBadRequest()
     {
-        var pencil = ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL);
+        var pencil = _seedProduct.GetByType(ProductSeedType.PENCIL);
         var quantityToBuy = pencil.Inventory.QuantityAvailable + 1;
 
         var request = PlaceOrderRequestUtils.CreateRequest(
@@ -146,14 +177,29 @@ public class PlaceOrderTests : BaseIntegrationTest
             ]
         );
 
-        await Client.LoginAs(SeedAvailableUsers.Customer);
-        Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
-        var response = await Client.PostAsJsonAsync(OrderEndpoints.BaseEndpoint, request);
+        var endpoint = TestConstants.OrderEndpoints.PlaceOrder;
+
+        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        RequestService.Client.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
+        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
         var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         responseContent!.Status.Should().Be((int)HttpStatusCode.BadRequest);
         responseContent.Detail.Should().Be("The product does not have available stock to complete the operation");
         responseContent.Title.Should().Be("Inventory Insufficient");
+    }
+
+    private decimal CalculateExpectedPriceAfterApplyingSales(Product product)
+    {
+        var productCategoryIds = product.ProductCategories.Select(c => c.CategoryId).ToHashSet();
+
+        var saleProduct = SaleProduct.Create(product.Id, productCategoryIds);
+
+        var discounts = _seedSale
+            .ListAll(s => s.IsProductInSale(saleProduct))
+            .Select(s => s.Discount);
+
+        return DiscountService.ApplyDiscounts(product.BasePrice, discounts.ToArray());
     }
 }

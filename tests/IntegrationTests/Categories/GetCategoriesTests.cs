@@ -1,11 +1,13 @@
+using Domain.CategoryAggregate;
+
 using Contracts.Categories;
 
 using IntegrationTests.Common;
-using IntegrationTests.TestUtils.Seeds;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Categories;
+using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
 
-using WebApi.Categories;
-
-using System.Net.Http.Json;
 using FluentAssertions;
 using Xunit.Abstractions;
 
@@ -16,6 +18,8 @@ namespace IntegrationTests.Categories;
 /// </summary>
 public class GetCategoriesTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoriesTests"/> class.
     /// </summary>
@@ -23,6 +27,7 @@ public class GetCategoriesTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public GetCategoriesTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
     }
 
     /// <summary>
@@ -31,12 +36,12 @@ public class GetCategoriesTests : BaseIntegrationTest
     [Fact]
     public async Task GetCategories_WhenCalled_ReturnsOkContainingAllAvailableCategories()
     {
-        var expectedCategories = CategorySeed
-            .ListCategories()
+        var expectedCategories = _seedCategory
+            .ListAll()
             .Select(c => new CategoryResponse(c.Id.ToString(), c.Name));
 
-        var response = await Client.GetAsync($"{CategoryEndpoints.BaseEndpoint}");
-        var responseContent = await response.Content.ReadFromJsonAsync<IEnumerable<CategoryResponse>>();
+        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.GetCategories);
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<CategoryResponse>>();
 
         responseContent.Should().BeEquivalentTo(expectedCategories);
     }

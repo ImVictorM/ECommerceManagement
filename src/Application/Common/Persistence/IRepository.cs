@@ -14,6 +14,11 @@ public interface IRepository<TEntity, TEntityId>
     where TEntityId : notnull
 {
     /// <summary>
+    /// Retrieves the first <typeparamref name="TEntity"/> element.
+    /// </summary>
+    /// <returns>The first <typeparamref name="TEntity"/> element.</returns>
+    Task<TEntity> FirstAsync();
+    /// <summary>
     /// Find all records.
     /// </summary>
     /// <param name="filter">A nullable filter expression.</param>

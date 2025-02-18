@@ -1,6 +1,6 @@
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.Security.Authorization.Roles;
 using Application.Users.DTOs;
+using SharedKernel.ValueObjects;
 
 namespace Application.Users.Queries.GetAllUsers;
 

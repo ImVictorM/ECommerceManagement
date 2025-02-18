@@ -8,20 +8,21 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
-using Infrastructure.Common.Persistence.Configurations;
+using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedKernel.Models;
 
 namespace Infrastructure.Orders;
 
 /// <summary>
 /// Configures the tables for the <see cref="Order"/> aggregate.
 /// </summary>
-public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
+public sealed class OrderConfigurations : EntityTypeConfigurationDependency<Order>
 {
     /// <inheritdoc/>
-    public void Configure(EntityTypeBuilder<Order> builder)
+    public override void Configure(EntityTypeBuilder<Order> builder)
     {
         ConfigureOrdersTable(builder);
         ConfigureOwnedOrdersCouponsTable(builder);
@@ -59,10 +60,21 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .IsRequired();
 
         builder
+            .Property<long>("_orderStatusId")
+            .HasColumnName("id_order_status")
+            .IsRequired();
+
+        builder
             .HasOne<OrderStatus>()
             .WithMany()
-            .HasForeignKey(o => o.OrderStatusId)
+            .HasForeignKey("_orderStatusId")
             .IsRequired();
+
+        builder.Ignore(order => order.OrderStatus);
+
+        builder
+            .Property(order => order.OrderStatus)
+            .HasConversion(status => status.Id, id => BaseEnumeration.FromValue<OrderStatus>(id));
 
         builder
             .Property(order => order.Total)
@@ -72,8 +84,6 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
             .Property(order => order.Description)
             .HasMaxLength(200)
             .IsRequired();
-
-        builder.OwnsOne(order => order.DeliveryAddress, AddressNavigationBuilderConfigurations.Configure);
     }
 
     private static void ConfigureOwnedOrdersCouponsTable(EntityTypeBuilder<Order> builder)
@@ -193,34 +203,41 @@ public sealed class OrderConfigurations : IEntityTypeConfiguration<Order>
 
     private static void ConfigureOwnedOrderStatusHistoriesTable(EntityTypeBuilder<Order> builder)
     {
-        builder.OwnsMany(o => o.OrderStatusHistories, orderStatusHistoryBuilder =>
+        builder.OwnsMany(o => o.OrderTrackingEntries, orderTrackingEntryBuilder =>
         {
-            orderStatusHistoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+            orderTrackingEntryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            orderStatusHistoryBuilder.ToTable("order_status_histories");
+            orderTrackingEntryBuilder.ToTable("order_tracking_entries");
 
-            orderStatusHistoryBuilder
+            orderTrackingEntryBuilder
                 .Property<long>("id")
                 .ValueGeneratedOnAdd();
 
-            orderStatusHistoryBuilder.HasKey("id");
+            orderTrackingEntryBuilder.HasKey("id");
 
-            orderStatusHistoryBuilder
+            orderTrackingEntryBuilder
                 .WithOwner()
                 .HasForeignKey("id_order");
 
-            orderStatusHistoryBuilder
+            orderTrackingEntryBuilder
                 .Property("id_order")
                 .IsRequired();
 
-            orderStatusHistoryBuilder
-                .HasOne<OrderStatus>()
-                .WithMany()
-                .HasForeignKey(osh => osh.OrderStatusId)
+            orderTrackingEntryBuilder
+                .Property<long>("_orderStatusId")
+                .HasColumnName("id_order_status")
                 .IsRequired();
 
-            orderStatusHistoryBuilder
-                .Property(osh => osh.CreatedAt)
+            orderTrackingEntryBuilder
+                .HasOne<OrderStatus>()
+                .WithMany()
+                .HasForeignKey("_orderStatusId")
+                .IsRequired();
+
+            orderTrackingEntryBuilder.Ignore(o => o.OrderStatus);
+
+            orderTrackingEntryBuilder
+                .Property(o => o.CreatedAt)
                 .IsRequired();
         });
     }

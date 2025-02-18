@@ -1,9 +1,16 @@
-using IntegrationTests.Common;
-using IntegrationTests.Products.TestUtils;
-using IntegrationTests.TestUtils.Extensions.HttpClient;
-using IntegrationTests.TestUtils.Seeds;
+using Domain.CategoryAggregate;
+using Domain.ProductAggregate;
 
 using Contracts.Products;
+
+using IntegrationTests.Common;
+using IntegrationTests.Common.Seeds.Abstracts;
+using IntegrationTests.Common.Seeds.Categories;
+using IntegrationTests.Common.Seeds.Products;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.TestUtils.Extensions.Http;
+using IntegrationTests.TestUtils.Constants;
+using IntegrationTests.Products.TestUtils;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -18,6 +25,9 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class UpdateProductTests : BaseIntegrationTest
 {
+    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateProductTests"/> class.
     /// </summary>
@@ -25,6 +35,8 @@ public class UpdateProductTests : BaseIntegrationTest
     /// <param name="output">The log helper.</param>
     public UpdateProductTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
     {
+        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
     }
 
     /// <summary>
@@ -33,7 +45,9 @@ public class UpdateProductTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateProduct_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
-        var response = await Client.PutAsJsonAsync("/products/1", UpdateProductRequestUtils.CreateRequest());
+        var endpoint = TestConstants.ProductEndpoints.UpdateProduct("1");
+
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, UpdateProductRequestUtils.CreateRequest());
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -43,13 +57,14 @@ public class UpdateProductTests : BaseIntegrationTest
     /// </summary>
     /// <param name="customerUserType">The customer type to be authenticated.</param>
     [Theory]
-    [InlineData(SeedAvailableUsers.CustomerWithAddress)]
-    [InlineData(SeedAvailableUsers.Customer)]
-    public async Task UpdateProduct_WhenUserIsNotAdmin_ReturnsForbidden(SeedAvailableUsers customerUserType)
+    [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
+    [InlineData(UserSeedType.CUSTOMER)]
+    public async Task UpdateProduct_WhenUserIsNotAdmin_ReturnsForbidden(UserSeedType customerUserType)
     {
-        await Client.LoginAs(customerUserType);
+        var endpoint = TestConstants.ProductEndpoints.UpdateProduct("1");
 
-        var response = await Client.PutAsJsonAsync("/products/1", UpdateProductRequestUtils.CreateRequest());
+        await RequestService.LoginAsAsync(customerUserType);
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, UpdateProductRequestUtils.CreateRequest());
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -61,13 +76,14 @@ public class UpdateProductTests : BaseIntegrationTest
     public async Task UpdateProduct_WhenProductDoesNotExist_ReturnsNotFound()
     {
         var notFoundId = "404";
-        await Client.LoginAs(SeedAvailableUsers.Admin);
+        var endpoint = TestConstants.ProductEndpoints.UpdateProduct(notFoundId);
 
-        var response = await Client.PutAsJsonAsync($"/products/{notFoundId}", UpdateProductRequestUtils.CreateRequest());
-        var responseContent = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await RequestService.Client.PutAsJsonAsync(endpoint, UpdateProductRequestUtils.CreateRequest());
+        var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
+        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
         responseContent.Detail.Should().Be($"The product with id {notFoundId} could not be updated because it does not exist");
     }
@@ -81,11 +97,11 @@ public class UpdateProductTests : BaseIntegrationTest
     {
         var productCategories = new[]
         {
-            CategorySeed.GetSeedCategory(SeedAvailableCategories.BOOKS_STATIONERY),
-            CategorySeed.GetSeedCategory(SeedAvailableCategories.TECHNOLOGY)
+            _seedCategory.GetByType(CategorySeedType.BOOKS_STATIONERY),
+            _seedCategory.GetByType(CategorySeedType.TECHNOLOGY)
         };
 
-        var productToUpdate = ProductSeed.GetSeedProduct(SeedAvailableProducts.PENCIL);
+        var productToUpdate = _seedProduct.GetByType(ProductSeedType.PENCIL);
 
         var request = UpdateProductRequestUtils.CreateRequest(
             name: "Techy pen",
@@ -95,13 +111,16 @@ public class UpdateProductTests : BaseIntegrationTest
             images: [new Uri("tech-pencil.png", UriKind.Relative)]
         );
 
-        await Client.LoginAs(SeedAvailableUsers.Admin);
-        var putResponse = await Client.PutAsJsonAsync($"/products/{productToUpdate.Id}", request);
-        var getResponse = await Client.GetAsync($"/products/{productToUpdate.Id}");
-        var getResponseContent = await getResponse.Content.ReadFromJsonAsync<ProductResponse>();
+        var updateEndpoint = TestConstants.ProductEndpoints.UpdateProduct(productToUpdate.Id.ToString());
+        var getEndpoint = TestConstants.ProductEndpoints.GetProductById(productToUpdate.Id.ToString());
+
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var putResponse = await RequestService.Client.PutAsJsonAsync(updateEndpoint, request);
+        var getResponse = await RequestService.Client.GetAsync(getEndpoint);
+        var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<ProductResponse>();
 
         putResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        getResponseContent!.Name.Should().Be(request.Name);
+        getResponseContent.Name.Should().Be(request.Name);
         getResponseContent.Description.Should().Be(request.Description);
         getResponseContent.Images.Should().BeEquivalentTo(request.Images);
         getResponseContent.BasePrice.Should().Be(request.BasePrice);
