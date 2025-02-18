@@ -31,7 +31,7 @@ public class ShipmentEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<NoContent, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> AdvanceShipmentStatus(
+    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> AdvanceShipmentStatus(
         [FromRoute] string id,
         ISender sender
     )
