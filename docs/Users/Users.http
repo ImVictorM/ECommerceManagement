@@ -1,9 +1,5 @@
-# All of the user endpoints required authentication. To get a valid
-# token, login using the authentication.http file (docs/Authentication/Authentication.http).
-# Set the user_id and token variables to match the id and token received from the login response.
-
 @base_endpoint = http://localhost:8000/users
-@user_id = 1
+@id_user = 1
 @token = insert-token-here
 
 ### Retrieves the currently authenticated user's details. Requires authentication.
@@ -13,7 +9,7 @@ Authorization: Bearer {{token}}
 
 ### Retrieves a specific user's details by identifier. Admin authentication is required.
 ### Returns a 200 OK response in case of success.
-GET {{base_endpoint}}/{{user_id}}
+GET {{base_endpoint}}/{{id_user}}
 Authorization: Bearer {{token}}
 
 ### Retrieves the users. The {{active}} query parameter is optional and can be used to filter active/inactive users. Admin authentication is required.
@@ -23,7 +19,7 @@ Authorization: Bearer {{token}}
 
 ### Updates a user's details. Users can only update their own details. Administrators can update any other non-administrator user's details. Requires authentication.
 ### Returns a 204 NO_CONTENT response in case of success.
-PUT {{base_endpoint}}/{{user_id}}
+PUT {{base_endpoint}}/{{id_user}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -35,6 +31,6 @@ Authorization: Bearer {{token}}
 
 ### Deactivates a user by setting them as inactive. Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account.
 ### Returns a 204 NO_CONTENT response in case of success.
-DELETE {{base_endpoint}}/{{user_id}}
+DELETE {{base_endpoint}}/{{id_user}}
 Authorization: Bearer {{token}}
 

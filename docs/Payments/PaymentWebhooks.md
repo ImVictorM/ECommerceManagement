@@ -1,15 +1,15 @@
 # E-commerce Management API
 
-## Payment Notifications
+## Payment Webhooks
 
-The Payment Notifications feature provides an endpoint that acts as a webhook for payment gateways. This endpoint receives notifications from the payment gateway and updates internal data accordingly. Secure communication is ensured through an HMAC-based signature validation.
+The Payment Webhooks feature provides an endpoint that acts as a webhook for payment gateways. This endpoint receives notifications from the payment gateway and updates internal data accordingly. Secure communication is ensured through an HMAC-based signature validation.
 
-### Receive Payment Notifications
+### Handle Payment Status Changed
 
 This endpoint allows payment gateways to send notifications regarding payment status changes. The provided signature is validated to ensure the authenticity of the request.
 
 ```js
-POST "/notifications/payments"
+POST "/webhooks/payments"
 ```
 
 #### Headers
@@ -22,7 +22,7 @@ POST "/notifications/payments"
 ```json
 {
   "paymentId": "66b43390-c206-4ec9-8384-173029982ca8",
-  "paymentStatus": "authorized"
+  "paymentStatus": "Authorized"
 }
 ```
 

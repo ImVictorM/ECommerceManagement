@@ -51,7 +51,7 @@ Field Rules:
 Updates the details of an active product. Admin authentication is required.
 
 ```js
-PUT "/products/{{product_id}}"
+PUT "/products/{{id_product}}"
 ```
 
 #### Header
@@ -92,7 +92,7 @@ Field Rules:
 Increments the inventory quantity available for an active product. Admin authentication is required.
 
 ```js
-PUT "/products/{{product_id}}/inventory"
+PUT "/products/{{id_product}}/inventory"
 ```
 
 #### Headers
@@ -125,7 +125,7 @@ Field Rules:
 Deactivates a product and sets the product inventory to 0 items. Admin authentication is required.
 
 ```js
-DELETE "/products/{{product_id}}"
+DELETE "/products/{{id_product}}"
 ```
 
 #### Headers
@@ -173,7 +173,7 @@ GET "/products/?category=1&limit=2"
 Retrieve an active product by its identifier. No authentication is required.
 
 ```js
-GET "/products/{{product_id}}"
+GET "/products/{{id_product}}"
 ```
 
 #### Response Format

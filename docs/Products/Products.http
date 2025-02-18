@@ -1,6 +1,6 @@
 @base_endpoint = http://localhost:8000/products
 @token = insert-token-here
-@product_id = 2
+@id_product = 2
 
 ### Creates a new product. Admin authentication is required.
 ### Returns a 201 CREATED response in case of success.
@@ -19,7 +19,7 @@ Authorization: Bearer {{token}}
 
 ### Updates the details of an active product. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
-PUT {{base_endpoint}}/{{product_id}}
+PUT {{base_endpoint}}/{{id_product}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -37,7 +37,7 @@ Authorization: Bearer {{token}}
 
 ### Increments the inventory quantity available for an active product. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
-PUT {{base_endpoint}}/{{product_id}}/inventory
+PUT {{base_endpoint}}/{{id_product}}/inventory
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -47,7 +47,7 @@ Authorization: Bearer {{token}}
 
 ### Deactivates a product and set the inventory to 0 items. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
-DELETE {{base_endpoint}}/{{product_id}}
+DELETE {{base_endpoint}}/{{id_product}}
 Authorization: Bearer {{token}}
 
 ### Retrieves all active products. It will retrieve the first 20 products if no limit is specified.
@@ -58,4 +58,4 @@ GET {{base_endpoint}}?category=1&limit=2
 
 ### Retrieves an active product by its identifier. No authentication is required.
 ### Returns an OK response in case of success.
-GET {{base_endpoint}}/{{product_id}}
+GET {{base_endpoint}}/{{id_product}}

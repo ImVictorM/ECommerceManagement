@@ -1,4 +1,4 @@
-@base_endpoint = http://localhost:8000/notifications/payments
+@base_endpoint = http://localhost:8000/webhooks/payments
 @provider_signature = LTExNDQxOTQwMzU=
 
 ### Receives a payment notification to update internal data.
@@ -13,5 +13,5 @@ X-Provider-Signature: {{provider_signature}}
 
 {
   "paymentId": "1",
-  "paymentStatus": "canceled"
+  "paymentStatus": "Canceled"
 }
