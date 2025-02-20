@@ -23,6 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Reflection;
 
 namespace Infrastructure;
 
@@ -31,6 +32,8 @@ namespace Infrastructure;
 /// </summary>
 public static class ServicesRegistration
 {
+    private static readonly Assembly _assembly = typeof(ServicesRegistration).Assembly;
+
     /// <summary>
     /// Add the required dependencies of the infrastructure layer.
     /// </summary>
@@ -79,7 +82,23 @@ public static class ServicesRegistration
             options.UseNpgsql($"Host={dbConnectionSettings.Host};Port={dbConnectionSettings.Port};Database={dbConnectionSettings.Database};Username={dbConnectionSettings.Username};Password={dbConnectionSettings.Password};Trust Server Certificate=true;");
         });
 
-        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+        var repositoryTypes = _assembly.DefinedTypes
+            .Where(t =>
+                !t.IsAbstract
+                && !t.IsGenericTypeDefinition
+                && t.GetInterfaces().Any(i => !i.IsGenericTypeDefinition && i.IsAssignableFrom(typeof(IBaseRepository<,>)))
+            )
+            .Select(typeInfo => typeInfo.AsType());
+
+        foreach (var repositoryType in repositoryTypes)
+        {
+            var repositoryInterface = repositoryType
+                .GetInterfaces()
+                .First(i => !i.IsGenericType && i.IsAssignableFrom(typeof(IBaseRepository<,>)));
+
+            services.AddScoped(repositoryInterface, repositoryType);
+        }
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<AuditInterceptor>();

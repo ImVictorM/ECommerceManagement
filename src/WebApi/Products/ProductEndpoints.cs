@@ -53,9 +53,8 @@ public class ProductEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Products",
-                Description = "Retrieves all active products. " +
-                "The first 20 products will be retrieved if no limit is specified. " +
-                "It is possible to filter the products specifying the category ids to the URL e.g &category={id_category}."
+                Description = "Retrieves all active products with pagination." +
+                "It is possible to filter the products specifying the category ids in the URL e.g &category={id_category}."
             });
 
         productGroup
@@ -119,11 +118,12 @@ public class ProductEndpoints : ICarterModule
     private async Task<Ok<IEnumerable<ProductResponse>>> GetAllProducts(
         ISender sender,
         IMapper mapper,
-        [FromQuery(Name = "limit")] int? limit = null,
+        [FromQuery(Name = "page")] int? page = null,
+        [FromQuery(Name = "pageSize")] int? pageSize = null,
         [FromQuery(Name = "category")] string[]? categories = null
     )
     {
-        var query = new GetProductsQuery(limit, categories);
+        var query = new GetProductsQuery(page, pageSize, categories);
 
         var result = await sender.Send(query);
 

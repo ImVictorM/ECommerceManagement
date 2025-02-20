@@ -1,25 +1,4 @@
-using Domain.CategoryAggregate;
-using Domain.CategoryAggregate.ValueObjects;
-using Domain.CouponAggregate;
-using Domain.CouponAggregate.ValueObjects;
-using Domain.OrderAggregate;
-using Domain.OrderAggregate.ValueObjects;
-using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.ValueObjects;
-using Domain.ProductAggregate;
-using Domain.ProductAggregate.ValueObjects;
-using Domain.SaleAggregate;
-using Domain.SaleAggregate.ValueObjects;
-using Domain.ShipmentAggregate;
-using Domain.ShipmentAggregate.ValueObjects;
-using Domain.UserAggregate;
-using Domain.UserAggregate.ValueObjects;
-
 using Application.Common.Persistence;
-using Domain.CarrierAggregate;
-using Domain.CarrierAggregate.ValueObjects;
-using Domain.ShippingMethodAggregate;
-using Domain.ShippingMethodAggregate.ValueObjects;
 
 namespace Infrastructure.Common.Persistence;
 
@@ -30,76 +9,13 @@ public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly ECommerceDbContext _context;
 
-    /// <inheritdoc/>
-    public IRepository<User, UserId> UserRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Product, ProductId> ProductRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Order, OrderId> OrderRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Category, CategoryId> CategoryRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Sale, SaleId> SaleRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Coupon, CouponId> CouponRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Payment, PaymentId> PaymentRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Shipment, ShipmentId> ShipmentRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<Carrier, CarrierId> CarrierRepository { get; }
-
-    /// <inheritdoc/>
-    public IRepository<ShippingMethod, ShippingMethodId> ShippingMethodRepository { get; }
-
     /// <summary>
     /// Initiates a new instance of the <see cref="UnitOfWork"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="userRepository">The user repository.</param>
-    /// <param name="productRepository">The product repository.</param>
-    /// <param name="orderRepository">The order repository.</param>
-    /// <param name="categoryRepository">The category repository.</param>
-    /// <param name="saleRepository">The sale repository.</param>
-    /// <param name="couponRepository">The coupon repository.</param>
-    /// <param name="paymentRepository">The payment repository.</param>
-    /// <param name="shipmentRepository">The shipment repository.</param>
-    /// <param name="carrierRepository">The carrier repository.</param>
-    /// <param name="shippingMethodRepository">The shipping method repository.</param>
-    public UnitOfWork(
-        ECommerceDbContext context,
-        IRepository<User, UserId> userRepository,
-        IRepository<Product, ProductId> productRepository,
-        IRepository<Order, OrderId> orderRepository,
-        IRepository<Category, CategoryId> categoryRepository,
-        IRepository<Sale, SaleId> saleRepository,
-        IRepository<Coupon, CouponId> couponRepository,
-        IRepository<Payment, PaymentId> paymentRepository,
-        IRepository<Shipment, ShipmentId> shipmentRepository,
-        IRepository<Carrier, CarrierId> carrierRepository,
-        IRepository<ShippingMethod, ShippingMethodId> shippingMethodRepository
-    )
+    public UnitOfWork(ECommerceDbContext context)
     {
         _context = context;
-
-        UserRepository = userRepository;
-        ProductRepository = productRepository;
-        OrderRepository = orderRepository;
-        CategoryRepository = categoryRepository;
-        SaleRepository = saleRepository;
-        CouponRepository = couponRepository;
-        PaymentRepository = paymentRepository;
-        ShipmentRepository = shipmentRepository;
-        CarrierRepository = carrierRepository;
-        ShippingMethodRepository = shippingMethodRepository;
     }
 
     /// <inheritdoc/>
