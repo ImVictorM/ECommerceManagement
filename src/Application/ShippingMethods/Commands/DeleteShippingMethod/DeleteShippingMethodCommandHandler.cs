@@ -14,15 +14,22 @@ namespace Application.ShippingMethods.Commands.DeleteShippingMethod;
 public sealed partial class DeleteShippingMethodCommandHandler : IRequestHandler<DeleteShippingMethodCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IShippingMethodRepository _shippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeleteShippingMethodCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="shippingMethodRepository">The shipping method repository.</param>
     /// <param name="logger">The logger.</param>
-    public DeleteShippingMethodCommandHandler(IUnitOfWork unitOfWork, ILogger<DeleteShippingMethodCommandHandler> logger)
+    public DeleteShippingMethodCommandHandler(
+        IUnitOfWork unitOfWork,
+        IShippingMethodRepository shippingMethodRepository,
+        ILogger<DeleteShippingMethodCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _shippingMethodRepository = shippingMethodRepository;
         _logger = logger;
     }
 
@@ -33,7 +40,7 @@ public sealed partial class DeleteShippingMethodCommandHandler : IRequestHandler
 
         var shippingMethodToDeleteId = ShippingMethodId.Create(request.ShippingMethodId);
 
-        var shippingMethodToDelete = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(shippingMethodToDeleteId);
+        var shippingMethodToDelete = await _shippingMethodRepository.FindByIdAsync(shippingMethodToDeleteId, cancellationToken);
 
         if (shippingMethodToDelete == null)
         {
@@ -41,7 +48,7 @@ public sealed partial class DeleteShippingMethodCommandHandler : IRequestHandler
             throw new ShippingMethodNotFoundException();
         }
 
-        _unitOfWork.ShippingMethodRepository.RemoveOrDeactivate(shippingMethodToDelete);
+        _shippingMethodRepository.RemoveOrDeactivate(shippingMethodToDelete);
 
         await _unitOfWork.SaveChangesAsync();
         LogShippingMethodDeletedSuccessfully();

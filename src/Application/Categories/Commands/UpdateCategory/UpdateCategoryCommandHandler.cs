@@ -3,8 +3,8 @@ using Application.Common.Persistence;
 
 using Domain.CategoryAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Categories.Commands.UpdateCategory;
 
@@ -14,15 +14,22 @@ namespace Application.Categories.Commands.UpdateCategory;
 public partial class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICategoryRepository _categoryRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateCategoryCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="categoryRepository">The category repository.</param>
     /// <param name="logger">The logger.</param>
-    public UpdateCategoryCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateCategoryCommandHandler> logger)
+    public UpdateCategoryCommandHandler(
+        IUnitOfWork unitOfWork,
+        ICategoryRepository categoryRepository,
+        ILogger<UpdateCategoryCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _categoryRepository = categoryRepository;
         _logger = logger;
     }
 
@@ -33,7 +40,7 @@ public partial class UpdateCategoryCommandHandler : IRequestHandler<UpdateCatego
 
         var categoryId = CategoryId.Create(request.Id);
 
-        var category = await _unitOfWork.CategoryRepository.FindByIdAsync(categoryId);
+        var category = await _categoryRepository.FindByIdAsync(categoryId, cancellationToken);
 
         if (category == null)
         {

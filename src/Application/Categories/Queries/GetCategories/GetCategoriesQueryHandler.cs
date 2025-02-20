@@ -1,8 +1,8 @@
 using Application.Categories.DTOs;
 using Application.Common.Persistence;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Categories.Queries.GetCategories;
 
@@ -11,16 +11,19 @@ namespace Application.Categories.Queries.GetCategories;
 /// </summary>
 public partial class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, IEnumerable<CategoryResult>>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICategoryRepository _categoryRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoriesQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="categoryRepository">The category repository.</param>
     /// <param name="logger">The logger.</param>
-    public GetCategoriesQueryHandler(IUnitOfWork unitOfWork, ILogger<GetCategoriesQueryHandler> logger)
+    public GetCategoriesQueryHandler(
+        ICategoryRepository categoryRepository,
+        ILogger<GetCategoriesQueryHandler> logger
+    )
     {
-        _unitOfWork = unitOfWork;
+        _categoryRepository = categoryRepository;
         _logger = logger;
     }
 
@@ -29,7 +32,7 @@ public partial class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQu
     {
         LogStartQueryingAllCategories();
 
-        var categories = await _unitOfWork.CategoryRepository.FindAllAsync();
+        var categories = await _categoryRepository.FindAllAsync(cancellationToken: cancellationToken);
 
         LogAllCategoriesFetched();
         return categories.Select(c => new CategoryResult(c.Id.ToString(), c.Name));

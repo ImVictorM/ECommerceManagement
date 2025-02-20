@@ -1,5 +1,6 @@
 using Application.Common.Persistence;
 
+using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
@@ -11,23 +12,38 @@ namespace Application.Sales.Services;
 /// </summary>
 public class SaleService : ISaleService
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="SaleService"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    public SaleService(IUnitOfWork unitOfWork)
+    /// <param name="saleRepository">The sale repository.</param>
+    public SaleService(ISaleRepository saleRepository)
     {
-        _unitOfWork = unitOfWork;
+        _saleRepository = saleRepository;
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<Sale>> GetProductSalesAsync(SaleProduct product)
+    public async Task<IDictionary<ProductId, IEnumerable<Sale>>> GetProductsSalesAsync(
+        IEnumerable<SaleProduct> products,
+        CancellationToken cancellationToken = default
+    )
     {
-        return await _unitOfWork.SaleRepository.FindAllAsync(sale =>
-            sale.ProductsInSale.Any(p => p.ProductId == product.ProductId) ||
-            (sale.CategoriesInSale.Any(c => product.Categories.Contains(c.CategoryId)) && !sale.ProductsExcludedFromSale.Any(p => p.ProductId == product.ProductId))
-         );
+        var productList = products.ToList();
+
+        var allProductIds = productList.Select(p => p.ProductId).ToHashSet();
+        var allCategoryIds = productList.SelectMany(p => p.Categories).ToHashSet();
+
+        var allSales = await _saleRepository.FindAllAsync(sale =>
+            sale.ProductsInSale.Any(p => allProductIds.Contains(p.ProductId)) ||
+            (sale.CategoriesInSale.Any(c => allCategoryIds.Contains(c.CategoryId)) &&
+            !sale.ProductsExcludedFromSale.Any(p => allProductIds.Contains(p.ProductId))),
+            cancellationToken
+        );
+
+        return productList.ToDictionary(
+            product => product.ProductId,
+            product => allSales.Where(sale => sale.IsProductInSale(product))
+        );
     }
 }

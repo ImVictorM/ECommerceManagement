@@ -16,21 +16,14 @@ public partial class DeactivateUserCommandHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The user to be deactivated does not exist."
+        Message = "The user to be deactivated either does not exist or is already inactive."
     )]
     private partial void LogUserDoesNotExist();
 
     [LoggerMessage(
         EventId = 3,
-        Level = LogLevel.Information,
-        Message = "A user without the right privileges tried to deactivate another user. Current user id: {Id}"
-    )]
-    private partial void LogUserNotAllowed(string id);
-
-    [LoggerMessage(
-        EventId = 4,
         Level = LogLevel.Debug,
-        Message = "Deactivation complete. User is no longer available."
+        Message = "Deactivation complete. The User is no longer active."
     )]
     private partial void LogDeactivationComplete();
 }

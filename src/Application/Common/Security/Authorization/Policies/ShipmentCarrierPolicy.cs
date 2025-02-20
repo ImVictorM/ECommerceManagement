@@ -14,17 +14,17 @@ public sealed class ShipmentCarrierPolicy<TRequest> : IPolicy<TRequest>
     where TRequest : IShipmentSpecificResource
 {
     private readonly IIdentityProvider _identityProvider;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IShipmentRepository _shipmentRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ShipmentCarrierPolicy{TRequest}"/> class.
     /// </summary>
     /// <param name="identityProvider">The identity provider.</param>
-    /// <param name="unitOfWork">The unit of work.</param>
-    public ShipmentCarrierPolicy(IIdentityProvider identityProvider, IUnitOfWork unitOfWork)
+    /// <param name="shipmentRepository">The shipment repository.</param>
+    public ShipmentCarrierPolicy(IIdentityProvider identityProvider, IShipmentRepository shipmentRepository)
     {
         _identityProvider = identityProvider;
-        _unitOfWork = unitOfWork;
+        _shipmentRepository = shipmentRepository;
     }
 
     /// <inheritdoc/>
@@ -34,7 +34,7 @@ public sealed class ShipmentCarrierPolicy<TRequest> : IPolicy<TRequest>
 
         var carrierId = CarrierId.Create(identity.Id);
         var shipmentId = ShipmentId.Create(request.ShipmentId);
-        var shipment = await _unitOfWork.ShipmentRepository.FindByIdAsync(shipmentId);
+        var shipment = await _shipmentRepository.FindByIdAsync(shipmentId);
 
         if (shipment == null)
         {

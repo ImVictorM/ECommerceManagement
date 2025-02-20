@@ -86,6 +86,12 @@ public class Sale : AggregateRoot<SaleId>
     /// </summary>
     /// <param name="product">The product to be checked.</param>
     /// <returns>A boolean value indicating if the product is in sale.</returns>
+    /// /// <remarks>
+    /// A sale applies to a product if:
+    /// - The product is explicitly included in the sale (exists in <see cref="Sale.ProductsInSale"/>).
+    /// - OR the product belongs to a category that is on sale (exists in <see cref="Sale.CategoriesInSale"/>),
+    ///   and it is NOT explicitly excluded from the sale (exists in <see cref="Sale.ProductsExcludedFromSale"/>).
+    /// </remarks>
     public bool IsProductInSale(SaleProduct product)
     {
         var isProductInSaleList = ProductsInSale.Contains(ProductReference.Create(product.ProductId));

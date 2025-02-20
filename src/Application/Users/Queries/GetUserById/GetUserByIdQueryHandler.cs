@@ -4,8 +4,8 @@ using Application.Users.Errors;
 
 using Domain.UserAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Users.Queries.GetUserById;
 
@@ -14,27 +14,27 @@ namespace Application.Users.Queries.GetUserById;
 /// </summary>
 public sealed partial class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetUserByIdQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="userRepository">The user repository.</param>
     /// <param name="logger">The logger.</param>
-    public GetUserByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetUserByIdQueryHandler> logger)
+    public GetUserByIdQueryHandler(IUserRepository userRepository, ILogger<GetUserByIdQueryHandler> logger)
     {
-        _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
         _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task<UserResult> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        LogInitiatingUserFetch(request.UserId);
+        LogInitiatingUserRetrieval(request.UserId);
 
         var id = UserId.Create(request.UserId);
 
-        var user = await _unitOfWork.UserRepository.FindByIdAsync(id);
+        var user = await _userRepository.FindByIdAsync(id, cancellationToken);
 
         if (user == null)
         {
@@ -44,7 +44,7 @@ public sealed partial class GetUserByIdQueryHandler : IRequestHandler<GetUserByI
                 .WithContext("UserId", id.ToString());
         }
 
-        LogUserFound();
+        LogUserRetrievedSuccessfully();
         return new UserResult(user);
     }
 }

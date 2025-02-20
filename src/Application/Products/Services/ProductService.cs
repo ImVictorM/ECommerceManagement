@@ -1,7 +1,6 @@
-using Application.Common.Persistence;
-
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
 
@@ -14,42 +13,50 @@ namespace Application.Products.Services;
 /// </summary>
 public class ProductService : IProductService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ISaleService _saleService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductService"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="saleService">The sale service.</param>
-    public ProductService(IUnitOfWork unitOfWork, ISaleService saleService)
+    public ProductService(ISaleService saleService)
     {
-        _unitOfWork = unitOfWork;
         _saleService = saleService;
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<string>> GetProductCategoryNamesAsync(Product product)
+    public async Task<decimal> CalculateProductPriceApplyingSaleAsync(
+        Product product,
+        CancellationToken cancellationToken = default
+    )
     {
-        var productCategoryIds = product.ProductCategories.Select(pc => pc.CategoryId);
+        var result = await CalculateProductsPriceApplyingSaleAsync([product], cancellationToken);
 
-        var productCategories = await _unitOfWork.CategoryRepository.FindAllAsync(c => productCategoryIds.Contains(c.Id));
-
-        return productCategories.Select(pc => pc.Name);
+        return result[product.Id];
     }
 
     /// <inheritdoc/>
-    public async Task<decimal> CalculateProductPriceApplyingSaleAsync(Product product)
+    public async Task<Dictionary<ProductId, decimal>> CalculateProductsPriceApplyingSaleAsync(
+        IEnumerable<Product> products,
+        CancellationToken cancellationToken = default
+    )
     {
-        var productCategoriesIds = product.ProductCategories.Select(c => c.CategoryId).ToHashSet();
+        var saleProducts = products.Select(p => SaleProduct.Create(
+            p.Id,
+            p.ProductCategories.Select(c => c.CategoryId).ToHashSet())
+        );
 
-        var productSales = await _saleService.GetProductSalesAsync(SaleProduct.Create(product.Id, productCategoriesIds));
+        var productSales = await _saleService.GetProductsSalesAsync(saleProducts, cancellationToken);
 
-        var discountsValid = productSales
-            .Where(sale => sale.IsValidToDate())
-            .Select(sale => sale.Discount)
-            .ToArray();
-
-        return DiscountService.ApplyDiscounts(product.BasePrice, discountsValid);
+        return products.ToDictionary(
+            p => p.Id,
+            p => DiscountService.ApplyDiscounts(
+                p.BasePrice,
+                productSales[p.Id]
+                    .Where(s => s.IsValidToDate())
+                    .Select(s => s.Discount)
+                    .ToArray()
+            )
+        );
     }
 }

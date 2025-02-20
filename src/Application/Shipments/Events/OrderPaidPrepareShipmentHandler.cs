@@ -15,20 +15,26 @@ namespace Application.Shipments.Events;
 public sealed class OrderPaidPrepareShipmentHandler : INotificationHandler<OrderPaid>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IShipmentRepository _shipmentRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderPaidPrepareShipmentHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderPaidPrepareShipmentHandler(IUnitOfWork unitOfWork)
+    /// <param name="shipmentRepository">The shipment repository.</param>
+    public OrderPaidPrepareShipmentHandler(IUnitOfWork unitOfWork, IShipmentRepository shipmentRepository)
     {
         _unitOfWork = unitOfWork;
+        _shipmentRepository = shipmentRepository;
     }
 
     /// <inheritdoc/>
     public async Task Handle(OrderPaid notification, CancellationToken cancellationToken)
     {
-        var shipment = await _unitOfWork.ShipmentRepository.FindOneOrDefaultAsync(s => s.OrderId == notification.Order.Id);
+        var shipment = await _shipmentRepository.GetShipmentByOrderId(
+            notification.Order.Id,
+            cancellationToken
+        );
 
         if (shipment == null)
         {
@@ -37,7 +43,10 @@ public sealed class OrderPaidPrepareShipmentHandler : INotificationHandler<Order
 
         if (shipment.ShipmentStatus != ShipmentStatus.Pending)
         {
-            throw new OperationProcessFailedException($"Shipment status was expected to be 'Pending' but was '{shipment.ShipmentStatus.Name}' instead");
+            throw new OperationProcessFailedException(
+                $"Shipment status was expected to be 'Pending'" +
+                $" but was '{shipment.ShipmentStatus.Name}' instead"
+            );
         }
 
         shipment.AdvanceShipmentStatus();

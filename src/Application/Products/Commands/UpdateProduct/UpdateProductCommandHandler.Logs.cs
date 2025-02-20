@@ -15,7 +15,7 @@ public partial class UpdateProductCommandHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Product to be deactivated either does not exist or is already inactive."
+        Message = "Product to be updated either does not exist or is inactive."
     )]
     private partial void LogProductDoesNotExist();
 

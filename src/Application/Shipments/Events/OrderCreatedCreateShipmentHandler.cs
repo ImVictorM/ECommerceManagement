@@ -14,20 +14,30 @@ namespace Application.Shipments.Events;
 public class OrderCreatedCreateShipmentHandler : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICarrierRepository _carrierRepository;
+    private readonly IShipmentRepository _shipmentRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderCreatedCreateShipmentHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderCreatedCreateShipmentHandler(IUnitOfWork unitOfWork)
+    /// <param name="carrierRepository">The carrier repository.</param>
+    /// <param name="shipmentRepository">The shipment repository.</param>
+    public OrderCreatedCreateShipmentHandler(
+        IUnitOfWork unitOfWork,
+        ICarrierRepository carrierRepository,
+        IShipmentRepository shipmentRepository
+    )
     {
         _unitOfWork = unitOfWork;
+        _carrierRepository = carrierRepository;
+        _shipmentRepository = shipmentRepository;
     }
 
     /// <inheritdoc/>
     public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
     {
-        var shipmentCarrier = await _unitOfWork.CarrierRepository.FirstAsync();
+        var shipmentCarrier = await _carrierRepository.FirstAsync(cancellationToken);
 
         var shipment = Shipment.Create(
             notification.Order.Id,
@@ -36,7 +46,7 @@ public class OrderCreatedCreateShipmentHandler : INotificationHandler<OrderCreat
             notification.DeliveryAddress
         );
 
-        await _unitOfWork.ShipmentRepository.AddAsync(shipment);
+        await _shipmentRepository.AddAsync(shipment);
 
         await _unitOfWork.SaveChangesAsync();
     }

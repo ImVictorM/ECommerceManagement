@@ -14,21 +14,29 @@ namespace Application.Users.Events;
 public class OrderCreatedAssignUserAddressesHandler : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderCreatedAssignUserAddressesHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderCreatedAssignUserAddressesHandler(IUnitOfWork unitOfWork)
+    /// <param name="userRepository">The user repository.</param>
+    public OrderCreatedAssignUserAddressesHandler(
+        IUnitOfWork unitOfWork,
+        IUserRepository userRepository
+    )
     {
         _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
     }
 
     /// <inheritdoc/>
     public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
     {
-        var user = await _unitOfWork.UserRepository
-            .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.Order.OwnerId));
+        var user = await _userRepository.FindFirstSatisfyingAsync(
+            new QueryActiveUserByIdSpecification(notification.Order.OwnerId),
+            cancellationToken
+        );
 
         if (user != null)
         {

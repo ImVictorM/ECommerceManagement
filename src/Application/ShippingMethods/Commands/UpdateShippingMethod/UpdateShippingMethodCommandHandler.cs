@@ -14,15 +14,22 @@ namespace Application.ShippingMethods.Commands.UpdateShippingMethod;
 public sealed partial class UpdateShippingMethodCommandHandler : IRequestHandler<UpdateShippingMethodCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IShippingMethodRepository _shippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateShippingMethodCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="shippingMethodRepository">The shipping method repository.</param>
     /// <param name="logger">The logger.</param>
-    public UpdateShippingMethodCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateShippingMethodCommandHandler> logger)
+    public UpdateShippingMethodCommandHandler(
+        IUnitOfWork unitOfWork,
+        IShippingMethodRepository shippingMethodRepository,
+        ILogger<UpdateShippingMethodCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _shippingMethodRepository = shippingMethodRepository;
         _logger = logger;
     }
 
@@ -33,7 +40,7 @@ public sealed partial class UpdateShippingMethodCommandHandler : IRequestHandler
 
         var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 
-        var shippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(shippingMethodId);
+        var shippingMethod = await _shippingMethodRepository.FindByIdAsync(shippingMethodId, cancellationToken);
 
         if (shippingMethod == null)
         {

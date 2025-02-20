@@ -6,8 +6,8 @@ using Domain.OrderAggregate.Specifications;
 
 using SharedKernel.Models;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Orders.Queries.GetOrders;
 
@@ -18,16 +18,16 @@ namespace Application.Orders.Queries.GetOrders;
 /// </summary>
 public sealed partial class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, IEnumerable<OrderResult>>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IOrderRepository _orderRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrdersQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="orderRepository">The order repository.</param>
     /// <param name="logger">The logger.</param>
-    public GetOrdersQueryHandler(IUnitOfWork unitOfWork, ILogger<GetOrdersQueryHandler> logger)
+    public GetOrdersQueryHandler(IOrderRepository orderRepository, ILogger<GetOrdersQueryHandler> logger)
     {
-        _unitOfWork = unitOfWork;
+        _orderRepository = orderRepository;
         _logger = logger;
     }
 
@@ -40,7 +40,10 @@ public sealed partial class GetOrdersQueryHandler : IRequestHandler<GetOrdersQue
             BaseEnumeration.FromDisplayName<OrderStatus>(request.Status)
             : null;
 
-        var orders = await _unitOfWork.OrderRepository.FindSatisfyingAsync(new QueryOrderByStatusSpecification(statusFilter));
+        var orders = await _orderRepository.FindSatisfyingAsync(
+            new QueryOrderByStatusSpecification(statusFilter),
+            cancellationToken
+        );
 
         LogOrdersRetrievedSuccessfully(orders.Count());
 

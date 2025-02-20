@@ -3,8 +3,8 @@ using Application.Common.Persistence;
 
 using Domain.CategoryAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Categories.Commands.DeleteCategory;
 
@@ -14,15 +14,22 @@ namespace Application.Categories.Commands.DeleteCategory;
 public partial class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICategoryRepository _categoryRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeleteCategoryCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="categoryRepository">The category repository.</param>
     /// <param name="logger">The logger.</param>
-    public DeleteCategoryCommandHandler(IUnitOfWork unitOfWork, ILogger<DeleteCategoryCommandHandler> logger)
+    public DeleteCategoryCommandHandler(
+        IUnitOfWork unitOfWork,
+        ICategoryRepository categoryRepository,
+        ILogger<DeleteCategoryCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _categoryRepository = categoryRepository;
         _logger = logger;
     }
 
@@ -32,7 +39,7 @@ public partial class DeleteCategoryCommandHandler : IRequestHandler<DeleteCatego
         LogInitiatingDeleteCategory(request.Id);
         var categoryId = CategoryId.Create(request.Id);
 
-        var category = await _unitOfWork.CategoryRepository.FindByIdAsync(categoryId);
+        var category = await _categoryRepository.FindByIdAsync(categoryId, cancellationToken);
 
         if (category == null)
         {
@@ -40,7 +47,7 @@ public partial class DeleteCategoryCommandHandler : IRequestHandler<DeleteCatego
             throw new CategoryNotFoundException();
         }
 
-        _unitOfWork.CategoryRepository.RemoveOrDeactivate(category);
+        _categoryRepository.RemoveOrDeactivate(category);
 
         await _unitOfWork.SaveChangesAsync();
         LogCategoryDeleted();

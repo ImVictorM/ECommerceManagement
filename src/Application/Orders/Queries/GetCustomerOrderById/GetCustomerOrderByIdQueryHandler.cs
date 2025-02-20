@@ -6,8 +6,8 @@ using Application.Orders.Errors;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Orders.Queries.GetCustomerOrderById;
 
@@ -17,22 +17,22 @@ namespace Application.Orders.Queries.GetCustomerOrderById;
 /// </summary>
 public sealed partial class GetCustomerOrderByIdQueryHandler : IRequestHandler<GetCustomerOrderByIdQuery, OrderDetailedResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IOrderRepository _orderRepository;
     private readonly IPaymentGateway _paymentGateway;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCustomerOrderByIdQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="orderRepository">The order repository.</param>
     /// <param name="paymentGateway">The payment gateway.</param>
     /// <param name="logger">The logger.</param>
     public GetCustomerOrderByIdQueryHandler(
-        IUnitOfWork unitOfWork,
+        IOrderRepository orderRepository,
         IPaymentGateway paymentGateway,
         ILogger<GetCustomerOrderByIdQueryHandler> logger
     )
     {
-        _unitOfWork = unitOfWork;
+        _orderRepository = orderRepository;
         _paymentGateway = paymentGateway;
         _logger = logger;
     }
@@ -40,49 +40,38 @@ public sealed partial class GetCustomerOrderByIdQueryHandler : IRequestHandler<G
     /// <inheritdoc/>
     public async Task<OrderDetailedResult> Handle(GetCustomerOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        LogHandlingOrderFetch(request.OrderId, request.UserId);
+        LogInitiatingCustomerOrderRetrieval(request.OrderId, request.UserId);
 
         var orderOwnerId = UserId.Create(request.UserId);
         var orderId = OrderId.Create(request.OrderId);
 
-        var order = await _unitOfWork.OrderRepository.FindOneOrDefaultAsync(order => order.OwnerId == orderOwnerId && order.Id == orderId);
+        var orderDetailed = await _orderRepository.GetOrderDetailedAsync(orderId, orderOwnerId, cancellationToken);
 
-        if (order == null)
+        if (orderDetailed == null)
         {
             LogOrderNotFound();
 
             throw new OrderNotFoundException($"Order with id {orderId} and owner id {orderOwnerId} does not exist");
         }
 
-        LogOrderFound();
+        LogOrderRetrieved();
 
-        var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(payment => payment.OrderId == orderId);
+        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderDetailed.PaymentId.ToString());
 
-        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment!.Id.ToString());
+        LogOrderPaymentDetailsRetrieved();
 
-        var orderShipment = await _unitOfWork.ShipmentRepository.FindOneOrDefaultAsync(shipment => shipment.OrderId == order.Id);
-
-        var orderShippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(orderShipment!.ShippingMethodId);
+        LogOrderDetailedRetrievedSuccessfully();
 
         return new OrderDetailedResult(
-            order,
+            orderDetailed.Order,
+            orderDetailed.OrderShipment,
             new OrderPaymentResult(
-                orderPayment.Id,
+                orderDetailed.PaymentId,
                 orderPaymentDetails.Amount,
                 orderPaymentDetails.Installments,
                 orderPaymentDetails.Status.Name,
                 orderPaymentDetails.Details,
                 orderPaymentDetails.PaymentMethod
-            ),
-            new OrderShipmentResult(
-                orderShipment.Id,
-                orderShipment.ShipmentStatus.Name,
-                orderShipment.DeliveryAddress,
-                new OrderShippingMethodResult(
-                    orderShippingMethod!.Name,
-                    orderShippingMethod.Price,
-                    orderShippingMethod.EstimatedDeliveryDays
-                )
             )
         );
     }

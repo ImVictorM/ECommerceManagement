@@ -14,15 +14,15 @@ namespace Application.Common.Security.Authorization.Policies;
 public sealed class RestrictedDeactivationPolicy<TRequest> :
     IPolicy<TRequest> where TRequest : IUserSpecificResource
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="RestrictedDeactivationPolicy{TRequest}"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    public RestrictedDeactivationPolicy(IUnitOfWork unitOfWork)
+    /// <param name="userRepository">The user repository.</param>
+    public RestrictedDeactivationPolicy(IUserRepository userRepository)
     {
-        _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
     }
 
     /// <inheritdoc/>
@@ -34,7 +34,7 @@ public sealed class RestrictedDeactivationPolicy<TRequest> :
 
         if (currentUserId != userToBeDeactivatedId)
         {
-            var userToBeDeactivated = await _unitOfWork.UserRepository.FindByIdAsync(userToBeDeactivatedId);
+            var userToBeDeactivated = await _userRepository.FindByIdAsync(userToBeDeactivatedId);
 
             if (userToBeDeactivated == null)
             {

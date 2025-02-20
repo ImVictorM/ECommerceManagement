@@ -16,28 +16,42 @@ public partial class UpdateUserCommandHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The current user is not allowed to update the other user."
+        Message = "The user could not be updated because either the user does not exist or is inactive."
     )]
-    private partial void LogUserNotAllowed();
+    private partial void LogUserToBeUpdatedNotFound();
 
     [LoggerMessage(
         EventId = 3,
-        Level = LogLevel.Information,
-        Message = "The user could not be updated because there is already a user with the same email."
+        Level = LogLevel.Debug,
+        Message = "The user email is being updated. Former email: {FormerEmail}, New Email: {NewEmail}."
     )]
-    private partial void LogEmailConflict();
+    private partial void LogEmailBeingUpdated(string formerEmail, string newEmail);
 
     [LoggerMessage(
         EventId = 4,
-        Level = LogLevel.Debug,
-        Message = "Updating and save user changes."
+        Level = LogLevel.Information,
+        Message = "The user could not be updated because there is already a user with the same email. Email in use: {Email}"
     )]
-    private partial void LogUpdatingUser();
+    private partial void LogEmailConflict(string email);
 
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Debug,
-        Message = "The user has been updated and the changes have been saved."
+        Message = "The user new email is available. Email: {Email}."
     )]
-    private partial void LogUpdateComplete();
+    private partial void LogEmailAvailable(string email);
+
+    [LoggerMessage(
+        EventId = 6,
+        Level = LogLevel.Debug,
+        Message = "The user data was updated."
+    )]
+    private partial void LogUserUpdated();
+
+    [LoggerMessage(
+        EventId = 7,
+        Level = LogLevel.Debug,
+        Message = "The user has been updated and the changes have been saved. Operation complete successfully."
+    )]
+    private partial void LogUserUpdatedAndSavedSuccessfully();
 }

@@ -9,14 +9,21 @@ public partial class GetAllUsersQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating user retrieval."
+        Message = "Initiating users retrieval."
     )]
     private partial void LogInitiatingUsersRetrieval();
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Users retrieved.\nFilters: active={Active}."
+        Message = "Active filter: {ActiveFilter}."
     )]
-    private partial void LogUsersRetrieved(bool? active);
+    private partial void LogActiveFilter(string activeFilter);
+
+    [LoggerMessage(
+        EventId = 3,
+        Level = LogLevel.Debug,
+        Message = "The users were retrieved successfully."
+    )]
+    private partial void LogUsersRetrieved();
 }

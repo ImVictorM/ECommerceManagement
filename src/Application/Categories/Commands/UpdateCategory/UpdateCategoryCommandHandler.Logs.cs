@@ -9,21 +9,21 @@ public partial class UpdateCategoryCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Starting category update for category with id {CategoryId}"
+        Message = "Starting category update for category with id {CategoryId}."
     )]
     private partial void LogInitiatingCategoryUpdate(string categoryId);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The category was not found"
+        Message = "The category could not be updated because it was not found."
     )]
     private partial void LogCategoryNotFound();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "Category updated successfully"
+        Message = "The category was updated successfully."
     )]
     private partial void LogCategoryUpdated();
 }

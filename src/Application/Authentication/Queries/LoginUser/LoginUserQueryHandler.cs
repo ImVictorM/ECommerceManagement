@@ -1,4 +1,3 @@
-using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
 
 using Application.Authentication.DTOs;
@@ -9,8 +8,8 @@ using Application.Common.Security.Identity;
 
 using SharedKernel.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Authentication.Queries.LoginUser;
 
@@ -22,58 +21,48 @@ public partial class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, Aut
 {
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoginUserQueryHandler"/> class.
     /// </summary>
-    /// <param name="jwtTokenGenerator">Token service.</param>
-    /// <param name="passwordHasher">Password hash service.</param>
-    /// <param name="unitOfWork">The unity of work.</param>
+    /// <param name="jwtTokenService">The token service.</param>
+    /// <param name="passwordHasher">The password hash service.</param>
+    /// <param name="userRepository">The user repository.</param>
     /// <param name="logger">The query handler logger.</param>
     public LoginUserQueryHandler(
         IPasswordHasher passwordHasher,
-        IJwtTokenService jwtTokenGenerator,
-        IUnitOfWork unitOfWork,
+        IJwtTokenService jwtTokenService,
+        IUserRepository userRepository,
         ILogger<LoginUserQueryHandler> logger
     )
     {
         _passwordHasher = passwordHasher;
-        _jwtTokenService = jwtTokenGenerator;
-        _unitOfWork = unitOfWork;
+        _jwtTokenService = jwtTokenService;
+        _userRepository = userRepository;
         _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task<AuthenticationResult> Handle(LoginUserQuery query, CancellationToken cancellationToken)
     {
-        var inputEmail = Email.Create(query.Email);
+        LogInitiatingUserLogin(query.Email);
 
-        LogHandlingLoginQuery(inputEmail.Value);
+        var inputEmail = Email.Create(query.Email);
 
         var userQuerySpecification = new QueryUserByEmailSpecification(inputEmail).And(new QueryActiveUserSpecification());
 
-        var user = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(userQuerySpecification);
+        var user = await _userRepository.FindFirstSatisfyingAsync(userQuerySpecification, cancellationToken);
 
-        if (user == null || !IsUserPasswordCorrect(query, user))
+        if (user == null || !_passwordHasher.Verify(query.Password, user.PasswordHash))
         {
-            LogAuthenticationFailed();
+            LogUserAuthenticationFailed();
 
             throw new AuthenticationFailedException();
         }
 
-        var token = GenerateToken(user);
+        LogGeneratingUserAuthenticationToken();
 
-        LogSuccessfullyAuthenticatedUser(query.Email);
-
-        return new AuthenticationResult(
-            new AuthenticatedIdentity(user.Id.ToString(), user.Name, user.Email.ToString(), user.Phone),
-            token
-        );
-    }
-
-    private string GenerateToken(User user)
-    {
         var userIdentity = new IdentityUser(
             user.Id.ToString(),
             user.UserRoles.Select(ur => ur.Role).ToList()
@@ -81,11 +70,16 @@ public partial class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, Aut
 
         var token = _jwtTokenService.GenerateToken(userIdentity);
 
-        return token;
-    }
+        LogUserAuthenticatedSuccessfully(query.Email);
 
-    private bool IsUserPasswordCorrect(LoginUserQuery query, User user)
-    {
-        return _passwordHasher.Verify(query.Password, user.PasswordHash);
+        return new AuthenticationResult(
+            new AuthenticatedIdentity(
+                user.Id.ToString(),
+                user.Name,
+                user.Email.ToString(),
+                user.Phone
+            ),
+            token
+        );
     }
 }

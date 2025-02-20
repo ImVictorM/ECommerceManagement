@@ -15,16 +15,23 @@ public sealed class PaymentRejectedCancelAuthorizationHandler : INotificationHan
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentGateway _paymentGateway;
+    private readonly IPaymentRepository _paymentRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentRejectedCancelAuthorizationHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="paymentGateway">The payment gateway.</param>
-    public PaymentRejectedCancelAuthorizationHandler(IUnitOfWork unitOfWork, IPaymentGateway paymentGateway)
+    /// <param name="paymentRepository">The payment repository.</param>
+    public PaymentRejectedCancelAuthorizationHandler(
+        IUnitOfWork unitOfWork,
+        IPaymentGateway paymentGateway,
+        IPaymentRepository paymentRepository
+    )
     {
         _unitOfWork = unitOfWork;
         _paymentGateway = paymentGateway;
+        _paymentRepository = paymentRepository;
     }
 
     /// <inheritdoc/>
@@ -35,6 +42,8 @@ public sealed class PaymentRejectedCancelAuthorizationHandler : INotificationHan
         var response = await _paymentGateway.CancelAuthorizationAsync(payment.Id.ToString());
 
         payment.UpdatePaymentStatus(response.Status);
+
+        _paymentRepository.Update(payment);
 
         await _unitOfWork.SaveChangesAsync();
     }

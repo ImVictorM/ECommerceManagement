@@ -13,15 +13,15 @@ namespace Application.Common.Security.Authorization.Policies;
 public sealed class RestrictedUpdatePolicy<TRequest> : IPolicy<TRequest>
     where TRequest : IUserSpecificResource
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Creates a new instance of the <see cref="RestrictedUpdatePolicy{T}"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    public RestrictedUpdatePolicy(IUnitOfWork unitOfWork)
+    /// <param name="userRepository">The user repository.</param>
+    public RestrictedUpdatePolicy(IUserRepository userRepository)
     {
-        _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
     }
 
     /// <inheritdoc/>
@@ -30,7 +30,7 @@ public sealed class RestrictedUpdatePolicy<TRequest> : IPolicy<TRequest>
         var userToBeUpdatedId = request.UserId;
         var currentUserIsAdmin = currentUser.IsAdmin();
 
-        var userToBeUpdated = await _unitOfWork.UserRepository.FindByIdAsync(UserId.Create(userToBeUpdatedId));
+        var userToBeUpdated = await _userRepository.FindByIdAsync(UserId.Create(userToBeUpdatedId));
 
         if (userToBeUpdated == null)
         {

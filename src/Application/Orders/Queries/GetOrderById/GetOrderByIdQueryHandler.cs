@@ -6,64 +6,68 @@ using Application.Orders.Errors;
 using Domain.OrderAggregate.ValueObjects;
 
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Orders.Queries.GetOrderById;
 
 /// <summary>
 /// Query handler for the <see cref="GetOrderByIdQuery"/> query.
 /// </summary>
-public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDetailedResult>
+public sealed partial class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDetailedResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IOrderRepository _orderRepository;
     private readonly IPaymentGateway _paymentGateway;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="orderRepository">The order repository.</param>
     /// <param name="paymentGateway">The payment gateway.</param>
-    public GetOrderByIdQueryHandler(IUnitOfWork unitOfWork, IPaymentGateway paymentGateway)
+    /// <param name="logger">The logger.</param>
+    public GetOrderByIdQueryHandler(
+        IOrderRepository orderRepository,
+        IPaymentGateway paymentGateway,
+        ILogger<GetOrderByIdQueryHandler> logger
+    )
     {
-        _unitOfWork = unitOfWork;
+        _orderRepository = orderRepository;
         _paymentGateway = paymentGateway;
+        _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task<OrderDetailedResult> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
+        LogInitiatingOrderRetrieval(request.OrderId);
+
         var orderId = OrderId.Create(request.OrderId);
 
-        var order =
-            await _unitOfWork.OrderRepository.FindByIdAsync(orderId)
-            ?? throw new OrderNotFoundException();
+        var orderDetailed = await _orderRepository.GetOrderDetailedAsync(orderId, cancellationToken);
 
-        var orderPayment = await _unitOfWork.PaymentRepository.FindOneOrDefaultAsync(payment => payment.OrderId == order.Id);
+        if (orderDetailed == null)
+        {
+            LogOrderNotFound();
+            throw new OrderNotFoundException();
+        }
 
-        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderPayment!.Id.ToString());
+        LogOrderRetrieved();
 
-        var orderShipment = await _unitOfWork.ShipmentRepository.FindOneOrDefaultAsync(shipment => shipment.OrderId == order.Id);
+        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderDetailed.PaymentId.ToString());
 
-        var orderShippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(orderShipment!.ShippingMethodId);
+        LogOrderPaymentDetailsRetrieved();
+
+        LogOrderDetailedRetrievedSuccessfully();
 
         return new OrderDetailedResult(
-            order,
+            orderDetailed.Order,
+            orderDetailed.OrderShipment,
             new OrderPaymentResult(
-                orderPayment.Id,
+                orderDetailed.PaymentId,
                 orderPaymentDetails.Amount,
                 orderPaymentDetails.Installments,
                 orderPaymentDetails.Status.Name,
                 orderPaymentDetails.Details,
                 orderPaymentDetails.PaymentMethod
-            ),
-            new OrderShipmentResult(
-                orderShipment.Id,
-                orderShipment.ShipmentStatus.Name,
-                orderShipment.DeliveryAddress,
-                new OrderShippingMethodResult(
-                    orderShippingMethod!.Name,
-                    orderShippingMethod.Price,
-                    orderShippingMethod.EstimatedDeliveryDays
-                )
             )
         );
     }

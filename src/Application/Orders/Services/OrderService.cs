@@ -19,21 +19,30 @@ namespace Application.Orders.Services;
 /// </summary>
 public class OrderService : IOrderService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IProductService _productService;
+    private readonly IShippingMethodRepository _shippingMethodRepository;
+    private readonly ICouponRepository _couponRepository;
+    private readonly IProductRepository _productRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderService"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="productService">The product service.</param>
+    /// <param name="couponRepository">The coupon repository.</param>
+    /// <param name="productRepository">The product repository.</param>
+    /// <param name="shippingMethodRepository">The shipping method repository.</param>
     public OrderService(
-        IUnitOfWork unitOfWork,
-        IProductService productService
+        IProductService productService,
+        IShippingMethodRepository shippingMethodRepository,
+        ICouponRepository couponRepository,
+        IProductRepository productRepository
+
     )
     {
-        _unitOfWork = unitOfWork;
         _productService = productService;
+        _shippingMethodRepository = shippingMethodRepository;
+        _couponRepository = couponRepository;
+        _productRepository = productRepository;
     }
 
     /// <inheritdoc/>
@@ -43,7 +52,7 @@ public class OrderService : IOrderService
         IEnumerable<OrderCoupon>? couponsApplied
     )
     {
-        var shippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(shippingMethodId)
+        var shippingMethod = await _shippingMethodRepository.FindByIdAsync(shippingMethodId)
             ?? throw new InvalidShippingMethodException();
 
         var productsTotal = orderProducts.Sum(p => p.CalculateTransactionPrice());
@@ -66,7 +75,7 @@ public class OrderService : IOrderService
     {
         var couponAppliedIds = couponsApplied.Select(c => c.CouponId).ToList();
 
-        var coupons = await _unitOfWork.CouponRepository.FindAllAsync(c => couponAppliedIds.Contains(c.Id));
+        var coupons = await _couponRepository.FindAllAsync(c => couponAppliedIds.Contains(c.Id));
 
         if (coupons.Count() != couponAppliedIds.Count)
         {
@@ -112,7 +121,7 @@ public class OrderService : IOrderService
 
     private async Task<IDictionary<ProductId, Product>> FetchProductsAsync(IEnumerable<ProductId> productIds)
     {
-        var products = await _unitOfWork.ProductRepository.FindAllAsync(p => productIds.Contains(p.Id));
+        var products = await _productRepository.FindAllAsync(p => productIds.Contains(p.Id));
 
         if (products.Count() != productIds.Count())
         {

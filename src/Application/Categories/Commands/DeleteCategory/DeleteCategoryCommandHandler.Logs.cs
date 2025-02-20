@@ -9,21 +9,21 @@ public partial class DeleteCategoryCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Starting removal of category with id {CategoryId}"
+        Message = "Starting removal of category with id {CategoryId}."
     )]
     private partial void LogInitiatingDeleteCategory(string categoryId);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The category was not found"
+        Message = "The could not be deleted because it does not exist."
     )]
     private partial void LogCategoryNotFound();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The category was found an removed successfully"
+        Message = "The category was found an removed successfully."
     )]
     private partial void LogCategoryDeleted();
 }
