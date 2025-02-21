@@ -108,7 +108,7 @@ public class Sale : AggregateRoot<SaleId>
         var hasAnyProduct = ProductsInSale.Any();
         var productInSaleAndExcludedProductsAreEqual = ProductsInSale.SetEquals(ProductsExcludedFromSale);
 
-        if ((hasAnyCategory || hasAnyProduct) && !productInSaleAndExcludedProductsAreEqual)
+        if (hasAnyCategory || (hasAnyProduct && !productInSaleAndExcludedProductsAreEqual))
         {
             return;
         }
