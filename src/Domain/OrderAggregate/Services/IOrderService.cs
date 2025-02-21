@@ -14,8 +14,12 @@ public interface IOrderService
     /// quantity of items in the inventory for each product
     /// </summary>
     /// <param name="orderProducts">The order products input.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A list of prepared order products.</returns>
-    IAsyncEnumerable<OrderProduct> PrepareOrderProductsAsync(IEnumerable<IOrderProductReserved> orderProducts);
+    Task<IEnumerable<OrderProduct>> PrepareOrderProductsAsync(
+        IEnumerable<IOrderProductReserved> orderProducts,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// Calculates the total amount of the products, applying the necessary discounts.
@@ -23,6 +27,12 @@ public interface IOrderService
     /// <param name="orderProducts">The products to calculate the total.</param>
     /// <param name="shippingMethodId">The shipping method id.</param>
     /// <param name="couponsApplied">The coupons applied to the order.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The total amount.</returns>
-    Task<decimal> CalculateTotalAsync(IEnumerable<OrderProduct> orderProducts, ShippingMethodId shippingMethodId, IEnumerable<OrderCoupon>? couponsApplied);
+    Task<decimal> CalculateTotalAsync(
+        IEnumerable<OrderProduct> orderProducts,
+        ShippingMethodId shippingMethodId,
+        IEnumerable<OrderCoupon>? couponsApplied,
+        CancellationToken cancellationToken = default
+    );
 }

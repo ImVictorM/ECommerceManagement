@@ -50,7 +50,7 @@ public class OrderFactory
         IEnumerable<OrderCoupon>? couponsApplied = null
     )
     {
-        var orderProductsWithPrice = await _orderService.PrepareOrderProductsAsync(products).ToListAsync();
+        var orderProductsWithPrice = await _orderService.PrepareOrderProductsAsync(products);
 
         var total = await _orderService.CalculateTotalAsync(orderProductsWithPrice, shippingMethodId, couponsApplied);
 
