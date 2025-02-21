@@ -34,18 +34,21 @@ public sealed class ProductRepository : BaseRepository<Product, ProductId>, IPro
     )
     {
         return await Context.Products
+            .Where(specification.Criteria)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Where(specification.Criteria)
             .Select(product => new ProductWithCategoriesQueryResult(
                 product,
-                GetProductCategoryNames(product.ProductCategories)
+                Context.Categories
+                    .Where(category => product.ProductCategories.Select(pc => pc.CategoryId).Contains(category.Id))
+                    .Select(category => category.Name)
+                    .ToList()
             ))
             .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc/>
-    public async Task<ProductWithCategoriesQueryResult> GetProductWithCategoriesSatisfyingAsync(
+    public async Task<ProductWithCategoriesQueryResult?> GetProductWithCategoriesSatisfyingAsync(
         ISpecificationQuery<Product> specification,
         CancellationToken cancellationToken = default
     )
@@ -54,15 +57,11 @@ public sealed class ProductRepository : BaseRepository<Product, ProductId>, IPro
             .Where(specification.Criteria)
             .Select(product => new ProductWithCategoriesQueryResult(
                 product,
-                GetProductCategoryNames(product.ProductCategories)
+                Context.Categories
+                    .Where(category => product.ProductCategories.Select(pc => pc.CategoryId).Contains(category.Id))
+                    .Select(category => category.Name)
+                    .ToList()
             ))
-            .FirstAsync(cancellationToken);
-    }
-
-    private IEnumerable<string> GetProductCategoryNames(IEnumerable<ProductCategory> productCategories)
-    {
-        return Context.Categories
-            .Where(category => productCategories.Select(pc => pc.CategoryId).Contains(category.Id))
-            .Select(category => category.Name);
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

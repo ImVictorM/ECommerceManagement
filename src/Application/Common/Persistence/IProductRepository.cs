@@ -34,7 +34,7 @@ public interface IProductRepository : IBaseRepository<Product, ProductId>
     /// <param name="specification">The specification.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The product with the category names.</returns>
-    Task<ProductWithCategoriesQueryResult> GetProductWithCategoriesSatisfyingAsync(
+    Task<ProductWithCategoriesQueryResult?> GetProductWithCategoriesSatisfyingAsync(
         ISpecificationQuery<Product> specification,
         CancellationToken cancellationToken = default
     );
