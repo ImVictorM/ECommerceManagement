@@ -82,6 +82,10 @@ public partial class RegisterCustomerCommandHandler : IRequestHandler<RegisterCu
 
         await _userRepository.AddAsync(user);
 
+        await _unitOfWork.SaveChangesAsync();
+
+        LogCustomerSavedSuccessfully();
+
         var userIdentity = new IdentityUser(
                 user.Id.ToString(),
                 user.UserRoles.Select(ur => ur.Role).ToList()
@@ -90,8 +94,6 @@ public partial class RegisterCustomerCommandHandler : IRequestHandler<RegisterCu
         var token = _jwtTokenService.GenerateToken(userIdentity);
 
         LogAuthenticationTokenGenerated();
-
-        await _unitOfWork.SaveChangesAsync();
 
         LogRegistrationCompleteSuccessfully();
 

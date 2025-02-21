@@ -32,12 +32,19 @@ public partial class RegisterCustomerCommandHandler
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
+        Message = "The customer saved successfully."
+    )]
+    private partial void LogCustomerSavedSuccessfully();
+
+    [LoggerMessage(
+        EventId = 5,
+        Level = LogLevel.Debug,
         Message = "The authentication token was generated successfully."
     )]
     private partial void LogAuthenticationTokenGenerated();
 
     [LoggerMessage(
-        EventId = 5,
+        EventId = 6,
         Level = LogLevel.Debug,
         Message = "The customer was registered and the authentication token was generated. " +
         "The process complete successfully."
