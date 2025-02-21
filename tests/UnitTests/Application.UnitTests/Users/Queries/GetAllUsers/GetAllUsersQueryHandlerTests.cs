@@ -4,7 +4,6 @@ using Application.Common.Persistence;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
-using Domain.UserAggregate.ValueObjects;
 
 using System.Linq.Expressions;
 using FluentAssertions;
@@ -19,21 +18,17 @@ namespace Application.UnitTests.Users.Queries.GetAllUsers;
 public class GetAllUsersQueryHandlerTests
 {
     private readonly GetAllUsersQueryHandler _handler;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetAllUsersQueryHandlerTests"/> class.
     /// </summary>
     public GetAllUsersQueryHandlerTests()
     {
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
-
-        _mockUnitOfWork.Setup(uw => uw.UserRepository).Returns(_mockUserRepository.Object);
+        _mockUserRepository = new Mock<IUserRepository>();
 
         _handler = new GetAllUsersQueryHandler(
-            _mockUnitOfWork.Object,
+            _mockUserRepository.Object,
             new Mock<ILogger<GetAllUsersQueryHandler>>().Object
         );
     }
@@ -47,7 +42,10 @@ public class GetAllUsersQueryHandlerTests
         var mockActiveUsers = UserUtils.CreateCustomers(count: 5, active: true);
 
         _mockUserRepository
-            .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(mockActiveUsers);
 
         var query = GetAllUsersQueryUtils.CreateQuery(isActive: true);
@@ -55,7 +53,13 @@ public class GetAllUsersQueryHandlerTests
         var response = await _handler.Handle(query, default);
 
         response.Select(ur => ur.User).Should().BeEquivalentTo(mockActiveUsers);
-        _mockUserRepository.Verify(r => r.FindAllAsync(user => user.IsActive == query.IsActive), Times.Once());
+        _mockUserRepository.Verify(
+            r => r.FindAllAsync(
+                user => user.IsActive == query.IsActive,
+                It.IsAny<CancellationToken>()
+            ),
+            Times.Once()
+        );
     }
 
     /// <summary>
@@ -67,7 +71,10 @@ public class GetAllUsersQueryHandlerTests
         var mockInactiveUsers = UserUtils.CreateCustomers(count: 5, active: false);
 
         _mockUserRepository
-            .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(mockInactiveUsers);
 
         var query = GetAllUsersQueryUtils.CreateQuery(isActive: false);
@@ -75,7 +82,13 @@ public class GetAllUsersQueryHandlerTests
         var response = await _handler.Handle(query, default);
 
         response.Select(ur => ur.User).Should().BeEquivalentTo(mockInactiveUsers);
-        _mockUserRepository.Verify(r => r.FindAllAsync(user => user.IsActive == query.IsActive), Times.Once());
+        _mockUserRepository.Verify(
+            r => r.FindAllAsync(
+                user => user.IsActive == query.IsActive,
+                It.IsAny<CancellationToken>()
+            ),
+            Times.Once()
+        );
     }
 
     /// <summary>
@@ -87,7 +100,10 @@ public class GetAllUsersQueryHandlerTests
         var mockAllUsers = UserUtils.CreateCustomers(count: 5);
 
         _mockUserRepository
-            .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(mockAllUsers);
 
         var query = GetAllUsersQueryUtils.CreateQuery();
@@ -95,6 +111,9 @@ public class GetAllUsersQueryHandlerTests
         var response = await _handler.Handle(query, default);
 
         response.Select(ur => ur.User).Should().BeEquivalentTo(mockAllUsers);
-        _mockUserRepository.Verify(r => r.FindAllAsync(null), Times.Once());
+        _mockUserRepository.Verify(r =>
+            r.FindAllAsync(null, It.IsAny<CancellationToken>()),
+            Times.Once()
+        );
     }
 }

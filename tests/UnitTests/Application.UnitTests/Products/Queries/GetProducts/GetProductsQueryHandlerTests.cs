@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+using Application.Products.DTOs;
 using Application.Products.Queries.GetProducts;
 using Application.UnitTests.Products.Queries.TestUtils;
 
@@ -9,7 +10,6 @@ using Domain.UnitTests.TestUtils;
 
 using SharedKernel.Models;
 
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -20,8 +20,7 @@ namespace Application.UnitTests.Products.Queries.GetProducts;
 /// </summary>
 public class GetProductsQueryHandlerTests
 {
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IProductService> _mockProductService;
     private readonly GetProductsQueryHandler _handler;
 
@@ -30,80 +29,127 @@ public class GetProductsQueryHandlerTests
     /// </summary>
     public GetProductsQueryHandlerTests()
     {
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
+        _mockProductRepository = new Mock<IProductRepository>();
         _mockProductService = new Mock<IProductService>();
 
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
-
         _handler = new GetProductsQueryHandler(
-            _mockUnitOfWork.Object,
+            _mockProductRepository.Object,
             _mockProductService.Object,
             new Mock<ILogger<GetProductsQueryHandler>>().Object
         );
     }
 
     /// <summary>
-    /// Tests that getting the products without specifying a limit retrieves the first 20 products.
+    /// Tests that getting the products without specifying pagination details retrieves the first 20 products.
     /// </summary>
     [Fact]
-    public async Task HandleGetAllProducts_WithoutSpecifyingLimit_RetrievesFirstTwenty()
+    public async Task HandleGetAllProducts_WithoutSpecifyingPagination_RetrievesFirstTwentyProducts()
     {
+        var query = GetProductsQueryUtils.CreateQuery();
+
+        var queryResult = new[]
+        {
+            new ProductWithCategoriesQueryResult(
+                ProductUtils.CreateProduct(id: ProductId.Create(1)),
+                ["category_1", "category_2"]
+            ),
+
+            new ProductWithCategoriesQueryResult(
+                ProductUtils.CreateProduct(id: ProductId.Create(2)),
+                ["category_1"]
+            ),
+        };
+
+        var products = queryResult.Select(qr => qr.Product);
+
+        var productPrices = products.ToDictionary(
+            p => p.Id,
+            p => p.BasePrice
+        );
+
         _mockProductRepository
-            .Setup(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), It.IsAny<int>()))
-            .ReturnsAsync(ProductUtils.CreateProducts());
+            .Setup(r => r.GetProductsWithCategoriesSatisfyingAsync(
+                It.IsAny<CompositeQuerySpecification<Product>>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(queryResult);
 
-        await _handler.Handle(GetProductsQueryUtils.CreateQuery(), default);
-
-        _mockProductRepository.Verify(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), 20));
-    }
-
-    /// <summary>
-    /// Tests that it is possible to fetch products including a custom limit.
-    /// </summary>
-    [Fact]
-    public async Task HandleGetAllProducts_SpecifyingLimit_RetrievesFirstNth()
-    {
-        var quantityToFetch = 5;
-        var query = GetProductsQueryUtils.CreateQuery(limit: quantityToFetch);
-
-        _mockProductRepository
-            .Setup(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), It.IsAny<int>()))
-            .ReturnsAsync(ProductUtils.CreateProducts());
+        _mockProductService
+            .Setup(s => s.CalculateProductsPriceApplyingSaleAsync(
+                products,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(productPrices);
 
         await _handler.Handle(query, default);
 
-        _mockProductRepository.Verify(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), quantityToFetch));
+        _mockProductRepository.Verify(r => r.GetProductsWithCategoriesSatisfyingAsync(
+            It.IsAny<CompositeQuerySpecification<Product>>(),
+            1,
+            20,
+            It.IsAny<CancellationToken>()
+        ));
     }
 
     /// <summary>
-    /// Tests if the product price and categories are fetched for each product.
+    /// Tests that it is possible to fetch products including pagination details.
     /// </summary>
     [Fact]
-    public async Task HandleGetProducts_ForEachProduct_CalculatesPriceAndRetrievesCategoryNames()
+    public async Task HandleGetAllProducts_SpecifyingPaginationDetails_RetrievesWithPagination()
     {
-        var products = ProductUtils.CreateProducts(3).ToList();
+        var page = 1;
+        var pageSize = 5;
+
+        var query = GetProductsQueryUtils.CreateQuery(
+            page: page,
+            pageSize: pageSize
+        );
+
+        var queryResult = new[]
+        {
+            new ProductWithCategoriesQueryResult(
+                ProductUtils.CreateProduct(id: ProductId.Create(1)),
+                ["category_1", "category_2"]
+            ),
+
+            new ProductWithCategoriesQueryResult(
+                ProductUtils.CreateProduct(id: ProductId.Create(2)),
+                ["category_1"]
+            ),
+        };
+
+        var products = queryResult.Select(qr => qr.Product);
+
+        var productPrices = products.ToDictionary(
+            p => p.Id,
+            p => p.BasePrice
+        );
 
         _mockProductRepository
-            .Setup(r => r.FindSatisfyingAsync(It.IsAny<CompositeQuerySpecification<Product>>(), It.IsAny<int>()))
-            .ReturnsAsync(products);
+            .Setup(r => r.GetProductsWithCategoriesSatisfyingAsync(
+                It.IsAny<CompositeQuerySpecification<Product>>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(queryResult);
 
         _mockProductService
-            .Setup(s => s.CalculateProductPriceApplyingSaleAsync(It.IsAny<Product>()))
-            .ReturnsAsync(100m);
+            .Setup(s => s.CalculateProductsPriceApplyingSaleAsync(
+                products,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(productPrices);
 
-        _mockProductService
-            .Setup(s => s.GetProductCategoryNamesAsync(It.IsAny<Product>()))
-            .ReturnsAsync(["Category1", "Category2"]);
+        await _handler.Handle(query, default);
 
-        var result = await _handler.Handle(GetProductsQueryUtils.CreateQuery(), default);
-
-        foreach (var product in products)
-        {
-            _mockProductService.Verify(s => s.CalculateProductPriceApplyingSaleAsync(product), Times.Once);
-            _mockProductService.Verify(s => s.GetProductCategoryNamesAsync(product), Times.Once);
-        }
-
-        result.Count().Should().Be(products.Count);
+        _mockProductRepository.Verify(r => r.GetProductsWithCategoriesSatisfyingAsync(
+            It.IsAny<CompositeQuerySpecification<Product>>(),
+            page,
+            pageSize,
+            It.IsAny<CancellationToken>()
+        ));
     }
 }

@@ -7,7 +7,6 @@ using Application.Common.Errors;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
-using Domain.UserAggregate.ValueObjects;
 
 using SharedKernel.UnitTests.TestUtils;
 
@@ -24,20 +23,19 @@ public class UpdateUserCommandHandlerTests
 {
     private readonly UpdateUserCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnityOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateUserCommandHandlerTests"/> class.
     /// </summary>
     public UpdateUserCommandHandlerTests()
     {
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
+        _mockUserRepository = new Mock<IUserRepository>();
         _mockUnityOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnityOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
 
         _handler = new UpdateUserCommandHandler(
             _mockUnityOfWork.Object,
+            _mockUserRepository.Object,
             new Mock<ILogger<UpdateUserCommandHandler>>().Object
         );
     }
@@ -52,7 +50,10 @@ public class UpdateUserCommandHandlerTests
         var command = UpdateUserCommandUtils.CreateCommand(name: "new name", phone: "19958274823");
 
         _mockUserRepository
-            .SetupSequence(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .SetupSequence(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveUserByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(userToBeUpdated);
 
         await _handler.Handle(command, default);
@@ -70,7 +71,10 @@ public class UpdateUserCommandHandlerTests
     public async Task HandleUpdateUser_WhenUserDoesNotExist_ThrowsException()
     {
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveUserByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((User?)null);
 
         await FluentActions
@@ -94,11 +98,17 @@ public class UpdateUserCommandHandlerTests
         var updateRequest = UpdateUserCommandUtils.CreateCommand(email: userToBeUpdatedNewEmail.ToString());
 
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveUserByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(userToBeUpdated);
 
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryUserByEmailSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(conflictingUser);
 
         await FluentActions

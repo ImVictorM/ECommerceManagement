@@ -1,7 +1,7 @@
 using Application.Common.Persistence;
 using Application.ShippingMethods.Commands.CreateShippingMethod;
 using Application.UnitTests.ShippingMethods.Commands.TestUtils;
-using Application.UnitTests.TestUtils.Behaviors;
+using Application.UnitTests.TestUtils.Extensions;
 
 using Domain.ShippingMethodAggregate;
 using Domain.ShippingMethodAggregate.ValueObjects;
@@ -19,20 +19,19 @@ public class CreateShippingMethodCommandHandlerTests
 {
     private readonly CreateShippingMethodCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<ShippingMethod, ShippingMethodId>> _mockShippingMethodRepository;
+    private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="CreateShippingMethodCommandHandlerTests"/> class.
     /// </summary>
     public CreateShippingMethodCommandHandlerTests()
     {
-        _mockShippingMethodRepository = new Mock<IRepository<ShippingMethod, ShippingMethodId>>();
+        _mockShippingMethodRepository = new Mock<IShippingMethodRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.ShippingMethodRepository).Returns(_mockShippingMethodRepository.Object);
 
         _handler = new CreateShippingMethodCommandHandler(
             _mockUnitOfWork.Object,
+            _mockShippingMethodRepository.Object,
             new Mock<ILogger<CreateShippingMethodCommandHandler>>().Object
         );
     }
@@ -47,7 +46,10 @@ public class CreateShippingMethodCommandHandlerTests
 
         var request = CreateShippingMethodCommandUtils.CreateCommand();
 
-        MockEFCoreBehaviors.MockSetEntityIdBehavior(_mockShippingMethodRepository, _mockUnitOfWork, shippingMethodCreatedId);
+        _mockUnitOfWork.MockSetEntityIdBehavior<IShippingMethodRepository, ShippingMethod, ShippingMethodId>(
+            _mockShippingMethodRepository,
+            shippingMethodCreatedId
+        );
 
         var result = await _handler.Handle(request, default);
 

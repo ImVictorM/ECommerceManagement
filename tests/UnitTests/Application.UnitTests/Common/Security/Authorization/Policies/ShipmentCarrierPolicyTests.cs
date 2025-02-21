@@ -22,24 +22,20 @@ namespace Application.UnitTests.Common.Security.Authorization.Policies;
 public class ShipmentCarrierPolicyTests
 {
     private readonly ShipmentCarrierPolicy<IShipmentSpecificResource> _policy;
-    private readonly Mock<IRepository<Shipment, ShipmentId>> _mockShipmentRepository;
+    private readonly Mock<IShipmentRepository> _mockShipmentRepository;
     private readonly Mock<IIdentityProvider> _mockIdentityProvider;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShipmentCarrierPolicyTests"/> class.
     /// </summary>
     public ShipmentCarrierPolicyTests()
     {
-        _mockShipmentRepository = new Mock<IRepository<Shipment, ShipmentId>>();
+        _mockShipmentRepository = new Mock<IShipmentRepository>();
         _mockIdentityProvider = new Mock<IIdentityProvider>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.ShipmentRepository).Returns(_mockShipmentRepository.Object);
 
         _policy = new ShipmentCarrierPolicy<IShipmentSpecificResource>(
             _mockIdentityProvider.Object,
-            _mockUnitOfWork.Object
+            _mockShipmentRepository.Object
         );
     }
 
@@ -58,7 +54,10 @@ public class ShipmentCarrierPolicyTests
             .Returns(identity);
 
         _mockShipmentRepository
-            .Setup(repo => repo.FindByIdAsync(shipmentId))
+            .Setup(repo => repo.FindByIdAsync(
+                shipmentId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((Shipment?)null);
 
         var result = await _policy.IsAuthorizedAsync(request, new IdentityUser("1", [Role.Carrier]));
@@ -85,7 +84,10 @@ public class ShipmentCarrierPolicyTests
             .Returns(identity);
 
         _mockShipmentRepository
-            .Setup(repo => repo.FindByIdAsync(shipmentId))
+            .Setup(repo => repo.FindByIdAsync(
+                shipmentId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shipment);
 
         var result = await _policy.IsAuthorizedAsync(request, identity);
@@ -112,7 +114,10 @@ public class ShipmentCarrierPolicyTests
             .Returns(identity);
 
         _mockShipmentRepository
-            .Setup(repo => repo.FindByIdAsync(shipmentId))
+            .Setup(repo => repo.FindByIdAsync(
+                shipmentId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shipment);
 
         var result = await _policy.IsAuthorizedAsync(request, identity);

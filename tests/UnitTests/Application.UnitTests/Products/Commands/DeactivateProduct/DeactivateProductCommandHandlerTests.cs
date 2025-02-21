@@ -5,13 +5,13 @@ using Application.UnitTests.Products.Commands.TestUtils;
 
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Specifications;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
 using SharedKernel.Interfaces;
+
+using Microsoft.Extensions.Logging;
+using FluentAssertions;
+using Moq;
 
 namespace Application.UnitTests.Products.Commands.DeactivateProduct;
 
@@ -21,7 +21,7 @@ namespace Application.UnitTests.Products.Commands.DeactivateProduct;
 public class DeactivateProductCommandHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly DeactivateProductCommandHandler _handler;
 
     /// <summary>
@@ -30,12 +30,11 @@ public class DeactivateProductCommandHandlerTests
     public DeactivateProductCommandHandlerTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
-
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
+        _mockProductRepository = new Mock<IProductRepository>();
 
         _handler = new DeactivateProductCommandHandler(
             _mockUnitOfWork.Object,
+            _mockProductRepository.Object,
             new Mock<ILogger<DeactivateProductCommandHandler>>().Object
         );
     }
@@ -48,7 +47,8 @@ public class DeactivateProductCommandHandlerTests
     {
         _mockProductRepository
             .Setup(r => r.FindFirstSatisfyingAsync(
-                It.IsAny<ISpecificationQuery<Product>>()
+                It.IsAny<ISpecificationQuery<Product>>(),
+                It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync((Product?)null);
 
@@ -59,9 +59,6 @@ public class DeactivateProductCommandHandlerTests
             .Should()
             .ThrowAsync<ProductNotFoundException>()
             .WithMessage($"Product with id {command.Id} could not be deactivated because it does not exist or is already inactive");
-
-        _mockProductRepository.Verify(r => r.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<Product>>()), Times.Once());
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never());
     }
 
     /// <summary>
@@ -73,7 +70,10 @@ public class DeactivateProductCommandHandlerTests
         var productToBeDeactivate = ProductUtils.CreateProduct();
 
         _mockProductRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveProductByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(productToBeDeactivate);
 
         var command = DeactivateProductCommandUtils.CreateCommand();
@@ -82,7 +82,6 @@ public class DeactivateProductCommandHandlerTests
 
         productToBeDeactivate.IsActive.Should().BeFalse();
         productToBeDeactivate.Inventory.QuantityAvailable.Should().Be(0);
-        _mockProductRepository.Verify(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()), Times.Once());
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 }

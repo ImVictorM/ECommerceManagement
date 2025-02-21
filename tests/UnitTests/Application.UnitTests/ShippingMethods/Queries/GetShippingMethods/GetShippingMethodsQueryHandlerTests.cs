@@ -2,7 +2,6 @@ using Application.Common.Persistence;
 using Application.ShippingMethods.Queries.GetShippingMethods;
 using Application.UnitTests.ShippingMethods.Queries.TestUtils;
 
-using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate;
 using Domain.UnitTests.TestUtils;
 
@@ -19,21 +18,17 @@ namespace Application.UnitTests.ShippingMethods.Queries.GetShippingMethods;
 public class GetShippingMethodsQueryHandlerTests
 {
     private readonly GetShippingMethodsQueryHandler _handler;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<ShippingMethod, ShippingMethodId>> _mockShippingMethodRepository;
+    private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetShippingMethodsQueryHandlerTests"/> class.
     /// </summary>
     public GetShippingMethodsQueryHandlerTests()
     {
-        _mockShippingMethodRepository = new Mock<IRepository<ShippingMethod, ShippingMethodId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.ShippingMethodRepository).Returns(_mockShippingMethodRepository.Object);
+        _mockShippingMethodRepository = new Mock<IShippingMethodRepository>();
 
         _handler = new GetShippingMethodsQueryHandler(
-            _mockUnitOfWork.Object,
+            _mockShippingMethodRepository.Object,
             new Mock<ILogger<GetShippingMethodsQueryHandler>>().Object
         );
     }
@@ -54,7 +49,10 @@ public class GetShippingMethodsQueryHandlerTests
         };
 
         _mockShippingMethodRepository
-            .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<ShippingMethod, bool>>>()))
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<ShippingMethod, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shippingMethods);
 
         var result = await _handler.Handle(request, default);
@@ -62,7 +60,10 @@ public class GetShippingMethodsQueryHandlerTests
         result.Select(r => r.ShippingMethod).Should().BeEquivalentTo(shippingMethods);
 
         _mockShippingMethodRepository.Verify(r =>
-            r.FindAllAsync(It.IsAny<Expression<Func<ShippingMethod, bool>>>()),
+            r.FindAllAsync(
+                It.IsAny<Expression<Func<ShippingMethod, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ),
             Times.Once()
         );
     }

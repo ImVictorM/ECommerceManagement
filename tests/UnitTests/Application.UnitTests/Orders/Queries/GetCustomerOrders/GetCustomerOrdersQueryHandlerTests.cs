@@ -22,21 +22,20 @@ namespace Application.UnitTests.Orders.Queries.GetCustomerOrders;
 public class GetCustomerOrdersQueryHandlerTests
 {
     private readonly GetCustomerOrdersQueryHandler _handler;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
+    private readonly Mock<IOrderRepository> _mockOrderRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCustomerOrdersQueryHandlerTests"/> class.
     /// </summary>
     public GetCustomerOrdersQueryHandlerTests()
     {
-        _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockOrderRepository = new Mock<IOrderRepository>();
         var mockLogger = new Mock<ILogger<GetCustomerOrdersQueryHandler>>();
 
-        _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
-
-        _handler = new GetCustomerOrdersQueryHandler(_mockUnitOfWork.Object, mockLogger.Object);
+        _handler = new GetCustomerOrdersQueryHandler(
+            _mockOrderRepository.Object,
+            mockLogger.Object
+        );
     }
 
     /// <summary>
@@ -58,7 +57,7 @@ public class GetCustomerOrdersQueryHandlerTests
         _mockOrderRepository
             .Setup(repo => repo.FindSatisfyingAsync(
                 It.IsAny<ISpecificationQuery<Order>>(),
-                It.IsAny<int?>()
+                It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(orders);
 
@@ -97,7 +96,7 @@ public class GetCustomerOrdersQueryHandlerTests
         _mockOrderRepository
             .Setup(repo => repo.FindSatisfyingAsync(
                 It.IsAny<ISpecificationQuery<Order>>(),
-                It.IsAny<int?>()
+                It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(ordersPending);
 

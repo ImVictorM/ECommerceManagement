@@ -20,7 +20,7 @@ namespace Application.UnitTests.Orders.Events;
 public class PaymentApprovedMarkOrderAsPaidHandlerTests
 {
     private readonly PaymentApprovedMarkOrderAsPaidHandler _handler;
-    private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
+    private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
@@ -28,12 +28,13 @@ public class PaymentApprovedMarkOrderAsPaidHandlerTests
     /// </summary>
     public PaymentApprovedMarkOrderAsPaidHandlerTests()
     {
-        _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
+        _mockOrderRepository = new Mock<IOrderRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
-
-        _handler = new PaymentApprovedMarkOrderAsPaidHandler(_mockUnitOfWork.Object);
+        _handler = new PaymentApprovedMarkOrderAsPaidHandler(
+            _mockOrderRepository.Object,
+            _mockUnitOfWork.Object
+        );
     }
 
     /// <summary>
@@ -51,7 +52,10 @@ public class PaymentApprovedMarkOrderAsPaidHandlerTests
         var notification = PaymentApprovedUtils.CreateEvent(payment);
 
         _mockOrderRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<OrderId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<OrderId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(order);
 
         await _handler.Handle(notification, default);
@@ -66,11 +70,14 @@ public class PaymentApprovedMarkOrderAsPaidHandlerTests
     [Fact]
     public async Task HandlePaymentApproved_WhenOrderIsNotFound_ThrowsError()
     {
-        _mockOrderRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<OrderId>()))
-            .ReturnsAsync((Order?)null);
-
         var notification = PaymentApprovedUtils.CreateEvent();
+
+        _mockOrderRepository
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<OrderId>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync((Order?)null);
 
         await FluentActions
             .Invoking(() => _handler.Handle(notification, default))

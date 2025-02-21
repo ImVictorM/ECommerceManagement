@@ -20,20 +20,19 @@ public class DeleteCategoryCommandHandlerTests
 {
     private readonly DeleteCategoryCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Category, CategoryId>> _mockCategoryRepository;
+    private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeleteCategoryCommandHandlerTests"/> class.
     /// </summary>
     public DeleteCategoryCommandHandlerTests()
     {
-        _mockCategoryRepository = new Mock<IRepository<Category, CategoryId>>();
+        _mockCategoryRepository = new Mock<ICategoryRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.CategoryRepository).Returns(_mockCategoryRepository.Object);
 
         _handler = new DeleteCategoryCommandHandler(
             _mockUnitOfWork.Object,
+            _mockCategoryRepository.Object,
             new Mock<ILogger<DeleteCategoryCommandHandler>>().Object
         );
     }
@@ -49,7 +48,10 @@ public class DeleteCategoryCommandHandlerTests
         var command = DeleteCategoryCommandUtils.CreateCommand(id: categoryId.ToString());
 
         _mockCategoryRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<CategoryId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<CategoryId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(category);
 
         await _handler.Handle(command, default);
@@ -67,7 +69,10 @@ public class DeleteCategoryCommandHandlerTests
         var command = DeleteCategoryCommandUtils.CreateCommand();
 
         _mockCategoryRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<CategoryId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<CategoryId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((Category?)null);
 
         await FluentActions

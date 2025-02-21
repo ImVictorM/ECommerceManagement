@@ -166,10 +166,20 @@ public static class OrderUtils
         var preparedProducts = orderProducts.Select(op => CreateOrderProduct(op.ProductId, op.Quantity));
         var preparedProductsTotal = preparedProducts.Sum(pp => pp.CalculateTransactionPrice());
 
-        mock.Setup(s => s.PrepareOrderProductsAsync(orderProducts))
-            .Returns(preparedProducts.ToAsyncEnumerable());
+        mock
+            .Setup(s => s.PrepareOrderProductsAsync(
+                orderProducts,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(preparedProducts);
 
-        mock.Setup(s => s.CalculateTotalAsync(preparedProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
+        mock
+            .Setup(s => s.CalculateTotalAsync(
+                preparedProducts,
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<IEnumerable<OrderCoupon>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(preparedProductsTotal);
 
         return mock.Object;

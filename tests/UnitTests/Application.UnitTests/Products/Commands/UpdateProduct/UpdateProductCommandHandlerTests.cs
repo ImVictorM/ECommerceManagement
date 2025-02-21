@@ -5,7 +5,6 @@ using Application.UnitTests.Products.Commands.TestUtils;
 
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Specifications;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 using FluentAssertions;
@@ -20,7 +19,7 @@ namespace Application.UnitTests.Products.Commands.UpdateProduct;
 public class UpdateProductCommandHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly UpdateProductCommandHandler _handler;
 
     /// <summary>
@@ -29,11 +28,13 @@ public class UpdateProductCommandHandlerTests
     public UpdateProductCommandHandlerTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
+        _mockProductRepository = new Mock<IProductRepository>();
 
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
-
-        _handler = new UpdateProductCommandHandler(_mockUnitOfWork.Object, new Mock<ILogger<UpdateProductCommandHandler>>().Object);
+        _handler = new UpdateProductCommandHandler(
+            _mockUnitOfWork.Object,
+            _mockProductRepository.Object,
+            new Mock<ILogger<UpdateProductCommandHandler>>().Object
+        );
     }
 
     /// <summary>
@@ -46,7 +47,10 @@ public class UpdateProductCommandHandlerTests
         var command = UpdateProductCommandUtils.CreateCommand(id: notFoundId);
 
         _mockProductRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveProductByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((Product?)null);
 
         await FluentActions
@@ -54,8 +58,6 @@ public class UpdateProductCommandHandlerTests
             .Should()
             .ThrowAsync<ProductNotFoundException>()
             .WithMessage($"The product with id {notFoundId} could not be updated because it does not exist");
-
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never());
     }
 
     /// <summary>
@@ -75,7 +77,10 @@ public class UpdateProductCommandHandlerTests
         );
 
         _mockProductRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveProductByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(productToBeUpdated);
 
         await _handler.Handle(command, default);

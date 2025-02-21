@@ -21,19 +21,20 @@ public class OrderCreatedAssignUserAddressesHandlerTests
 {
     private readonly OrderCreatedAssignUserAddressesHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderCreatedAssignUserAddressesHandlerTests"/> class.
     /// </summary>
     public OrderCreatedAssignUserAddressesHandlerTests()
     {
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
+        _mockUserRepository = new Mock<IUserRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
-
-        _handler = new OrderCreatedAssignUserAddressesHandler(_mockUnitOfWork.Object);
+        _handler = new OrderCreatedAssignUserAddressesHandler(
+            _mockUnitOfWork.Object,
+            _mockUserRepository.Object
+        );
     }
 
     /// <summary>
@@ -60,7 +61,10 @@ public class OrderCreatedAssignUserAddressesHandlerTests
         );
 
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<User>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<User>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(user);
 
         await _handler.Handle(notification, default);

@@ -5,10 +5,9 @@ using Application.Users.Commands.DeactivateUser;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.Specification;
-using Domain.UserAggregate.ValueObjects;
 
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using FluentAssertions;
 using Moq;
 
 namespace Application.UnitTests.Users.Commands.DeactivateUser;
@@ -18,7 +17,7 @@ namespace Application.UnitTests.Users.Commands.DeactivateUser;
 /// </summary>
 public class DeactivateUserCommandHandlerTests
 {
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly DeactivateUserCommandHandler _handler;
 
@@ -27,13 +26,12 @@ public class DeactivateUserCommandHandlerTests
     /// </summary>
     public DeactivateUserCommandHandlerTests()
     {
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
+        _mockUserRepository = new Mock<IUserRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
 
         _handler = new DeactivateUserCommandHandler(
             _mockUnitOfWork.Object,
+            _mockUserRepository.Object,
             new Mock<ILogger<DeactivateUserCommandHandler>>().Object
         );
     }
@@ -47,7 +45,10 @@ public class DeactivateUserCommandHandlerTests
         var userToBeDeactivated = UserUtils.CreateCustomer(active: true);
 
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveUserByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(userToBeDeactivated);
 
         await _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default);
@@ -63,7 +64,10 @@ public class DeactivateUserCommandHandlerTests
     public async Task HandleDeactivateUser_WhenUserDoesNotExist_ReturnsWithoutThrowing()
     {
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveUserByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveUserByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((User?)null);
 
         await FluentActions

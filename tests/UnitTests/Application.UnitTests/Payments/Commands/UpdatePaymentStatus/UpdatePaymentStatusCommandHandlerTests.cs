@@ -9,6 +9,7 @@ using Domain.PaymentAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Application.UnitTests.Payments.Commands.UpdatePaymentStatus;
@@ -18,7 +19,7 @@ namespace Application.UnitTests.Payments.Commands.UpdatePaymentStatus;
 /// </summary>
 public class UpdatePaymentStatusCommandHandlerTests
 {
-    private readonly Mock<IRepository<Payment, PaymentId>> _mockPaymentRepository;
+    private readonly Mock<IPaymentRepository> _mockPaymentRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly UpdatePaymentStatusCommandHandler _handler;
 
@@ -27,12 +28,14 @@ public class UpdatePaymentStatusCommandHandlerTests
     /// </summary>
     public UpdatePaymentStatusCommandHandlerTests()
     {
-        _mockPaymentRepository = new Mock<IRepository<Payment, PaymentId>>();
+        _mockPaymentRepository = new Mock<IPaymentRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.PaymentRepository).Returns(_mockPaymentRepository.Object);
-
-        _handler = new UpdatePaymentStatusCommandHandler(_mockUnitOfWork.Object);
+        _handler = new UpdatePaymentStatusCommandHandler(
+            _mockUnitOfWork.Object,
+            _mockPaymentRepository.Object,
+            new Mock<ILogger<UpdatePaymentStatusCommandHandler>>().Object
+        );
     }
 
     /// <summary>
@@ -44,7 +47,10 @@ public class UpdatePaymentStatusCommandHandlerTests
         var command = UpdatePaymentStatusCommandUtils.CreateCommand();
 
         _mockPaymentRepository
-            .Setup(r => r.FindByIdAsync(PaymentId.Create(command.PaymentId)))
+            .Setup(r => r.FindByIdAsync(
+                PaymentId.Create(command.PaymentId),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((Payment?)null);
 
         await FluentActions
@@ -65,12 +71,16 @@ public class UpdatePaymentStatusCommandHandlerTests
         var payment = PaymentUtils.CreatePayment(paymentId: paymentId, paymentStatus: PaymentStatus.Pending);
 
         _mockPaymentRepository
-            .Setup(r => r.FindByIdAsync(paymentId))
+            .Setup(r => r.FindByIdAsync(
+                paymentId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(payment);
 
         await _handler.Handle(command, default);
 
-        payment.PaymentStatusId.Should().Be(newStatus.Id);
+        payment.PaymentStatus.Should().Be(newStatus);
+
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

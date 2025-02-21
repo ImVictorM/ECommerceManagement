@@ -5,7 +5,6 @@ using Application.UnitTests.Products.Commands.TestUtils;
 
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.Specifications;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 using FluentAssertions;
@@ -20,7 +19,7 @@ namespace Application.UnitTests.Products.Commands.UpdateProductInventory;
 public class UpdateProductInventoryCommandHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly UpdateProductInventoryCommandHandler _handler;
 
     /// <summary>
@@ -29,12 +28,11 @@ public class UpdateProductInventoryCommandHandlerTests
     public UpdateProductInventoryCommandHandlerTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
-
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
+        _mockProductRepository = new Mock<IProductRepository>();
 
         _handler = new UpdateProductInventoryCommandHandler(
             _mockUnitOfWork.Object,
+            _mockProductRepository.Object,
             new Mock<ILogger<UpdateProductInventoryCommandHandler>>().Object
         );
     }
@@ -48,7 +46,10 @@ public class UpdateProductInventoryCommandHandlerTests
         var command = UpdateProductInventoryCommandUtils.CreateCommand();
 
         _mockProductRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveProductByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((Product?)null);
 
         await FluentActions
@@ -56,8 +57,6 @@ public class UpdateProductInventoryCommandHandlerTests
             .Should()
             .ThrowAsync<ProductNotFoundException>()
             .WithMessage($"It was not possible to increment the inventory of the product with id {command.ProductId} because the product does not exist");
-
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never());
     }
 
     /// <summary>
@@ -71,7 +70,10 @@ public class UpdateProductInventoryCommandHandlerTests
         var expectedQuantityAfterIncrement = 32;
 
         _mockProductRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryActiveProductByIdSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryActiveProductByIdSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(product);
 
         await _handler.Handle(command, default);

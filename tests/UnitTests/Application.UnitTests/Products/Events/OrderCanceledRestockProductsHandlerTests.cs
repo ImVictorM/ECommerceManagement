@@ -18,7 +18,7 @@ namespace Application.UnitTests.Products.Events;
 public class OrderCanceledRestockProductsHandlerTests
 {
     private readonly OrderCanceledRestockProductsHandler _handler;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
@@ -26,12 +26,13 @@ public class OrderCanceledRestockProductsHandlerTests
     /// </summary>
     public OrderCanceledRestockProductsHandlerTests()
     {
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
+        _mockProductRepository = new Mock<IProductRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
-
-        _handler = new OrderCanceledRestockProductsHandler(_mockUnitOfWork.Object);
+        _handler = new OrderCanceledRestockProductsHandler(
+            _mockUnitOfWork.Object,
+            _mockProductRepository.Object
+        );
     }
 
     /// <summary>
@@ -59,7 +60,10 @@ public class OrderCanceledRestockProductsHandlerTests
         var notification = await OrderCanceledUtils.CreateEventAsync(order: order);
 
         _mockProductRepository
-            .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<Product, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(products);
 
         await _handler.Handle(notification, default);

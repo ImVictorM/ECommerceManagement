@@ -4,12 +4,10 @@ using Application.Shipments.Events;
 
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.ShipmentAggregate;
 using Domain.ShipmentAggregate.Enumerations;
 using Domain.ShipmentAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
-using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 
@@ -21,7 +19,7 @@ namespace Application.UnitTests.Shipments.Events;
 public class OrderPaidPrepareShipmentHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Shipment, ShipmentId>> _mockShipmentRepository;
+    private readonly Mock<IShipmentRepository> _mockShipmentRepository;
     private readonly OrderPaidPrepareShipmentHandler _handler;
 
     /// <summary>
@@ -30,11 +28,12 @@ public class OrderPaidPrepareShipmentHandlerTests
     public OrderPaidPrepareShipmentHandlerTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockShipmentRepository = new Mock<IRepository<Shipment, ShipmentId>>();
+        _mockShipmentRepository = new Mock<IShipmentRepository>();
 
-        _mockUnitOfWork.Setup(uow => uow.ShipmentRepository).Returns(_mockShipmentRepository.Object);
-
-        _handler = new OrderPaidPrepareShipmentHandler(_mockUnitOfWork.Object);
+        _handler = new OrderPaidPrepareShipmentHandler(
+            _mockUnitOfWork.Object,
+            _mockShipmentRepository.Object
+        );
     }
 
     /// <summary>
@@ -48,7 +47,10 @@ public class OrderPaidPrepareShipmentHandlerTests
         var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), orderId: orderId);
 
         _mockShipmentRepository
-            .Setup(repo => repo.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Shipment, bool>>>()))
+            .Setup(repo => repo.GetShipmentByOrderId(
+                orderId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shipment);
 
         await _handler.Handle(new OrderPaid(order), default);
@@ -70,7 +72,10 @@ public class OrderPaidPrepareShipmentHandlerTests
         shipment.AdvanceShipmentStatus();
 
         _mockShipmentRepository
-            .Setup(repo => repo.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Shipment, bool>>>()))
+            .Setup(repo => repo.GetShipmentByOrderId(
+                orderId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shipment);
 
         await FluentActions
@@ -79,6 +84,6 @@ public class OrderPaidPrepareShipmentHandlerTests
             .ThrowAsync<OperationProcessFailedException>()
             .WithMessage($"Shipment status was expected to be 'Pending' but was 'Preparing' instead");
 
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never());
     }
 }

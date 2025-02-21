@@ -20,8 +20,7 @@ namespace Application.UnitTests.Common.Security.Authorization.Policies;
 /// </summary>
 public class RestrictedDeactivationPolicyTests
 {
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly RestrictedDeactivationPolicy<IUserSpecificResource> _policy;
 
     /// <summary>
@@ -29,12 +28,11 @@ public class RestrictedDeactivationPolicyTests
     /// </summary>
     public RestrictedDeactivationPolicyTests()
     {
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockUserRepository = new Mock<IUserRepository>();
 
-        _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
-
-        _policy = new RestrictedDeactivationPolicy<IUserSpecificResource>(_mockUnitOfWork.Object);
+        _policy = new RestrictedDeactivationPolicy<IUserSpecificResource>(
+            _mockUserRepository.Object
+        );
     }
 
     /// <summary>
@@ -84,7 +82,10 @@ public class RestrictedDeactivationPolicyTests
         var userToBeDeactivated = UserUtils.CreateCustomer(id: userToBeDeactivatedId);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(userToBeDeactivatedId))
+            .Setup(r => r.FindByIdAsync(
+                userToBeDeactivatedId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(userToBeDeactivated);
 
         var result = await _policy.IsAuthorizedAsync(request, currentUser);
@@ -109,7 +110,10 @@ public class RestrictedDeactivationPolicyTests
         var otherAdminToBeDeactivated = UserUtils.CreateAdmin(id: otherAdminToBeDeactivatedId);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(otherAdminToBeDeactivatedId))
+            .Setup(r => r.FindByIdAsync(
+                otherAdminToBeDeactivatedId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(otherAdminToBeDeactivated);
 
         var result = await _policy.IsAuthorizedAsync(request, currentUser);
@@ -132,7 +136,10 @@ public class RestrictedDeactivationPolicyTests
         var currentUser = new IdentityUser(currentAdminUserId.ToString(), [Role.Admin]);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(nonExistingUserId))
+            .Setup(r => r.FindByIdAsync(
+                nonExistingUserId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((User?)null);
 
         var result = await _policy.IsAuthorizedAsync(request, currentUser);

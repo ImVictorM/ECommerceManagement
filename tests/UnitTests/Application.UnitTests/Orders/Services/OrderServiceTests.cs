@@ -9,7 +9,6 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
-using Domain.ProductAggregate.Errors;
 using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate;
 
@@ -28,31 +27,33 @@ public class OrderServiceTests
 {
     private readonly OrderService _service;
     private readonly Mock<IProductService> _mockProductService;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
-    private readonly Mock<IRepository<ShippingMethod, ShippingMethodId>> _mockShippingMethodRepository;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
+    private readonly Mock<ICouponRepository> _mockCouponRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderServiceTests"/> class.
     /// </summary>
     public OrderServiceTests()
     {
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
-        _mockShippingMethodRepository = new Mock<IRepository<ShippingMethod, ShippingMethodId>>();
         _mockProductService = new Mock<IProductService>();
+        _mockShippingMethodRepository = new Mock<IShippingMethodRepository>();
+        _mockCouponRepository = new Mock<ICouponRepository>();
+        _mockProductRepository = new Mock<IProductRepository>();
 
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
-        _mockUnitOfWork.Setup(uow => uow.ShippingMethodRepository).Returns(_mockShippingMethodRepository.Object);
-
-        _service = new OrderService(_mockUnitOfWork.Object, _mockProductService.Object);
+        _service = new OrderService(
+            _mockProductService.Object,
+            _mockShippingMethodRepository.Object,
+            _mockCouponRepository.Object,
+            _mockProductRepository.Object
+        );
     }
 
     /// <summary>
     /// Tests the calculation of the total price when no coupon is applied.
     /// </summary>
     [Fact]
-    public async Task CalculateTotal_WithoutCouponApplied_ReturnsProductsTotal()
+    public async Task CalculateTotal_WithoutCouponsApplied_ReturnsProductsTotal()
     {
         IEnumerable<OrderProduct> orderProducts = [
             OrderUtils.CreateOrderProduct(
@@ -64,10 +65,16 @@ public class OrderServiceTests
                 quantity: 2
             )
         ];
+
         var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(1));
         var expectedTotal = orderProducts.Sum(p => p.CalculateTransactionPrice()) + shippingMethod.Price;
 
-        _mockShippingMethodRepository.Setup(r => r.FindByIdAsync(shippingMethod.Id)).ReturnsAsync(shippingMethod);
+        _mockShippingMethodRepository
+            .Setup(r => r.FindByIdAsync(
+                shippingMethod.Id,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(shippingMethod);
 
         var result = await _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, null);
 
@@ -78,7 +85,7 @@ public class OrderServiceTests
     /// Tests the calculation of the total price when valid coupons are applied.
     /// </summary>
     [Fact]
-    public async Task CalculateTotal_WithValidCoupons_AppliesDiscounts()
+    public async Task CalculateTotal_WithValidCouponsApplied_ReturnsProductsTotalWithDiscount()
     {
         var orderProducts = new[]
         {
@@ -118,10 +125,18 @@ public class OrderServiceTests
 
         var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(1), price: 10m);
 
-        _mockShippingMethodRepository.Setup(r => r.FindByIdAsync(shippingMethod.Id)).ReturnsAsync(shippingMethod);
+        _mockShippingMethodRepository
+            .Setup(r => r.FindByIdAsync(
+                shippingMethod.Id,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(shippingMethod);
 
-        _mockUnitOfWork
-            .Setup(uow => uow.CouponRepository.FindAllAsync(It.IsAny<Expression<Func<Coupon, bool>>>()))
+        _mockCouponRepository
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<Coupon, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(couponsApplied);
 
         var result = await _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, orderCoupons);
@@ -146,7 +161,7 @@ public class OrderServiceTests
             OrderCoupon.Create(CouponId.Create(1)),
         };
 
-        var couponsApplied = new[]
+        var invalidCoupons = new[]
         {
             CouponUtils.CreateCoupon(
                 id: CouponId.Create(1),
@@ -156,11 +171,19 @@ public class OrderServiceTests
 
         var shippingMethod = ShippingMethodUtils.CreateShippingMethod();
 
-        _mockShippingMethodRepository.Setup(r => r.FindByIdAsync(shippingMethod.Id)).ReturnsAsync(shippingMethod);
+        _mockShippingMethodRepository
+            .Setup(r => r.FindByIdAsync(
+                shippingMethod.Id,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(shippingMethod);
 
-        _mockUnitOfWork
-            .Setup(uow => uow.CouponRepository.FindAllAsync(It.IsAny<Expression<Func<Coupon, bool>>>()))
-            .ReturnsAsync(couponsApplied);
+        _mockCouponRepository
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<Coupon, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(invalidCoupons);
 
         await FluentActions
             .Invoking(() => _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, orderCoupons))
@@ -194,11 +217,17 @@ public class OrderServiceTests
         };
 
         _mockShippingMethodRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShippingMethodId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((ShippingMethod?)null);
 
-        _mockUnitOfWork
-            .Setup(uow => uow.CouponRepository.FindAllAsync(It.IsAny<Expression<Func<Coupon, bool>>>()))
+        _mockCouponRepository
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<Coupon, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(couponsApplied);
 
         await FluentActions
@@ -208,8 +237,8 @@ public class OrderServiceTests
     }
 
     /// <summary>
-    /// Tests the preparation of order products when there is sufficient inventory.
-    /// Considers the products are not on sale.
+    /// Tests the preparation of order products when there is sufficient inventory
+    /// considering the products are not on sale.
     /// </summary>
     [Fact]
     public async Task PrepareOrderProducts_WithSufficientInventory_ReturnsPreparedProducts()
@@ -226,6 +255,8 @@ public class OrderServiceTests
             ProductUtils.CreateProduct(id: ProductId.Create(2), basePrice: 50m, initialQuantityInInventory: 5)
         };
 
+        var productsWithPrices = products.ToDictionary(p => p.Id, p => p.BasePrice);
+
         var expectedOrderProductsPrepared = orderProductsInput.Zip(
             products,
             (first, second) => OrderProduct.Create(
@@ -237,15 +268,21 @@ public class OrderServiceTests
             )
         ).ToList();
 
-        _mockUnitOfWork
-            .Setup(uow => uow.ProductRepository.FindAllAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+        _mockProductRepository
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<Product, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(products);
 
         _mockProductService
-            .Setup(ps => ps.CalculateProductPriceApplyingSaleAsync(It.IsAny<Product>()))
-            .ReturnsAsync((Product p) => p.BasePrice);
+            .Setup(ps => ps.CalculateProductsPriceApplyingSaleAsync(
+                products,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(productsWithPrices);
 
-        var result = await _service.PrepareOrderProductsAsync(orderProductsInput).ToListAsync();
+        var result = await _service.PrepareOrderProductsAsync(orderProductsInput);
 
         result.Should().HaveCount(2);
 
@@ -268,17 +305,25 @@ public class OrderServiceTests
             ProductUtils.CreateProduct(id: ProductId.Create(1), basePrice: 100m, initialQuantityInInventory: 1),
         };
 
-        _mockUnitOfWork
-            .Setup(uow => uow.ProductRepository.FindAllAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+        var productsWithPrices = products.ToDictionary(p => p.Id, p => p.BasePrice);
+
+        _mockProductRepository
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<Product, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(products);
 
         _mockProductService
-            .Setup(ps => ps.CalculateProductPriceApplyingSaleAsync(It.IsAny<Product>()))
-            .ReturnsAsync((Product p) => p.BasePrice);
+            .Setup(ps => ps.CalculateProductsPriceApplyingSaleAsync(
+                products,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(productsWithPrices);
 
         await FluentActions
-            .Invoking(async () => await _service.PrepareOrderProductsAsync(orderProductsInput).ToListAsync())
+            .Invoking(async () => await _service.PrepareOrderProductsAsync(orderProductsInput))
             .Should()
-            .ThrowAsync<InventoryInsufficientException>();
+            .ThrowAsync<OrderProductNotAvailableException>();
     }
 }

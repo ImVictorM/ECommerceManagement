@@ -86,7 +86,7 @@ public class PaymentTests
         payment.Should().NotBeNull();
         payment.Id.Should().Be(paymentId);
         payment.OrderId.Should().Be(orderId);
-        payment.PaymentStatusId.Should().Be(paymentStatus.Id);
+        payment.PaymentStatus.Should().Be(paymentStatus);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public class PaymentTests
     {
         var payment = PaymentUtils.CreatePayment(paymentStatus: status);
 
-        payment.PaymentStatusId.Should().Be(status.Id);
+        payment.PaymentStatus.Should().Be(status);
         payment.DomainEvents.Should().Contain(e => e.GetType() == expectedRaisedEventType);
     }
 
@@ -121,7 +121,7 @@ public class PaymentTests
 
         payment.UpdatePaymentStatus(status);
 
-        payment.PaymentStatusId.Should().Be(status.Id);
+        payment.PaymentStatus.Should().Be(status);
         payment.DomainEvents.Should().Contain(e => e.GetType() == expectedRaisedEventType);
     }
 }
