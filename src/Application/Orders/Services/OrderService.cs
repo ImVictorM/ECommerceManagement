@@ -101,7 +101,7 @@ public class OrderService : IOrderService
             }
             catch (Exception)
             {
-                throw new OrderProductNotAvailableException();
+                throw new OrderProductNotAvailableException($"The product with id {op.ProductId} is not available at the moment");
             }
         }
 
