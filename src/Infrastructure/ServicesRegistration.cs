@@ -79,22 +79,39 @@ public static class ServicesRegistration
                 options.EnableSensitiveDataLogging();
             }
 
-            options.UseNpgsql($"Host={dbConnectionSettings.Host};Port={dbConnectionSettings.Port};Database={dbConnectionSettings.Database};Username={dbConnectionSettings.Username};Password={dbConnectionSettings.Password};Trust Server Certificate=true;");
+            options.UseNpgsql(
+                $"Host={dbConnectionSettings.Host};" +
+                $"Port={dbConnectionSettings.Port};" +
+                $"Database={dbConnectionSettings.Database};" +
+                $"Username={dbConnectionSettings.Username};" +
+                $"Password={dbConnectionSettings.Password};" +
+                $"Trust Server Certificate=true;"
+            );
         });
 
         var repositoryTypes = _assembly.DefinedTypes
             .Where(t =>
                 !t.IsAbstract
                 && !t.IsGenericTypeDefinition
-                && t.GetInterfaces().Any(i => !i.IsGenericTypeDefinition && i.IsAssignableFrom(typeof(IBaseRepository<,>)))
+                && t.GetInterfaces().Any(i =>
+                    i.IsGenericType &&
+                    i.GetGenericTypeDefinition() == typeof(IBaseRepository<,>)
+                )
             )
-            .Select(typeInfo => typeInfo.AsType());
+            .Select(typeInfo => typeInfo.AsType())
+            .ToList();
 
         foreach (var repositoryType in repositoryTypes)
         {
             var repositoryInterface = repositoryType
                 .GetInterfaces()
-                .First(i => !i.IsGenericType && i.IsAssignableFrom(typeof(IBaseRepository<,>)));
+                .First(i =>
+                    !i.IsGenericType
+                    && i.GetInterfaces().Any(
+                        i => i.IsGenericType
+                        && i.GetGenericTypeDefinition() == typeof(IBaseRepository<,>)
+                    )
+                );
 
             services.AddScoped(repositoryInterface, repositoryType);
         }
