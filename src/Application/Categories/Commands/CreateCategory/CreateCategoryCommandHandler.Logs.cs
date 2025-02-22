@@ -9,14 +9,14 @@ public partial class CreateCategoryCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating creation of category with name {CategoryName}"
+        Message = "Initiating creation of category with name {CategoryName}."
     )]
     private partial void LogCreatingCategory(string categoryName);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Category created and saved successfully"
+        Message = "Category created and saved successfully."
     )]
     private partial void LogCategoryCreatedAndSaved();
 }

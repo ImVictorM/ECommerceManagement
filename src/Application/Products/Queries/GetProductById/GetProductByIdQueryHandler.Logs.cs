@@ -22,21 +22,22 @@ public partial class GetProductByIdQueryHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "Product found."
+        Message = "The product was retrieved with its corresponding category names."
     )]
-    private partial void LogProductFound();
+    private partial void LogProductRetrieved();
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "Calculating product price."
+        Message = "The product price on sale was calculated."
     )]
-    private partial void LogCalculatingProductCurrentPrice();
+    private partial void LogProductPriceCalculated();
 
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Debug,
-        Message = "Getting product category names."
+        Message = "The product was retrieved with its category names and calculate price on sale." +
+        " Operation complete successfully."
     )]
-    private partial void LogGettingProductCategories();
+    private partial void LogProductRetrievedSuccessfully();
 }

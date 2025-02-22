@@ -146,8 +146,14 @@ It is possible to filter the products by the specified categories appending &cat
 No authentication is required.
 
 ```js
-GET "/products/?category=1&limit=2"
+GET "/products/?category=1&page=1&pageSize=20"
 ```
+
+#### Query Parameters
+
+- `category` (optional) - Filters products by category id
+- `page` (optional, default: 1) - Specifies the page number
+- `pageSize` (optional, default: 20) - Defines the number of products per page
 
 #### Response Format
 

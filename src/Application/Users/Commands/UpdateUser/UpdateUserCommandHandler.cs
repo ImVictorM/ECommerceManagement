@@ -5,11 +5,10 @@ using Application.Common.Persistence;
 using Application.Common.Errors;
 using Application.Users.Errors;
 
-using SharedKernel.Errors;
 using SharedKernel.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Users.Commands.UpdateUser;
 
@@ -20,47 +19,63 @@ namespace Application.Users.Commands.UpdateUser;
 public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UpdateUserCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="userRepository">The user repository.</param>
     /// <param name="logger">The logger.</param>
-    public UpdateUserCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateUserCommandHandler> logger)
+    public UpdateUserCommandHandler(
+        IUnitOfWork unitOfWork,
+        IUserRepository userRepository,
+        ILogger<UpdateUserCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
         _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        if (request.UserId == null)
-        {
-            throw new EmptyArgumentException();
-        }
-
         LogInitiatingUserUpdate(request.UserId);
 
         var userToUpdateId = UserId.Create(request.UserId);
         var inputEmail = Email.Create(request.Email);
 
-        var userToUpdate = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(userToUpdateId))
-            ?? throw new UserNotFoundException("The user to be updated could not be found");
+        var userToUpdate = await _userRepository.FindFirstSatisfyingAsync(
+            new QueryActiveUserByIdSpecification(userToUpdateId),
+            cancellationToken
+        );
+
+        if (userToUpdate == null)
+        {
+            LogUserToBeUpdatedNotFound();
+
+            throw new UserNotFoundException("The user to be updated could not be found");
+        }
 
         if (userToUpdate.Email != inputEmail)
         {
-            var existingUserWithEmail = await _unitOfWork.UserRepository.FindFirstSatisfyingAsync(new QueryUserByEmailSpecification(inputEmail));
+            LogEmailBeingUpdated(userToUpdate.Email.ToString(), request.Email);
 
-            if (existingUserWithEmail != null)
+            var userWithConflictingEmail = await _userRepository.FindFirstSatisfyingAsync(
+                new QueryUserByEmailSpecification(inputEmail),
+                cancellationToken
+            );
+
+            if (userWithConflictingEmail != null)
             {
-                LogEmailConflict();
+                LogEmailConflict(request.Email);
 
                 throw new EmailConflictException();
             }
-        }
 
-        LogUpdatingUser();
+            LogEmailAvailable(request.Email);
+        }
 
         userToUpdate.UpdateDetails(
             name: request.Name,
@@ -68,9 +83,11 @@ public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUse
             phone: request.Phone
         );
 
+        LogUserUpdated();
+
         await _unitOfWork.SaveChangesAsync();
 
-        LogUpdateComplete();
+        LogUserUpdatedAndSavedSuccessfully();
 
         return Unit.Value;
     }

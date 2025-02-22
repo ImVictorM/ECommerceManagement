@@ -22,8 +22,7 @@ public class GetSelfQueryHandlerTests
 {
     private readonly GetSelfQueryHandler _handler;
     private readonly Mock<IIdentityProvider> _mockIdentityProvider;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetSelfQueryHandlerTests"/> class.
@@ -31,14 +30,11 @@ public class GetSelfQueryHandlerTests
     public GetSelfQueryHandlerTests()
     {
         _mockIdentityProvider = new Mock<IIdentityProvider>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
-
-        _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
+        _mockUserRepository = new Mock<IUserRepository>();
 
         _handler = new GetSelfQueryHandler(
             _mockIdentityProvider.Object,
-            _mockUnitOfWork.Object,
+            _mockUserRepository.Object,
             new Mock<ILogger<GetSelfQueryHandler>>().Object
         );
     }
@@ -59,8 +55,12 @@ public class GetSelfQueryHandlerTests
         _mockIdentityProvider
             .Setup(provider => provider.GetCurrentUserIdentity())
             .Returns(currentUserIdentity);
+
         _mockUserRepository
-            .Setup(repo => repo.FindByIdAsync(currentUserId))
+            .Setup(repo => repo.FindByIdAsync(
+                currentUserId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(user);
 
         var query = new GetSelfQuery();
@@ -85,7 +85,10 @@ public class GetSelfQueryHandlerTests
             .Returns(currentUserIdentity);
 
         _mockUserRepository
-            .Setup(repo => repo.FindByIdAsync(currentUserId))
+            .Setup(repo => repo.FindByIdAsync(
+                currentUserId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((User?)null);
 
         var query = new GetSelfQuery();

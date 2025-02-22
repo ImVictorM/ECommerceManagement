@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20250207034214_InitialCreate")]
+    [Migration("20250221233213_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -84,12 +84,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7716), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7697), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "carrier@email.com",
                             Name = "ECommerceManagementCarrier",
-                            PasswordHash = "AACE47AD3448036C245ED568DD8456F0019EE2E525A87989AE351C38DF19F1C6-C329F1E800BCFA9D65B06952B352E3C8",
+                            PasswordHash = "BAD1CB82F9FEA088B7396DD41B4D00B30728406C02762A071D6FDC6F31B4F6C3-C1CCE95B69150D37FA6445E2530C89B0",
                             Phone = "",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7722), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7702), new TimeSpan(0, 0, 0, 0, 0)),
                             _roleId = 3L
                         });
                 });
@@ -361,20 +361,24 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_order");
 
-                    b.Property<long>("PaymentStatusId")
+                    b.Property<long>("PaymentStatus")
                         .HasColumnType("bigint")
-                        .HasColumnName("id_payment_status");
+                        .HasColumnName("payment_status");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<long>("_paymentStatusId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_payment_status");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.HasIndex("PaymentStatusId");
+                    b.HasIndex("_paymentStatusId");
 
                     b.ToTable("payments", (string)null);
                 });
@@ -693,12 +697,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1224), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6218), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@email.com",
                             IsActive = true,
                             Name = "admin",
-                            PasswordHash = "723FEA43BBD7A66F2130D6E62F416A6CFAE570EA19A6E0BB5FBFF188F2C3E7E1-00FA5FC6360F50C23B2B992D93456698",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1231), new TimeSpan(0, 0, 0, 0, 0))
+                            PasswordHash = "98276D6490F17A5890FC11E9D91610EB96097F87C83DC58503CA5BBED7E62718-E446EE08B9F6AD075EA1F19812D35E8F",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6222), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -988,7 +992,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.PaymentAggregate.Enumerations.PaymentStatus", null)
                         .WithMany()
-                        .HasForeignKey("PaymentStatusId")
+                        .HasForeignKey("_paymentStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

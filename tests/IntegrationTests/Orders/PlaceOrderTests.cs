@@ -186,8 +186,8 @@ public class PlaceOrderTests : BaseIntegrationTest
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         responseContent!.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        responseContent.Detail.Should().Be("The product does not have available stock to complete the operation");
-        responseContent.Title.Should().Be("Inventory Insufficient");
+        responseContent.Detail.Should().Be($"The product with id {pencil.Id} is not available at the moment");
+        responseContent.Title.Should().Be("Product Not Available");
     }
 
     private decimal CalculateExpectedPriceAfterApplyingSales(Product product)

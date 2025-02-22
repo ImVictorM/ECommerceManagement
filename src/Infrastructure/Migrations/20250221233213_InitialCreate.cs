@@ -626,6 +626,7 @@ namespace Infrastructure.Migrations
                 {
                     id = table.Column<string>(type: "text", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false),
+                    payment_status = table.Column<long>(type: "bigint", nullable: false),
                     id_payment_status = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -832,12 +833,12 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "id", "created_at", "email", "is_active", "name", "password_hash", "phone", "updated_at" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1224), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "723FEA43BBD7A66F2130D6E62F416A6CFAE570EA19A6E0BB5FBFF188F2C3E7E1-00FA5FC6360F50C23B2B992D93456698", null, new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 226, DateTimeKind.Unspecified).AddTicks(1231), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6218), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "98276D6490F17A5890FC11E9D91610EB96097F87C83DC58503CA5BBED7E62718-E446EE08B9F6AD075EA1F19812D35E8F", null, new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6222), new TimeSpan(0, 0, 0, 0, 0)) });
 
             migrationBuilder.InsertData(
                 table: "carriers",
                 columns: new[] { "id", "created_at", "email", "name", "password_hash", "phone", "updated_at", "id_role" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7716), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "AACE47AD3448036C245ED568DD8456F0019EE2E525A87989AE351C38DF19F1C6-C329F1E800BCFA9D65B06952B352E3C8", "", new DateTimeOffset(new DateTime(2025, 2, 7, 3, 42, 12, 256, DateTimeKind.Unspecified).AddTicks(7722), new TimeSpan(0, 0, 0, 0, 0)), 3L });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7697), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "BAD1CB82F9FEA088B7396DD41B4D00B30728406C02762A071D6FDC6F31B4F6C3-C1CCE95B69150D37FA6445E2530C89B0", "", new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7702), new TimeSpan(0, 0, 0, 0, 0)), 3L });
 
             migrationBuilder.InsertData(
                 table: "users_roles",

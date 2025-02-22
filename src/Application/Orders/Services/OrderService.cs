@@ -5,9 +5,7 @@ using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
-using Domain.ProductAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate.ValueObjects;
 
 using SharedKernel.Services;
@@ -19,38 +17,53 @@ namespace Application.Orders.Services;
 /// </summary>
 public class OrderService : IOrderService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IProductService _productService;
+    private readonly IShippingMethodRepository _shippingMethodRepository;
+    private readonly ICouponRepository _couponRepository;
+    private readonly IProductRepository _productRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderService"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
     /// <param name="productService">The product service.</param>
+    /// <param name="couponRepository">The coupon repository.</param>
+    /// <param name="productRepository">The product repository.</param>
+    /// <param name="shippingMethodRepository">The shipping method repository.</param>
     public OrderService(
-        IUnitOfWork unitOfWork,
-        IProductService productService
+        IProductService productService,
+        IShippingMethodRepository shippingMethodRepository,
+        ICouponRepository couponRepository,
+        IProductRepository productRepository
+
     )
     {
-        _unitOfWork = unitOfWork;
         _productService = productService;
+        _shippingMethodRepository = shippingMethodRepository;
+        _couponRepository = couponRepository;
+        _productRepository = productRepository;
     }
 
     /// <inheritdoc/>
     public async Task<decimal> CalculateTotalAsync(
         IEnumerable<OrderProduct> orderProducts,
         ShippingMethodId shippingMethodId,
-        IEnumerable<OrderCoupon>? couponsApplied
+        IEnumerable<OrderCoupon>? couponsApplied,
+        CancellationToken cancellationToken = default
     )
     {
-        var shippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(shippingMethodId)
+        var shippingMethod = await _shippingMethodRepository.FindByIdAsync(shippingMethodId, cancellationToken)
             ?? throw new InvalidShippingMethodException();
 
         var productsTotal = orderProducts.Sum(p => p.CalculateTransactionPrice());
 
         if (couponsApplied != null)
         {
-            productsTotal = await CalculateTotalApplyingCouponsAsync(orderProducts, couponsApplied, productsTotal);
+            productsTotal = await CalculateTotalApplyingCouponsAsync(
+                orderProducts,
+                couponsApplied,
+                productsTotal,
+                cancellationToken
+            );
         }
 
         var total = productsTotal + shippingMethod.Price;
@@ -58,67 +71,93 @@ public class OrderService : IOrderService
         return total;
     }
 
+    /// <inheritdoc/>
+    public async Task<IEnumerable<OrderProduct>> PrepareOrderProductsAsync(
+        IEnumerable<IOrderProductReserved> orderProducts,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var productIds = orderProducts.Select(p => p.ProductId);
+
+        var products = await _productRepository.FindAllAsync(
+            p => productIds.Contains(p.Id),
+            cancellationToken
+        );
+
+        var productOnSalePrices = await _productService.CalculateProductsPriceApplyingSaleAsync(
+            products,
+            cancellationToken
+        );
+
+        var productsMap = products.ToDictionary(p => p.Id);
+
+        foreach (var op in orderProducts)
+        {
+            try
+            {
+                var product = productsMap[op.ProductId];
+
+                product.Inventory.RemoveStock(op.Quantity);
+            }
+            catch (Exception)
+            {
+                throw new OrderProductNotAvailableException($"The product with id {op.ProductId} is not available at the moment");
+            }
+        }
+
+        return orderProducts.Select(op => OrderProduct.Create(
+            op.ProductId,
+            op.Quantity,
+            productsMap[op.ProductId].BasePrice,
+            productOnSalePrices[op.ProductId],
+            productsMap[op.ProductId].ProductCategories.Select(c => c.CategoryId).ToHashSet()
+        ));
+    }
+
     private async Task<decimal> CalculateTotalApplyingCouponsAsync(
         IEnumerable<OrderProduct> orderProducts,
         IEnumerable<OrderCoupon> couponsApplied,
-        decimal total
+        decimal total,
+        CancellationToken cancellationToken = default
     )
     {
-        var couponAppliedIds = couponsApplied.Select(c => c.CouponId).ToList();
+        var couponIds = couponsApplied.Select(c => c.CouponId);
 
-        var coupons = await _unitOfWork.CouponRepository.FindAllAsync(c => couponAppliedIds.Contains(c.Id));
+        var coupons = await _couponRepository.FindAllAsync(
+            c => couponIds.Contains(c.Id),
+            cancellationToken
+        );
 
-        if (coupons.Count() != couponAppliedIds.Count)
+        var couponsMap = coupons.ToDictionary(c => c.Id);
+
+        var productsWithCategoryIds = orderProducts.Select(p => (p.ProductId, p.ProductCategoryIds)).ToHashSet();
+
+        foreach (var couponId in couponIds)
         {
-            throw new InvalidCouponAppliedException("Some of the applied coupons are expired");
-        }
+            try
+            {
+                var coupon = couponsMap[couponId];
+                var couponCanBeApplied = coupon.CanBeApplied(CouponOrder.Create(productsWithCategoryIds, total));
 
-        var products = orderProducts.Select(p => (p.ProductId, p.ProductCategoryIds)).ToHashSet();
-
-        var couponsCanBeApplied = coupons.All(c => c.CanBeApplied(CouponOrder.Create(products, total)));
-
-        if (!couponsCanBeApplied)
-        {
-            throw new InvalidCouponAppliedException("Some of the applied coupons are expired or invalid");
+                if (!couponCanBeApplied)
+                {
+                    throw new InvalidCouponAppliedException(
+                        $"The coupon with id {coupon.Id} cannot be applied" +
+                        $" because the order does not meet the requirements"
+                    );
+                }
+            }
+            catch (Exception)
+            {
+                throw new InvalidCouponAppliedException(
+                    $"The coupon with id {couponId}" +
+                    $" Is expired or invalid"
+                );
+            }
         }
 
         var couponDiscounts = coupons.Select(c => c.Discount);
 
         return DiscountService.ApplyDiscounts(total, [.. couponDiscounts]);
-    }
-
-    /// <inheritdoc/>
-    public async IAsyncEnumerable<OrderProduct> PrepareOrderProductsAsync(IEnumerable<IOrderProductReserved> orderProducts)
-    {
-        var products = await FetchProductsAsync(orderProducts.Select(p => p.ProductId));
-
-        foreach (var op in orderProducts)
-        {
-            var product = products[op.ProductId];
-
-            product.Inventory.RemoveStock(op.Quantity);
-
-            var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);
-
-            yield return OrderProduct.Create(
-                op.ProductId,
-                op.Quantity,
-                product.BasePrice,
-                productPrice,
-                product.ProductCategories.Select(p => p.CategoryId).ToHashSet()
-            );
-        }
-    }
-
-    private async Task<IDictionary<ProductId, Product>> FetchProductsAsync(IEnumerable<ProductId> productIds)
-    {
-        var products = await _unitOfWork.ProductRepository.FindAllAsync(p => productIds.Contains(p.Id));
-
-        if (products.Count() != productIds.Count())
-        {
-            throw new OrderProductNotAvailableException("Some of the order products could not be found");
-        }
-
-        return products.ToDictionary(p => p.Id);
     }
 }

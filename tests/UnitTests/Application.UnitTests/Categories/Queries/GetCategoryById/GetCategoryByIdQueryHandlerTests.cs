@@ -20,21 +20,17 @@ namespace Application.UnitTests.Categories.Queries.GetCategoryById;
 public class GetCategoryByIdQueryHandlerTests
 {
     private readonly GetCategoryByIdQueryHandler _handler;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Category, CategoryId>> _mockCategoryRepository;
+    private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoryByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetCategoryByIdQueryHandlerTests()
     {
-        _mockCategoryRepository = new Mock<IRepository<Category, CategoryId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.CategoryRepository).Returns(_mockCategoryRepository.Object);
+        _mockCategoryRepository = new Mock<ICategoryRepository>();
 
         _handler = new GetCategoryByIdQueryHandler(
-            _mockUnitOfWork.Object,
+            _mockCategoryRepository.Object,
             new Mock<ILogger<GetCategoryByIdQueryHandler>>().Object
         );
     }
@@ -45,11 +41,14 @@ public class GetCategoryByIdQueryHandlerTests
     [Fact]
     public async Task HandleGetCategoryById_WhenCategoryDoesNotExist_ThrowsError()
     {
-        _mockCategoryRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<CategoryId>()))
-            .ReturnsAsync((Category?)null);
-
         var query = GetCategoryByIdQueryUtils.CreateQuery();
+
+        _mockCategoryRepository
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<CategoryId>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync((Category?)null);
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
@@ -66,11 +65,14 @@ public class GetCategoryByIdQueryHandlerTests
         var categoryId = CategoryId.Create(1);
         var category = CategoryUtils.CreateCategory(id: categoryId);
 
-        _mockCategoryRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<CategoryId>()))
-            .ReturnsAsync(category);
-
         var query = GetCategoryByIdQueryUtils.CreateQuery(id: categoryId.ToString());
+
+        _mockCategoryRepository
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<CategoryId>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(category);
 
         var result = await _handler.Handle(query, default);
 

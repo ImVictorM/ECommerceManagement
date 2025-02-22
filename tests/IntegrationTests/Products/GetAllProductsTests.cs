@@ -52,19 +52,20 @@ public class GetAllProductsTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests that is possible to get the products with a limit.
+    /// Tests that is possible to get the products with pagination.
     /// </summary>
     [Fact]
-    public async Task GetAllProducts_WhenGettingProductsWithLimitParameter_ReturnsOkContainingProductsSubset()
+    public async Task GetAllProducts_WhenGettingProductsWithPagination_ReturnsOkContainingProductsSubset()
     {
-        var limit = 2;
+        var page = 1;
+        var pageSize = 2;
         var endpoint = TestConstants.ProductEndpoints.GetAllProducts;
 
-        var response = await RequestService.Client.GetAsync($"{endpoint}?limit={limit}");
+        var response = await RequestService.Client.GetAsync($"{endpoint}?page={page}&pageSize={pageSize}");
         var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent.Count().Should().Be(limit);
+        responseContent.Count().Should().Be(pageSize);
     }
 
     /// <summary>

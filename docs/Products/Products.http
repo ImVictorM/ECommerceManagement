@@ -50,11 +50,14 @@ Authorization: Bearer {{token}}
 DELETE {{base_endpoint}}/{{id_product}}
 Authorization: Bearer {{token}}
 
-### Retrieves all active products. It will retrieve the first 20 products if no limit is specified.
-### It is possible to filter the products by the specified categories appending &category={category_id} to the URL.
-### No authentication is required.
+### Retrieves a paginated list of active products.
+### Optional filters:
+### - `category={id_category}`: Filters products by category.
+### - `page={number}` (default: 1): Specifies the page number.
+### - `pageSize={number}` (default: 20): Defines the number of products per page.
+### No authentication required.
 ### Returns an 200 OK response in case of success.
-GET {{base_endpoint}}?category=1&limit=2
+GET {{base_endpoint}}?category=1&page=1&pageSize=20
 
 ### Retrieves an active product by its identifier. No authentication is required.
 ### Returns an OK response in case of success.

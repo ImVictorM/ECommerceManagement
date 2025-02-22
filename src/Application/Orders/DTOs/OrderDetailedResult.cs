@@ -10,6 +10,6 @@ namespace Application.Orders.DTOs;
 /// <param name="Shipment">The order shipment.</param>
 public record OrderDetailedResult(
     Order Order,
-    OrderPaymentResult Payment,
-    OrderShipmentResult Shipment
+    OrderShipmentResult Shipment,
+    OrderPaymentResult Payment
 );

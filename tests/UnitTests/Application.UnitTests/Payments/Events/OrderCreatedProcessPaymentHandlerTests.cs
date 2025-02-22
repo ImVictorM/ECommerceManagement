@@ -4,7 +4,6 @@ using Application.Common.Persistence;
 using Application.Common.PaymentGateway;
 using Application.UnitTests.TestUtils.PaymentGateway;
 
-using Domain.PaymentAggregate.ValueObjects;
 using Domain.PaymentAggregate;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate.ValueObjects;
@@ -23,8 +22,8 @@ public class OrderCreatedProcessPaymentHandlerTests
 {
     private readonly OrderCreatedProcessPaymentHandler _eventHandler;
     private readonly Mock<IPaymentGateway> _mockPaymentGateway;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
-    private readonly Mock<IRepository<Payment, PaymentId>> _mockPaymentRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
+    private readonly Mock<IPaymentRepository> _mockPaymentRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
@@ -33,14 +32,16 @@ public class OrderCreatedProcessPaymentHandlerTests
     public OrderCreatedProcessPaymentHandlerTests()
     {
         _mockPaymentGateway = new Mock<IPaymentGateway>();
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
-        _mockPaymentRepository = new Mock<IRepository<Payment, PaymentId>>();
+        _mockUserRepository = new Mock<IUserRepository>();
+        _mockPaymentRepository = new Mock<IPaymentRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.PaymentRepository).Returns(_mockPaymentRepository.Object);
-        _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockUserRepository.Object);
-
-        _eventHandler = new OrderCreatedProcessPaymentHandler(_mockPaymentGateway.Object, _mockUnitOfWork.Object);
+        _eventHandler = new OrderCreatedProcessPaymentHandler(
+            _mockPaymentGateway.Object,
+            _mockUnitOfWork.Object,
+            _mockPaymentRepository.Object,
+            _mockUserRepository.Object
+        );
     }
 
     /// <summary>
@@ -58,7 +59,10 @@ public class OrderCreatedProcessPaymentHandlerTests
         var orderCreatedEvent = await OrderCreatedUtils.CreateEventAsync(order: order);
 
         _mockUserRepository
-            .Setup(repo => repo.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<User>>()))
+            .Setup(repo => repo.FindFirstSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<User>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(payer);
 
         _mockPaymentGateway
@@ -84,7 +88,7 @@ public class OrderCreatedProcessPaymentHandlerTests
         _mockPaymentRepository.Verify(
             r => r.AddAsync(It.Is<Payment>(p =>
                 p.Id.ToString() == paymentResponse.PaymentId
-                && p.PaymentStatusId == paymentResponse.Status.Id
+                && p.PaymentStatus == paymentResponse.Status
             )),
             Times.Once()
         );

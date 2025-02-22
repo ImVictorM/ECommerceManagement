@@ -11,8 +11,8 @@ using Domain.UserAggregate.ValueObjects;
 using SharedKernel.Interfaces;
 
 using Microsoft.Extensions.Logging;
-using Moq;
 using FluentAssertions;
+using Moq;
 
 namespace Application.UnitTests.Orders.Queries.GetOrders;
 
@@ -22,21 +22,17 @@ namespace Application.UnitTests.Orders.Queries.GetOrders;
 public class GetOrdersQueryHandlerTests
 {
     private readonly GetOrdersQueryHandler _handler;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
+    private readonly Mock<IOrderRepository> _mockOrderRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetOrdersQueryHandlerTests"/> class.
     /// </summary>
     public GetOrdersQueryHandlerTests()
     {
-        _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockOrderRepository = new Mock<IOrderRepository>();
         var mockLogger = new Mock<ILogger<GetOrdersQueryHandler>>();
 
-        _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
-
-        _handler = new GetOrdersQueryHandler(_mockUnitOfWork.Object, mockLogger.Object);
+        _handler = new GetOrdersQueryHandler(_mockOrderRepository.Object, mockLogger.Object);
     }
 
     /// <summary>
@@ -56,7 +52,7 @@ public class GetOrdersQueryHandlerTests
         _mockOrderRepository
             .Setup(repo => repo.FindSatisfyingAsync(
                 It.IsAny<ISpecificationQuery<Order>>(),
-                It.IsAny<int?>()
+                It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(orders);
 
@@ -93,7 +89,7 @@ public class GetOrdersQueryHandlerTests
         _mockOrderRepository
             .Setup(repo => repo.FindSatisfyingAsync(
                 It.IsAny<ISpecificationQuery<Order>>(),
-                It.IsAny<int?>()
+                It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(ordersPending);
 

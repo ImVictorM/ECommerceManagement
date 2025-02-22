@@ -2,12 +2,10 @@ using Application.Common.Persistence;
 using Application.Shipments.Events;
 using Application.UnitTests.TestUtils.Events.Orders;
 
-using Domain.CarrierAggregate;
 using Domain.CarrierAggregate.ValueObjects;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
-using Domain.ShipmentAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 using Moq;
@@ -21,22 +19,23 @@ public class OrderCreatedCreateShipmentHandlerTests
 {
     private readonly OrderCreatedCreateShipmentHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Shipment, ShipmentId>> _mockShipmentRepository;
-    private readonly Mock<IRepository<Carrier, CarrierId>> _mockCarrierRepository;
+    private readonly Mock<IShipmentRepository> _mockShipmentRepository;
+    private readonly Mock<ICarrierRepository> _mockCarrierRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderCreatedCreateShipmentHandlerTests"/> class.
     /// </summary>
     public OrderCreatedCreateShipmentHandlerTests()
     {
-        _mockShipmentRepository = new Mock<IRepository<Shipment, ShipmentId>>();
-        _mockCarrierRepository = new Mock<IRepository<Carrier, CarrierId>>();
+        _mockShipmentRepository = new Mock<IShipmentRepository>();
+        _mockCarrierRepository = new Mock<ICarrierRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.ShipmentRepository).Returns(_mockShipmentRepository.Object);
-        _mockUnitOfWork.Setup(uow => uow.CarrierRepository).Returns(_mockCarrierRepository.Object);
-
-        _handler = new OrderCreatedCreateShipmentHandler(_mockUnitOfWork.Object);
+        _handler = new OrderCreatedCreateShipmentHandler(
+            _mockUnitOfWork.Object,
+            _mockCarrierRepository.Object,
+            _mockShipmentRepository.Object
+        );
     }
 
     /// <summary>
@@ -52,7 +51,9 @@ public class OrderCreatedCreateShipmentHandlerTests
 
         var shipmentCarrier = CarrierUtils.CreateCarrier(id: CarrierId.Create(1));
 
-        _mockCarrierRepository.Setup(r => r.FirstAsync()).ReturnsAsync(shipmentCarrier);
+        _mockCarrierRepository
+            .Setup(r => r.FirstAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(shipmentCarrier);
 
         var notification = await OrderCreatedUtils.CreateEventAsync(order: order);
 

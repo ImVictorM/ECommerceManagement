@@ -14,16 +14,19 @@ namespace Application.ShippingMethods.Queries.GetShippingMethodById;
 /// </summary>
 public sealed partial class GetShippingMethodByIdQueryHandler : IRequestHandler<GetShippingMethodByIdQuery, ShippingMethodResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IShippingMethodRepository _shippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetShippingMethodByIdQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="shippingMethodRepository">The shipping method repository.</param>
     /// <param name="logger">The logger.</param>
-    public GetShippingMethodByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetShippingMethodByIdQueryHandler> logger)
+    public GetShippingMethodByIdQueryHandler(
+        IShippingMethodRepository shippingMethodRepository,
+        ILogger<GetShippingMethodByIdQueryHandler> logger
+    )
     {
-        _unitOfWork = unitOfWork;
+        _shippingMethodRepository = shippingMethodRepository;
         _logger = logger;
     }
 
@@ -34,7 +37,10 @@ public sealed partial class GetShippingMethodByIdQueryHandler : IRequestHandler<
 
         var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 
-        var shippingMethod = await _unitOfWork.ShippingMethodRepository.FindByIdAsync(shippingMethodId);
+        var shippingMethod = await _shippingMethodRepository.FindByIdAsync(
+            shippingMethodId,
+            cancellationToken
+        );
 
         if (shippingMethod == null)
         {

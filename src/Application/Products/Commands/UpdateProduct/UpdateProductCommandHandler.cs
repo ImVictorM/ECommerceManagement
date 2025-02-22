@@ -5,8 +5,8 @@ using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Products.Commands.UpdateProduct;
 
@@ -16,15 +16,22 @@ namespace Application.Products.Commands.UpdateProduct;
 public sealed partial class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductRepository _productRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateProductCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="productRepository">The product repository.</param>
     /// <param name="logger">The logger.</param>
-    public UpdateProductCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateProductCommandHandler> logger)
+    public UpdateProductCommandHandler(
+        IUnitOfWork unitOfWork,
+        IProductRepository productRepository,
+        ILogger<UpdateProductCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _productRepository = productRepository;
         _logger = logger;
     }
 
@@ -36,7 +43,10 @@ public sealed partial class UpdateProductCommandHandler : IRequestHandler<Update
         var productId = ProductId.Create(request.Id);
         var productCategoryIds = request.CategoryIds.Select(CategoryId.Create);
 
-        var productToUpdate = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
+        var productToUpdate = await _productRepository.FindFirstSatisfyingAsync(
+            new QueryActiveProductByIdSpecification(productId),
+            cancellationToken
+        );
 
         if (productToUpdate == null)
         {
@@ -53,9 +63,9 @@ public sealed partial class UpdateProductCommandHandler : IRequestHandler<Update
             productCategoryIds.Select(ProductCategory.Create)
         );
 
-        LogProductUpdatedSuccessfully();
-
         await _unitOfWork.SaveChangesAsync();
+
+        LogProductUpdatedSuccessfully();
 
         return Unit.Value;
     }

@@ -9,9 +9,9 @@ public partial class CreateProductCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating product creation. Product name: {Name}"
+        Message = "Initiating product creation. Product name: {Name}."
     )]
-    private partial void LogCreatingProduct(string name);
+    private partial void LogInitiatingProductCreation(string name);
 
     [LoggerMessage(
         EventId = 2,

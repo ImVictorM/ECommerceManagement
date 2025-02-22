@@ -9,7 +9,6 @@ using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
-using SharedKernel.Models;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 using SharedKernel.Interfaces;
@@ -27,8 +26,7 @@ public class LoginUserQueryHandlerTests
 {
     private readonly LoginUserQueryHandler _handler;
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
 
     /// <summary>
@@ -47,16 +45,13 @@ public class LoginUserQueryHandlerTests
     public LoginUserQueryHandlerTests()
     {
         _mockJwtTokenService = new Mock<IJwtTokenService>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
+        _mockUserRepository = new Mock<IUserRepository>();
         _mockPasswordHasher = new Mock<IPasswordHasher>();
-
-        _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
 
         _handler = new LoginUserQueryHandler(
             _mockPasswordHasher.Object,
             _mockJwtTokenService.Object,
-            _mockUnitOfWork.Object,
+            _mockUserRepository.Object,
             new Mock<ILogger<LoginUserQueryHandler>>().Object
         );
     }
@@ -67,7 +62,7 @@ public class LoginUserQueryHandlerTests
     /// <param name="query">The login query.</param>
     [Theory]
     [MemberData(nameof(ValidLoginQueries))]
-    public async Task HandleLoginUserQuery_WhenCredentialsAreValid_ReturnsTokenAndUser(LoginUserQuery query)
+    public async Task HandleLoginUserQuery_WithValidCredentials_ReturnsUserWithAuthenticationToken(LoginUserQuery query)
     {
         var generatedToken = "generated-token";
 
@@ -77,7 +72,10 @@ public class LoginUserQueryHandlerTests
         );
 
         _mockUserRepository
-            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<ISpecificationQuery<User>>()))
+            .Setup(repository => repository.FindFirstSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<User>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(user);
 
         _mockJwtTokenService
@@ -95,21 +93,22 @@ public class LoginUserQueryHandlerTests
         result.AuthenticatedIdentity.Email.ToString().Should().Be(query.Email);
 
         result.Token.Should().Be(generatedToken);
-
-        _mockUnitOfWork.Verify(m => m.SaveChangesAsync(), Times.Never);
     }
 
     /// <summary>
     /// Tests when the user is not found by email in the database.
     /// </summary>
     [Fact]
-    public async Task HandleLoginUserQuery_WhenEmailIsIncorrect_ThrowsError()
+    public async Task HandleLoginUserQuery_WithIncorrectEmail_ThrowsError()
     {
-        _mockUserRepository
-            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
-            .ReturnsAsync((User?)null);
-
         var query = LoginUserQueryUtils.CreateQuery();
+
+        _mockUserRepository
+            .Setup(repository => repository.FindFirstSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<User>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync((User?)null);
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
@@ -122,17 +121,20 @@ public class LoginUserQueryHandlerTests
     /// Tests if it is not possible to authenticate an user with invalid password.
     /// </summary>
     [Fact]
-    public async Task HandleLoginUserQuery_WhenEmailIsCorrectAndPasswordIsIncorrect_ThrowsError()
+    public async Task HandleLoginUserQuery_WithCorrectEmailAndWrongPassword_ThrowsError()
     {
+        var query = LoginUserQueryUtils.CreateQuery();
+
         _mockUserRepository
-            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
+            .Setup(repository => repository.FindFirstSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<User>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(UserUtils.CreateCustomer());
 
         _mockPasswordHasher
             .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
             .Returns(false);
-
-        var query = LoginUserQueryUtils.CreateQuery();
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
@@ -149,11 +151,14 @@ public class LoginUserQueryHandlerTests
     {
         var userInactive = UserUtils.CreateCustomer(active: false);
 
-        _mockUserRepository
-            .Setup(repository => repository.FindFirstSatisfyingAsync(It.IsAny<CompositeQuerySpecification<User>>()))
-            .ReturnsAsync(userInactive);
-
         var query = LoginUserQueryUtils.CreateQuery();
+
+        _mockUserRepository
+            .Setup(repository => repository.FindFirstSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<User>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(userInactive);
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))

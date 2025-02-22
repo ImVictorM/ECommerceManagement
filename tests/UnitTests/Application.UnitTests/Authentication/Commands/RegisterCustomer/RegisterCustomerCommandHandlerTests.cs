@@ -3,8 +3,8 @@ using Application.Common.Security.Authentication;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Common.Errors;
-using Application.UnitTests.TestUtils.Behaviors;
 using Application.UnitTests.Authentication.Commands.TestUtils;
+using Application.UnitTests.TestUtils.Extensions;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -14,7 +14,6 @@ using Domain.UserAggregate.ValueObjects;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
-using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -30,7 +29,7 @@ public class RegisterCustomerCommandHandlerTests
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="RegisterCustomerCommandHandlerTests"/> class.
@@ -40,14 +39,13 @@ public class RegisterCustomerCommandHandlerTests
         _mockJwtTokenService = new Mock<IJwtTokenService>();
         _mockPasswordHasher = new Mock<IPasswordHasher>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
-
-        _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
+        _mockUserRepository = new Mock<IUserRepository>();
 
         _handler = new RegisterCustomerCommandHandler(
             _mockJwtTokenService.Object,
             _mockPasswordHasher.Object,
             _mockUnitOfWork.Object,
+            _mockUserRepository.Object,
             new Mock<ILogger<RegisterCustomerCommandHandler>>().Object
         );
     }
@@ -69,24 +67,27 @@ public class RegisterCustomerCommandHandlerTests
     /// <param name="registerCommand">The register command.</param>
     [Theory]
     [MemberData(nameof(ValidRegisterCommands))]
-    public async Task HandleRegisterCustomerCommand_WhenUserIsValid_ShouldCreateAndReturnUserPlusAuthenticationToken(RegisterCustomerCommand registerCommand)
+    public async Task HandleRegisterCustomerCommand_WithValidCommand_ReturnsCreatedUserWithAuthenticationToken(RegisterCustomerCommand registerCommand)
     {
         var generatedToken = "generated-token";
         var createdUserId = UserId.Create(2);
 
         _mockUserRepository
-            .Setup(r => r.FindOneOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryUserByEmailSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((User?)null);
-
-        _mockJwtTokenService
-            .Setup(r => r.GenerateToken(It.IsAny<IdentityUser>()))
-            .Returns(generatedToken);
 
         _mockPasswordHasher
             .Setup(r => r.Hash(It.IsAny<string>()))
             .Returns(PasswordHashUtils.Create());
 
-        MockEFCoreBehaviors.MockSetEntityIdBehavior(_mockUserRepository, _mockUnitOfWork, createdUserId);
+        _mockJwtTokenService
+            .Setup(r => r.GenerateToken(It.IsAny<IdentityUser>()))
+            .Returns(generatedToken);
+
+        _mockUnitOfWork.MockSetEntityIdBehavior<IUserRepository, User, UserId>(_mockUserRepository, createdUserId);
 
         var result = await _handler.Handle(registerCommand, default);
 
@@ -117,12 +118,15 @@ public class RegisterCustomerCommandHandlerTests
     /// Tests if it throws an error when a user with the same email already exists.
     /// </summary>
     [Fact]
-    public async Task HandleRegisterCustomerCommand_WhenUserWithEmailAlreadyExists_ThrowsError()
+    public async Task HandleRegisterCustomerCommand_WithEmailAlreadyInUse_ThrowsError()
     {
         var testEmail = EmailUtils.CreateEmail();
 
         _mockUserRepository
-            .Setup(r => r.FindFirstSatisfyingAsync(It.IsAny<QueryUserByEmailSpecification>()))
+            .Setup(r => r.FindFirstSatisfyingAsync(
+                It.IsAny<QueryUserByEmailSpecification>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(UserUtils.CreateCustomer(email: testEmail));
 
         var registerCommand = RegisterCustomerCommandUtils.CreateCommand(email: testEmail.ToString());

@@ -3,12 +3,10 @@ using Application.Shipments.Events;
 
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.ShipmentAggregate;
 using Domain.ShipmentAggregate.Enumerations;
 using Domain.ShipmentAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
-using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 
@@ -20,7 +18,7 @@ namespace Application.UnitTests.Shipments.Events;
 public class OrderCanceledCancelShipmentHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Shipment, ShipmentId>> _mockShipmentRepository;
+    private readonly Mock<IShipmentRepository> _mockShipmentRepository;
     private readonly OrderCanceledCancelShipmentHandler _handler;
 
     /// <summary>
@@ -28,12 +26,13 @@ public class OrderCanceledCancelShipmentHandlerTests
     /// </summary>
     public OrderCanceledCancelShipmentHandlerTests()
     {
-        _mockShipmentRepository = new Mock<IRepository<Shipment, ShipmentId>>();
+        _mockShipmentRepository = new Mock<IShipmentRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.ShipmentRepository).Returns(_mockShipmentRepository.Object);
-
-        _handler = new OrderCanceledCancelShipmentHandler(_mockUnitOfWork.Object);
+        _handler = new OrderCanceledCancelShipmentHandler(
+            _mockUnitOfWork.Object,
+            _mockShipmentRepository.Object
+        );
     }
 
     /// <summary>
@@ -51,12 +50,16 @@ public class OrderCanceledCancelShipmentHandlerTests
         );
 
         _mockShipmentRepository
-            .Setup(repo => repo.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Shipment, bool>>>()))
+            .Setup(repo => repo.GetShipmentByOrderId(
+                orderId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shipment);
 
         await _handler.Handle(new OrderCanceled(order), default);
 
         shipment.ShipmentStatus.Should().Be(ShipmentStatus.Canceled);
+        _mockShipmentRepository.Verify(r => r.Update(shipment), Times.Once());
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 }

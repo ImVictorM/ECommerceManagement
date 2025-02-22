@@ -8,8 +8,8 @@ using Domain.ShippingMethodAggregate;
 using Domain.UnitTests.TestUtils;
 
 using Microsoft.Extensions.Logging;
-using Moq;
 using FluentAssertions;
+using Moq;
 
 namespace Application.UnitTests.ShippingMethods.Commands.UpdateShippingMethod;
 
@@ -20,20 +20,19 @@ public class UpdateShippingMethodCommandHandlerTests
 {
     private readonly UpdateShippingMethodCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<ShippingMethod, ShippingMethodId>> _mockShippingMethodRepository;
+    private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateShippingMethodCommandHandlerTests"/> class.
     /// </summary>
     public UpdateShippingMethodCommandHandlerTests()
     {
-        _mockShippingMethodRepository = new Mock<IRepository<ShippingMethod, ShippingMethodId>>();
+        _mockShippingMethodRepository = new Mock<IShippingMethodRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.ShippingMethodRepository).Returns(_mockShippingMethodRepository.Object);
 
         _handler = new UpdateShippingMethodCommandHandler(
             _mockUnitOfWork.Object,
+            _mockShippingMethodRepository.Object,
             new Mock<ILogger<UpdateShippingMethodCommandHandler>>().Object
         );
     }
@@ -57,7 +56,10 @@ public class UpdateShippingMethodCommandHandlerTests
         var shippingMethodToBeUpdated = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(request.ShippingMethodId));
 
         _mockShippingMethodRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShippingMethodId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shippingMethodToBeUpdated);
 
         await _handler.Handle(request, default);
@@ -78,7 +80,10 @@ public class UpdateShippingMethodCommandHandlerTests
         var request = UpdateShippingMethodCommandUtils.CreateCommand();
 
         _mockShippingMethodRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShippingMethodId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((ShippingMethod?)null);
 
         await FluentActions

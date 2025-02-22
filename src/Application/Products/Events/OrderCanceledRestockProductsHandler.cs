@@ -13,14 +13,20 @@ namespace Application.Products.Events;
 public class OrderCanceledRestockProductsHandler : INotificationHandler<OrderCanceled>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductRepository _productRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderCanceledRestockProductsHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderCanceledRestockProductsHandler(IUnitOfWork unitOfWork)
+    /// <param name="productRepository">The product repository.</param>
+    public OrderCanceledRestockProductsHandler(
+        IUnitOfWork unitOfWork,
+        IProductRepository productRepository
+    )
     {
         _unitOfWork = unitOfWork;
+        _productRepository = productRepository;
     }
 
     /// <inheritdoc/>
@@ -28,7 +34,9 @@ public class OrderCanceledRestockProductsHandler : INotificationHandler<OrderCan
     {
         var order = notification.Order;
         var productIds = order.Products.Select(p => p.ProductId);
-        var products = await _unitOfWork.ProductRepository.FindAllAsync(p => productIds.Contains(p.Id));
+
+        var products = await _productRepository.FindAllAsync(p => productIds.Contains(p.Id), cancellationToken);
+
         var productsHashMap = products.ToDictionary(p => p.Id);
 
         foreach (var orderProduct in order.Products)

@@ -60,11 +60,19 @@ public class OrderTests
         var mockOrderService = new Mock<IOrderService>();
 
         mockOrderService
-            .Setup(s => s.PrepareOrderProductsAsync(mockReservedProducts))
-            .Returns(mockOrderProducts.ToAsyncEnumerable());
+            .Setup(s => s.PrepareOrderProductsAsync(
+                mockReservedProducts,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(mockOrderProducts);
 
         mockOrderService
-            .Setup(s => s.CalculateTotalAsync(mockOrderProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
+            .Setup(s => s.CalculateTotalAsync(
+                mockOrderProducts,
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<IEnumerable<OrderCoupon>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(mockTotal);
 
         var actionResult = await FluentActions

@@ -9,35 +9,45 @@ public partial class RegisterCustomerCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating user creation with email {Email}."
+        Message = "Initiating customer registration. " +
+        "Customer email: {Email}."
     )]
-    private partial void LogHandlingRegisterCommand(string email);
+    private partial void LogInitiatingRegisterCustomer(string email);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Warning,
-        Message = "There was an error when trying to create a new user. The user already exists."
+        Message = "There was an error when trying to register the customer." +
+        " The customer email is already in use."
     )]
-    private partial void LogUserAlreadyExists();
+    private partial void LogEmailAlreadyInUse();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "User was created and associated with the customer role. Initiating persistence process."
+        Message = "The customer was created successfully."
     )]
-    private partial void LogUserCreatedWithCustomerRole();
+    private partial void LogCustomerCreated();
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "User with email {Email} was saved successfully. Initiating token generation."
+        Message = "The customer saved successfully."
     )]
-    private partial void LogUserSavedSuccessfully(string email);
+    private partial void LogCustomerSavedSuccessfully();
 
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Debug,
-        Message = "Token generated successfully."
+        Message = "The authentication token was generated successfully."
     )]
-    private partial void LogTokenGeneratedSuccessfully();
+    private partial void LogAuthenticationTokenGenerated();
+
+    [LoggerMessage(
+        EventId = 6,
+        Level = LogLevel.Debug,
+        Message = "The customer was registered and the authentication token was generated. " +
+        "The process complete successfully."
+    )]
+    private partial void LogRegistrationCompleteSuccessfully();
 }

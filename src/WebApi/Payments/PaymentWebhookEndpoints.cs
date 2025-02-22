@@ -5,11 +5,11 @@ using WebApi.Common.Utilities;
 
 using Contracts.Payments;
 
-using Carter;
-using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using MapsterMapper;
+using MediatR;
+using Carter;
 
 namespace WebApi.Payments;
 

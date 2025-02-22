@@ -4,8 +4,8 @@ using Application.Products.Errors;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Products.Commands.DeactivateProduct;
 
@@ -15,15 +15,22 @@ namespace Application.Products.Commands.DeactivateProduct;
 public sealed partial class DeactivateProductCommandHandler : IRequestHandler<DeactivateProductCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductRepository _productRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeactivateProductCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="productRepository">The product repository.</param>
     /// <param name="logger">The logger.</param>
-    public DeactivateProductCommandHandler(IUnitOfWork unitOfWork, ILogger<DeactivateProductCommandHandler> logger)
+    public DeactivateProductCommandHandler(
+        IUnitOfWork unitOfWork,
+        IProductRepository productRepository,
+        ILogger<DeactivateProductCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _productRepository = productRepository;
         _logger = logger;
     }
 
@@ -34,8 +41,10 @@ public sealed partial class DeactivateProductCommandHandler : IRequestHandler<De
 
         var productId = ProductId.Create(request.Id);
 
-        var product = await _unitOfWork.ProductRepository
-            .FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
+        var product = await _productRepository.FindFirstSatisfyingAsync(
+            new QueryActiveProductByIdSpecification(productId),
+            cancellationToken
+        );
 
         if (product == null)
         {

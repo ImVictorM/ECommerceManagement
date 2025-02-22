@@ -19,21 +19,17 @@ namespace Application.UnitTests.Users.Queries.GetUserById;
 public class GetUserByIdQueryHandlerTests
 {
     private readonly GetUserByIdQueryHandler _handler;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetUserByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetUserByIdQueryHandlerTests()
     {
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
-
-        _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
+        _mockUserRepository = new Mock<IUserRepository>();
 
         _handler = new GetUserByIdQueryHandler(
-            _mockUnitOfWork.Object,
+            _mockUserRepository.Object,
             new Mock<ILogger<GetUserByIdQueryHandler>>().Object
         );
     }
@@ -47,7 +43,10 @@ public class GetUserByIdQueryHandlerTests
         var mockUser = UserUtils.CreateCustomer();
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<UserId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(mockUser);
 
         var result = await _handler.Handle(GetUserByIdQueryUtils.CreateQuery(), default);
@@ -63,7 +62,10 @@ public class GetUserByIdQueryHandlerTests
     public async Task HandleGetUserById_WhenUserDoesNotExist_ThrowsError()
     {
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<UserId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<UserId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((User?)null);
 
         var idToBeFound = "1";

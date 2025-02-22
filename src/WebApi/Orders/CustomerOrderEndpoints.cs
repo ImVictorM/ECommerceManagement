@@ -3,11 +3,12 @@ using Application.Orders.Queries.GetCustomerOrders;
 
 using Contracts.Orders;
 
-using Carter;
-using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using MapsterMapper;
+using MediatR;
+using Carter;
 
 namespace WebApi.Orders;
 
@@ -30,7 +31,26 @@ public sealed class CustomerOrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Customer Orders",
-                Description = "Retrieves a customer orders. Requires authentication as order owner or administrator."
+                Description = "Retrieves a customer orders. Requires authentication as order owner or administrator.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "userId",
+                        In = ParameterLocation.Path,
+                        Description = "The customer identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                    new()
+                    {
+                        Name = "status",
+                        In = ParameterLocation.Query,
+                        Description = "Filters orders by status.",
+                        Required = false,
+                        Schema = new() { Type = "string" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -40,7 +60,26 @@ public sealed class CustomerOrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Customer Order By Id",
-                Description = "Retrieves a customer's order by its identifier. Requires authentication as order owner or administrator."
+                Description = "Retrieves a customer's order by its identifier. Requires authentication as order owner or administrator.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "userId",
+                        In = ParameterLocation.Path,
+                        Description = "The customer identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                    new()
+                    {
+                        Name = "orderId",
+                        In = ParameterLocation.Path,
+                        Description = "The order identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                ],
             })
             .RequireAuthorization();
     }

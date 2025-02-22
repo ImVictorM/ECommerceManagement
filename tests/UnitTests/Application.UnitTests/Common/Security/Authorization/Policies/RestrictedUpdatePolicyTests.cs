@@ -20,8 +20,7 @@ namespace Application.UnitTests.Common.Security.Authorization.Policies;
 /// </summary>
 public class RestrictedUpdatePolicyTests
 {
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<User, UserId>> _mockUserRepository;
+    private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly RestrictedUpdatePolicy<IUserSpecificResource> _policy;
 
     /// <summary>
@@ -29,12 +28,11 @@ public class RestrictedUpdatePolicyTests
     /// </summary>
     public RestrictedUpdatePolicyTests()
     {
-        _mockUserRepository = new Mock<IRepository<User, UserId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockUserRepository = new Mock<IUserRepository>();
 
-        _mockUnitOfWork.Setup(u => u.UserRepository).Returns(_mockUserRepository.Object);
-
-        _policy = new RestrictedUpdatePolicy<IUserSpecificResource>(_mockUnitOfWork.Object);
+        _policy = new RestrictedUpdatePolicy<IUserSpecificResource>(
+            _mockUserRepository.Object
+        );
     }
 
     /// <summary>
@@ -50,7 +48,10 @@ public class RestrictedUpdatePolicyTests
         var user = UserUtils.CreateCustomer(id: userId);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(userId))
+            .Setup(r => r.FindByIdAsync(
+                userId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(user);
 
         var result = await _policy.IsAuthorizedAsync(request, currentUser);
@@ -73,7 +74,10 @@ public class RestrictedUpdatePolicyTests
         var nonAdminUser = UserUtils.CreateCustomer(id: nonAdminUserId);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(nonAdminUserId))
+            .Setup(r => r.FindByIdAsync(
+                nonAdminUserId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(nonAdminUser);
 
         var result = await _policy.IsAuthorizedAsync(request, adminUser);
@@ -96,7 +100,10 @@ public class RestrictedUpdatePolicyTests
         var otherAdminUser = UserUtils.CreateAdmin(id: otherAdminId);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(otherAdminId))
+            .Setup(r => r.FindByIdAsync(
+                otherAdminId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(otherAdminUser);
 
         var result = await _policy.IsAuthorizedAsync(request, adminUser);
@@ -117,7 +124,10 @@ public class RestrictedUpdatePolicyTests
         var adminUser = new IdentityUser(adminId.ToString(), [Role.Admin]);
 
         _mockUserRepository
-            .Setup(r => r.FindByIdAsync(nonExistingUserId))
+            .Setup(r => r.FindByIdAsync(
+                nonExistingUserId,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((User?)null);
 
         var result = await _policy.IsAuthorizedAsync(request, adminUser);

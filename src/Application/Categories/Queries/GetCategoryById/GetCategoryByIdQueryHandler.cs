@@ -4,8 +4,8 @@ using Application.Common.Persistence;
 
 using Domain.CategoryAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Categories.Queries.GetCategoryById;
 
@@ -14,16 +14,16 @@ namespace Application.Categories.Queries.GetCategoryById;
 /// </summary>
 public partial class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICategoryRepository _categoryRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoryByIdQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="categoryRepository">The category repository.</param>
     /// <param name="logger">The logger.</param>
-    public GetCategoryByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetCategoryByIdQueryHandler> logger)
+    public GetCategoryByIdQueryHandler(ICategoryRepository categoryRepository, ILogger<GetCategoryByIdQueryHandler> logger)
     {
-        _unitOfWork = unitOfWork;
+        _categoryRepository = categoryRepository;
         _logger = logger;
     }
 
@@ -34,7 +34,7 @@ public partial class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryBy
 
         var categoryId = CategoryId.Create(request.Id);
 
-        var category = await _unitOfWork.CategoryRepository.FindByIdAsync(categoryId);
+        var category = await _categoryRepository.FindByIdAsync(categoryId, cancellationToken);
 
         if (category == null)
         {

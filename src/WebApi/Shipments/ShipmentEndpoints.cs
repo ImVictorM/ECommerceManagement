@@ -2,6 +2,7 @@ using Application.Shipments.Commands.AdvanceShipmentStatus;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using MediatR;
 using Carter;
 
@@ -27,6 +28,17 @@ public class ShipmentEndpoints : ICarterModule
             {
                 Summary = "Advance Shipment Status",
                 Description = "Advances a shipment status to the next state. Carrier authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The shipment identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                ],
             })
             .RequireAuthorization();
     }

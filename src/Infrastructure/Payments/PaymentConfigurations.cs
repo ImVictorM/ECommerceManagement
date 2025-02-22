@@ -6,8 +6,10 @@ using Domain.PaymentAggregate.ValueObjects;
 
 using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
-using Microsoft.EntityFrameworkCore;
+using SharedKernel.Models;
+
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Payments;
 
@@ -40,9 +42,20 @@ public class PaymentConfigurations : EntityTypeConfigurationDependency<Payment>
             .IsRequired();
 
         builder
+            .Property<long>("_paymentStatusId")
+            .HasColumnName("id_payment_status")
+            .IsRequired();
+
+        builder
             .HasOne<PaymentStatus>()
             .WithMany()
-            .HasForeignKey(p => p.PaymentStatusId)
+            .HasForeignKey("_paymentStatusId")
             .IsRequired();
+
+        builder.Ignore(p => p.PaymentStatus);
+
+        builder
+            .Property(p => p.PaymentStatus)
+            .HasConversion(status => status.Id, id => BaseEnumeration.FromValue<PaymentStatus>(id));
     }
 }

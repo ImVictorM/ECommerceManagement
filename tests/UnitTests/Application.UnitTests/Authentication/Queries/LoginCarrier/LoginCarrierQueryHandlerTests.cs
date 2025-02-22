@@ -13,7 +13,6 @@ using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 
@@ -26,8 +25,7 @@ public class LoginCarrierQueryHandlerTests
 {
     private readonly LoginCarrierQueryHandler _handler;
     private readonly Mock<IJwtTokenService> _mockJwtTokenService;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Carrier, CarrierId>> _mockCarrierRepository;
+    private readonly Mock<ICarrierRepository> _mockCarrierRepository;
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
 
     /// <summary>
@@ -36,14 +34,11 @@ public class LoginCarrierQueryHandlerTests
     public LoginCarrierQueryHandlerTests()
     {
         _mockJwtTokenService = new Mock<IJwtTokenService>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockCarrierRepository = new Mock<IRepository<Carrier, CarrierId>>();
+        _mockCarrierRepository = new Mock<ICarrierRepository>();
         _mockPasswordHasher = new Mock<IPasswordHasher>();
 
-        _mockUnitOfWork.Setup(u => u.CarrierRepository).Returns(_mockCarrierRepository.Object);
-
         _handler = new LoginCarrierQueryHandler(
-            _mockUnitOfWork.Object,
+            _mockCarrierRepository.Object,
             _mockPasswordHasher.Object,
             _mockJwtTokenService.Object,
             new Mock<ILogger<LoginCarrierQueryHandler>>().Object
@@ -54,7 +49,7 @@ public class LoginCarrierQueryHandlerTests
     /// Verifies the carrier is successfully authenticated when the carrier exists and the credentials are valid.
     /// </summary>
     [Fact]
-    public async Task HandleLoginCarrierQuery_WhenCredentialsAreValid_ReturnsTokenAndCarrierData()
+    public async Task HandleLoginCarrierQuery_WithValidCredentials_ReturnsCarrierWithAuthenticationToken()
     {
         var generatedToken = "generated-token";
 
@@ -66,7 +61,10 @@ public class LoginCarrierQueryHandlerTests
         );
 
         _mockCarrierRepository
-            .Setup(repository => repository.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Carrier, bool>>>()))
+            .Setup(repository => repository.FindByEmail(
+                carrier.Email,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(carrier);
 
         _mockJwtTokenService
@@ -84,21 +82,22 @@ public class LoginCarrierQueryHandlerTests
         result.AuthenticatedIdentity.Email.ToString().Should().Be(query.Email);
 
         result.Token.Should().Be(generatedToken);
-
-        _mockUnitOfWork.Verify(m => m.SaveChangesAsync(), Times.Never());
     }
 
     /// <summary>
     /// Verifies and exception is thrown when the carrier email is incorrect.
     /// </summary>
     [Fact]
-    public async Task HandleLoginCarrierQuery_WhenEmailIsIncorrect_ThrowsError()
+    public async Task HandleLoginCarrierQuery_WithIncorrectEmail_ThrowsError()
     {
-        _mockCarrierRepository
-            .Setup(repository => repository.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Carrier, bool>>>()))
-            .ReturnsAsync((Carrier?)null);
-
         var query = LoginCarrierQueryUtils.CreateQuery();
+
+        _mockCarrierRepository
+            .Setup(repository => repository.FindByEmail(
+                It.IsAny<Email>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync((Carrier?)null);
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
@@ -111,17 +110,20 @@ public class LoginCarrierQueryHandlerTests
     /// Verifies and exception is thrown when the carrier email is correct and the password is incorrect.
     /// </summary>
     [Fact]
-    public async Task HandleLoginCarrierQuery_WhenEmailIsCorrectAndPasswordIsIncorrect_ThrowsError()
+    public async Task HandleLoginCarrierQuery_WithCorrectEmailAndWrongPassword_ThrowsError()
     {
+        var query = LoginCarrierQueryUtils.CreateQuery();
+
         _mockCarrierRepository
-            .Setup(repository => repository.FindOneOrDefaultAsync(It.IsAny<Expression<Func<Carrier, bool>>>()))
+            .Setup(repository => repository.FindByEmail(
+                It.IsAny<Email>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(CarrierUtils.CreateCarrier());
 
         _mockPasswordHasher
             .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
             .Returns(false);
-
-        var query = LoginCarrierQueryUtils.CreateQuery();
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))

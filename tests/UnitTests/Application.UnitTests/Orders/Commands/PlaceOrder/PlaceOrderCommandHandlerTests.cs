@@ -3,7 +3,7 @@ using Application.Common.Security.Identity;
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.Commands.TestUtils;
 using Application.UnitTests.Orders.TestUtils.Extensions;
-using Application.UnitTests.TestUtils.Behaviors;
+using Application.UnitTests.TestUtils.Extensions;
 
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Services;
@@ -13,6 +13,7 @@ using Domain.UnitTests.TestUtils;
 
 using SharedKernel.ValueObjects;
 
+using Microsoft.Extensions.Logging;
 using FluentAssertions;
 using Moq;
 
@@ -26,7 +27,7 @@ public class PlaceOrderCommandHandlerTests
     private readonly PlaceOrderCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IOrderService> _mockOrdersService;
-    private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
+    private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IIdentityProvider> _mockIdentityProvider;
 
     /// <summary>
@@ -34,17 +35,17 @@ public class PlaceOrderCommandHandlerTests
     /// </summary>
     public PlaceOrderCommandHandlerTests()
     {
-        _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
+        _mockOrderRepository = new Mock<IOrderRepository>();
         _mockOrdersService = new Mock<IOrderService>();
         _mockIdentityProvider = new Mock<IIdentityProvider>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
-
         _handler = new PlaceOrderCommandHandler(
             _mockUnitOfWork.Object,
+            _mockOrderRepository.Object,
             _mockOrdersService.Object,
-            _mockIdentityProvider.Object
+            _mockIdentityProvider.Object,
+            new Mock<ILogger<PlaceOrderCommandHandler>>().Object
         );
     }
 
@@ -67,20 +68,32 @@ public class PlaceOrderCommandHandlerTests
             installments: 2
         );
 
+        var mockCreatedId = OrderId.Create(2);
+
         _mockIdentityProvider
             .Setup(i => i.GetCurrentUserIdentity())
             .Returns(mockIdentityUser);
 
         _mockOrdersService
-            .Setup(s => s.PrepareOrderProductsAsync(command.Products))
-            .Returns(orderProducts.ToAsyncEnumerable());
+            .Setup(s => s.PrepareOrderProductsAsync(
+                command.Products,
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(orderProducts);
 
         _mockOrdersService
-            .Setup(s => s.CalculateTotalAsync(orderProducts, It.IsAny<ShippingMethodId>(), It.IsAny<IEnumerable<OrderCoupon>>()))
+            .Setup(s => s.CalculateTotalAsync(
+                orderProducts,
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<IEnumerable<OrderCoupon>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(mockTotal);
 
-        var mockCreatedId = OrderId.Create(2);
-        MockEFCoreBehaviors.MockSetEntityIdBehavior(_mockOrderRepository, _mockUnitOfWork, mockCreatedId);
+        _mockUnitOfWork.MockSetEntityIdBehavior<IOrderRepository, Order, OrderId>(
+            _mockOrderRepository,
+            mockCreatedId
+        );
 
         var result = await _handler.Handle(command, default);
 

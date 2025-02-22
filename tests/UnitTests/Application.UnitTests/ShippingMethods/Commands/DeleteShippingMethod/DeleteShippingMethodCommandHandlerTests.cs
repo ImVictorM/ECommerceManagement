@@ -20,20 +20,19 @@ public class DeleteShippingMethodCommandHandlerTests
 {
     private readonly DeleteShippingMethodCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<ShippingMethod, ShippingMethodId>> _mockShippingMethodRepository;
+    private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeleteShippingMethodCommandHandlerTests"/> class.
     /// </summary>
     public DeleteShippingMethodCommandHandlerTests()
     {
-        _mockShippingMethodRepository = new Mock<IRepository<ShippingMethod, ShippingMethodId>>();
+        _mockShippingMethodRepository = new Mock<IShippingMethodRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.ShippingMethodRepository).Returns(_mockShippingMethodRepository.Object);
 
         _handler = new DeleteShippingMethodCommandHandler(
             _mockUnitOfWork.Object,
+            _mockShippingMethodRepository.Object,
             new Mock<ILogger<DeleteShippingMethodCommandHandler>>().Object
         );
     }
@@ -48,7 +47,10 @@ public class DeleteShippingMethodCommandHandlerTests
         var shippingMethodToBeDeleted = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(request.ShippingMethodId));
 
         _mockShippingMethodRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShippingMethodId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shippingMethodToBeDeleted);
 
         await _handler.Handle(request, default);
@@ -66,7 +68,10 @@ public class DeleteShippingMethodCommandHandlerTests
         var request = DeleteShippingMethodCommandUtils.CreateCommand();
 
         _mockShippingMethodRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShippingMethodId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShippingMethodId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((ShippingMethod?)null);
 
         await FluentActions

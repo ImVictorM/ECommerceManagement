@@ -6,7 +6,6 @@ using Domain.OrderAggregate.Enumerations;
 using Domain.PaymentAggregate.Enumerations;
 using Domain.UnitTests.TestUtils;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.OrderAggregate;
 
 using FluentAssertions;
 using Moq;
@@ -19,7 +18,7 @@ namespace Application.UnitTests.Orders.Events;
 public class PaymentCanceledCancelOrderHandlerTests
 {
     private readonly PaymentCanceledCancelOrderHandler _handler;
-    private readonly Mock<IRepository<Order, OrderId>> _mockOrderRepository;
+    private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
@@ -27,12 +26,13 @@ public class PaymentCanceledCancelOrderHandlerTests
     /// </summary>
     public PaymentCanceledCancelOrderHandlerTests()
     {
-        _mockOrderRepository = new Mock<IRepository<Order, OrderId>>();
+        _mockOrderRepository = new Mock<IOrderRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.OrderRepository).Returns(_mockOrderRepository.Object);
-
-        _handler = new PaymentCanceledCancelOrderHandler(_mockUnitOfWork.Object);
+        _handler = new PaymentCanceledCancelOrderHandler(
+            _mockUnitOfWork.Object,
+            _mockOrderRepository.Object
+        );
     }
 
     /// <summary>
@@ -50,7 +50,10 @@ public class PaymentCanceledCancelOrderHandlerTests
         var notification = PaymentCanceledUtils.CreateEvent(payment);
 
         _mockOrderRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<OrderId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<OrderId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(order);
 
         await _handler.Handle(notification, default);

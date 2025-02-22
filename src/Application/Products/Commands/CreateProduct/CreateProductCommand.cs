@@ -1,5 +1,6 @@
 using Application.Common.DTOs;
 using Application.Common.Security.Authorization.Requests;
+
 using SharedKernel.ValueObjects;
 
 namespace Application.Products.Commands.CreateProduct;

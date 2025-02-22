@@ -20,7 +20,7 @@ namespace Application.UnitTests.Shipments.Commands.AdvanceShipmentStatus;
 /// </summary>
 public class AdvanceShipmentStatusCommandHandlerTests
 {
-    private readonly Mock<IRepository<Shipment, ShipmentId>> _mockShipmentRepository;
+    private readonly Mock<IShipmentRepository> _mockShipmentRepository;
     private readonly AdvanceShipmentStatusCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -29,14 +29,13 @@ public class AdvanceShipmentStatusCommandHandlerTests
     /// </summary>
     public AdvanceShipmentStatusCommandHandlerTests()
     {
-        _mockShipmentRepository = new Mock<IRepository<Shipment, ShipmentId>>();
+        _mockShipmentRepository = new Mock<IShipmentRepository>();
 
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.ShipmentRepository).Returns(_mockShipmentRepository.Object);
-
         _handler = new AdvanceShipmentStatusCommandHandler(
             _mockUnitOfWork.Object,
+            _mockShipmentRepository.Object,
             new Mock<ILogger<AdvanceShipmentStatusCommandHandler>>().Object
         );
     }
@@ -51,12 +50,16 @@ public class AdvanceShipmentStatusCommandHandlerTests
         var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), initialShipmentStatus: ShipmentStatus.Preparing);
 
         _mockShipmentRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShipmentId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShipmentId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shipment);
 
         await _handler.Handle(command, default);
 
         shipment.ShipmentStatus.Should().Be(ShipmentStatus.Shipped);
+
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 
@@ -70,7 +73,10 @@ public class AdvanceShipmentStatusCommandHandlerTests
         var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1));
 
         _mockShipmentRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShipmentId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShipmentId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(shipment);
 
         await FluentActions
@@ -88,7 +94,10 @@ public class AdvanceShipmentStatusCommandHandlerTests
         var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
 
         _mockShipmentRepository
-            .Setup(r => r.FindByIdAsync(It.IsAny<ShipmentId>()))
+            .Setup(r => r.FindByIdAsync(
+                It.IsAny<ShipmentId>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((Shipment?)null);
 
         await FluentActions

@@ -6,8 +6,8 @@ using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Products.Queries.GetProductById;
 
@@ -16,22 +16,22 @@ namespace Application.Products.Queries.GetProductById;
 /// </summary>
 public sealed partial class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductRepository _productRepository;
     private readonly IProductService _productService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetProductByIdQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="productRepository">The product repository.</param>
     /// <param name="productService">The product service.</param>
     /// <param name="logger">The logger.</param>
     public GetProductByIdQueryHandler(
-        IUnitOfWork unitOfWork,
+        IProductRepository productRepository,
         IProductService productService,
         ILogger<GetProductByIdQueryHandler> logger
     )
     {
-        _unitOfWork = unitOfWork;
+        _productRepository = productRepository;
         _productService = productService;
         _logger = logger;
     }
@@ -43,25 +43,31 @@ public sealed partial class GetProductByIdQueryHandler : IRequestHandler<GetProd
 
         var productId = ProductId.Create(request.Id);
 
-        var product = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
+        var productWithCategories = await _productRepository.GetProductWithCategoriesSatisfyingAsync(
+            new QueryActiveProductByIdSpecification(productId),
+            cancellationToken
+        );
 
-        if (product == null)
+        if (productWithCategories == null)
         {
             LogProductDoesNotExist();
             throw new ProductNotFoundException($"The product with id {productId} does not exist");
         }
 
-        LogProductFound();
+        LogProductRetrieved();
 
-        LogCalculatingProductCurrentPrice();
-        var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);
+        var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(
+            productWithCategories.Product,
+            cancellationToken
+        );
 
-        LogGettingProductCategories();
-        var productCategories = await _productService.GetProductCategoryNamesAsync(product);
+        LogProductPriceCalculated();
+
+        LogProductRetrievedSuccessfully();
 
         return new ProductResult(
-            product,
-            productCategories,
+            productWithCategories.Product,
+            productWithCategories.CategoryNames,
             productPrice
         );
     }

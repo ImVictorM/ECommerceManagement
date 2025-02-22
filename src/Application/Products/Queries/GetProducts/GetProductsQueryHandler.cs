@@ -8,8 +8,8 @@ using Domain.ProductAggregate.Specifications;
 
 using SharedKernel.Models;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Products.Queries.GetProducts;
 
@@ -18,24 +18,25 @@ namespace Application.Products.Queries.GetProducts;
 /// </summary>
 public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, IEnumerable<ProductResult>>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductRepository _productRepository;
     private readonly IProductService _productService;
-    private const int DefaultProductQuantityToTake = 20;
+    private const int DefaultInitialPage = 1;
+    private const int DefaultPageSize = 20;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetProductsQueryHandler"/> class.
     /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="productRepository">The product repository.</param>
     /// <param name="productService">The product service.</param>
     /// <param name="logger">The logger.</param>
     public GetProductsQueryHandler(
-        IUnitOfWork unitOfWork,
+        IProductRepository productRepository,
         IProductService productService,
         ILogger<GetProductsQueryHandler> logger
     )
     {
         _productService = productService;
-        _unitOfWork = unitOfWork;
+        _productRepository = productRepository;
         _logger = logger;
     }
 
@@ -43,7 +44,14 @@ public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProduct
     public async Task<IEnumerable<ProductResult>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
         LogInitiatedRetrievingProducts();
-        var limit = request.Limit ?? DefaultProductQuantityToTake;
+
+        var page = request.Page ?? DefaultInitialPage;
+        var pageSize = request.PageSize ?? DefaultPageSize;
+        var categoriesToFilter = request.Categories == null || !request.Categories.Any()
+            ? "none" : string.Join(',', request.Categories);
+
+        LogPaginationDetails(page, pageSize);
+        LogCategoriesFilterDetails(categoriesToFilter);
 
         CompositeQuerySpecification<Product> spec = new QueryActiveProductSpecification();
 
@@ -54,20 +62,28 @@ public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProduct
             spec = spec.And(new QueryProductsContainingCategoriesSpecification(categoryIds));
         }
 
-        var products = await _unitOfWork.ProductRepository.FindSatisfyingAsync(spec, limit: limit);
+        var productsWithCategories = await _productRepository.GetProductsWithCategoriesSatisfyingAsync(
+            spec,
+            page,
+            pageSize,
+            cancellationToken
+        );
 
-        LogProductsRetrievedSuccessfully(limit, request.Categories != null ? string.Join(',', request.Categories) : "none");
+        LogProductsRetrieved(productsWithCategories.Count());
 
-        List<ProductResult> productResults = [];
+        var productPricesOnSale = await _productService.CalculateProductsPriceApplyingSaleAsync(
+            productsWithCategories.Select(p => p.Product),
+            cancellationToken
+        );
 
-        foreach (var product in products)
-        {
-            var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(product);
-            var productCategories = await _productService.GetProductCategoryNamesAsync(product);
+        LogProductsPriceCalculated();
 
-            productResults.Add(new ProductResult(product, productCategories, productPrice));
-        }
+        LogProductsRetrievedSuccessfully();
 
-        return productResults;
+        return productsWithCategories.Select(p => new ProductResult(
+            p.Product,
+            p.CategoryNames,
+            productPricesOnSale[p.Product.Id]
+        ));
     }
 }

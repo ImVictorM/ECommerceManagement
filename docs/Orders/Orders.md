@@ -69,12 +69,16 @@ Retrieves all the orders. Admin authentication is required.
 Can receive an optional status parameter to filter the orders.
 
 ```js
-GET "/orders?status=pending"
+GET "/orders?status=Pending"
 ```
 
 #### Headers
 
 - `Authorization: Bearer {{token}}`
+
+#### Query Parameters
+
+- `status` (optional) - Filters orders by status
 
 #### Response Format
 
@@ -170,8 +174,12 @@ Retrieves all orders related to a customer. Self or admin authentication is requ
 Can receive an optional status parameter to filter the orders.
 
 ```js
-GET "/users/customers/{{id_user}}/orders?status=pending"
+GET "/users/customers/{{id_user}}/orders?status=Pending"
 ```
+
+#### Query Parameters
+
+- `status` (optional) - Filters orders by status
 
 #### Headers
 

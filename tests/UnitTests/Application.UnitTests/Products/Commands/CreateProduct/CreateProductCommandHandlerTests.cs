@@ -1,7 +1,7 @@
 using Application.Common.Persistence;
 using Application.Products.Commands.CreateProduct;
 using Application.UnitTests.Products.Commands.TestUtils;
-using Application.UnitTests.TestUtils.Behaviors;
+using Application.UnitTests.TestUtils.Extensions;
 
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
@@ -19,7 +19,7 @@ namespace Application.UnitTests.Products.Commands.CreateProduct;
 public class CreateProductCommandHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly CreateProductCommandHandler _handler;
 
     /// <summary>
@@ -28,12 +28,11 @@ public class CreateProductCommandHandlerTests
     public CreateProductCommandHandlerTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
-
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
+        _mockProductRepository = new Mock<IProductRepository>();
 
         _handler = new CreateProductCommandHandler(
             _mockUnitOfWork.Object,
+            _mockProductRepository.Object,
             new Mock<ILogger<CreateProductCommandHandler>>().Object
         );
     }
@@ -64,7 +63,10 @@ public class CreateProductCommandHandlerTests
     {
         var mockEntityId = ProductId.Create(5);
 
-        MockEFCoreBehaviors.MockSetEntityIdBehavior(_mockProductRepository, _mockUnitOfWork, mockEntityId);
+        _mockUnitOfWork.MockSetEntityIdBehavior<IProductRepository, Product, ProductId>(
+            _mockProductRepository,
+            mockEntityId
+        );
 
         var actResult = await FluentActions
             .Invoking(() => _handler.Handle(request, default))

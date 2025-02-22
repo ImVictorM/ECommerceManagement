@@ -13,14 +13,20 @@ namespace Application.Orders.Events;
 public sealed class PaymentCanceledCancelOrderHandler : INotificationHandler<PaymentCanceled>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IOrderRepository _orderRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PaymentCanceledCancelOrderHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">the unit of work.</param>
-    public PaymentCanceledCancelOrderHandler(IUnitOfWork unitOfWork)
+    /// <param name="orderRepository">The order repository.</param>
+    public PaymentCanceledCancelOrderHandler(
+        IUnitOfWork unitOfWork,
+        IOrderRepository orderRepository
+    )
     {
         _unitOfWork = unitOfWork;
+        _orderRepository = orderRepository;
     }
 
     /// <inheritdoc/>
@@ -28,7 +34,7 @@ public sealed class PaymentCanceledCancelOrderHandler : INotificationHandler<Pay
     {
         var orderId = notification.Payment.OrderId;
 
-        var order = await _unitOfWork.OrderRepository.FindByIdAsync(orderId);
+        var order = await _orderRepository.FindByIdAsync(orderId, cancellationToken);
 
         if (order != null)
         {

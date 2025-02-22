@@ -1,17 +1,13 @@
 using Application.Products.Services;
-using Application.Common.Persistence;
 
-using Domain.CategoryAggregate;
-using Domain.CategoryAggregate.ValueObjects;
-using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
+using Domain.SaleAggregate;
 using Domain.UnitTests.TestUtils;
 
 using SharedKernel.UnitTests.TestUtils;
 
-using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 
@@ -24,9 +20,6 @@ public class ProductServiceTests
 {
     private readonly ProductService _service;
     private readonly Mock<ISaleService> _mockSaleService;
-    private readonly Mock<IRepository<Product, ProductId>> _mockProductRepository;
-    private readonly Mock<IRepository<Category, CategoryId>> _mockCategoryRepository;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductServiceTests"/> class.
@@ -34,78 +27,150 @@ public class ProductServiceTests
     public ProductServiceTests()
     {
         _mockSaleService = new Mock<ISaleService>();
-        _mockProductRepository = new Mock<IRepository<Product, ProductId>>();
-        _mockCategoryRepository = new Mock<IRepository<Category, CategoryId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        _mockUnitOfWork.Setup(uow => uow.ProductRepository).Returns(_mockProductRepository.Object);
-        _mockUnitOfWork.Setup(uow => uow.CategoryRepository).Returns(_mockCategoryRepository.Object);
-
-        _service = new ProductService(_mockUnitOfWork.Object, _mockSaleService.Object);
+        _service = new ProductService(_mockSaleService.Object);
     }
 
     /// <summary>
-    /// Verifies the product category names is returned.
+    /// Tests that <see cref="ProductService.CalculateProductsPriceApplyingSaleAsync"/> correctly applies sales discounts when applicable.
     /// </summary>
     [Fact]
-    public async Task GetProductCategoryNames_WhenCalled_ReturnsTheCategoryNames()
+    public async Task CalculateProductsPriceApplyingSaleAsync_WhenSaleIsApplicable_ReturnsCorrectPrice()
     {
-        var categories = new[]
+        var products = new[]
         {
-            CategoryUtils.CreateCategory(name: "category1"),
-            CategoryUtils.CreateCategory(name: "category2"),
+            ProductUtils.CreateProduct(id: ProductId.Create(1), basePrice: 100),
+            ProductUtils.CreateProduct(id: ProductId.Create(2), basePrice: 200)
         };
 
-        var product = ProductUtils.CreateProduct(
-            categories: categories.Select(c => ProductCategory.Create(c.Id))
-        );
-
-        var expectedCategoryNames = categories.Select(c => c.Name);
-
-        _mockCategoryRepository
-            .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-            .ReturnsAsync(categories);
-
-        var result = await _service.GetProductCategoryNamesAsync(product);
-
-        result.Should().BeEquivalentTo(expectedCategoryNames);
-    }
-
-    /// <summary>
-    /// Verifies the calculation of the product price applying sales.
-    /// </summary>
-    /// <returns></returns>
-    [Fact]
-    public async Task CalculatePriceApplyingSale_WhenCalled_ReturnsThePrice()
-    {
-        var product = ProductUtils.CreateProduct(
-            id: ProductId.Create(1),
-            basePrice: 100
-        );
-
-        var productSales = new[]
+        var productSales = new Dictionary<ProductId, IEnumerable<Sale>>()
         {
-            SaleUtils.CreateSale(
+            [products[0].Id] = [SaleUtils.CreateSale(
                 discount: DiscountUtils.CreateDiscount(
                     percentage: PercentageUtils.Create(10),
                     startingDate: DateTimeOffset.UtcNow.AddHours(-5),
                     endingDate: DateTimeOffset.UtcNow.AddHours(5)
                 ),
-                productsInSale: new HashSet<ProductReference>()
-                {
-                    ProductReference.Create(product.Id)
-                }
-            )
+                productsInSale: new HashSet<ProductReference> { ProductReference.Create(products[0].Id) },
+                categoriesInSale: new HashSet<CategoryReference>(),
+                productsExcludeFromSale: new HashSet<ProductReference>()
+            )],
+            [products[1].Id] = [SaleUtils.CreateSale(
+                discount: DiscountUtils.CreateDiscount(
+                    percentage: PercentageUtils.Create(20),
+                    startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                    endingDate: DateTimeOffset.UtcNow.AddHours(5)
+                ),
+                productsInSale: new HashSet<ProductReference> { ProductReference.Create(products[1].Id) },
+                categoriesInSale: new HashSet<CategoryReference>(),
+                productsExcludeFromSale: new HashSet<ProductReference>()
+            )]
         };
 
-        var expectedProductPriceAfterDiscountsApplied = 90;
+        var expectedPrices = new Dictionary<ProductId, decimal>
+        {
+            [products[0].Id] = 100 - (100 * 10 / 100),
+            [products[1].Id] = 200 - (200 * 20 / 100)
+        };
 
         _mockSaleService
-            .Setup(s => s.GetProductSalesAsync(It.IsAny<SaleProduct>()))
+            .Setup(s => s.GetProductsSalesAsync(
+                It.IsAny<IEnumerable<SaleProduct>>(),
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(productSales);
 
-        var result = await _service.CalculateProductPriceApplyingSaleAsync(product);
+        var results = await _service.CalculateProductsPriceApplyingSaleAsync(products, default);
 
-        result.Should().Be(expectedProductPriceAfterDiscountsApplied);
+        foreach (var result in results)
+        {
+            expectedPrices.Should().ContainKey(result.Key);
+            expectedPrices[result.Key].Should().Be(result.Value);
+        }
+    }
+
+    /// <summary>
+    /// Tests that <see cref="ProductService.CalculateProductsPriceApplyingSaleAsync"/> returns the original price when no sale applies.
+    /// </summary>
+    [Fact]
+    public async Task CalculateProductsPriceApplyingSaleAsync_WhenNoSaleApplies_ReturnsOriginalPrice()
+    {
+        var product = ProductUtils.CreateProduct(id: ProductId.Create(3), basePrice: 150);
+
+        _mockSaleService
+            .Setup(s => s.GetProductsSalesAsync(
+                It.IsAny<IEnumerable<SaleProduct>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(new Dictionary<ProductId, IEnumerable<Sale>>()
+            {
+                [product.Id] = []
+            });
+
+        var results = await _service.CalculateProductsPriceApplyingSaleAsync([product], default);
+
+        results.Should().ContainKey(product.Id);
+        results[product.Id].Should().Be(product.BasePrice);
+    }
+
+    /// <summary>
+    /// Tests that <see cref="ProductService.CalculateProductPriceApplyingSaleAsync"/> applies a discount correctly when a sale is available.
+    /// </summary>
+    [Fact]
+    public async Task CalculateProductPriceApplyingSaleAsync_WhenSaleIsApplicable_ReturnsDiscountedPrice()
+    {
+        var product = ProductUtils.CreateProduct(id: ProductId.Create(4), basePrice: 300);
+
+        var sale = SaleUtils.CreateSale(
+            discount: DiscountUtils.CreateDiscount(
+                percentage: PercentageUtils.Create(15),
+                startingDate: DateTimeOffset.UtcNow.AddHours(-5),
+                endingDate: DateTimeOffset.UtcNow.AddHours(5)
+            ),
+            productsInSale: new HashSet<ProductReference> { ProductReference.Create(product.Id) },
+            categoriesInSale: new HashSet<CategoryReference>(),
+            productsExcludeFromSale: new HashSet<ProductReference>()
+        );
+
+        var productSales = new Dictionary<ProductId, IEnumerable<Sale>>
+        {
+            [product.Id] = [sale]
+        };
+
+        var expectedPrice = 300 - (300 * 15 / 100);
+
+        _mockSaleService
+            .Setup(s => s.GetProductsSalesAsync(
+                It.IsAny<IEnumerable<SaleProduct>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(productSales);
+
+        var result = await _service.CalculateProductPriceApplyingSaleAsync(product, default);
+
+        result.Should().Be(expectedPrice);
+    }
+
+    /// <summary>
+    /// Tests that <see cref="ProductService.CalculateProductPriceApplyingSaleAsync"/> returns the original price when no sale applies.
+    /// </summary>
+    [Fact]
+    public async Task CalculateProductPriceApplyingSaleAsync_WhenNoSaleIsApplicable_ReturnsOriginalPrice()
+    {
+        var product = ProductUtils.CreateProduct(id: ProductId.Create(5), basePrice: 500);
+
+        _mockSaleService
+            .Setup(s => s.GetProductsSalesAsync(
+                It.IsAny<IEnumerable<SaleProduct>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(new Dictionary<ProductId, IEnumerable<Sale>>()
+            {
+                [product.Id] = []
+            });
+
+        var result = await _service.CalculateProductPriceApplyingSaleAsync(product, default);
+
+        result.Should().Be(product.BasePrice);
     }
 }

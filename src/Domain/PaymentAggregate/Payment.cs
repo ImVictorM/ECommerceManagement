@@ -12,15 +12,21 @@ namespace Domain.PaymentAggregate;
 /// </summary>
 public class Payment : AggregateRoot<PaymentId>
 {
+    private long _paymentStatusId;
+
     /// <summary>
     /// The payment order id.
     /// </summary>
     public OrderId OrderId { get; } = null!;
 
     /// <summary>
-    /// The current payment status id.
+    /// The payment status.
     /// </summary>
-    public long PaymentStatusId { get; private set; }
+    public PaymentStatus PaymentStatus
+    {
+        get => BaseEnumeration.FromValue<PaymentStatus>(_paymentStatusId);
+        private set => _paymentStatusId = value.Id;
+    }
 
     private Payment() { }
 
@@ -49,7 +55,7 @@ public class Payment : AggregateRoot<PaymentId>
     /// <param name="status">The new status.</param>
     public void UpdatePaymentStatus(PaymentStatus status)
     {
-        PaymentStatusId = status.Id;
+        PaymentStatus = status;
 
         if (status == PaymentStatus.Authorized)
         {

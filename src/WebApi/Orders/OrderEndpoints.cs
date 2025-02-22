@@ -4,11 +4,12 @@ using Application.Orders.Queries.GetOrders;
 
 using Contracts.Orders;
 
-using Carter;
-using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using MapsterMapper;
+using MediatR;
+using Carter;
 
 namespace WebApi.Orders;
 
@@ -33,7 +34,7 @@ public class OrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Place Order",
-                Description = "As a customer, places an order. Customer authentication is required."
+                Description = "As a customer, places an order. Customer authentication is required.",
             })
             .RequireAuthorization();
 
@@ -43,7 +44,18 @@ public class OrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Order By Id",
-                Description = "Retrieves an order by its identifier. Admin authentication is required."
+                Description = "Retrieves an order by its identifier. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The order identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                ],
             })
             .RequireAuthorization();
 
@@ -53,7 +65,18 @@ public class OrderEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Orders",
-                Description = "Retrieves all the orders. Admin authentication is required."
+                Description = "Retrieves all the orders. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "status",
+                        In = ParameterLocation.Query,
+                        Description = "Filters orders by status.",
+                        Required = false,
+                        Schema = new() { Type = "string" }
+                    }
+                ],
             })
             .RequireAuthorization();
     }

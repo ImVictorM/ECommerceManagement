@@ -16,24 +16,37 @@ namespace Application.Payments.Events;
 public class OrderCreatedProcessPaymentHandler : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPaymentRepository _paymentRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IPaymentGateway _paymentGateway;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderCreatedProcessPaymentHandler"/> class.
     /// </summary>
-    /// <param name="paymentGateway">The payment gateway.</param>
     /// <param name="unitOfWork">The unit of work.</param>
-    public OrderCreatedProcessPaymentHandler(IPaymentGateway paymentGateway, IUnitOfWork unitOfWork)
+    /// <param name="paymentGateway">The payment gateway.</param>
+    /// <param name="paymentRepository">The payment repository.</param>
+    /// <param name="userRepository">The user repository.</param>
+    public OrderCreatedProcessPaymentHandler(
+        IPaymentGateway paymentGateway,
+        IUnitOfWork unitOfWork,
+        IPaymentRepository paymentRepository,
+        IUserRepository userRepository
+    )
     {
         _unitOfWork = unitOfWork;
         _paymentGateway = paymentGateway;
+        _paymentRepository = paymentRepository;
+        _userRepository = userRepository;
     }
 
     /// <inheritdoc/>
     public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
     {
-        var payer = await _unitOfWork.UserRepository
-            .FindFirstSatisfyingAsync(new QueryActiveUserByIdSpecification(notification.Order.OwnerId));
+        var payer = await _userRepository.FindFirstSatisfyingAsync(
+            new QueryActiveUserByIdSpecification(notification.Order.OwnerId),
+            cancellationToken
+        );
 
         var response = await _paymentGateway.AuthorizePaymentAsync(new AuthorizePaymentInput(
             requestId: notification.RequestId,
@@ -50,7 +63,7 @@ public class OrderCreatedProcessPaymentHandler : INotificationHandler<OrderCreat
             response.Status
         );
 
-        await _unitOfWork.PaymentRepository.AddAsync(payment);
+        await _paymentRepository.AddAsync(payment);
         await _unitOfWork.SaveChangesAsync();
     }
 }

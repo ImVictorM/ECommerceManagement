@@ -7,11 +7,13 @@ using Application.Products.Queries.GetProducts;
 
 using Contracts.Products;
 
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 using Carter;
 using MapsterMapper;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Products;
 
@@ -34,7 +36,7 @@ public class ProductEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Create Product",
-                Description = "Creates a new product. Admin authentication is required."
+                Description = "Creates a new product. Admin authentication is required.",
             })
             .RequireAuthorization();
 
@@ -43,8 +45,19 @@ public class ProductEndpoints : ICarterModule
             .WithName("GetProductById")
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Get Product By Identifier",
-                Description = "Retrieves an active product by its identifier."
+                Summary = "Get Product By Id",
+                Description = "Retrieves an active product by its identifier.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The product identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             });
 
         productGroup
@@ -53,9 +66,34 @@ public class ProductEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Products",
-                Description = "Retrieves all active products. " +
-                "The first 20 products will be retrieved if no limit is specified. " +
-                "It is possible to filter the products specifying the category ids to the URL e.g &category={id_category}."
+                Description = "Retrieves all active products with pagination. Optionally, products can be filtered by category.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "category",
+                        In = ParameterLocation.Query,
+                        Description = "Filters products by category identifier.",
+                        Schema = new() { Type = "array", Items = new() { Type = "string" } },
+                        Required = false
+                    },
+                    new()
+                    {
+                        Name = "page",
+                        In = ParameterLocation.Query,
+                        Description = "Specifies the page number (default: 1).",
+                        Schema = new() { Type = "integer", Default = new OpenApiInteger(1) },
+                        Required = false
+                    },
+                    new()
+                    {
+                        Name = "pageSize",
+                        In = ParameterLocation.Query,
+                        Description = "Defines the number of products per page (default: 20).",
+                        Schema = new() { Type = "integer", Default = new OpenApiInteger(20) },
+                        Required = false
+                    }
+                ],
             });
 
         productGroup
@@ -64,7 +102,18 @@ public class ProductEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product",
-                Description = "Updates the details of an active product. Admin authentication is required."
+                Description = "Updates the details of an active product. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The product identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -74,7 +123,18 @@ public class ProductEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Deactivate Product",
-                Description = "Deactivates a product and resets its inventory. Admin authentication is required."
+                Description = "Deactivates a product and resets its inventory. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The product identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -84,7 +144,18 @@ public class ProductEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product Inventory",
-                Description = "Increments the inventory quantity available for an active product. Admin authentication is required."
+                Description = "Increments the inventory quantity available for an active product. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The product identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -119,11 +190,12 @@ public class ProductEndpoints : ICarterModule
     private async Task<Ok<IEnumerable<ProductResponse>>> GetAllProducts(
         ISender sender,
         IMapper mapper,
-        [FromQuery(Name = "limit")] int? limit = null,
+        [FromQuery(Name = "page")] int? page = null,
+        [FromQuery(Name = "pageSize")] int? pageSize = null,
         [FromQuery(Name = "category")] string[]? categories = null
     )
     {
-        var query = new GetProductsQuery(limit, categories);
+        var query = new GetProductsQuery(page, pageSize, categories);
 
         var result = await sender.Send(query);
 

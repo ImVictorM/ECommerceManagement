@@ -15,18 +15,22 @@ namespace Application.Shipments.Commands.AdvanceShipmentStatus;
 public sealed partial class AdvanceShipmentStatusCommandHandler : IRequestHandler<AdvanceShipmentStatusCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IShipmentRepository _shipmentRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="AdvanceShipmentStatusCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="shipmentRepository">The shipment repository.</param>
     /// <param name="logger">The logger.</param>
     public AdvanceShipmentStatusCommandHandler(
         IUnitOfWork unitOfWork,
+        IShipmentRepository shipmentRepository,
         ILogger<AdvanceShipmentStatusCommandHandler> logger
     )
     {
         _unitOfWork = unitOfWork;
+        _shipmentRepository = shipmentRepository;
         _logger = logger;
     }
 
@@ -37,7 +41,7 @@ public sealed partial class AdvanceShipmentStatusCommandHandler : IRequestHandle
 
         var shipmentId = ShipmentId.Create(request.ShipmentId);
 
-        var shipment = await _unitOfWork.ShipmentRepository.FindByIdAsync(shipmentId);
+        var shipment = await _shipmentRepository.FindByIdAsync(shipmentId, cancellationToken);
 
         if (shipment == null)
         {

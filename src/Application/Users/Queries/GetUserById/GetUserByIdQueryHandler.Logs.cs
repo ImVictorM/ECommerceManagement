@@ -9,21 +9,21 @@ public partial class GetUserByIdQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating user fetch. User id: {Id}."
+        Message = "Initiating user retrieval. User id: {Id}."
     )]
-    private partial void LogInitiatingUserFetch(string id);
+    private partial void LogInitiatingUserRetrieval(string id);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The user was not found."
+        Message = "The user could not be found."
     )]
     private partial void LogUserNotFound();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The user was found. Returning them."
+        Message = "The user was retrieved. The operation complete successfully."
     )]
-    private partial void LogUserFound();
+    private partial void LogUserRetrievedSuccessfully();
 }

@@ -14,6 +14,7 @@ namespace Application.Payments.Events;
 public sealed class PaymentAuthorizedCapturePaymentHandler : INotificationHandler<PaymentAuthorized>
 {
     private readonly IPaymentGateway _paymentGateway;
+    private readonly IPaymentRepository _paymentRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
@@ -21,9 +22,15 @@ public sealed class PaymentAuthorizedCapturePaymentHandler : INotificationHandle
     /// </summary>
     /// <param name="paymentGateway">The payment gateway.</param>
     /// <param name="unitOfWork">The unit of work.</param>
-    public PaymentAuthorizedCapturePaymentHandler(IUnitOfWork unitOfWork, IPaymentGateway paymentGateway)
+    /// <param name="paymentRepository">The payment repository.</param>
+    public PaymentAuthorizedCapturePaymentHandler(
+        IUnitOfWork unitOfWork,
+        IPaymentGateway paymentGateway,
+        IPaymentRepository paymentRepository
+    )
     {
         _paymentGateway = paymentGateway;
+        _paymentRepository = paymentRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -35,6 +42,8 @@ public sealed class PaymentAuthorizedCapturePaymentHandler : INotificationHandle
         var captureResponse = await _paymentGateway.CapturePaymentAsync(payment.Id.ToString());
 
         payment.UpdatePaymentStatus(captureResponse.Status);
+
+        _paymentRepository.Update(payment);
 
         await _unitOfWork.SaveChangesAsync();
     }

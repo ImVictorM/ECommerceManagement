@@ -1,7 +1,8 @@
 using Application.Common.Security.Authorization.Requests;
 
-using MediatR;
 using SharedKernel.ValueObjects;
+
+using MediatR;
 
 namespace Application.Products.Commands.UpdateProductInventory;
 

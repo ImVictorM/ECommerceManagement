@@ -2,7 +2,6 @@ using Application.Categories.Queries.GetCategories;
 using Application.UnitTests.Categories.Queries.TestUtils;
 using Application.Common.Persistence;
 
-using Domain.CategoryAggregate.ValueObjects;
 using Domain.CategoryAggregate;
 using Domain.UnitTests.TestUtils;
 
@@ -19,21 +18,17 @@ namespace Application.UnitTests.Categories.Queries.GetCategories;
 public class GetCategoriesQueryHandlerTests
 {
     private readonly GetCategoriesQueryHandler _handler;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Category, CategoryId>> _mockCategoryRepository;
+    private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoriesQueryHandlerTests"/> class.
     /// </summary>
     public GetCategoriesQueryHandlerTests()
     {
-        _mockCategoryRepository = new Mock<IRepository<Category, CategoryId>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        _mockUnitOfWork.Setup(uow => uow.CategoryRepository).Returns(_mockCategoryRepository.Object);
+        _mockCategoryRepository = new Mock<ICategoryRepository>();
 
         _handler = new GetCategoriesQueryHandler(
-            _mockUnitOfWork.Object,
+            _mockCategoryRepository.Object,
             new Mock<ILogger<GetCategoriesQueryHandler>>().Object
         );
     }
@@ -46,11 +41,14 @@ public class GetCategoriesQueryHandlerTests
     {
         var categories = CategoryUtils.CreateCategories(4).ToList();
 
-        _mockCategoryRepository
-            .Setup(r => r.FindAllAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-            .ReturnsAsync(categories);
-
         var query = GetCategoriesQueryUtils.CreateQuery();
+
+        _mockCategoryRepository
+            .Setup(r => r.FindAllAsync(
+                It.IsAny<Expression<Func<Category, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(categories);
 
         var result = await _handler.Handle(query, default);
 

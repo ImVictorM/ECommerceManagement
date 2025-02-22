@@ -20,6 +20,7 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
 {
     private readonly Mock<IPaymentGateway> _mockPaymentGateway;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    private readonly Mock<IPaymentRepository> _mockPaymentRepository;
     private readonly PaymentRejectedCancelAuthorizationHandler _handler;
 
     /// <summary>
@@ -28,11 +29,13 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
     public PaymentRejectedCancelAuthorizationHandlerTests()
     {
         _mockPaymentGateway = new Mock<IPaymentGateway>();
+        _mockPaymentRepository = new Mock<IPaymentRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _handler = new PaymentRejectedCancelAuthorizationHandler(
             _mockUnitOfWork.Object,
-            _mockPaymentGateway.Object
+            _mockPaymentGateway.Object,
+            _mockPaymentRepository.Object
         );
     }
 
@@ -57,8 +60,10 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
 
         await _handler.Handle(notification, default);
 
-        payment.PaymentStatusId.Should().Be(paymentStatusResponse.Status.Id);
+        payment.PaymentStatus.Should().Be(paymentStatusResponse.Status);
+
         _mockPaymentGateway.Verify(g => g.CancelAuthorizationAsync(payment.Id.ToString()), Times.Once());
+        _mockPaymentRepository.Verify(r => r.Update(payment), Times.Once());
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 }

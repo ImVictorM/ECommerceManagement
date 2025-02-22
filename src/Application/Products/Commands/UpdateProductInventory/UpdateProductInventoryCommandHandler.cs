@@ -4,8 +4,8 @@ using Application.Products.Errors;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Products.Commands.UpdateProductInventory;
 
@@ -15,15 +15,22 @@ namespace Application.Products.Commands.UpdateProductInventory;
 public sealed partial class UpdateProductInventoryCommandHandler : IRequestHandler<UpdateProductInventoryCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IProductRepository _productRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateProductInventoryCommandHandler"/> class.
     /// </summary>
     /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="productRepository">The product repository.</param>
     /// <param name="logger">The logger.</param>
-    public UpdateProductInventoryCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateProductInventoryCommandHandler> logger)
+    public UpdateProductInventoryCommandHandler(
+        IUnitOfWork unitOfWork,
+        IProductRepository productRepository,
+        ILogger<UpdateProductInventoryCommandHandler> logger
+    )
     {
         _unitOfWork = unitOfWork;
+        _productRepository = productRepository;
         _logger = logger;
     }
 
@@ -34,7 +41,10 @@ public sealed partial class UpdateProductInventoryCommandHandler : IRequestHandl
 
         var productId = ProductId.Create(request.ProductId);
 
-        var product = await _unitOfWork.ProductRepository.FindFirstSatisfyingAsync(new QueryActiveProductByIdSpecification(productId));
+        var product = await _productRepository.FindFirstSatisfyingAsync(
+            new QueryActiveProductByIdSpecification(productId),
+            cancellationToken
+        );
 
         if (product == null)
         {

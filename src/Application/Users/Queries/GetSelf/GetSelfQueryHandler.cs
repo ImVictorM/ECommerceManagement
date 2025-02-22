@@ -5,8 +5,8 @@ using Application.Users.Errors;
 
 using Domain.UserAggregate.ValueObjects;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Users.Queries.GetSelf;
 
@@ -16,22 +16,22 @@ namespace Application.Users.Queries.GetSelf;
 public sealed partial class GetSelfQueryHandler : IRequestHandler<GetSelfQuery, UserResult>
 {
     private readonly IIdentityProvider _identityProvider;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetSelfQueryHandler"/> class.
     /// </summary>
     /// <param name="identityProvider">The identity provider.</param>
-    /// <param name="unitOfWork">The unit of work.</param>
+    /// <param name="userRepository">The user repository.</param>
     /// <param name="logger">The logger.</param>
     public GetSelfQueryHandler(
         IIdentityProvider identityProvider,
-        IUnitOfWork unitOfWork,
+        IUserRepository userRepository,
         ILogger<GetSelfQueryHandler> logger
     )
     {
         _identityProvider = identityProvider;
-        _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
         _logger = logger;
     }
 
@@ -46,7 +46,7 @@ public sealed partial class GetSelfQueryHandler : IRequestHandler<GetSelfQuery, 
 
         var currentUserId = UserId.Create(currentUser.Id);
 
-        var user = await _unitOfWork.UserRepository.FindByIdAsync(currentUserId);
+        var user = await _userRepository.FindByIdAsync(currentUserId, cancellationToken);
 
         if (user == null)
         {

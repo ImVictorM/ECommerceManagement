@@ -10,14 +10,16 @@ public static class GetProductsQueryUtils
     /// <summary>
     /// Creates a new instance of the <see cref="GetProductsQuery"/> with default limit.
     /// </summary>
-    /// <param name="limit">The limit of products to retrieve.</param>
+    /// <param name="page">The current page.</param>
+    /// <param name="pageSize">The page size.</param>
     /// <param name="categories">The categories the products should have.</param>
     /// <returns>A new instance of the <see cref="GetProductsQuery"/> class.</returns>
     public static GetProductsQuery CreateQuery(
-        int? limit = null,
+        int? page = null,
+        int? pageSize = null,
         IEnumerable<string>? categories = null
     )
     {
-        return new GetProductsQuery(limit, categories);
+        return new GetProductsQuery(page, pageSize, categories);
     }
 }
