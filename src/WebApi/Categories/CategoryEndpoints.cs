@@ -6,11 +6,12 @@ using Application.Categories.Queries.GetCategoryById;
 
 using Contracts.Categories;
 
-using Carter;
-using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using MapsterMapper;
+using MediatR;
+using Carter;
 
 namespace WebApi.Categories;
 
@@ -45,7 +46,18 @@ public class CategoryEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Delete Category",
-                Description = "Deletes an existing category. Admin authentication is required."
+                Description = "Deletes an existing category. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The category identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -55,7 +67,18 @@ public class CategoryEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Category",
-                Description = "Updates an existing category. Admin authentication is required."
+                Description = "Updates an existing category. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The category identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -74,7 +97,18 @@ public class CategoryEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Category By Identifier",
-                Description = "Retrieves a category by its identifier."
+                Description = "Retrieves a category by its identifier.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The category identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             });
     }
 

@@ -8,6 +8,7 @@ using Contracts.Users;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using MapsterMapper;
 using MediatR;
 using Carter;
@@ -44,6 +45,17 @@ public sealed class UserEndpoints : ICarterModule
             {
                 Summary = "Get User By Id",
                 Description = "Retrieves a user by its identifier. Admin authentication required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The user identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -55,7 +67,18 @@ public sealed class UserEndpoints : ICarterModule
                 Summary = "Get All Users",
                 Description = "Retrieves all the registered users. " +
                 "Can receive an {{active}} query parameter to filter users. " +
-                "Admin authentication is required."
+                "Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "active",
+                        In = ParameterLocation.Query,
+                        Description = "Filters users by active boolean value.",
+                        Required = false,
+                        Schema = new() { Type = "boolean" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -67,7 +90,18 @@ public sealed class UserEndpoints : ICarterModule
                 Summary = "Update User By Id",
                 Description = "Updates a user by its identifier. " +
                 "Users can only update their own details. " +
-                "Administrators can update any other non-administrator user's details."
+                "Administrators can update any other non-administrator user's details.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The user identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -78,7 +112,18 @@ public sealed class UserEndpoints : ICarterModule
             {
                 Summary = "Deactivate User",
                 Description = "Deactivates a user by setting them as inactive. " +
-                "Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account."
+                "Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The user identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
     }

@@ -7,6 +7,7 @@ using Application.ShippingMethods.Queries.GetShippingMethods;
 using Contracts.ShippingMethods;
 
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using MapsterMapper;
 using MediatR;
@@ -43,7 +44,18 @@ public class ShippingMethodEndpoints : ICarterModule
             .WithOpenApi(op => new(op)
             {
                 Summary = "Update Shipping Method",
-                Description = "Updates a shipping method. Admin authentication is required."
+                Description = "Updates a shipping method. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The shipping method identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -53,7 +65,18 @@ public class ShippingMethodEndpoints : ICarterModule
             .WithOpenApi(op => new(op)
             {
                 Summary = "Delete Shipping Method",
-                Description = "Deletes a shipping method by its identifier. Admin authentication is required."
+                Description = "Deletes a shipping method by its identifier. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The shipping method identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             })
             .RequireAuthorization();
 
@@ -63,7 +86,18 @@ public class ShippingMethodEndpoints : ICarterModule
             .WithOpenApi(op => new(op)
             {
                 Summary = "Get Shipping Method By Id",
-                Description = "Retrieves a shipping method by its identifier."
+                Description = "Retrieves a shipping method by its identifier.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The shipping method identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
             });
 
         group
