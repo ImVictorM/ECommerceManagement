@@ -4,10 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Common.Persistence.Configurations;
 
-/// <summary>
-/// Configures the shared discount owned entity properties.
-/// </summary>
-public static class DiscountNavigationBuilderConfigurations
+internal static class DiscountNavigationBuilderConfigurations
 {
     /// <inheritdoc/>
     public static void Configure<T>(OwnedNavigationBuilder<T, Discount> builder) where T : class

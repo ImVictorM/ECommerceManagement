@@ -13,10 +13,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Carriers;
 
-/// <summary>
-/// Configures the tables for the <see cref="Carrier"/> aggregate.
-/// </summary>
-public class CarrierConfigurations : EntityTypeConfigurationDependency<Carrier>
+internal sealed class CarrierConfigurations : EntityTypeConfigurationDependency<Carrier>
 {
     private sealed record CarrierData(
         CarrierId Id,
@@ -31,11 +28,6 @@ public class CarrierConfigurations : EntityTypeConfigurationDependency<Carrier>
 
     private readonly CarrierData _defaultInternalCarrier;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="CarrierConfigurations"/> class.
-    /// </summary>
-    /// <param name="carrierOptions">The default internal carrier options.</param>
-    /// <param name="passwordHasher">The password hasher to hash the carrier password.</param>
     public CarrierConfigurations(IOptions<CarrierInternalSettings> carrierOptions, IPasswordHasher passwordHasher)
     {
         var carrierSettings = carrierOptions.Value;

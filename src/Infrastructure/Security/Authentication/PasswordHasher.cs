@@ -6,10 +6,7 @@ using System.Security.Cryptography;
 
 namespace Infrastructure.Security.Authentication;
 
-/// <summary>
-/// Service to hash and verify passwords.
-/// </summary>
-public sealed class PasswordHasher : IPasswordHasher
+internal sealed class PasswordHasher : IPasswordHasher
 {
     private const int SaltSize = 16;
     private const int HashSize = 32;

@@ -13,10 +13,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Sales;
 
-/// <summary>
-/// Configures the tables for the <see cref="Sale"/> aggregate.
-/// </summary>
-public class SaleConfigurations : EntityTypeConfigurationDependency<Sale>
+internal sealed class SaleConfigurations : EntityTypeConfigurationDependency<Sale>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Sale> builder)

@@ -14,10 +14,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.ProductFeedback;
 
-/// <summary>
-/// Configures the tables for the <see cref="DomainProductFeedback"/> aggregate.
-/// </summary>
-public sealed class ProductFeedbackConfigurations : EntityTypeConfigurationDependency<DomainProductFeedback>
+internal sealed class ProductFeedbackConfigurations : EntityTypeConfigurationDependency<DomainProductFeedback>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<DomainProductFeedback> builder)

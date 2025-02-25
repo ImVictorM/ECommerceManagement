@@ -8,12 +8,7 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.Common.Persistence;
 
-/// <summary>
-/// Provides a base implementation of a generic repository for aggregate interactions.
-/// </summary>
-/// <typeparam name="TEntity">The aggregate type.</typeparam>
-/// <typeparam name="TEntityId">The aggregate identifier type.</typeparam>
-public abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEntity, TEntityId>
+internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEntity, TEntityId>
     where TEntity : AggregateRoot<TEntityId>
     where TEntityId : notnull
 {
@@ -29,10 +24,6 @@ public abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEnti
     /// </summary>
     protected DbSet<TEntity> DbSet => _dbSet;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="BaseRepository{TEntity, TEntityId}"/> class.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
     protected BaseRepository(ECommerceDbContext dbContext)
     {
         _context = dbContext;

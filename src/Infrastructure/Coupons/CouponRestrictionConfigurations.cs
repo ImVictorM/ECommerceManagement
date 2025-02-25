@@ -8,10 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
-/// <summary>
-/// Configures the <see cref="CouponRestriction"/> abstract using the Type-per-concrete strategy.
-/// </summary>
-public class CouponRestrictionConfigurations : EntityTypeConfigurationDependency<CouponRestriction>
+internal sealed class CouponRestrictionConfigurations : EntityTypeConfigurationDependency<CouponRestriction>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<CouponRestriction> builder)

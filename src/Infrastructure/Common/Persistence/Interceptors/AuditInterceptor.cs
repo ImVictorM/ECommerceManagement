@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Infrastructure.Common.Persistence.Interceptors;
 
-/// <summary>
-/// Intercepts save operations to automatically update timestamp properties
-/// for entities implementing the <see cref="IAuditable"/> interface.
-/// </summary>
-public sealed class AuditInterceptor : SaveChangesInterceptor
+internal sealed class AuditInterceptor : SaveChangesInterceptor
 {
     /// <inheritdoc/>
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)

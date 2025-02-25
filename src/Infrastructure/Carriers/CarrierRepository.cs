@@ -9,15 +9,8 @@ using SharedKernel.ValueObjects;
 
 namespace Infrastructure.Carriers;
 
-/// <summary>
-/// Defines the implementation for carrier persistence operations.
-/// </summary>
-public sealed class CarrierRepository : BaseRepository<Carrier, CarrierId>, ICarrierRepository
+internal sealed class CarrierRepository : BaseRepository<Carrier, CarrierId>, ICarrierRepository
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="CarrierRepository"/> class.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
     public CarrierRepository(ECommerceDbContext dbContext) : base(dbContext)
     {
     }

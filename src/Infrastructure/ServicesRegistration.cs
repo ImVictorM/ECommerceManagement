@@ -29,21 +29,28 @@ using System.Reflection;
 namespace Infrastructure;
 
 /// <summary>
-/// Add the infrastructure layer required services to the DI pipeline.
+/// Provides extension methods for registering services from the Infrastructure layer
+/// into the dependency injection pipeline.
 /// </summary>
 public static class ServicesRegistration
 {
     private static readonly Assembly _assembly = typeof(ServicesRegistration).Assembly;
 
     /// <summary>
-    /// Add the required dependencies of the infrastructure layer.
+    /// Registers all services from the Infrastructure layer into the current
+    /// <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="services">The app services.</param>
-    /// <param name="configuration">The app configurations.</param>
-    /// <param name="environment">The host environment.</param>
+    /// <param name="services">
+    /// The <see cref="IServiceCollection"/> to which the Infrastructure services will be added.
+    /// </param>
+    /// <param name="configuration">
+    /// The <see cref="IConfigurationManager"/> that provides access to the application's configuration settings.
+    /// </param>
+    /// <param name="environment">
+    /// The <see cref="IHostEnvironment"/> that provides information about the hosting environment
+    /// </param>
     /// <returns>
-    /// The app services including the registration of the infrastructure layer
-    /// required services.
+    /// The same <see cref="IServiceCollection"/> instance with the Infrastructure services registered.
     /// </returns>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,

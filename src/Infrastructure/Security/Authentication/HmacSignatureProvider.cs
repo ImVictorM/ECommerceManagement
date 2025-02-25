@@ -8,17 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Security.Authentication;
 
-/// <summary>
-/// Hash-Based Message Authentication Codes (HMAC) signature provider implementation.
-/// </summary>
-public sealed class HmacSignatureProvider : IHmacSignatureProvider
+internal sealed class HmacSignatureProvider : IHmacSignatureProvider
 {
     private readonly string _secret;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="HmacSignatureProvider"/> class.
-    /// </summary>
-    /// <param name="signatureOptions">The signature options.</param>
     public HmacSignatureProvider(IOptions<HmacSignatureSettings> signatureOptions)
     {
         _secret = signatureOptions.Value.Secret;

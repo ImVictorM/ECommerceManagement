@@ -13,10 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Payments;
 
-/// <summary>
-/// Configures the tables for the <see cref="Payment"/> aggregate.
-/// </summary>
-public class PaymentConfigurations : EntityTypeConfigurationDependency<Payment>
+internal sealed class PaymentConfigurations : EntityTypeConfigurationDependency<Payment>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Payment> builder)

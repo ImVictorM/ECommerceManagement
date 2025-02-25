@@ -10,16 +10,14 @@ using Domain.UserAggregate.ValueObjects;
 
 using Infrastructure.Common.Persistence.Configurations.Abstracts;
 
+using SharedKernel.Models;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedKernel.Models;
 
 namespace Infrastructure.Orders;
 
-/// <summary>
-/// Configures the tables for the <see cref="Order"/> aggregate.
-/// </summary>
-public sealed class OrderConfigurations : EntityTypeConfigurationDependency<Order>
+internal sealed class OrderConfigurations : EntityTypeConfigurationDependency<Order>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Order> builder)

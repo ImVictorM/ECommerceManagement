@@ -24,10 +24,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Infrastructure.Common.Persistence;
 
-/// <summary>
-/// The application db context.
-/// </summary>
-public class ECommerceDbContext : DbContext
+internal sealed class ECommerceDbContext : DbContext
 {
     private const string KeyPrefix = "id";
     private readonly IEnumerable<IInterceptor> _interceptors;
@@ -36,59 +33,52 @@ public class ECommerceDbContext : DbContext
     /// <summary>
     /// Gets or sets the category aggregate context.
     /// </summary>
-    public DbSet<Category> Categories { get; set; } = null!;
+    public DbSet<Category> Categories { get; set; }
     /// <summary>
     /// Gets or sets the user aggregate context.
     /// </summary>
-    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<User> Users { get; set; }
     /// <summary>
     /// Gets or sets the order aggregate context.
     /// </summary>
-    public DbSet<Order> Orders { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; }
     /// <summary>
     /// Gets or sets the product aggregate context.
     /// </summary>
-    public DbSet<Product> Products { get; set; } = null!;
+    public DbSet<Product> Products { get; set; }
     /// <summary>
     /// Gets or sets the product feedback aggregate context.
     /// </summary>
-    public DbSet<DomainProductFeedback> ProductFeedback { get; set; } = null!;
+    public DbSet<DomainProductFeedback> ProductFeedback { get; set; }
     /// <summary>
     /// Gets or sets the shipment aggregate context.
     /// </summary>
-    public DbSet<Shipment> Shipments { get; set; } = null!;
+    public DbSet<Shipment> Shipments { get; set; }
     /// <summary>
     /// Gets or sets the coupons aggregate context.
     /// </summary>
-    public DbSet<Coupon> Coupons { get; set; } = null!;
+    public DbSet<Coupon> Coupons { get; set; }
     /// <summary>
     /// Gets or sets the coupon restrictions aggregate context.
     /// </summary>
-    public DbSet<CouponRestriction> CouponRestrictions { get; set; } = null!;
+    public DbSet<CouponRestriction> CouponRestrictions { get; set; }
     /// <summary>
     /// Gets or sets the sale aggregate context.
     /// </summary>
-    public DbSet<Sale> Sales { get; set; } = null!;
+    public DbSet<Sale> Sales { get; set; }
     /// <summary>
     /// Gets or sets the payment aggregate context.
     /// </summary>
-    public DbSet<Payment> Payments { get; set; } = null!;
+    public DbSet<Payment> Payments { get; set; }
     /// <summary>
     /// Gets or sets the carrier aggregate context.
     /// </summary>
-    public DbSet<Carrier> Carriers { get; set; } = null!;
+    public DbSet<Carrier> Carriers { get; set; }
     /// <summary>
     /// Gets or sets the shipping method aggregate context.
     /// </summary>
-    public DbSet<ShippingMethod> ShippingMethods { get; set; } = null!;
+    public DbSet<ShippingMethod> ShippingMethods { get; set; }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ECommerceDbContext"/> class.
-    /// </summary>
-    /// <param name="options">The db context options.</param>
-    /// <param name="auditInterceptor">The audit interceptor.</param>
-    /// <param name="publishDomainEventInterceptor">The publish domain events interceptor.</param>
-    /// <param name="configurations">The entity type configurations.</param>
     public ECommerceDbContext(
         DbContextOptions<ECommerceDbContext> options,
         AuditInterceptor auditInterceptor,

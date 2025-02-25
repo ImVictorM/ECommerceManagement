@@ -9,10 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Products;
 
-/// <summary>
-/// Configures the tables for the <see cref="Product"/> aggregate.
-/// </summary>
-public sealed class ProductConfigurations : EntityTypeConfigurationDependency<Product>
+internal sealed class ProductConfigurations : EntityTypeConfigurationDependency<Product>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Product> builder)

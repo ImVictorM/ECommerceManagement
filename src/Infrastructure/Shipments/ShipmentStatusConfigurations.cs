@@ -7,10 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Shipments;
 
-/// <summary>
-/// Configures the <see cref="ShipmentStatus"/> table.
-/// </summary>
-public sealed class ShipmentStatusConfigurations : EntityTypeConfigurationDependency<ShipmentStatus>
+internal sealed class ShipmentStatusConfigurations : EntityTypeConfigurationDependency<ShipmentStatus>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<ShipmentStatus> builder)
