@@ -1,7 +1,8 @@
-using FluentAssertions;
 using SharedKernel.Services;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.Services;
 
@@ -10,6 +11,16 @@ namespace SharedKernel.UnitTests.Services;
 /// </summary>
 public class DiscountServiceTests
 {
+    private readonly DiscountService _service;
+
+    /// <summary>
+    /// Initiates a new instance of the <see cref="DiscountServiceTests"/> class.
+    /// </summary>
+    public DiscountServiceTests()
+    {
+        _service = new DiscountService();
+    }
+
     /// <summary>
     /// List containing base price, discounts, and the expected total after discounts were applied.
     /// </summary>
@@ -56,13 +67,13 @@ public class DiscountServiceTests
     /// <param name="expectedTotalWithDiscountsApplied">The expected total.</param>
     [Theory]
     [MemberData(nameof(DiscountsWithExpectedTotalAfterDiscounts))]
-    public void DiscountService_WhenApplyingDiscounts_CalculatesTotalCorrectlyAndReturnsIt(
+    public void CalculateDiscountedPrice_WithValidDiscounts_ReturnsCalculatedTotal(
         decimal basePrice,
         Discount[] discounts,
         decimal expectedTotalWithDiscountsApplied
     )
     {
-        var total = DiscountService.ApplyDiscounts(basePrice, discounts);
+        var total = _service.CalculateDiscountedPrice(basePrice, discounts);
 
         total.Should().Be(expectedTotalWithDiscountsApplied);
     }

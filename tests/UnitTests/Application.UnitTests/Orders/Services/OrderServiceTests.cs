@@ -13,6 +13,8 @@ using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate;
 
 using SharedKernel.UnitTests.TestUtils;
+using SharedKernel.Interfaces;
+using SharedKernel.ValueObjects;
 
 using System.Linq.Expressions;
 using FluentAssertions;
@@ -30,6 +32,7 @@ public class OrderServiceTests
     private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
     private readonly Mock<ICouponRepository> _mockCouponRepository;
     private readonly Mock<IProductRepository> _mockProductRepository;
+    private readonly Mock<IDiscountService> _mockDiscountService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OrderServiceTests"/> class.
@@ -40,12 +43,14 @@ public class OrderServiceTests
         _mockShippingMethodRepository = new Mock<IShippingMethodRepository>();
         _mockCouponRepository = new Mock<ICouponRepository>();
         _mockProductRepository = new Mock<IProductRepository>();
+        _mockDiscountService = new Mock<IDiscountService>();
 
         _service = new OrderService(
             _mockProductService.Object,
             _mockShippingMethodRepository.Object,
             _mockCouponRepository.Object,
-            _mockProductRepository.Object
+            _mockProductRepository.Object,
+            _mockDiscountService.Object
         );
     }
 
@@ -67,7 +72,9 @@ public class OrderServiceTests
         ];
 
         var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(1));
-        var expectedTotal = orderProducts.Sum(p => p.CalculateTransactionPrice()) + shippingMethod.Price;
+
+        var productsTotal = orderProducts.Sum(p => p.CalculateTransactionPrice());
+        var expectedTotal = productsTotal + shippingMethod.Price;
 
         _mockShippingMethodRepository
             .Setup(r => r.FindByIdAsync(
@@ -75,6 +82,13 @@ public class OrderServiceTests
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(shippingMethod);
+
+        _mockDiscountService
+            .Setup(s => s.CalculateDiscountedPrice(
+                productsTotal,
+                It.IsAny<IEnumerable<Discount>>()
+            ))
+            .Returns(expectedTotal);
 
         var result = await _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, null);
 
@@ -123,7 +137,19 @@ public class OrderServiceTests
             )
         };
 
-        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(1), price: 10m);
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(
+            id: ShippingMethodId.Create(1),
+            price: 10m
+        );
+
+        var productsTotal = orderProducts.Sum(p => p.PurchasedPrice * p.Quantity);
+
+        var discounts = couponsApplied
+            .Select(c => c.Discount);
+
+        var totalApplyingDiscountsInDescendingOrder = 102.41m;
+
+        var expectedTotal = totalApplyingDiscountsInDescendingOrder + shippingMethod.Price;
 
         _mockShippingMethodRepository
             .Setup(r => r.FindByIdAsync(
@@ -139,9 +165,13 @@ public class OrderServiceTests
             ))
             .ReturnsAsync(couponsApplied);
 
+        _mockDiscountService
+            .Setup(s => s.CalculateDiscountedPrice(productsTotal, discounts))
+            .Returns(totalApplyingDiscountsInDescendingOrder);
+
         var result = await _service.CalculateTotalAsync(orderProducts, shippingMethod.Id, orderCoupons);
 
-        result.Should().Be(112.41m);
+        result.Should().Be(expectedTotal);
     }
 
     /// <summary>

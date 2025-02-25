@@ -4,6 +4,9 @@ using Infrastructure.Common.Persistence;
 using Infrastructure.Security.Authentication;
 using Infrastructure.Security.Authentication.Settings;
 
+using SharedKernel.Interfaces;
+using SharedKernel.Services;
+
 using IntegrationTests.Common.Requests.Abstracts;
 using IntegrationTests.Common.Requests;
 using IntegrationTests.Common.Seeds;
@@ -55,6 +58,7 @@ public static class ServicesRegistration
             .AddCredentialsProviders()
             .AddHmacSignatureProvider(configurations);
 
+        services.AddTransient<IDiscountService, DiscountService>();
         services.AddTransient<IRequestService, RequestService>();
 
         return services;

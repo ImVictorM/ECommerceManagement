@@ -7,6 +7,8 @@ using Domain.SaleAggregate;
 using Domain.UnitTests.TestUtils;
 
 using SharedKernel.UnitTests.TestUtils;
+using SharedKernel.Interfaces;
+using SharedKernel.ValueObjects;
 
 using FluentAssertions;
 using Moq;
@@ -20,6 +22,7 @@ public class ProductServiceTests
 {
     private readonly ProductService _service;
     private readonly Mock<ISaleService> _mockSaleService;
+    private readonly Mock<IDiscountService> _mockDiscountService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="ProductServiceTests"/> class.
@@ -27,8 +30,12 @@ public class ProductServiceTests
     public ProductServiceTests()
     {
         _mockSaleService = new Mock<ISaleService>();
+        _mockDiscountService = new Mock<IDiscountService>();
 
-        _service = new ProductService(_mockSaleService.Object);
+        _service = new ProductService(
+            _mockSaleService.Object,
+            _mockDiscountService.Object
+        );
     }
 
     /// <summary>
@@ -80,6 +87,14 @@ public class ProductServiceTests
             ))
             .ReturnsAsync(productSales);
 
+        _mockDiscountService
+            .SetupSequence(s => s.CalculateDiscountedPrice(
+                It.IsAny<decimal>(),
+                It.IsAny<IEnumerable<Discount>>()
+            ))
+            .Returns(expectedPrices[products[0].Id])
+            .Returns(expectedPrices[products[1].Id]);
+
         var results = await _service.CalculateProductsPriceApplyingSaleAsync(products, default);
 
         foreach (var result in results)
@@ -106,6 +121,13 @@ public class ProductServiceTests
             {
                 [product.Id] = []
             });
+
+        _mockDiscountService
+            .Setup(s => s.CalculateDiscountedPrice(
+                It.IsAny<decimal>(),
+                It.IsAny<IEnumerable<Discount>>()
+            ))
+            .Returns(product.BasePrice);
 
         var results = await _service.CalculateProductsPriceApplyingSaleAsync([product], default);
 
@@ -146,6 +168,13 @@ public class ProductServiceTests
             ))
             .ReturnsAsync(productSales);
 
+        _mockDiscountService
+            .Setup(s => s.CalculateDiscountedPrice(
+                It.IsAny<decimal>(),
+                It.IsAny<IEnumerable<Discount>>()
+            ))
+            .Returns(expectedPrice);
+
         var result = await _service.CalculateProductPriceApplyingSaleAsync(product, default);
 
         result.Should().Be(expectedPrice);
@@ -168,6 +197,13 @@ public class ProductServiceTests
             {
                 [product.Id] = []
             });
+
+        _mockDiscountService
+            .Setup(s => s.CalculateDiscountedPrice(
+                It.IsAny<decimal>(),
+                It.IsAny<IEnumerable<Discount>>()
+            ))
+            .Returns(product.BasePrice);
 
         var result = await _service.CalculateProductPriceApplyingSaleAsync(product, default);
 

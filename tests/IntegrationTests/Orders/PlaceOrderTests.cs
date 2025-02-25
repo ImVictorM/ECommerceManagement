@@ -8,7 +8,7 @@ using Domain.OrderAggregate.Enumerations;
 
 using Contracts.Orders;
 
-using SharedKernel.Services;
+using SharedKernel.Interfaces;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
@@ -21,10 +21,11 @@ using IntegrationTests.Orders.TestUtils;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Constants;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Orders;
@@ -38,6 +39,7 @@ public class PlaceOrderTests : BaseIntegrationTest
     private readonly IDataSeed<CouponSeedType, Coupon> _seedCoupon;
     private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
     private readonly IDataSeed<SaleSeedType, Sale> _seedSale;
+    private readonly IDiscountService _discountService;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="PlaceOrderTests"/> class.
@@ -50,6 +52,7 @@ public class PlaceOrderTests : BaseIntegrationTest
         _seedCoupon = SeedManager.GetSeed<CouponSeedType, Coupon>();
         _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
         _seedSale = SeedManager.GetSeed<SaleSeedType, Sale>();
+        _discountService = factory.Services.GetRequiredService<IDiscountService>();
     }
 
     /// <summary>
@@ -129,7 +132,7 @@ public class PlaceOrderTests : BaseIntegrationTest
         var expectedComputerTotal = expectedCreatedComputerResponse.PurchasedPrice * expectedCreatedComputerResponse.Quantity;
         var expectedPencilTotal = expectedCreatedPencilResponse.PurchasedPrice * expectedCreatedPencilResponse.Quantity;
 
-        var expectedTotalPrice = DiscountService.ApplyDiscounts(
+        var expectedTotalPrice = _discountService.CalculateDiscountedPrice(
             expectedComputerTotal + expectedPencilTotal,
             [couponApplied.Discount]
         ) + shippingMethod.Price;
@@ -200,6 +203,6 @@ public class PlaceOrderTests : BaseIntegrationTest
             .ListAll(s => s.IsProductInSale(saleProduct))
             .Select(s => s.Discount);
 
-        return DiscountService.ApplyDiscounts(product.BasePrice, discounts.ToArray());
+        return _discountService.CalculateDiscountedPrice(product.BasePrice, discounts.ToArray());
     }
 }

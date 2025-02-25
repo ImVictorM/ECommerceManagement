@@ -2,6 +2,8 @@ using Application;
 
 using Infrastructure;
 
+using SharedKernel;
+
 using WebApi;
 using WebApi.Common.Middleware;
 
@@ -16,6 +18,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services
+    .AddSharedKernel()
     .AddApplication()
     .AddInfrastructure(builder.Configuration, builder.Environment)
     .AddPresentation(builder.Configuration);
