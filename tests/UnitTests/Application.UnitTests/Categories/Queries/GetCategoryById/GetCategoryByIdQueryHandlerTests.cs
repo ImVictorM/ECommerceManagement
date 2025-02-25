@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Categories.Errors;
 using Application.Categories.Queries.GetCategoryById;
 using Application.UnitTests.Categories.Queries.TestUtils;

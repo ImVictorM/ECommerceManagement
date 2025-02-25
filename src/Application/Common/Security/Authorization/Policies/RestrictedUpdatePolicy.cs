@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Identity;
 
@@ -6,19 +6,11 @@ using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Common.Security.Authorization.Policies;
 
-/// <summary>
-/// Represents a policy to update a user.
-/// Users can update themselves. Admins can update other non-admin users.
-/// </summary>
-public sealed class RestrictedUpdatePolicy<TRequest> : IPolicy<TRequest>
+internal sealed class RestrictedUpdatePolicy<TRequest> : IPolicy<TRequest>
     where TRequest : IUserSpecificResource
 {
     private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="RestrictedUpdatePolicy{T}"/> class.
-    /// </summary>
-    /// <param name="userRepository">The user repository.</param>
     public RestrictedUpdatePolicy(IUserRepository userRepository)
     {
         _userRepository = userRepository;

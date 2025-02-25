@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Payments.Commands.UpdatePaymentStatus;
 using Application.Payments.Errors;
 using Application.UnitTests.Payments.Commands.TestUtils;

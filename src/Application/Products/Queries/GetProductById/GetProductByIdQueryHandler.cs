@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Products.DTOs;
 using Application.Products.Errors;
 
@@ -11,20 +11,12 @@ using MediatR;
 
 namespace Application.Products.Queries.GetProductById;
 
-/// <summary>
-/// Query handler for the <see cref="GetProductByIdQuery"/> query;
-/// </summary>
-public sealed partial class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductResult>
+internal sealed partial class GetProductByIdQueryHandler
+    : IRequestHandler<GetProductByIdQuery, ProductResult>
 {
     private readonly IProductRepository _productRepository;
     private readonly IProductService _productService;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetProductByIdQueryHandler"/> class.
-    /// </summary>
-    /// <param name="productRepository">The product repository.</param>
-    /// <param name="productService">The product service.</param>
-    /// <param name="logger">The logger.</param>
     public GetProductByIdQueryHandler(
         IProductRepository productRepository,
         IProductService productService,

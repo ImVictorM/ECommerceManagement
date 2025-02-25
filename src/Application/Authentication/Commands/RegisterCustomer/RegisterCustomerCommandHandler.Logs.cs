@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Authentication.Commands.RegisterCustomer;
 
-public partial class RegisterCustomerCommandHandler
+internal sealed partial class RegisterCustomerCommandHandler
 {
     private readonly ILogger<RegisterCustomerCommandHandler> _logger;
 

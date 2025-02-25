@@ -1,5 +1,4 @@
-using Application.Common.Persistence;
-
+using Application.Common.Persistence.Repositories;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.Services;

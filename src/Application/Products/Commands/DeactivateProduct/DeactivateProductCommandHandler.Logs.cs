@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Products.Commands.DeactivateProduct;
 
-public partial class DeactivateProductCommandHandler
+internal sealed partial class DeactivateProductCommandHandler
 {
     private readonly ILogger<DeactivateProductCommandHandler> _logger;
 

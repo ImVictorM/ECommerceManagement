@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Products.Errors;
 
@@ -9,20 +10,12 @@ using MediatR;
 
 namespace Application.Products.Commands.DeactivateProduct;
 
-/// <summary>
-/// Handles the command to deactivate a product.
-/// </summary>
-public sealed partial class DeactivateProductCommandHandler : IRequestHandler<DeactivateProductCommand, Unit>
+internal sealed partial class DeactivateProductCommandHandler
+    : IRequestHandler<DeactivateProductCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="DeactivateProductCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="productRepository">The product repository.</param>
-    /// <param name="logger">The logger.</param>
     public DeactivateProductCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,

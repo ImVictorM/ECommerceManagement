@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Products.Queries.GetProductById;
 
-public partial class GetProductByIdQueryHandler
+internal sealed partial class GetProductByIdQueryHandler
 {
     private readonly ILogger<GetProductByIdQueryHandler> _logger;
 

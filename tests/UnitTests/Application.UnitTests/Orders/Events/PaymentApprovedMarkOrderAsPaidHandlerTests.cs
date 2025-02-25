@@ -1,5 +1,6 @@
 using Application.Common.Errors;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Orders.Events;
 using Application.UnitTests.TestUtils.Events.Payments;
 

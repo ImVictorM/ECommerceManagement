@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Common.DTOs;
 
@@ -8,20 +9,12 @@ using MediatR;
 
 namespace Application.ShippingMethods.Commands.CreateShippingMethod;
 
-/// <summary>
-/// Handles the <see cref="CreateShippingMethodCommand"/> command.
-/// </summary>
-public sealed partial class CreateShippingMethodCommandHandler : IRequestHandler<CreateShippingMethodCommand, CreatedResult>
+internal sealed partial class CreateShippingMethodCommandHandler
+    : IRequestHandler<CreateShippingMethodCommand, CreatedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IShippingMethodRepository _shippingMethodRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="CreateShippingMethodCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="shippingMethodRepository">The shipping method repository.</param>
-    /// <param name="logger">The logger.</param>
     public CreateShippingMethodCommandHandler(
         IUnitOfWork unitOfWork,
         IShippingMethodRepository shippingMethodRepository,

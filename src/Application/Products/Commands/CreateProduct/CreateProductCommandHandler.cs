@@ -1,5 +1,6 @@
 using Application.Common.DTOs;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
@@ -10,20 +11,12 @@ using MediatR;
 
 namespace Application.Products.Commands.CreateProduct;
 
-/// <summary>
-/// Handles product creation.
-/// </summary>
-public sealed partial class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreatedResult>
+internal sealed partial class CreateProductCommandHandler
+    : IRequestHandler<CreateProductCommand, CreatedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="CreateProductCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="productRepository">The product repository.</param>
-    /// <param name="logger">The logger.</param>
     public CreateProductCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,

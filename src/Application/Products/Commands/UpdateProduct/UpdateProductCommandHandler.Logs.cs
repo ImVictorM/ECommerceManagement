@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Products.Commands.UpdateProduct;
 
-public partial class UpdateProductCommandHandler
+internal sealed partial class UpdateProductCommandHandler
 {
     private readonly ILogger<UpdateProductCommandHandler> _logger;
 

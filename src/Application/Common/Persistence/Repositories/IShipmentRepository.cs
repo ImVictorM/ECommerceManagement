@@ -2,7 +2,7 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
 using Domain.ShipmentAggregate.ValueObjects;
 
-namespace Application.Common.Persistence;
+namespace Application.Common.Persistence.Repositories;
 
 /// <summary>
 /// Defines the contract for shipment persistence operations.

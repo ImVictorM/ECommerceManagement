@@ -1,6 +1,7 @@
 using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Common.Errors;
 using Application.Users.Errors;
@@ -12,21 +13,12 @@ using MediatR;
 
 namespace Application.Users.Commands.UpdateUser;
 
-/// <summary>
-/// Command handler for the command <see cref="UpdateUserCommand"/>.
-/// Handles user registration.
-/// </summary>
-public sealed partial class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Unit>
+internal sealed partial class UpdateUserCommandHandler
+    : IRequestHandler<UpdateUserCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UpdateUserCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="userRepository">The user repository.</param>
-    /// <param name="logger">The logger.</param>
     public UpdateUserCommandHandler(
         IUnitOfWork unitOfWork,
         IUserRepository userRepository,

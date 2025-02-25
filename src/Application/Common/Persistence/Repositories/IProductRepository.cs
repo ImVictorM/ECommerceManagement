@@ -5,7 +5,7 @@ using Domain.ProductAggregate.ValueObjects;
 
 using SharedKernel.Interfaces;
 
-namespace Application.Common.Persistence;
+namespace Application.Common.Persistence.Repositories;
 
 /// <summary>
 /// Defines the contract for product persistence operations.

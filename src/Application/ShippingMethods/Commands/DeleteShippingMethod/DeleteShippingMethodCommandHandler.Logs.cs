@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.ShippingMethods.Commands.DeleteShippingMethod;
 
-public sealed partial class DeleteShippingMethodCommandHandler
+internal sealed partial class DeleteShippingMethodCommandHandler
 {
     private readonly ILogger<DeleteShippingMethodCommandHandler> _logger;
 

@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Identity;
 
@@ -6,20 +6,11 @@ using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Common.Security.Authorization.Policies;
 
-/// <summary>
-/// Represents a policy to deactivate an user.
-/// A non-admin user can deactivate themselves.
-/// An admin can deactivate other non-admin users.
-/// </summary>
-public sealed class RestrictedDeactivationPolicy<TRequest> :
+internal sealed class RestrictedDeactivationPolicy<TRequest> :
     IPolicy<TRequest> where TRequest : IUserSpecificResource
 {
     private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="RestrictedDeactivationPolicy{TRequest}"/> class.
-    /// </summary>
-    /// <param name="userRepository">The user repository.</param>
     public RestrictedDeactivationPolicy(IUserRepository userRepository)
     {
         _userRepository = userRepository;

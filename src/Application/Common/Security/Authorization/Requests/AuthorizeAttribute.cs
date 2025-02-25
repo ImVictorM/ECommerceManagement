@@ -7,11 +7,8 @@ using System.Reflection;
 
 namespace Application.Common.Security.Authorization.Requests;
 
-/// <summary>
-/// Attribute used to authorize requests.
-/// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public sealed class AuthorizeAttribute : Attribute
+internal sealed class AuthorizeAttribute : Attribute
 {
     /// <summary>
     /// Gets the authorization required role.
@@ -23,12 +20,6 @@ public sealed class AuthorizeAttribute : Attribute
     /// </summary>
     public Type? PolicyType { get; }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="AuthorizeAttribute"/> class.
-    /// </summary>
-    /// <param name="roleName">The required role name.</param>
-    /// <param name="policyType">The required police type.</param>
-    /// <exception cref="ArgumentException">Thrown when any of the arguments are invalid.</exception>
     public AuthorizeAttribute(string? roleName = null, Type? policyType = null)
     {
         RoleName = roleName;

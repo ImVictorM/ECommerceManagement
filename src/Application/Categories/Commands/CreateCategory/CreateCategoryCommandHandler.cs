@@ -1,5 +1,6 @@
 using Application.Common.DTOs;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.CategoryAggregate;
 
@@ -8,20 +9,12 @@ using MediatR;
 
 namespace Application.Categories.Commands.CreateCategory;
 
-/// <summary>
-/// Handles the <see cref="CreateCategoryCommand"/> command.
-/// </summary>
-public partial class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CreatedResult>
+internal sealed partial class CreateCategoryCommandHandler
+    : IRequestHandler<CreateCategoryCommand, CreatedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICategoryRepository _categoryRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="CreateCategoryCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="categoryRepository">The category repository.</param>
-    /// <param name="logger">The logger.</param>
     public CreateCategoryCommandHandler(
         IUnitOfWork unitOfWork,
         ICategoryRepository categoryRepository,

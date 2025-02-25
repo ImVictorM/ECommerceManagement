@@ -19,7 +19,8 @@ public class ShippingMethodNotFoundException : BaseException
     {
     }
 
-    internal ShippingMethodNotFoundException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    internal ShippingMethodNotFoundException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }

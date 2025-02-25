@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Categories.Commands.UpdateCategory;
 
-public partial class UpdateCategoryCommandHandler
+internal sealed partial class UpdateCategoryCommandHandler
 {
     private readonly ILogger<UpdateCategoryCommandHandler> _logger;
 

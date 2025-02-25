@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Products.DTOs;
 using Application.Products.Queries.GetProducts;
 using Application.UnitTests.Products.Queries.TestUtils;

@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.ShippingMethods.Commands.CreateShippingMethod;
 using Application.UnitTests.ShippingMethods.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Extensions;

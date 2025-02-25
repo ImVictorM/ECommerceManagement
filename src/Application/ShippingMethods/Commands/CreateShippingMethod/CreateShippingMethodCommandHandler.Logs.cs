@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.ShippingMethods.Commands.CreateShippingMethod;
 
-public sealed partial class CreateShippingMethodCommandHandler
+internal sealed partial class CreateShippingMethodCommandHandler
 {
     private readonly ILogger<CreateShippingMethodCommandHandler> _logger;
 

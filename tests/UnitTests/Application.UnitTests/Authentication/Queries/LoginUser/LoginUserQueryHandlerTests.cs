@@ -1,8 +1,8 @@
 using Application.Authentication.Errors;
 using Application.Authentication.Queries.LoginUser;
 using Application.UnitTests.Authentication.Queries.TestUtils;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authentication;
-using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 
 using Domain.UnitTests.TestUtils;

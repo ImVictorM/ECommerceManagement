@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethodById;
 
-public sealed partial class GetShippingMethodByIdQueryHandler
+internal sealed partial class GetShippingMethodByIdQueryHandler
 {
     private readonly ILogger<GetShippingMethodByIdQueryHandler> _logger;
 

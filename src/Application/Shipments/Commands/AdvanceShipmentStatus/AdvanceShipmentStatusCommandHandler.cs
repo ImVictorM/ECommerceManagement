@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Shipments.Errors;
 
@@ -9,20 +10,12 @@ using MediatR;
 
 namespace Application.Shipments.Commands.AdvanceShipmentStatus;
 
-/// <summary>
-/// Handles the <see cref="AdvanceShipmentStatusCommand"/> command.
-/// </summary>
-public sealed partial class AdvanceShipmentStatusCommandHandler : IRequestHandler<AdvanceShipmentStatusCommand, Unit>
+internal sealed partial class AdvanceShipmentStatusCommandHandler
+    : IRequestHandler<AdvanceShipmentStatusCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IShipmentRepository _shipmentRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="AdvanceShipmentStatusCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="shipmentRepository">The shipment repository.</param>
-    /// <param name="logger">The logger.</param>
     public AdvanceShipmentStatusCommandHandler(
         IUnitOfWork unitOfWork,
         IShipmentRepository shipmentRepository,

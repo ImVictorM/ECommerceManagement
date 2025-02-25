@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Orders.DTOs;
 
 using Domain.OrderAggregate;

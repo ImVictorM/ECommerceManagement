@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Products.DTOs;
 
 using Domain.CategoryAggregate.ValueObjects;
@@ -13,22 +13,14 @@ using MediatR;
 
 namespace Application.Products.Queries.GetProducts;
 
-/// <summary>
-/// Handles the <see cref="GetProductsQuery"/> query.
-/// </summary>
-public sealed partial class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, IEnumerable<ProductResult>>
+internal sealed partial class GetProductsQueryHandler
+    : IRequestHandler<GetProductsQuery, IEnumerable<ProductResult>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IProductService _productService;
     private const int DefaultInitialPage = 1;
     private const int DefaultPageSize = 20;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetProductsQueryHandler"/> class.
-    /// </summary>
-    /// <param name="productRepository">The product repository.</param>
-    /// <param name="productService">The product service.</param>
-    /// <param name="logger">The logger.</param>
     public GetProductsQueryHandler(
         IProductRepository productRepository,
         IProductService productService,

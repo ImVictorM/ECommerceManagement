@@ -11,4 +11,5 @@ namespace Application.ShippingMethods.Commands.DeleteShippingMethod;
 /// </summary>
 /// <param name="ShippingMethodId">The shipping method id.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record DeleteShippingMethodCommand(string ShippingMethodId) : IRequestWithAuthorization<Unit>;
+public record DeleteShippingMethodCommand(string ShippingMethodId)
+    : IRequestWithAuthorization<Unit>;

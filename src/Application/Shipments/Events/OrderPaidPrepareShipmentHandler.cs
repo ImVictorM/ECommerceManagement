@@ -1,5 +1,6 @@
 using Application.Common.Errors;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.OrderAggregate.Events;
 using Domain.ShipmentAggregate.Enumerations;
@@ -8,20 +9,11 @@ using MediatR;
 
 namespace Application.Shipments.Events;
 
-/// <summary>
-/// Handles the <see cref="OrderPaid"/> event by
-/// Advancing the shipment status to <see cref="Domain.ShipmentAggregate.Enumerations.ShipmentStatus.Preparing"/>.
-/// </summary>
-public sealed class OrderPaidPrepareShipmentHandler : INotificationHandler<OrderPaid>
+internal sealed class OrderPaidPrepareShipmentHandler : INotificationHandler<OrderPaid>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IShipmentRepository _shipmentRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderPaidPrepareShipmentHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="shipmentRepository">The shipment repository.</param>
     public OrderPaidPrepareShipmentHandler(IUnitOfWork unitOfWork, IShipmentRepository shipmentRepository)
     {
         _unitOfWork = unitOfWork;

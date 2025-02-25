@@ -1,7 +1,7 @@
-using Application.Common.Persistence;
-
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
+
+using Application.Common.Persistence.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

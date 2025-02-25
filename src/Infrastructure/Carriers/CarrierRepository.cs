@@ -1,7 +1,7 @@
 using Domain.CarrierAggregate;
 using Domain.CarrierAggregate.ValueObjects;
 
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Infrastructure.Common.Persistence;
 

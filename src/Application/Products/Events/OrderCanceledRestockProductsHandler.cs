@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.OrderAggregate.Events;
 
@@ -6,20 +7,11 @@ using MediatR;
 
 namespace Application.Products.Events;
 
-/// <summary>
-/// Handles the <see cref="OrderCanceled"/> event by
-/// restocking the order reserved products.
-/// </summary>
-public class OrderCanceledRestockProductsHandler : INotificationHandler<OrderCanceled>
+internal sealed class OrderCanceledRestockProductsHandler : INotificationHandler<OrderCanceled>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCanceledRestockProductsHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="productRepository">The product repository.</param>
     public OrderCanceledRestockProductsHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository

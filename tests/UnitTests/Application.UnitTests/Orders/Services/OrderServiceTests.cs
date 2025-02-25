@@ -1,5 +1,5 @@
+using Application.Common.Persistence.Repositories;
 using Application.Orders.Services;
-using Application.Common.Persistence;
 using Application.Orders.Errors;
 
 using Domain.CouponAggregate;

@@ -2,8 +2,8 @@ using Domain.UnitTests.TestUtils;
 using Domain.CarrierAggregate;
 using Domain.CarrierAggregate.ValueObjects;
 
-using Application.Common.Persistence;
 using Application.Common.Security.Authentication;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Identity;
 using Application.Authentication.Errors;
 using Application.UnitTests.Authentication.Queries.TestUtils;

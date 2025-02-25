@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.ValueObjects;

@@ -1,28 +1,19 @@
 using Domain.OrderAggregate.Events;
 using Domain.ShipmentAggregate;
 
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 
 using MediatR;
 
 namespace Application.Shipments.Events;
 
-/// <summary>
-/// Handles the <see cref="OrderPaid"/> event by
-/// creating a shipment.
-/// </summary>
-public class OrderCreatedCreateShipmentHandler : INotificationHandler<OrderCreated>
+internal sealed class OrderCreatedCreateShipmentHandler : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICarrierRepository _carrierRepository;
     private readonly IShipmentRepository _shipmentRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCreatedCreateShipmentHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="carrierRepository">The carrier repository.</param>
-    /// <param name="shipmentRepository">The shipment repository.</param>
     public OrderCreatedCreateShipmentHandler(
         IUnitOfWork unitOfWork,
         ICarrierRepository carrierRepository,

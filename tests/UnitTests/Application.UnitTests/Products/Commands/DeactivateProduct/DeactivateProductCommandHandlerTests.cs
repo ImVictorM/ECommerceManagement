@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Products.Commands.DeactivateProduct;
 using Application.Products.Errors;

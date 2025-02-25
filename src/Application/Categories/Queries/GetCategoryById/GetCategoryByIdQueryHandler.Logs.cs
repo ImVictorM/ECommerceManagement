@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Categories.Queries.GetCategoryById;
 
-public partial class GetCategoryByIdQueryHandler
+internal sealed partial class GetCategoryByIdQueryHandler
 {
     private readonly ILogger<GetCategoryByIdQueryHandler> _logger;
 

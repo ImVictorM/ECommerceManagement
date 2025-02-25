@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Products.Errors;
 
@@ -10,20 +11,11 @@ using MediatR;
 
 namespace Application.Products.Commands.UpdateProduct;
 
-/// <summary>
-/// Handles the <see cref="UpdateProductCommand"/> command.
-/// </summary>
-public sealed partial class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
+internal sealed partial class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateProductCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="productRepository">The product repository.</param>
-    /// <param name="logger">The logger.</param>
     public UpdateProductCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,

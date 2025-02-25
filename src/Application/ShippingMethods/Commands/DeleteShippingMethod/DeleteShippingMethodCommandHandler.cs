@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.ShippingMethods.Errors;
 
@@ -8,20 +9,12 @@ using MediatR;
 
 namespace Application.ShippingMethods.Commands.DeleteShippingMethod;
 
-/// <summary>
-/// Handles the <see cref="DeleteShippingMethodCommand"/> command.
-/// </summary>
-public sealed partial class DeleteShippingMethodCommandHandler : IRequestHandler<DeleteShippingMethodCommand, Unit>
+internal sealed partial class DeleteShippingMethodCommandHandler
+    : IRequestHandler<DeleteShippingMethodCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IShippingMethodRepository _shippingMethodRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="DeleteShippingMethodCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="shippingMethodRepository">The shipping method repository.</param>
-    /// <param name="logger">The logger.</param>
     public DeleteShippingMethodCommandHandler(
         IUnitOfWork unitOfWork,
         IShippingMethodRepository shippingMethodRepository,

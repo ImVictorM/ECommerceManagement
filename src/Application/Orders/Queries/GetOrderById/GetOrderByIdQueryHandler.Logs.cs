@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Orders.Queries.GetOrderById;
 
-public sealed partial class GetOrderByIdQueryHandler
+internal sealed partial class GetOrderByIdQueryHandler
 {
     private readonly ILogger<GetOrderByIdQueryHandler> _logger;
 

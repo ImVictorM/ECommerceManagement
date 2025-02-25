@@ -1,5 +1,6 @@
 using Application.Common.Errors;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Shipments.Events;
 
 using Domain.OrderAggregate.Events;

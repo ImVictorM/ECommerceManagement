@@ -1,5 +1,6 @@
 using Application.Common.PaymentGateway;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.PaymentAggregate.Events;
 
@@ -7,22 +8,12 @@ using MediatR;
 
 namespace Application.Payments.Events;
 
-/// <summary>
-/// Handles the <see cref="PaymentRejected"/> event by
-/// cancelling the authorization process.
-/// </summary>
-public sealed class PaymentRejectedCancelAuthorizationHandler : INotificationHandler<PaymentRejected>
+internal sealed class PaymentRejectedCancelAuthorizationHandler : INotificationHandler<PaymentRejected>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentGateway _paymentGateway;
     private readonly IPaymentRepository _paymentRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="PaymentRejectedCancelAuthorizationHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="paymentGateway">The payment gateway.</param>
-    /// <param name="paymentRepository">The payment repository.</param>
     public PaymentRejectedCancelAuthorizationHandler(
         IUnitOfWork unitOfWork,
         IPaymentGateway paymentGateway,

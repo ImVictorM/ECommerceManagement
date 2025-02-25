@@ -1,5 +1,6 @@
 using Application.Products.Events;
 using Application.UnitTests.TestUtils.Events.Orders;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 
 using Domain.ProductAggregate;

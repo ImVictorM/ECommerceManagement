@@ -1,8 +1,9 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
+using Application.Common.Errors;
 using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Errors;
 using Application.Users.Commands.UpdateUser;
-using Application.Common.Errors;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;

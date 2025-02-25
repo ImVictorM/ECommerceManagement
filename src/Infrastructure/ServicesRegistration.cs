@@ -1,4 +1,5 @@
 using Application.Common.Security.Authentication;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Common.Security.Authorization;
 using Application.Common.PaymentGateway;

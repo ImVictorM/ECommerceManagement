@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.ShippingMethods.Errors;
 
@@ -8,20 +9,12 @@ using MediatR;
 
 namespace Application.ShippingMethods.Commands.UpdateShippingMethod;
 
-/// <summary>
-/// Handles the <see cref="UpdateShippingMethodCommand"/> command.
-/// </summary>
-public sealed partial class UpdateShippingMethodCommandHandler : IRequestHandler<UpdateShippingMethodCommand, Unit>
+internal sealed partial class UpdateShippingMethodCommandHandler
+    : IRequestHandler<UpdateShippingMethodCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IShippingMethodRepository _shippingMethodRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateShippingMethodCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="shippingMethodRepository">The shipping method repository.</param>
-    /// <param name="logger">The logger.</param>
     public UpdateShippingMethodCommandHandler(
         IUnitOfWork unitOfWork,
         IShippingMethodRepository shippingMethodRepository,

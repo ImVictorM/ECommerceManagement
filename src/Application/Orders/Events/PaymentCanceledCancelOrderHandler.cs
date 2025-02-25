@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.PaymentAggregate.Events;
 
@@ -6,20 +7,11 @@ using MediatR;
 
 namespace Application.Orders.Events;
 
-/// <summary>
-/// Handles the <see cref="PaymentCanceled"/> event by
-/// canceling the related order.
-/// </summary>
-public sealed class PaymentCanceledCancelOrderHandler : INotificationHandler<PaymentCanceled>
+internal sealed class PaymentCanceledCancelOrderHandler : INotificationHandler<PaymentCanceled>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="PaymentCanceledCancelOrderHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">the unit of work.</param>
-    /// <param name="orderRepository">The order repository.</param>
     public PaymentCanceledCancelOrderHandler(
         IUnitOfWork unitOfWork,
         IOrderRepository orderRepository

@@ -1,5 +1,6 @@
 using Application.Categories.Errors;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.CategoryAggregate.ValueObjects;
 
@@ -8,20 +9,12 @@ using MediatR;
 
 namespace Application.Categories.Commands.DeleteCategory;
 
-/// <summary>
-/// Handles the <see cref="DeleteCategoryCommand"/> command.
-/// </summary>
-public partial class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Unit>
+internal sealed partial class DeleteCategoryCommandHandler
+    : IRequestHandler<DeleteCategoryCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICategoryRepository _categoryRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="DeleteCategoryCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="categoryRepository">The category repository.</param>
-    /// <param name="logger">The logger.</param>
     public DeleteCategoryCommandHandler(
         IUnitOfWork unitOfWork,
         ICategoryRepository categoryRepository,

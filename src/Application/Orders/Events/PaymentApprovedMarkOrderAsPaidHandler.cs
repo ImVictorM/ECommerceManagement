@@ -1,5 +1,6 @@
 using Application.Common.Errors;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.PaymentAggregate.Events;
 
@@ -7,20 +8,11 @@ using MediatR;
 
 namespace Application.Orders.Events;
 
-/// <summary>
-/// Handles the <see cref="PaymentApproved"/> event by
-/// marking the order as paid.
-/// </summary>
-public sealed class PaymentApprovedMarkOrderAsPaidHandler : INotificationHandler<PaymentApproved>
+internal sealed class PaymentApprovedMarkOrderAsPaidHandler : INotificationHandler<PaymentApproved>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="PaymentApprovedMarkOrderAsPaidHandler"/> class.
-    /// </summary>
-    /// <param name="orderRepository">The order repository.</param>
-    /// <param name="unitOfWork">The unit of work.</param>
     public PaymentApprovedMarkOrderAsPaidHandler(
         IOrderRepository orderRepository,
         IUnitOfWork unitOfWork

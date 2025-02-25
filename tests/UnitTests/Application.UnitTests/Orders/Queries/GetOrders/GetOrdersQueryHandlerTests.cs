@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Orders.Queries.GetOrders;
 using Application.UnitTests.Orders.Queries.TestUtils;
 

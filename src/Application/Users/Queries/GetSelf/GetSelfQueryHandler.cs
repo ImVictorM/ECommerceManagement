@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Identity;
 using Application.Users.DTOs;
 using Application.Users.Errors;
@@ -10,20 +10,11 @@ using MediatR;
 
 namespace Application.Users.Queries.GetSelf;
 
-/// <summary>
-/// Handles the <see cref="GetSelfQuery"/> query.
-/// </summary>
-public sealed partial class GetSelfQueryHandler : IRequestHandler<GetSelfQuery, UserResult>
+internal sealed partial class GetSelfQueryHandler : IRequestHandler<GetSelfQuery, UserResult>
 {
     private readonly IIdentityProvider _identityProvider;
     private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetSelfQueryHandler"/> class.
-    /// </summary>
-    /// <param name="identityProvider">The identity provider.</param>
-    /// <param name="userRepository">The user repository.</param>
-    /// <param name="logger">The logger.</param>
     public GetSelfQueryHandler(
         IIdentityProvider identityProvider,
         IUserRepository userRepository,

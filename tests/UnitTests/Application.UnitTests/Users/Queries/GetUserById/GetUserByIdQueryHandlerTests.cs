@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.UnitTests.Users.Queries.TestUtils;
 using Application.Users.Errors;
 using Application.Users.Queries.GetUserById;

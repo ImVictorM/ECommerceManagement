@@ -1,5 +1,6 @@
 using Application.Common.Security.Authorization.Requests;
 using Application.Users.DTOs;
+
 using SharedKernel.ValueObjects;
 
 namespace Application.Users.Queries.GetUserById;
@@ -9,4 +10,5 @@ namespace Application.Users.Queries.GetUserById;
 /// </summary>
 /// <param name="UserId">The user identifier value.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record GetUserByIdQuery(string UserId) : IRequestWithAuthorization<UserResult>, IUserSpecificResource;
+public record GetUserByIdQuery(string UserId)
+    : IRequestWithAuthorization<UserResult>, IUserSpecificResource;
