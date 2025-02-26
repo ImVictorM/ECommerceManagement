@@ -59,14 +59,11 @@ public class BaseIntegrationTest : IAsyncLifetime
         await _factory.ResetDatabaseAsync();
     }
 
-    /// <summary>
-    /// Seeds the database.
-    /// </summary>
     private async Task SeedDataAsync()
     {
         using var scope = _factory.Services.CreateScope();
 
-        var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<IECommerceDbContext>();
 
         await SeedManager.SeedAsync(dbContext);
     }

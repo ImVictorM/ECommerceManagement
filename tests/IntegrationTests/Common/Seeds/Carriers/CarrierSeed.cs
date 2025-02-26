@@ -47,7 +47,7 @@ public sealed class CarrierSeed : DataSeed<CarrierSeedType, Carrier>
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await context.Carriers.AddRangeAsync(ListAll());
     }

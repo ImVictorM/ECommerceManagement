@@ -58,7 +58,7 @@ public sealed class CategorySeed : DataSeed<CategorySeedType, Category>
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await context.Categories.AddRangeAsync(ListAll());
     }

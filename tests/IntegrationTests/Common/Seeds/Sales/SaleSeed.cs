@@ -53,7 +53,7 @@ public sealed class SaleSeed : DataSeed<SaleSeedType, Sale>
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await context.Sales.AddRangeAsync(ListAll());
     }

@@ -122,7 +122,7 @@ public sealed class ProductSeed : DataSeed<ProductSeedType, Product>
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await context.Products.AddRangeAsync(ListAll());
     }

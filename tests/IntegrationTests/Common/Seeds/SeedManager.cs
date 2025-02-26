@@ -37,7 +37,7 @@ public sealed class SeedManager : ISeedManager
     }
 
     /// <inheritdoc/>
-    public async Task SeedAsync(ECommerceDbContext dbContext)
+    public async Task SeedAsync(IECommerceDbContext dbContext)
     {
         var orderedSeeds = _seeds.OrderBy(s => s.Order).ToList();
 

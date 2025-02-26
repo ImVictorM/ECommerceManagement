@@ -11,7 +11,8 @@ public interface ISeed
     /// Seeds the database into the provided <paramref name="context"/>.
     /// </summary>
     /// <param name="context">The database context.</param>
-    public Task SeedAsync(ECommerceDbContext context);
+    Task SeedAsync(IECommerceDbContext context);
+
     /// <summary>
     /// The order in which the seed should be applied.
     /// Lower numbers represents a seed with minimal dependencies on relationships.

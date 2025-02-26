@@ -88,7 +88,7 @@ public sealed class UserSeed : DataSeed<UserSeedType, User>
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await context.Users.AddRangeAsync(ListAll());
     }

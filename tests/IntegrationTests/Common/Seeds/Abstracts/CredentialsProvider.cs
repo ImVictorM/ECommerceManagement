@@ -12,9 +12,9 @@ public abstract class CredentialsProvider<TEnum> : ICredentialsProvider<TEnum>
     private readonly Dictionary<TEnum, AuthenticationCredentials> _credentials;
 
     /// <summary>
-    /// 
+    /// Initiates a new instance of the <see cref="CredentialsProvider{TEnum}"/> class.
     /// </summary>
-    /// <param name="credentials"></param>
+    /// <param name="credentials">The credentials.</param>
     protected CredentialsProvider(Dictionary<TEnum, AuthenticationCredentials> credentials)
     {
         _credentials = credentials;
