@@ -12,19 +12,19 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
     where TEntity : AggregateRoot<TEntityId>
     where TEntityId : notnull
 {
-    private readonly ECommerceDbContext _context;
+    private readonly IECommerceDbContext _context;
     private readonly DbSet<TEntity> _dbSet;
 
     /// <summary>
     /// Gets the database context used for data operations.
     /// </summary>
-    protected ECommerceDbContext Context => _context;
+    protected IECommerceDbContext Context => _context;
     /// <summary>
     /// Gets the database set representing the aggregate collection.
     /// </summary>
     protected DbSet<TEntity> DbSet => _dbSet;
 
-    protected BaseRepository(ECommerceDbContext dbContext)
+    protected BaseRepository(IECommerceDbContext dbContext)
     {
         _context = dbContext;
         _dbSet = _context.Set<TEntity>();

@@ -9,7 +9,7 @@ namespace Infrastructure.Sales;
 
 internal sealed class SaleRepository : BaseRepository<Sale, SaleId>, ISaleRepository
 {
-    public SaleRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public SaleRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 }

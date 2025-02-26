@@ -9,7 +9,7 @@ namespace Infrastructure.Payments;
 
 internal sealed class PaymentRepository : BaseRepository<Payment, PaymentId>, IPaymentRepository
 {
-    public PaymentRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public PaymentRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 }

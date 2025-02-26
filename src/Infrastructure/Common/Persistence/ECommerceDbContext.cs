@@ -24,59 +24,34 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Infrastructure.Common.Persistence;
 
-internal sealed class ECommerceDbContext : DbContext
+internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
 {
     private const string KeyPrefix = "id";
     private readonly IEnumerable<IInterceptor> _interceptors;
     private readonly IEnumerable<EntityTypeConfigurationDependency> _configurations;
 
-    /// <summary>
-    /// Gets or sets the category aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Category> Categories { get; set; }
-    /// <summary>
-    /// Gets or sets the user aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<User> Users { get; set; }
-    /// <summary>
-    /// Gets or sets the order aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Order> Orders { get; set; }
-    /// <summary>
-    /// Gets or sets the product aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Product> Products { get; set; }
-    /// <summary>
-    /// Gets or sets the product feedback aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<DomainProductFeedback> ProductFeedback { get; set; }
-    /// <summary>
-    /// Gets or sets the shipment aggregate context.
-    /// </summary>
     public DbSet<Shipment> Shipments { get; set; }
-    /// <summary>
-    /// Gets or sets the coupons aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Coupon> Coupons { get; set; }
-    /// <summary>
-    /// Gets or sets the coupon restrictions aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<CouponRestriction> CouponRestrictions { get; set; }
-    /// <summary>
-    /// Gets or sets the sale aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Sale> Sales { get; set; }
-    /// <summary>
-    /// Gets or sets the payment aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Payment> Payments { get; set; }
-    /// <summary>
-    /// Gets or sets the carrier aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Carrier> Carriers { get; set; }
-    /// <summary>
-    /// Gets or sets the shipping method aggregate context.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<ShippingMethod> ShippingMethods { get; set; }
 
     public ECommerceDbContext(

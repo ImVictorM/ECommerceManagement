@@ -80,7 +80,7 @@ public static class ServicesRegistration
 
         services.AddSingleton(Options.Create(dbConnectionSettings));
 
-        services.AddDbContext<ECommerceDbContext>(options =>
+        services.AddDbContext<IECommerceDbContext, ECommerceDbContext>(options =>
         {
             if (!environment.IsProduction())
             {

@@ -13,7 +13,7 @@ namespace Infrastructure.Orders;
 
 internal sealed class OrderRepository : BaseRepository<Order, OrderId>, IOrderRepository
 {
-    public OrderRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public OrderRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 

@@ -4,9 +4,9 @@ namespace Infrastructure.Common.Persistence;
 
 internal sealed class UnitOfWork : IUnitOfWork
 {
-    private readonly ECommerceDbContext _context;
+    private readonly IECommerceDbContext _context;
 
-    public UnitOfWork(ECommerceDbContext context)
+    public UnitOfWork(IECommerceDbContext context)
     {
         _context = context;
     }

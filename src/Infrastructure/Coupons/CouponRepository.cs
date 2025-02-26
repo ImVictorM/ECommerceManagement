@@ -9,7 +9,7 @@ namespace Infrastructure.Coupons;
 
 internal sealed class CouponRepository : BaseRepository<Coupon, CouponId>, ICouponRepository
 {
-    public CouponRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public CouponRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 }

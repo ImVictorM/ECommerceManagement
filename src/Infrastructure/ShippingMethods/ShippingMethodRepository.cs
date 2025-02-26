@@ -9,7 +9,7 @@ namespace Infrastructure.ShippingMethods;
 
 internal sealed class ShippingMethodRepository : BaseRepository<ShippingMethod, ShippingMethodId>, IShippingMethodRepository
 {
-    public ShippingMethodRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public ShippingMethodRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 }

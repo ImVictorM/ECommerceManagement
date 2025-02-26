@@ -24,7 +24,11 @@ internal sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
     }
 
     /// <inheritdoc/>
-    public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
+    public override async ValueTask<int> SavedChangesAsync(
+        SaveChangesCompletedEventData eventData,
+        int result,
+        CancellationToken cancellationToken = default
+    )
     {
         await PublishDomainEvents(eventData.Context);
         return await base.SavedChangesAsync(eventData, result, cancellationToken);

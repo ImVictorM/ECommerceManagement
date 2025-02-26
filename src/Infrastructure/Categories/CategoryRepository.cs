@@ -9,7 +9,7 @@ namespace Infrastructure.Categories;
 
 internal sealed class CategoryRepository : BaseRepository<Category, CategoryId>, ICategoryRepository
 {
-    public CategoryRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public CategoryRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 }

@@ -9,7 +9,7 @@ namespace Infrastructure.Users;
 
 internal sealed class UserRepository : BaseRepository<User, UserId>, IUserRepository
 {
-    public UserRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public UserRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 }

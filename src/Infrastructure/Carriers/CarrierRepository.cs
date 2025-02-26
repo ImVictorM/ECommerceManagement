@@ -11,7 +11,7 @@ namespace Infrastructure.Carriers;
 
 internal sealed class CarrierRepository : BaseRepository<Carrier, CarrierId>, ICarrierRepository
 {
-    public CarrierRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public CarrierRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 

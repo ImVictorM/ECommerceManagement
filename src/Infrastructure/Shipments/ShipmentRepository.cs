@@ -10,7 +10,7 @@ namespace Infrastructure.Shipments;
 
 internal sealed class ShipmentRepository : BaseRepository<Shipment, ShipmentId>, IShipmentRepository
 {
-    public ShipmentRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public ShipmentRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 

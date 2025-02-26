@@ -9,7 +9,10 @@ namespace Infrastructure.Common.Persistence.Interceptors;
 internal sealed class AuditInterceptor : SaveChangesInterceptor
 {
     /// <inheritdoc/>
-    public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+    public override InterceptionResult<int> SavingChanges(
+        DbContextEventData eventData,
+        InterceptionResult<int> result
+    )
     {
         UpdateTimestamps(eventData.Context);
 
@@ -17,7 +20,11 @@ internal sealed class AuditInterceptor : SaveChangesInterceptor
     }
 
     /// <inheritdoc/>
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken cancellationToken = default
+    )
     {
         UpdateTimestamps(eventData.Context);
 

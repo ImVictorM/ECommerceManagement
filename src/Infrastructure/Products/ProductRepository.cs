@@ -14,7 +14,7 @@ namespace Infrastructure.Products;
 
 internal sealed class ProductRepository : BaseRepository<Product, ProductId>, IProductRepository
 {
-    public ProductRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public ProductRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 
