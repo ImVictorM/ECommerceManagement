@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.ShippingMethods.Queries.GetShippingMethodById;
 using Application.ShippingMethods.Errors;
 using Application.UnitTests.ShippingMethods.Queries.TestUtils;

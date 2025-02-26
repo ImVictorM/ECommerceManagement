@@ -1,5 +1,6 @@
 using Application.Common.PaymentGateway;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.OrderAggregate.Events;
 using Domain.PaymentAggregate;
@@ -10,23 +11,13 @@ using MediatR;
 
 namespace Application.Payments.Events;
 
-/// <summary>
-/// Handles the <see cref="OrderCreated"/> event authorizing the order payment.
-/// </summary>
-public class OrderCreatedProcessPaymentHandler : INotificationHandler<OrderCreated>
+internal sealed class OrderCreatedProcessPaymentHandler : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentRepository _paymentRepository;
     private readonly IUserRepository _userRepository;
     private readonly IPaymentGateway _paymentGateway;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCreatedProcessPaymentHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="paymentGateway">The payment gateway.</param>
-    /// <param name="paymentRepository">The payment repository.</param>
-    /// <param name="userRepository">The user repository.</param>
     public OrderCreatedProcessPaymentHandler(
         IPaymentGateway paymentGateway,
         IUnitOfWork unitOfWork,

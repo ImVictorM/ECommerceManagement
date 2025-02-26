@@ -9,10 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
-/// <summary>
-/// Configures the tables for the <see cref="Coupon"/> aggregate.
-/// </summary>
-public class CouponConfigurations : EntityTypeConfigurationDependency<Coupon>
+internal sealed class CouponConfigurations : EntityTypeConfigurationDependency<Coupon>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Coupon> builder)

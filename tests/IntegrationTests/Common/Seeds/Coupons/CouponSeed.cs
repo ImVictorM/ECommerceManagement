@@ -61,7 +61,7 @@ public sealed class CouponSeed : DataSeed<CouponSeedType, Coupon>
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await context.Coupons.AddRangeAsync(ListAll());
     }

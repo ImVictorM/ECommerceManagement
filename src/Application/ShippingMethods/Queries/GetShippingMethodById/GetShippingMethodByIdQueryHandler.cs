@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.ShippingMethods.DTOs;
 using Application.ShippingMethods.Errors;
 
@@ -9,18 +9,11 @@ using MediatR;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethodById;
 
-/// <summary>
-/// Handles the <see cref="GetShippingMethodByIdQueryHandler"/> query.
-/// </summary>
-public sealed partial class GetShippingMethodByIdQueryHandler : IRequestHandler<GetShippingMethodByIdQuery, ShippingMethodResult>
+internal sealed partial class GetShippingMethodByIdQueryHandler
+    : IRequestHandler<GetShippingMethodByIdQuery, ShippingMethodResult>
 {
     private readonly IShippingMethodRepository _shippingMethodRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetShippingMethodByIdQueryHandler"/> class.
-    /// </summary>
-    /// <param name="shippingMethodRepository">The shipping method repository.</param>
-    /// <param name="logger">The logger.</param>
     public GetShippingMethodByIdQueryHandler(
         IShippingMethodRepository shippingMethodRepository,
         ILogger<GetShippingMethodByIdQueryHandler> logger

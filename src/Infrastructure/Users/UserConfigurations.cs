@@ -14,10 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Users;
 
-/// <summary>
-/// Configures the tables for the <see cref="User"/> aggregate.
-/// </summary>
-public sealed class UserConfigurations : EntityTypeConfigurationDependency<User>
+internal sealed class UserConfigurations : EntityTypeConfigurationDependency<User>
 {
     private sealed record UserData(
         UserId Id,
@@ -31,11 +28,6 @@ public sealed class UserConfigurations : EntityTypeConfigurationDependency<User>
 
     private readonly UserData _adminAccount;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UserConfigurations"/> class.
-    /// </summary>
-    /// <param name="adminOptions">The default admin account options.</param>
-    /// <param name="passwordHasher">The password hasher to hash the admin password.</param>
     public UserConfigurations(IOptions<AdminAccountSettings> adminOptions, IPasswordHasher passwordHasher)
     {
         var adminAccountSettings = adminOptions.Value;

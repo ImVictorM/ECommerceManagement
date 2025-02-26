@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Identity;
 using Application.Users.Queries.GetSelf;
 using Application.Users.Errors;

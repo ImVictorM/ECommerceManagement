@@ -9,24 +9,27 @@ using Domain.OrderAggregate.Services;
 using Domain.ProductAggregate.Services;
 using Domain.SaleAggregate.Services;
 
+using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
 
 /// <summary>
-/// Add the application layer required services to the DI pipeline.
+/// Provides extension methods for registering services from the Application layer
+/// into the dependency injection pipeline.
 /// </summary>
 public static class ServicesRegistration
 {
     /// <summary>
-    /// Add the required dependencies of the application layer.
+    /// Registers all services from the Application layer into the current
+    /// <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="services">The app services.</param>
+    /// <param name="services">
+    /// The <see cref="IServiceCollection"/> to which the Application services will be added.
+    /// </param>
     /// <returns>
-    /// The app services including the registration of the application layer
-    /// required services.
+    /// The same <see cref="IServiceCollection"/> instance with the Application services registered.
     /// </returns>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {

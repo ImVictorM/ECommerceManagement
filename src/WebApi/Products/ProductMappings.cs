@@ -9,15 +9,9 @@ using Mapster;
 
 namespace WebApi.Products;
 
-/// <summary>
-/// Configures the mappings between product objects.
-/// </summary>
-public class ProductMappings : IRegister
+internal sealed class ProductMappings : IRegister
 {
-    /// <summary>
-    /// Register mapping configurations related to products.
-    /// </summary>
-    /// <param name="config">The global configuration object.</param>
+    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<CreateProductRequest, CreateProductCommand>()

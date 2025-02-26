@@ -4,15 +4,15 @@ using Application.Authentication.Queries.LoginCarrier;
 
 using Contracts.Authentication;
 
-using Carter;
+using Microsoft.AspNetCore.Http.HttpResults;
 using MapsterMapper;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Carter;
 
 namespace WebApi.Authentication;
 
 /// <summary>
-/// Wraps the routes related to authentication.
+/// Provides endpoints for the user authentication features.
 /// </summary>
 public sealed class AuthenticationEndpoints : ICarterModule
 {
@@ -39,7 +39,7 @@ public sealed class AuthenticationEndpoints : ICarterModule
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Login User",
-                Description = "Allows a user to log in using their email and password. Inactive users cannot log in"
+                Description = "Allows a user to log in using their email and password. Inactive users cannot log in."
             });
 
         authenticationGroup

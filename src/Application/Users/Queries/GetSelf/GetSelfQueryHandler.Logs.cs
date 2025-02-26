@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Queries.GetSelf;
 
-public sealed partial class GetSelfQueryHandler
+internal sealed partial class GetSelfQueryHandler
 {
     private readonly ILogger<GetSelfQueryHandler> _logger;
 

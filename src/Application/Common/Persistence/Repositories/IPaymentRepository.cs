@@ -1,7 +1,7 @@
 using Domain.PaymentAggregate;
 using Domain.PaymentAggregate.ValueObjects;
 
-namespace Application.Common.Persistence;
+namespace Application.Common.Persistence.Repositories;
 
 /// <summary>
 /// Defines the contract for payment persistence operations.

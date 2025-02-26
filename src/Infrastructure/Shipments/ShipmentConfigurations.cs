@@ -16,10 +16,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Shipments;
 
-/// <summary>
-/// Configures the tables for the <see cref="Shipment"/> aggregate.
-/// </summary>
-public sealed class ShipmentConfigurations : EntityTypeConfigurationDependency<Shipment>
+internal sealed class ShipmentConfigurations : EntityTypeConfigurationDependency<Shipment>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Shipment> builder)

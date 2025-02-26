@@ -7,10 +7,7 @@ using Mapster;
 
 namespace WebApi.Users;
 
-/// <summary>
-/// Configures the mappings between user objects.
-/// </summary>
-public class UserMappings : IRegister
+internal sealed class UserMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

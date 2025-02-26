@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Authentication.Queries.LoginUser;
 
-public partial class LoginUserQueryHandler
+internal sealed partial class LoginUserQueryHandler
 {
     private readonly ILogger<LoginUserQueryHandler> _logger;
 

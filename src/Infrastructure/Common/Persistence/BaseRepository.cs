@@ -1,39 +1,30 @@
-using Application.Common.Persistence;
-
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
+
+using Application.Common.Persistence.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Common.Persistence;
 
-/// <summary>
-/// Provides a base implementation of a generic repository for aggregate interactions.
-/// </summary>
-/// <typeparam name="TEntity">The aggregate type.</typeparam>
-/// <typeparam name="TEntityId">The aggregate identifier type.</typeparam>
-public abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEntity, TEntityId>
+internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEntity, TEntityId>
     where TEntity : AggregateRoot<TEntityId>
     where TEntityId : notnull
 {
-    private readonly ECommerceDbContext _context;
+    private readonly IECommerceDbContext _context;
     private readonly DbSet<TEntity> _dbSet;
 
     /// <summary>
     /// Gets the database context used for data operations.
     /// </summary>
-    protected ECommerceDbContext Context => _context;
+    protected IECommerceDbContext Context => _context;
     /// <summary>
     /// Gets the database set representing the aggregate collection.
     /// </summary>
     protected DbSet<TEntity> DbSet => _dbSet;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="BaseRepository{TEntity, TEntityId}"/> class.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    protected BaseRepository(ECommerceDbContext dbContext)
+    protected BaseRepository(IECommerceDbContext dbContext)
     {
         _context = dbContext;
         _dbSet = _context.Set<TEntity>();

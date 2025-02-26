@@ -1,5 +1,5 @@
 using Application.Common.PaymentGateway;
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Orders.DTOs;
 using Application.Orders.Errors;
 
@@ -10,20 +10,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Orders.Queries.GetOrderById;
 
-/// <summary>
-/// Query handler for the <see cref="GetOrderByIdQuery"/> query.
-/// </summary>
-public sealed partial class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDetailedResult>
+internal sealed partial class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDetailedResult>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IPaymentGateway _paymentGateway;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandler"/> class.
-    /// </summary>
-    /// <param name="orderRepository">The order repository.</param>
-    /// <param name="paymentGateway">The payment gateway.</param>
-    /// <param name="logger">The logger.</param>
     public GetOrderByIdQueryHandler(
         IOrderRepository orderRepository,
         IPaymentGateway paymentGateway,

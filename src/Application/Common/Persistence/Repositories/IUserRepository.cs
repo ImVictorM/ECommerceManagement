@@ -1,7 +1,7 @@
 using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
-namespace Application.Common.Persistence;
+namespace Application.Common.Persistence.Repositories;
 
 /// <summary>
 /// Defines the contract for user persistence operations.

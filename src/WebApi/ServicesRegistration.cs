@@ -1,24 +1,29 @@
-using MapsterMapper;
-using Carter;
-using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using MapsterMapper;
+using Mapster;
+using Carter;
 
 namespace WebApi;
 
 /// <summary>
-/// Add the presentation layer required services to the DI pipeline.
+/// Provides extension methods for registering services from the Presentation (WebApi) layer
+/// into the dependency injection pipeline.
 /// </summary>
 public static class ServicesRegistration
 {
     /// <summary>
-    /// Add the required dependencies of the presentation layer.
+    /// Registers all services from the Presentation layer into the current
+    /// <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="services">The app services.</param>
-    /// <param name="configuration">The app configuration.</param>
+    /// <param name="services">
+    /// The <see cref="IServiceCollection"/> to which the Presentation services will be added.
+    /// </param>
+    /// <param name="configuration">
+    /// The <see cref="IConfigurationManager"/> that provides access to the application's configuration settings.
+    /// </param>
     /// <returns>
-    /// The app services including the registration of the presentation layer
-    /// required services.
+    /// The same <see cref="IServiceCollection"/> instance with the Presentation services registered.
     /// </returns>
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfigurationManager configuration)
     {

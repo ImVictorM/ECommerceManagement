@@ -4,14 +4,8 @@ using FluentValidation;
 
 namespace Application.Authentication.Commands.RegisterCustomer;
 
-/// <summary>
-/// Validates the <see cref="RegisterCustomerCommand"/> inputs.
-/// </summary>
-public class RegisterCustomerCommandValidator : AbstractValidator<RegisterCustomerCommand>
+internal class RegisterCustomerCommandValidator : AbstractValidator<RegisterCustomerCommand>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterCustomerCommandValidator"/> class.
-    /// </summary>
     public RegisterCustomerCommandValidator()
     {
         RuleFor(x => x.Name).IsValidUserName();

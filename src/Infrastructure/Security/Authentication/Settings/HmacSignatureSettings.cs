@@ -1,7 +1,7 @@
 namespace Infrastructure.Security.Authentication.Settings;
 
 /// <summary>
-/// Maps the signature configuration options.
+/// Maps the HMAC signature configuration options.
 /// </summary>
 public sealed class HmacSignatureSettings
 {

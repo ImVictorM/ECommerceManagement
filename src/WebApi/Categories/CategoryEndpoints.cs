@@ -16,9 +16,9 @@ using Carter;
 namespace WebApi.Categories;
 
 /// <summary>
-/// Defines the category-related endpoints.
+/// Provides endpoints for the category features.
 /// </summary>
-public class CategoryEndpoints : ICarterModule
+public sealed class CategoryEndpoints : ICarterModule
 {
     private const string BaseEndpoint = "/products/categories";
 

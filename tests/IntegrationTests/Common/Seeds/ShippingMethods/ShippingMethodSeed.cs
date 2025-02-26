@@ -11,7 +11,7 @@ namespace IntegrationTests.Common.Seeds.ShippingMethods;
 /// <summary>
 /// Provides seed data for shipping methods in the database.
 /// </summary>
-public sealed class ShippingMethodSeed : DataSeed<ShippingMethodSeedType, ShippingMethod>
+internal sealed class ShippingMethodSeed : DataSeed<ShippingMethodSeedType, ShippingMethod>
 {
     /// <inheritdoc/>
     public override int Order => 10;
@@ -42,7 +42,7 @@ public sealed class ShippingMethodSeed : DataSeed<ShippingMethodSeedType, Shippi
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await context.ShippingMethods.AddRangeAsync(ListAll());
     }

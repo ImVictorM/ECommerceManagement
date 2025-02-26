@@ -11,10 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
-/// <summary>
-/// Configures the <see cref="CategoryRestriction"/> restriction tables.
-/// </summary>
-public class CategoryRestrictionConfigurations : EntityTypeConfigurationDependency<CategoryRestriction>
+internal sealed class CategoryRestrictionConfigurations : EntityTypeConfigurationDependency<CategoryRestriction>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<CategoryRestriction> builder)

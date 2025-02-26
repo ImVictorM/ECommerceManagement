@@ -1,5 +1,6 @@
 using Application.UnitTests.Categories.Commands.TestUtils;
 using Application.Categories.Commands.UpdateCategory;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Categories.Errors;
 

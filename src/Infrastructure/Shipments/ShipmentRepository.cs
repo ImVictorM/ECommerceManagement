@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate;
@@ -8,16 +8,9 @@ using Infrastructure.Common.Persistence;
 
 namespace Infrastructure.Shipments;
 
-/// <summary>
-/// Defines the implementation for shipment persistence operations.
-/// </summary>
-public sealed class ShipmentRepository : BaseRepository<Shipment, ShipmentId>, IShipmentRepository
+internal sealed class ShipmentRepository : BaseRepository<Shipment, ShipmentId>, IShipmentRepository
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ShipmentRepository"/> class.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    public ShipmentRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public ShipmentRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 

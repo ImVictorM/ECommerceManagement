@@ -4,10 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Common.Persistence.Configurations;
 
-/// <summary>
-/// Configures the shared address owned entity properties.
-/// </summary>
-public static class AddressNavigationBuilderConfigurations
+internal static class AddressNavigationBuilderConfigurations
 {
     /// <inheritdoc/>
     public static void Configure<T>(OwnedNavigationBuilder<T, Address> builder) where T : class

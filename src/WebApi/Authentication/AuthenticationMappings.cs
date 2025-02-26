@@ -8,10 +8,7 @@ using Mapster;
 
 namespace WebApi.Authentication;
 
-/// <summary>
-/// Configures the mappings between authentication objects.
-/// </summary>
-public class AuthenticationMappings : IRegister
+internal sealed class AuthenticationMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

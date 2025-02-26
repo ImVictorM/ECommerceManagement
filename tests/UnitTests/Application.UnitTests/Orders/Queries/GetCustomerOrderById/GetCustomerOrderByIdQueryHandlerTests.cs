@@ -1,5 +1,5 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.PaymentGateway;
-using Application.Common.Persistence;
 using Application.Orders.DTOs;
 using Application.Orders.Errors;
 using Application.Orders.Queries.GetCustomerOrderById;

@@ -94,7 +94,7 @@ public sealed class OrderSeed : AsyncDataSeed<OrderSeedType, Order>
     }
 
     /// <inheritdoc/>
-    public override async Task SeedAsync(ECommerceDbContext context)
+    public override async Task SeedAsync(IECommerceDbContext context)
     {
         await InitializeAsync();
 

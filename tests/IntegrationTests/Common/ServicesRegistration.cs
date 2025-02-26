@@ -4,6 +4,9 @@ using Infrastructure.Common.Persistence;
 using Infrastructure.Security.Authentication;
 using Infrastructure.Security.Authentication.Settings;
 
+using SharedKernel.Interfaces;
+using SharedKernel.Services;
+
 using IntegrationTests.Common.Requests.Abstracts;
 using IntegrationTests.Common.Requests;
 using IntegrationTests.Common.Seeds;
@@ -20,25 +23,10 @@ using System.Reflection;
 
 namespace IntegrationTests.Common;
 
-/// <summary>
-/// Register the integration test required services.
-/// </summary>
-public static class ServicesRegistration
+internal static class ServicesRegistration
 {
     private static Assembly _assembly => typeof(ServicesRegistration).Assembly;
 
-    /// <summary>
-    /// Adds the required dependencies for the integration tests.
-    /// </summary>
-    /// <typeparam name="TStartup">The entry point.</typeparam>
-    /// <param name="services">The current services.</param>
-    /// <param name="configurations">The configurations.</param>
-    /// <param name="connection">The database connection.</param>
-    /// <param name="appFactory">The app factory.</param>
-    /// <returns>
-    /// The services including the registration of the integration test
-    /// required services.
-    /// </returns>
     public static IServiceCollection AddTestServices<TStartup>(
         this IServiceCollection services,
         IConfiguration configurations,
@@ -55,6 +43,7 @@ public static class ServicesRegistration
             .AddCredentialsProviders()
             .AddHmacSignatureProvider(configurations);
 
+        services.AddTransient<IDiscountService, DiscountService>();
         services.AddTransient<IRequestService, RequestService>();
 
         return services;
@@ -64,7 +53,7 @@ public static class ServicesRegistration
     {
         services.RemoveAll(typeof(DbContextOptions<ECommerceDbContext>));
 
-        services.AddDbContext<ECommerceDbContext>(options =>
+        services.AddDbContext<IECommerceDbContext, ECommerceDbContext>(options =>
         {
             options.UseNpgsql(connection);
         });

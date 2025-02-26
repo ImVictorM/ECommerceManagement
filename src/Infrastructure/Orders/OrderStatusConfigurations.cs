@@ -7,10 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Orders;
 
-/// <summary>
-/// Configures the <see cref="OrderStatus"/> table.
-/// </summary>
-public sealed class OrderStatusConfigurations : EntityTypeConfigurationDependency<OrderStatus>
+internal sealed class OrderStatusConfigurations : EntityTypeConfigurationDependency<OrderStatus>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<OrderStatus> builder)

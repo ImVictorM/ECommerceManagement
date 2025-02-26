@@ -14,9 +14,9 @@ using Carter;
 namespace WebApi.Payments;
 
 /// <summary>
-/// Endpoints related to payment webhooks.
+/// Provides endpoints for payment webhook features.
 /// </summary>
-public class PaymentWebhookEndpoints : ICarterModule
+public sealed class PaymentWebhookEndpoints : ICarterModule
 {
     private const string BaseEndpoint = "webhooks/payments";
 

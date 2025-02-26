@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.ShippingMethods.Commands.UpdateShippingMethod;
 using Application.ShippingMethods.Errors;

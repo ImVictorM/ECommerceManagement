@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Commands.UpdateUser;
 
-public partial class UpdateUserCommandHandler
+internal sealed partial class UpdateUserCommandHandler
 {
     private readonly ILogger<UpdateUserCommandHandler> _logger;
 

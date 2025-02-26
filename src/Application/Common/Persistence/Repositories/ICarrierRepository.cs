@@ -3,7 +3,7 @@ using Domain.CarrierAggregate.ValueObjects;
 
 using SharedKernel.ValueObjects;
 
-namespace Application.Common.Persistence;
+namespace Application.Common.Persistence.Repositories;
 
 /// <summary>
 /// Defines the contract for carrier persistence operations.

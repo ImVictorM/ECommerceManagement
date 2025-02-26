@@ -8,10 +8,7 @@ using Mapster;
 
 namespace WebApi.Categories;
 
-/// <summary>
-/// Configures the mappings between category objects.
-/// </summary>
-public class CategoryMappings : IRegister
+internal sealed class CategoryMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

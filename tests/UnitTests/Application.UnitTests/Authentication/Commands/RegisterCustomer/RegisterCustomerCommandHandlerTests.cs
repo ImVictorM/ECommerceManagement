@@ -1,5 +1,6 @@
 using Application.Authentication.Commands.RegisterCustomer;
 using Application.Common.Security.Authentication;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Common.Errors;

@@ -2,14 +2,8 @@ using FluentValidation;
 
 namespace Application.Products.Commands.UpdateProduct;
 
-/// <summary>
-/// Validates the <see cref="UpdateProductCommand"/> command.
-/// </summary>
-public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
+internal class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateProductCommandValidator"/> class.
-    /// </summary>
     public UpdateProductCommandValidator()
     {
         RuleFor(x => x.Name).NotEmpty();

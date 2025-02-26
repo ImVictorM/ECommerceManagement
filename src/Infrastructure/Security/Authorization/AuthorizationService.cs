@@ -6,19 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Security.Authorization;
 
-/// <summary>
-/// Represents an authorization service implementation.
-/// </summary>
-public class AuthorizationService : IAuthorizationService
+internal sealed class AuthorizationService : IAuthorizationService
 {
     private readonly IIdentityProvider _identityProvider;
     private readonly IServiceProvider _serviceProvider;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="AuthorizationService"/> class.
-    /// </summary>
-    /// <param name="identityProvider">The identity provider.</param>
-    /// <param name="serviceProvider">The service provider.</param>
     public AuthorizationService(IIdentityProvider identityProvider, IServiceProvider serviceProvider)
     {
         _identityProvider = identityProvider;

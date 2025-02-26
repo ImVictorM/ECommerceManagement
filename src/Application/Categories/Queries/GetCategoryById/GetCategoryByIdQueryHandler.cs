@@ -1,6 +1,6 @@
+using Application.Common.Persistence.Repositories;
 using Application.Categories.DTOs;
 using Application.Categories.Errors;
-using Application.Common.Persistence;
 
 using Domain.CategoryAggregate.ValueObjects;
 
@@ -9,19 +9,15 @@ using MediatR;
 
 namespace Application.Categories.Queries.GetCategoryById;
 
-/// <summary>
-/// Handles the <see cref="GetCategoryByIdQuery"/> query.
-/// </summary>
-public partial class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryResult>
+internal sealed partial class GetCategoryByIdQueryHandler
+    : IRequestHandler<GetCategoryByIdQuery, CategoryResult>
 {
     private readonly ICategoryRepository _categoryRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetCategoryByIdQueryHandler"/> class.
-    /// </summary>
-    /// <param name="categoryRepository">The category repository.</param>
-    /// <param name="logger">The logger.</param>
-    public GetCategoryByIdQueryHandler(ICategoryRepository categoryRepository, ILogger<GetCategoryByIdQueryHandler> logger)
+    public GetCategoryByIdQueryHandler(
+        ICategoryRepository categoryRepository,
+        ILogger<GetCategoryByIdQueryHandler> logger
+    )
     {
         _categoryRepository = categoryRepository;
         _logger = logger;

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Queries.GetUserById;
 
-public partial class GetUserByIdQueryHandler
+internal sealed partial class GetUserByIdQueryHandler
 {
     private readonly ILogger<GetUserByIdQueryHandler> _logger;
 

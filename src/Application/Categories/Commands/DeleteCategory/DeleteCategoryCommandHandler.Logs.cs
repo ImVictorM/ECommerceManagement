@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Categories.Commands.DeleteCategory;
 
-public partial class DeleteCategoryCommandHandler
+internal sealed partial class DeleteCategoryCommandHandler
 {
     private readonly ILogger<DeleteCategoryCommandHandler> _logger;
 

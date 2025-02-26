@@ -1,6 +1,6 @@
+using Application.Common.Persistence.Repositories;
 using Application.UnitTests.Users.Queries.TestUtils;
 using Application.Users.Queries.GetAllUsers;
-using Application.Common.Persistence;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;

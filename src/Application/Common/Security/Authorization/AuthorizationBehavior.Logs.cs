@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Common.Security.Authorization;
 
-public partial class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+internal sealed partial class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequestWithAuthorization<TResponse>
 {
     private readonly ILogger<AuthorizationBehavior<TRequest, TResponse>> _logger;

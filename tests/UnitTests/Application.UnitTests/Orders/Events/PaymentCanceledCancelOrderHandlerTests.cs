@@ -1,5 +1,6 @@
 using Application.Orders.Events;
 using Application.UnitTests.TestUtils.Events.Payments;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 
 using Domain.OrderAggregate.Enumerations;

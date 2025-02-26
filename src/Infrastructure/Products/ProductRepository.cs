@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Products.DTOs;
 
 using Domain.ProductAggregate;
@@ -12,16 +12,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Products;
 
-/// <summary>
-/// Defines the implementation for product persistence operations.
-/// </summary>
-public sealed class ProductRepository : BaseRepository<Product, ProductId>, IProductRepository
+internal sealed class ProductRepository : BaseRepository<Product, ProductId>, IProductRepository
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ProductRepository"/> class.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    public ProductRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public ProductRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 

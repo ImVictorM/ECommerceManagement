@@ -19,7 +19,8 @@ public sealed class AuthenticationFailedException : BaseException
     {
     }
 
-    internal AuthenticationFailedException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    internal AuthenticationFailedException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }

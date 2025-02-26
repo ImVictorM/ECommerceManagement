@@ -1,6 +1,6 @@
+using Application.Common.Persistence.Repositories;
 using Application.Categories.Queries.GetCategories;
 using Application.UnitTests.Categories.Queries.TestUtils;
-using Application.Common.Persistence;
 
 using Domain.CategoryAggregate;
 using Domain.UnitTests.TestUtils;

@@ -13,7 +13,7 @@ using Carter;
 namespace WebApi.Orders;
 
 /// <summary>
-/// Defines all endpoints related to user orders.
+/// Provides endpoints for the customer order features.
 /// </summary>
 public sealed class CustomerOrderEndpoints : ICarterModule
 {

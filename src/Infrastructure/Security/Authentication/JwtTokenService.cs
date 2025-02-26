@@ -11,17 +11,10 @@ using System.Text;
 
 namespace Infrastructure.Security.Authentication;
 
-/// <summary>
-/// Implementation of the token service.
-/// </summary>
-public class JwtTokenService : IJwtTokenService
+internal sealed class JwtTokenService : IJwtTokenService
 {
     private readonly JwtSettings _jwtSettings;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="JwtTokenService"/> class.
-    /// </summary>
-    /// <param name="jwtOptions">The jwt settings options.</param>
     public JwtTokenService(IOptions<JwtSettings> jwtOptions)
     {
         _jwtSettings = jwtOptions.Value;

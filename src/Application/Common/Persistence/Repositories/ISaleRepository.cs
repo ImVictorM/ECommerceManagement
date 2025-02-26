@@ -1,7 +1,7 @@
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
 
-namespace Application.Common.Persistence;
+namespace Application.Common.Persistence.Repositories;
 
 /// <summary>
 /// Defines the contract for sale persistence operations.

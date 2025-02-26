@@ -1,5 +1,5 @@
+using Application.Common.Persistence.Repositories;
 using Application.Orders.DTOs;
-using Application.Common.Persistence;
 
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Specifications;
@@ -12,19 +12,10 @@ using MediatR;
 
 namespace Application.Orders.Queries.GetCustomerOrders;
 
-/// <summary>
-/// Handles the <see cref="GetCustomerOrdersQuery"/> query by
-/// fetching all orders of a customer.
-/// </summary>
-public sealed partial class GetCustomerOrdersQueryHandler : IRequestHandler<GetCustomerOrdersQuery, IEnumerable<OrderResult>>
+internal sealed partial class GetCustomerOrdersQueryHandler : IRequestHandler<GetCustomerOrdersQuery, IEnumerable<OrderResult>>
 {
     private readonly IOrderRepository _orderRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetCustomerOrdersQueryHandler"/> class.
-    /// </summary>
-    /// <param name="orderRepository">The order repository.</param>
-    /// <param name="logger">The logger.</param>
     public GetCustomerOrdersQueryHandler(IOrderRepository orderRepository, ILogger<GetCustomerOrdersQueryHandler> logger)
     {
         _orderRepository = orderRepository;

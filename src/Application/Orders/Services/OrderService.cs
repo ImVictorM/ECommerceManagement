@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Orders.Errors;
 
 using Domain.CouponAggregate.ValueObjects;
@@ -8,39 +8,31 @@ using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.Services;
 using Domain.ShippingMethodAggregate.ValueObjects;
 
-using SharedKernel.Services;
+using SharedKernel.Interfaces;
 
 namespace Application.Orders.Services;
 
-/// <summary>
-/// Represents services related to order products.
-/// </summary>
-public class OrderService : IOrderService
+internal sealed class OrderService : IOrderService
 {
     private readonly IProductService _productService;
     private readonly IShippingMethodRepository _shippingMethodRepository;
     private readonly ICouponRepository _couponRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IDiscountService _discountService;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderService"/> class.
-    /// </summary>
-    /// <param name="productService">The product service.</param>
-    /// <param name="couponRepository">The coupon repository.</param>
-    /// <param name="productRepository">The product repository.</param>
-    /// <param name="shippingMethodRepository">The shipping method repository.</param>
     public OrderService(
         IProductService productService,
         IShippingMethodRepository shippingMethodRepository,
         ICouponRepository couponRepository,
-        IProductRepository productRepository
-
+        IProductRepository productRepository,
+        IDiscountService discountService
     )
     {
         _productService = productService;
         _shippingMethodRepository = shippingMethodRepository;
         _couponRepository = couponRepository;
         _productRepository = productRepository;
+        _discountService = discountService;
     }
 
     /// <inheritdoc/>
@@ -158,6 +150,6 @@ public class OrderService : IOrderService
 
         var couponDiscounts = coupons.Select(c => c.Discount);
 
-        return DiscountService.ApplyDiscounts(total, [.. couponDiscounts]);
+        return _discountService.CalculateDiscountedPrice(total, couponDiscounts);
     }
 }

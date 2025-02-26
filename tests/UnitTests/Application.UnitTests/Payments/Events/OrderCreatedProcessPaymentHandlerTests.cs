@@ -1,5 +1,6 @@
 using Application.Payments.Events;
 using Application.UnitTests.TestUtils.Events.Orders;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Common.PaymentGateway;
 using Application.UnitTests.TestUtils.PaymentGateway;

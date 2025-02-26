@@ -1,5 +1,4 @@
-using Application.Common.Persistence;
-
+using Application.Common.Persistence.Repositories;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.Services;
@@ -7,17 +6,10 @@ using Domain.SaleAggregate.ValueObjects;
 
 namespace Application.Sales.Services;
 
-/// <summary>
-/// Services for sales.
-/// </summary>
-public class SaleService : ISaleService
+internal sealed class SaleService : ISaleService
 {
     private readonly ISaleRepository _saleRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="SaleService"/> class.
-    /// </summary>
-    /// <param name="saleRepository">The sale repository.</param>
     public SaleService(ISaleRepository saleRepository)
     {
         _saleRepository = saleRepository;

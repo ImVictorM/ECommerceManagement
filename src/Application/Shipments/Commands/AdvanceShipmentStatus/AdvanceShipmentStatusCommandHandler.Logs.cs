@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Shipments.Commands.AdvanceShipmentStatus;
 
-public sealed partial class AdvanceShipmentStatusCommandHandler
+internal sealed partial class AdvanceShipmentStatusCommandHandler
 {
     private readonly ILogger<AdvanceShipmentStatusCommandHandler> _logger;
 

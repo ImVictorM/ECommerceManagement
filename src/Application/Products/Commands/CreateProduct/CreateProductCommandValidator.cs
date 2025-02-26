@@ -2,14 +2,8 @@ using FluentValidation;
 
 namespace Application.Products.Commands.CreateProduct;
 
-/// <summary>
-/// Validates the fields for the <see cref="CreateProductCommand"/> command.
-/// </summary>
-public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+internal class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="CreateProductCommandValidator"/> class.
-    /// </summary>
     public CreateProductCommandValidator()
     {
         RuleFor(x => x.Name).NotEmpty();

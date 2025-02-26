@@ -10,4 +10,5 @@ namespace Application.Users.Commands.DeactivateUser;
 /// </summary>
 /// <param name="UserId">The id of the user to be deactivated.</param>
 [Authorize(policyType: typeof(RestrictedDeactivationPolicy<DeactivateUserCommand>))]
-public record DeactivateUserCommand(string UserId) : IRequestWithAuthorization<Unit>, IUserSpecificResource;
+public record DeactivateUserCommand(string UserId)
+    : IRequestWithAuthorization<Unit>, IUserSpecificResource;

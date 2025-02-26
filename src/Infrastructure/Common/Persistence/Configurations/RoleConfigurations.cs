@@ -7,10 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Common.Persistence.Configurations;
 
-/// <summary>
-///  Configures the <see cref="Role"/> table.
-/// </summary>
-public sealed class RoleConfigurations : EntityTypeConfigurationDependency<Role>
+internal sealed class RoleConfigurations : EntityTypeConfigurationDependency<Role>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Role> builder)

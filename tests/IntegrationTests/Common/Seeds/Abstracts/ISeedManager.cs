@@ -32,5 +32,5 @@ public interface ISeedManager
     /// </summary>
     /// <param name="dbContext">The database context to seed.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task SeedAsync(ECommerceDbContext dbContext);
+    Task SeedAsync(IECommerceDbContext dbContext);
 }

@@ -8,10 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.ShippingMethods;
 
-/// <summary>
-/// Configures the tables for the <see cref="ShippingMethod"/> aggregate.
-/// </summary>
-public class ShippingMethodConfigurations : EntityTypeConfigurationDependency<ShippingMethod>
+internal sealed class ShippingMethodConfigurations : EntityTypeConfigurationDependency<ShippingMethod>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<ShippingMethod> builder)

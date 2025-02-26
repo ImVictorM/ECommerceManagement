@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Authentication.Queries.LoginCarrier;
 
-public sealed partial class LoginCarrierQueryHandler
+internal sealed partial class LoginCarrierQueryHandler
 {
     private readonly ILogger<LoginCarrierQueryHandler> _logger;
 

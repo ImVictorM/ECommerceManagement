@@ -59,5 +59,5 @@ public abstract class DataSeed<TEnum, TEntity> : IDataSeed<TEnum, TEntity>
     }
 
     /// <inheritdoc/>
-    public abstract Task SeedAsync(ECommerceDbContext context);
+    public abstract Task SeedAsync(IECommerceDbContext context);
 }

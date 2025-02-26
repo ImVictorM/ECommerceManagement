@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Payments.Commands.UpdatePaymentStatus;
 
-public sealed partial class UpdatePaymentStatusCommandHandler
+internal sealed partial class UpdatePaymentStatusCommandHandler
 {
     private readonly ILogger<UpdatePaymentStatusCommandHandler> _logger;
 

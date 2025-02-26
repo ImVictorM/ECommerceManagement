@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Commands.DeactivateUser;
 
-public partial class DeactivateUserCommandHandler
+internal sealed partial class DeactivateUserCommandHandler
 {
     private readonly ILogger<DeactivateUserCommandHandler> _logger;
 

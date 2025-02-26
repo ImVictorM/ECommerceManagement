@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Users.DTOs;
 using Application.Users.Errors;
 
@@ -9,19 +9,15 @@ using MediatR;
 
 namespace Application.Users.Queries.GetUserById;
 
-/// <summary>
-/// Query handler for the <see cref="GetUserByIdQuery"/> query.
-/// </summary>
-public sealed partial class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserResult>
+internal sealed partial class GetUserByIdQueryHandler
+    : IRequestHandler<GetUserByIdQuery, UserResult>
 {
     private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetUserByIdQueryHandler"/> class.
-    /// </summary>
-    /// <param name="userRepository">The user repository.</param>
-    /// <param name="logger">The logger.</param>
-    public GetUserByIdQueryHandler(IUserRepository userRepository, ILogger<GetUserByIdQueryHandler> logger)
+    public GetUserByIdQueryHandler(
+        IUserRepository userRepository,
+        ILogger<GetUserByIdQueryHandler> logger
+    )
     {
         _userRepository = userRepository;
         _logger = logger;

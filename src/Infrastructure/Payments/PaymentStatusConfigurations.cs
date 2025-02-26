@@ -7,10 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Payments;
 
-/// <summary>
-/// Configures the <see cref="PaymentStatus"/> table.
-/// </summary>
-public class PaymentStatusConfigurations : EntityTypeConfigurationDependency<PaymentStatus>
+internal sealed class PaymentStatusConfigurations : EntityTypeConfigurationDependency<PaymentStatus>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<PaymentStatus> builder)

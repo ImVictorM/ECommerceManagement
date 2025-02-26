@@ -3,7 +3,7 @@ using SharedKernel.Models;
 
 using System.Linq.Expressions;
 
-namespace Application.Common.Persistence;
+namespace Application.Common.Persistence.Repositories;
 
 /// <summary>
 /// Represents a base repository to handle aggregate operations.

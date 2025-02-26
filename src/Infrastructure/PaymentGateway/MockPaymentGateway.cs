@@ -6,10 +6,7 @@ using SharedKernel.Models;
 
 namespace Infrastructure.PaymentGateway;
 
-/// <summary>
-/// Represents a simple mocked implementation of a payment gateway.
-/// </summary>
-public class MockPaymentGateway : IPaymentGateway
+internal sealed class MockPaymentGateway : IPaymentGateway
 {
 
     /// <inheritdoc/>

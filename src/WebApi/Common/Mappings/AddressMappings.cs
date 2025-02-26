@@ -6,10 +6,7 @@ using Mapster;
 
 namespace WebApi.Common.Mappings;
 
-/// <summary>
-/// Configures the mappings between address objects.
-/// </summary>
-public class AddressMappings : IRegister
+internal sealed class AddressMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

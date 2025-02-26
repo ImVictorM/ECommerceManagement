@@ -1,4 +1,5 @@
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Products.Commands.UpdateProduct;
 using Application.Products.Errors;
 using Application.UnitTests.Products.Commands.TestUtils;

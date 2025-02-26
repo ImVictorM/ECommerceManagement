@@ -2,26 +2,19 @@ using Domain.UserAggregate.Specification;
 using Domain.UserAggregate.ValueObjects;
 
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
 
 namespace Application.Users.Commands.DeactivateUser;
 
-/// <summary>
-/// Handles user deactivation.
-/// </summary>
-public sealed partial class DeactivateUserCommandHandler : IRequestHandler<DeactivateUserCommand, Unit>
+internal sealed partial class DeactivateUserCommandHandler
+    : IRequestHandler<DeactivateUserCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="DeactivateUserCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="userRepository">The user repository.</param>
-    /// <param name="logger">The logger.</param>
     public DeactivateUserCommandHandler(
         IUnitOfWork unitOfWork,
         IUserRepository userRepository,

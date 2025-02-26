@@ -2,7 +2,7 @@ using Domain.UserAggregate.Specification;
 
 using Application.Authentication.DTOs;
 using Application.Authentication.Errors;
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authentication;
 using Application.Common.Security.Identity;
 
@@ -13,23 +13,13 @@ using MediatR;
 
 namespace Application.Authentication.Queries.LoginUser;
 
-/// <summary>
-/// Query handler for the <see cref="LoginUserQuery"/> query.
-/// Handles user authentication.
-/// </summary>
-public partial class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, AuthenticationResult>
+internal sealed partial class LoginUserQueryHandler
+    : IRequestHandler<LoginUserQuery, AuthenticationResult>
 {
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LoginUserQueryHandler"/> class.
-    /// </summary>
-    /// <param name="jwtTokenService">The token service.</param>
-    /// <param name="passwordHasher">The password hash service.</param>
-    /// <param name="userRepository">The user repository.</param>
-    /// <param name="logger">The query handler logger.</param>
     public LoginUserQueryHandler(
         IPasswordHasher passwordHasher,
         IJwtTokenService jwtTokenService,

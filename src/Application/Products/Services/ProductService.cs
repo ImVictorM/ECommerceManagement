@@ -4,24 +4,22 @@ using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
 
-using SharedKernel.Services;
+using SharedKernel.Interfaces;
 
 namespace Application.Products.Services;
 
-/// <summary>
-/// Product services.
-/// </summary>
-public class ProductService : IProductService
+internal sealed class ProductService : IProductService
 {
     private readonly ISaleService _saleService;
+    private readonly IDiscountService _discountService;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ProductService"/> class.
-    /// </summary>
-    /// <param name="saleService">The sale service.</param>
-    public ProductService(ISaleService saleService)
+    public ProductService(
+        ISaleService saleService,
+        IDiscountService discountService
+    )
     {
         _saleService = saleService;
+        _discountService = discountService;
     }
 
     /// <inheritdoc/>
@@ -50,7 +48,7 @@ public class ProductService : IProductService
 
         return products.ToDictionary(
             p => p.Id,
-            p => DiscountService.ApplyDiscounts(
+            p => _discountService.CalculateDiscountedPrice(
                 p.BasePrice,
                 productSales[p.Id]
                     .Where(s => s.IsValidToDate())

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Orders.Commands.PlaceOrder;
 
-public sealed partial class PlaceOrderCommandHandler
+internal sealed partial class PlaceOrderCommandHandler
 {
     private readonly ILogger<PlaceOrderCommandHandler> _logger;
 

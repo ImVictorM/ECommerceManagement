@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.ShippingMethods.DTOs;
 
 using Microsoft.Extensions.Logging;
@@ -6,18 +6,11 @@ using MediatR;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethods;
 
-/// <summary>
-/// Handles the <see cref="GetShippingMethodsQuery"/> query.
-/// </summary>
-public sealed partial class GetShippingMethodsQueryHandler : IRequestHandler<GetShippingMethodsQuery, IEnumerable<ShippingMethodResult>>
+internal sealed partial class GetShippingMethodsQueryHandler
+    : IRequestHandler<GetShippingMethodsQuery, IEnumerable<ShippingMethodResult>>
 {
     private readonly IShippingMethodRepository _shippingMethodRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetShippingMethodsQueryHandler"/> class.
-    /// </summary>
-    /// <param name="shippingMethodRepository">The shipping method repository.</param>
-    /// <param name="logger">The logger.</param>
     public GetShippingMethodsQueryHandler(
         IShippingMethodRepository shippingMethodRepository,
         ILogger<GetShippingMethodsQueryHandler> logger

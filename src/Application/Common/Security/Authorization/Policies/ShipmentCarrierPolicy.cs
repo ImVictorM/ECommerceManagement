@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authorization.Requests;
 using Application.Common.Security.Identity;
 
@@ -7,20 +7,12 @@ using Domain.ShipmentAggregate.ValueObjects;
 
 namespace Application.Common.Security.Authorization.Policies;
 
-/// <summary>
-/// Represents a policy that checks if the current user is the shipment carrier.
-/// </summary>
-public sealed class ShipmentCarrierPolicy<TRequest> : IPolicy<TRequest>
+internal sealed class ShipmentCarrierPolicy<TRequest> : IPolicy<TRequest>
     where TRequest : IShipmentSpecificResource
 {
     private readonly IIdentityProvider _identityProvider;
     private readonly IShipmentRepository _shipmentRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ShipmentCarrierPolicy{TRequest}"/> class.
-    /// </summary>
-    /// <param name="identityProvider">The identity provider.</param>
-    /// <param name="shipmentRepository">The shipment repository.</param>
     public ShipmentCarrierPolicy(IIdentityProvider identityProvider, IShipmentRepository shipmentRepository)
     {
         _identityProvider = identityProvider;

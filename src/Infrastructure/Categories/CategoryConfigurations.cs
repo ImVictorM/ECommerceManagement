@@ -8,10 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Categories;
 
-/// <summary>
-/// Configures the tables for the <see cref="Category"/> aggregate.
-/// </summary>
-public class CategoryConfigurations : EntityTypeConfigurationDependency<Category>
+internal sealed class CategoryConfigurations : EntityTypeConfigurationDependency<Category>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Category> builder)

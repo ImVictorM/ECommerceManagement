@@ -18,9 +18,9 @@ using MediatR;
 namespace WebApi.Products;
 
 /// <summary>
-/// Defines product-related routes.
+/// Provides endpoints for the product features.
 /// </summary>
-public class ProductEndpoints : ICarterModule
+public sealed class ProductEndpoints : ICarterModule
 {
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Orders.Queries.GetCustomerOrders;
 
-public partial class GetCustomerOrdersQueryHandler
+internal sealed partial class GetCustomerOrdersQueryHandler
 {
     private readonly ILogger<GetCustomerOrdersQueryHandler> _logger;
 

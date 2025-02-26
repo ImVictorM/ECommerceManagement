@@ -9,18 +9,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Security.Identity;
 
-/// <summary>
-/// Represents an identity provider implementation
-/// </summary>
-public class IdentityProvider : IIdentityProvider
+internal sealed class IdentityProvider : IIdentityProvider
 {
     private readonly HttpContext _httpContext;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="IdentityProvider"/> class.
-    /// </summary>
-    /// <param name="httpContextAccessor">The http context accessor.</param>
-    /// <exception cref="InvalidOperationException">Exception thrown when the http context is null.</exception>
     public IdentityProvider(IHttpContextAccessor httpContextAccessor)
     {
         if (httpContextAccessor.HttpContext == null)

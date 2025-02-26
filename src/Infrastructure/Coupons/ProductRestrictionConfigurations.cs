@@ -9,10 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
-/// <summary>
-/// Configures the <see cref="ProductRestriction"/> restriction tables.
-/// </summary>
-public class ProductRestrictionConfigurations : EntityTypeConfigurationDependency<ProductRestriction>
+internal sealed class ProductRestrictionConfigurations : EntityTypeConfigurationDependency<ProductRestriction>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<ProductRestriction> builder)

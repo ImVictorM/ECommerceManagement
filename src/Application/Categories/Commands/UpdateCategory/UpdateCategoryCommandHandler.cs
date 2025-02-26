@@ -1,5 +1,6 @@
 using Application.Categories.Errors;
 using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 
 using Domain.CategoryAggregate.ValueObjects;
 
@@ -8,20 +9,12 @@ using MediatR;
 
 namespace Application.Categories.Commands.UpdateCategory;
 
-/// <summary>
-/// Handles the <see cref="UpdateCategoryCommand"/> command.
-/// </summary>
-public partial class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Unit>
+internal sealed partial class UpdateCategoryCommandHandler
+    : IRequestHandler<UpdateCategoryCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICategoryRepository _categoryRepository;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateCategoryCommandHandler"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="categoryRepository">The category repository.</param>
-    /// <param name="logger">The logger.</param>
     public UpdateCategoryCommandHandler(
         IUnitOfWork unitOfWork,
         ICategoryRepository categoryRepository,

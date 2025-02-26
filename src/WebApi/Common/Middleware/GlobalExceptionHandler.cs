@@ -2,15 +2,15 @@ using WebApi.Common.Extensions;
 
 using SharedKernel.Errors;
 
-using Carter;
-using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
+using FluentValidation;
+using Carter;
 
 namespace WebApi.Common.Middleware;
 
 /// <summary>
-/// Middleware to handle exceptions globally.
+/// Defines a middleware to handle exceptions globally.
 /// </summary>
 public sealed class GlobalExceptionHandler : ICarterModule
 {

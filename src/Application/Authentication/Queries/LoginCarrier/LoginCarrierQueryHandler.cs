@@ -1,6 +1,6 @@
 using Application.Authentication.DTOs;
 using Application.Authentication.Errors;
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authentication;
 using Application.Common.Security.Identity;
 
@@ -11,22 +11,12 @@ using MediatR;
 
 namespace Application.Authentication.Queries.LoginCarrier;
 
-/// <summary>
-/// handles the <see cref="LoginCarrierQuery"/> query.
-/// </summary>
-public sealed partial class LoginCarrierQueryHandler : IRequestHandler<LoginCarrierQuery, AuthenticationResult>
+internal sealed partial class LoginCarrierQueryHandler : IRequestHandler<LoginCarrierQuery, AuthenticationResult>
 {
     private readonly ICarrierRepository _carrierRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenService _jwtTokenService;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="LoginCarrierQueryHandler"/> class.
-    /// </summary>
-    /// <param name="carrierRepository">The carrier repository.</param>
-    /// <param name="passwordHasher">The password hasher.</param>
-    /// <param name="jwtTokenService">The jwt token service.</param>
-    /// <param name="logger">The logger.</param>
     public LoginCarrierQueryHandler(
         ICarrierRepository carrierRepository,
         IPasswordHasher passwordHasher,

@@ -1,4 +1,5 @@
 using Application.Payments.Errors;
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 
 using Domain.PaymentAggregate.Enumerations;
@@ -11,20 +12,11 @@ using MediatR;
 
 namespace Application.Payments.Commands.UpdatePaymentStatus;
 
-/// <summary>
-/// Handles the <see cref="UpdatePaymentStatusCommand"/> command.
-/// </summary>
-public sealed partial class UpdatePaymentStatusCommandHandler : IRequestHandler<UpdatePaymentStatusCommand, Unit>
+internal sealed partial class UpdatePaymentStatusCommandHandler : IRequestHandler<UpdatePaymentStatusCommand, Unit>
 {
     private readonly IPaymentRepository _paymentRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UpdatePaymentStatusCommand"/> class.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work.</param>
-    /// <param name="paymentRepository">The payment repository.</param>
-    /// <param name="logger">The logger.</param>
     public UpdatePaymentStatusCommandHandler(
         IUnitOfWork unitOfWork,
         IPaymentRepository paymentRepository,

@@ -1,5 +1,5 @@
 using Application.Common.PaymentGateway;
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Orders.DTOs;
 using Application.Orders.Errors;
 
@@ -11,21 +11,12 @@ using MediatR;
 
 namespace Application.Orders.Queries.GetCustomerOrderById;
 
-/// <summary>
-/// Handles the <see cref="GetCustomerOrderByIdQuery"/> query by
-/// fetching a customer's order by id.
-/// </summary>
-public sealed partial class GetCustomerOrderByIdQueryHandler : IRequestHandler<GetCustomerOrderByIdQuery, OrderDetailedResult>
+internal sealed partial class GetCustomerOrderByIdQueryHandler
+    : IRequestHandler<GetCustomerOrderByIdQuery, OrderDetailedResult>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IPaymentGateway _paymentGateway;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="GetCustomerOrderByIdQueryHandler"/> class.
-    /// </summary>
-    /// <param name="orderRepository">The order repository.</param>
-    /// <param name="paymentGateway">The payment gateway.</param>
-    /// <param name="logger">The logger.</param>
     public GetCustomerOrderByIdQueryHandler(
         IOrderRepository orderRepository,
         IPaymentGateway paymentGateway,

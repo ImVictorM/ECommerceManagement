@@ -1,4 +1,4 @@
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Orders.DTOs;
 
 using Domain.OrderAggregate;
@@ -11,20 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Orders;
 
-/// <summary>
-/// Defines the implementation for order persistence operations.
-/// </summary>
-public sealed class OrderRepository : BaseRepository<Order, OrderId>, IOrderRepository
+internal sealed class OrderRepository : BaseRepository<Order, OrderId>, IOrderRepository
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="OrderRepository"/> class.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    public OrderRepository(ECommerceDbContext dbContext) : base(dbContext)
+    public OrderRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 
-    /// <inheritdoc/>
     /// <inheritdoc/>
     public async Task<OrderDetailedQueryResult?> GetOrderDetailedAsync(
         OrderId orderId,

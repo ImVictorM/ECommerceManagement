@@ -2,14 +2,8 @@ using FluentValidation;
 
 namespace Application.ShippingMethods.Commands.UpdateShippingMethod;
 
-/// <summary>
-/// Validates the <see cref="UpdateShippingMethodCommand"/> command inputs.
-/// </summary>
-public class UpdateShippingMethodCommandValidator : AbstractValidator<UpdateShippingMethodCommand>
+internal class UpdateShippingMethodCommandValidator : AbstractValidator<UpdateShippingMethodCommand>
 {
-    /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateShippingMethodCommandValidator"/> class.
-    /// </summary>
     public UpdateShippingMethodCommandValidator()
     {
         RuleFor(x => x.Name).NotEmpty();

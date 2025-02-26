@@ -16,7 +16,7 @@ using Carter;
 namespace WebApi.Users;
 
 /// <summary>
-/// Defines all user-related endpoints.
+/// Provides endpoints for the user features.
 /// </summary>
 public sealed class UserEndpoints : ICarterModule
 {

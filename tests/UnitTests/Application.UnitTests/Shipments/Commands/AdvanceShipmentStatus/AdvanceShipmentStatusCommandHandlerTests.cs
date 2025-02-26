@@ -1,3 +1,4 @@
+using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Shipments.Commands.AdvanceShipmentStatus;
 using Application.Shipments.Errors;

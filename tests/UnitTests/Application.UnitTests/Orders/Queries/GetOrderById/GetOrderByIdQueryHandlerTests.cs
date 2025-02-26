@@ -1,7 +1,7 @@
 using Application.Orders.Queries.GetOrderById;
 using Application.Orders.Errors;
 using Application.Orders.DTOs;
-using Application.Common.Persistence;
+using Application.Common.Persistence.Repositories;
 using Application.Common.PaymentGateway;
 using Application.UnitTests.Orders.Queries.TestUtils;
 using Application.UnitTests.TestUtils.PaymentGateway;
