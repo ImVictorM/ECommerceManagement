@@ -6,10 +6,7 @@ using Mapster;
 
 namespace WebApi.Payments;
 
-/// <summary>
-/// Configures the mappings between payment objects.
-/// </summary>
-public class PaymentMappings : IRegister
+internal sealed class PaymentMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

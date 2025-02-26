@@ -2,10 +2,7 @@ using System.Text.Json;
 
 namespace WebApi.Common.Utilities;
 
-/// <summary>
-/// Json serializer utilities to serialize/deserialize web content.
-/// </summary>
-public static class JsonSerializerUtils
+internal static class JsonSerializerUtils
 {
     private static readonly JsonSerializerOptions _webOptions = new(JsonSerializerDefaults.Web);
 

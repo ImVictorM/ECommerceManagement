@@ -51,6 +51,6 @@ app.MapCarter();
 app.Run();
 
 /// <summary>
-/// Defines the program entry point.
+/// Defines the application entry point.
 /// </summary>
 public partial class Program;

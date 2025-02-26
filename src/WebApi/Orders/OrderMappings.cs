@@ -10,10 +10,7 @@ using Mapster;
 
 namespace WebApi.Orders;
 
-/// <summary>
-/// Configures the mappings between order objects.
-/// </summary>
-public class OrderMappings : IRegister
+internal sealed class OrderMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

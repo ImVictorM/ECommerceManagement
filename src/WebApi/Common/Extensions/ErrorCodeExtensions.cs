@@ -4,10 +4,7 @@ using System.Net;
 
 namespace WebApi.Common.Extensions;
 
-/// <summary>
-/// Extension methods for the <see cref="ErrorCode"/> class.
-/// </summary>
-public static class ErrorCodeExtensions
+internal static class ErrorCodeExtensions
 {
     private static readonly Dictionary<ErrorCode, HttpStatusCode> _map = new()
     {
@@ -20,10 +17,10 @@ public static class ErrorCodeExtensions
     };
 
     /// <summary>
-    /// Parses the error code to an HTTP status code.
+    /// Parses an <see cref="ErrorCode"/> to <see cref="HttpStatusCode"/>.
     /// </summary>
     /// <param name="errorCode">The current error code.</param>
-    /// <returns>An HTTP status code.</returns>
+    /// <returns>An <see cref="HttpStatusCode"/> that represents the error code.</returns>
     public static HttpStatusCode ToHttpStatusCode(this ErrorCode errorCode)
     {
         return _map.TryGetValue(errorCode, out var statusCode)

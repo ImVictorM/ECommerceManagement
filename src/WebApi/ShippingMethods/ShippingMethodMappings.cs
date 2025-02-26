@@ -8,10 +8,7 @@ using Mapster;
 
 namespace WebApi.ShippingMethods;
 
-/// <summary>
-/// Configures the mappings between shipping method objects.
-/// </summary>
-public class ShippingMethodMappings : IRegister
+internal sealed class ShippingMethodMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)

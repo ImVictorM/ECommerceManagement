@@ -14,9 +14,9 @@ using Carter;
 namespace WebApi.Orders;
 
 /// <summary>
-/// Defines order-related endpoints.
+/// Provides endpoints for the order features.
 /// </summary>
-public class OrderEndpoints : ICarterModule
+public sealed class OrderEndpoints : ICarterModule
 {
     private const string BaseEndpoint = "orders";
 

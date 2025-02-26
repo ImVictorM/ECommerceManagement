@@ -9,9 +9,9 @@ using Carter;
 namespace WebApi.Shipments;
 
 /// <summary>
-/// Defines the shipment feature endpoints.
+/// Provides endpoints for the shipment features.
 /// </summary>
-public class ShipmentEndpoints : ICarterModule
+public sealed class ShipmentEndpoints : ICarterModule
 {
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)

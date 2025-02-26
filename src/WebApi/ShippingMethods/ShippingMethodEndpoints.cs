@@ -16,9 +16,9 @@ using Carter;
 namespace WebApi.ShippingMethods;
 
 /// <summary>
-/// Defines shipping method related endpoints.
+/// Provides endpoints for the shipping method features.
 /// </summary>
-public class ShippingMethodEndpoints : ICarterModule
+public sealed class ShippingMethodEndpoints : ICarterModule
 {
     /// <inheritdoc/>
     public void AddRoutes(IEndpointRouteBuilder app)

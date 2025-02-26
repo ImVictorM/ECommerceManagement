@@ -6,10 +6,7 @@ using Mapster;
 
 namespace WebApi.Common.Mappings;
 
-/// <summary>
-/// Configures the mappings between discount objects.
-/// </summary>
-public class DiscountMappings : IRegister
+internal sealed class DiscountMappings : IRegister
 {
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
