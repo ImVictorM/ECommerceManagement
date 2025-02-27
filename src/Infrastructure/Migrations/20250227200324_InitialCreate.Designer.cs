@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20250221233213_InitialCreate")]
+    [Migration("20250227200324_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -84,12 +84,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7697), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7975), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "carrier@email.com",
                             Name = "ECommerceManagementCarrier",
-                            PasswordHash = "BAD1CB82F9FEA088B7396DD41B4D00B30728406C02762A071D6FDC6F31B4F6C3-C1CCE95B69150D37FA6445E2530C89B0",
+                            PasswordHash = "3410EF2A448742774017B1FD5D995DE96FCC97CFE3BA4475D79187B52FC744FD-2435C630C8790196F24DD9C399BA875C",
                             Phone = "",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7702), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7983), new TimeSpan(0, 0, 0, 0, 0)),
                             _roleId = 3L
                         });
                 });
@@ -436,7 +436,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
                         .HasColumnName("content");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -447,23 +448,19 @@ namespace Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_order");
-
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_product");
 
-                    b.Property<int?>("StarRating")
+                    b.Property<int>("StarRating")
                         .HasColumnType("integer")
                         .HasColumnName("star_rating");
 
-                    b.Property<string>("Subject")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("character varying(60)")
-                        .HasColumnName("subject");
+                        .HasColumnName("title");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -474,9 +471,6 @@ namespace Infrastructure.Migrations
                         .HasColumnName("id_user");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderId")
-                        .IsUnique();
 
                     b.HasIndex("ProductId");
 
@@ -697,12 +691,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6218), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6809), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@email.com",
                             IsActive = true,
                             Name = "admin",
-                            PasswordHash = "98276D6490F17A5890FC11E9D91610EB96097F87C83DC58503CA5BBED7E62718-E446EE08B9F6AD075EA1F19812D35E8F",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6222), new TimeSpan(0, 0, 0, 0, 0))
+                            PasswordHash = "A37E1032240117E618E8A3D0CD72D1890265109B0019566E97EC0E70869FB04A-C8458BD5E9EB62CE5853452731E41585",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6816), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -1108,12 +1102,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.ProductFeedbackAggregate.ProductFeedback", b =>
                 {
-                    b.HasOne("Domain.OrderAggregate.Order", null)
-                        .WithOne()
-                        .HasForeignKey("Domain.ProductFeedbackAggregate.ProductFeedback", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.ProductAggregate.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")

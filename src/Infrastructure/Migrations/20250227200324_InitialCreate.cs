@@ -411,6 +411,38 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "product_feedback",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    title = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    content = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    star_rating = table.Column<int>(type: "integer", nullable: false),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    id_product = table.Column<long>(type: "bigint", nullable: false),
+                    id_user = table.Column<long>(type: "bigint", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_product_feedback", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_product_feedback_products_id_product",
+                        column: x => x.id_product,
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_product_feedback_users_id_user",
+                        column: x => x.id_user,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_addresses",
                 columns: table => new
                 {
@@ -649,45 +681,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "product_feedback",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    subject = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
-                    content = table.Column<string>(type: "text", nullable: false),
-                    star_rating = table.Column<int>(type: "integer", nullable: true),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false),
-                    id_product = table.Column<long>(type: "bigint", nullable: false),
-                    id_user = table.Column<long>(type: "bigint", nullable: false),
-                    id_order = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_product_feedback", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_product_feedback_orders_id_order",
-                        column: x => x.id_order,
-                        principalTable: "orders",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_product_feedback_products_id_product",
-                        column: x => x.id_product,
-                        principalTable: "products",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_product_feedback_users_id_user",
-                        column: x => x.id_user,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "shipments",
                 columns: table => new
                 {
@@ -833,12 +826,12 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "id", "created_at", "email", "is_active", "name", "password_hash", "phone", "updated_at" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6218), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "98276D6490F17A5890FC11E9D91610EB96097F87C83DC58503CA5BBED7E62718-E446EE08B9F6AD075EA1F19812D35E8F", null, new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 404, DateTimeKind.Unspecified).AddTicks(6222), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6809), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "A37E1032240117E618E8A3D0CD72D1890265109B0019566E97EC0E70869FB04A-C8458BD5E9EB62CE5853452731E41585", null, new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6816), new TimeSpan(0, 0, 0, 0, 0)) });
 
             migrationBuilder.InsertData(
                 table: "carriers",
                 columns: new[] { "id", "created_at", "email", "name", "password_hash", "phone", "updated_at", "id_role" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7697), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "BAD1CB82F9FEA088B7396DD41B4D00B30728406C02762A071D6FDC6F31B4F6C3-C1CCE95B69150D37FA6445E2530C89B0", "", new DateTimeOffset(new DateTime(2025, 2, 21, 23, 32, 11, 422, DateTimeKind.Unspecified).AddTicks(7702), new TimeSpan(0, 0, 0, 0, 0)), 3L });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7975), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "3410EF2A448742774017B1FD5D995DE96FCC97CFE3BA4475D79187B52FC744FD-2435C630C8790196F24DD9C399BA875C", "", new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7983), new TimeSpan(0, 0, 0, 0, 0)), 3L });
 
             migrationBuilder.InsertData(
                 table: "users_roles",
@@ -941,12 +934,6 @@ namespace Infrastructure.Migrations
                 name: "IX_payments_id_payment_status",
                 table: "payments",
                 column: "id_payment_status");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_product_feedback_id_order",
-                table: "product_feedback",
-                column: "id_order",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_product_feedback_id_product",

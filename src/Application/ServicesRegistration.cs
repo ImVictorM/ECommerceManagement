@@ -4,10 +4,12 @@ using Application.Common.Validation;
 using Application.Orders.Services;
 using Application.Products.Services;
 using Application.Sales.Services;
+using Application.ProductFeedback.Services;
 
 using Domain.OrderAggregate.Services;
 using Domain.ProductAggregate.Services;
 using Domain.SaleAggregate.Services;
+using Domain.ProductFeedbackAggregate.Services;
 
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
@@ -49,6 +51,7 @@ public static class ServicesRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISaleService, SaleService>();
+        services.AddScoped<IProductFeedbackService, ProductFeedbackService>();
 
         return services;
     }
