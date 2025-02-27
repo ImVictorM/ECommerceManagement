@@ -3,6 +3,7 @@ using Infrastructure.Common.Persistence;
 using IntegrationTests.Common.Requests.Abstracts;
 using IntegrationTests.Common.Seeds.Abstracts;
 
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
@@ -32,6 +33,11 @@ public class BaseIntegrationTest : IAsyncLifetime
     public IRequestService RequestService { get; }
 
     /// <summary>
+    /// Gets the link generator;
+    /// </summary>
+    public LinkGenerator LinkGenerator { get; }
+
+    /// <summary>
     /// Initiates a new instance of the <see cref="BaseIntegrationTest"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
@@ -44,6 +50,7 @@ public class BaseIntegrationTest : IAsyncLifetime
         using var scope = _factory.Services.CreateScope();
         SeedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
         RequestService = scope.ServiceProvider.GetRequiredService<IRequestService>();
+        LinkGenerator = scope.ServiceProvider.GetRequiredService<LinkGenerator>();
     }
 
     /// <inheritdoc/>

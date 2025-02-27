@@ -26,7 +26,7 @@ public class ProductFeedbackEndpoints : ICarterModule
 
         productFeedbackGroup
             .MapPost("/", LeaveProductFeedback)
-            .WithName("LeaveProductFeedback")
+            .WithName(nameof(LeaveProductFeedback))
             .WithOpenApi(op => new(op)
             {
                 Summary = "Leave Product Feedback",
@@ -46,7 +46,7 @@ public class ProductFeedbackEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<Created, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> LeaveProductFeedback(
+    internal async Task<Results<Created, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> LeaveProductFeedback(
         [FromRoute] string productId,
         [FromBody] LeaveProductFeedbackRequest request,
         ISender sender,
