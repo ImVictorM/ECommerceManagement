@@ -10,6 +10,7 @@ using WebApi.Categories;
 using Xunit.Abstractions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Categories;
 
@@ -46,11 +47,11 @@ public class DeleteCategoryTests : BaseIntegrationTest
             new { id = existingCategory.Id.ToString() }
         );
 
-        var response = await RequestService.Client.DeleteAsync(
+        var response = await RequestService.CreateClient().DeleteAsync(
            endpoint
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -66,13 +67,11 @@ public class DeleteCategoryTests : BaseIntegrationTest
             new { id = existingCategory.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
 
-        var response = await RequestService.Client.DeleteAsync(
-            endpoint
-        );
+        var response = await client.DeleteAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -93,20 +92,17 @@ public class DeleteCategoryTests : BaseIntegrationTest
             new { id = categoryToBeDeleted.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var deleteResponse = await RequestService.Client.DeleteAsync(
+        var deleteResponse = await client.DeleteAsync(
             endpointDelete
         );
 
-        var getDeletedCategoryResponse = await RequestService.Client.GetAsync(
+        var getDeletedCategoryResponse = await client.GetAsync(
             endpointGetById
         );
 
-        deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
-
-        getDeletedCategoryResponse.StatusCode
-            .Should()
-            .Be(System.Net.HttpStatusCode.NotFound);
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        getDeletedCategoryResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

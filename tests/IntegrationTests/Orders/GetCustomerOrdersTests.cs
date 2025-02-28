@@ -19,6 +19,7 @@ using WebApi.Orders;
 using FluentAssertions;
 using Xunit.Abstractions;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Orders;
 
@@ -59,9 +60,9 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
             }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await RequestService.CreateClient().GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -83,10 +84,10 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(otherCustomerType);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(otherCustomerType);
+        var response = await client.GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -115,12 +116,12 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(userWithPermission);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(userWithPermission);
+        var response = await client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(expectedCustomerOrders);
     }
 
@@ -141,25 +142,27 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
         var status = BaseEnumeration.FromDisplayName<OrderStatus>(statusName);
         var customerWithOrdersType = UserSeedType.CUSTOMER;
         var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
-        var expectedFilteredOrders = GetUserOrderByStatus(customerWithOrders.Id, status);
+        var expectedFilteredOrders = GetUserOrderByStatus(
+            customerWithOrders.Id,
+            status
+        );
 
-        var baseEndpoint = LinkGenerator.GetPathByName(
+        var endpoint = LinkGenerator.GetPathByName(
             nameof(CustomerOrderEndpoints.GetCustomerOrders),
             new
             {
-                userId = customerWithOrders.Id.ToString()
+                userId = customerWithOrders.Id.ToString(),
+                status = statusName,
             }
         );
 
-        var endpointWithStatusFilter = $"{baseEndpoint}?status={statusName}";
-
-        await RequestService.LoginAsAsync(customerWithOrdersType);
-        var response = await RequestService.Client.GetAsync(endpointWithStatusFilter);
+        var client = await RequestService.LoginAsAsync(customerWithOrdersType);
+        var response = await client.GetAsync(endpoint);
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(expectedFilteredOrders);
     }
 

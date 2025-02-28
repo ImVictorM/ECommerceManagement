@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Routing;
 using System.Net.Http.Json;
 using Xunit.Abstractions;
 using FluentAssertions;
+using System.Net;
 
 namespace IntegrationTests.ProductFeedback;
 
@@ -58,9 +59,12 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
             new { productId = existingProductId }
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
+        var response = await RequestService.CreateClient().PostAsJsonAsync(
+            endpoint,
+            request
+        );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -78,10 +82,10 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
             new { productId = existingProductId }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.PostAsJsonAsync(endpoint, request);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -103,10 +107,10 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
             new { productId = productNotAllowedToLeaveFeedback.Id }
         );
 
-        await RequestService.LoginAsAsync(userLeavingFeedbackType);
-        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
+        var client = await RequestService.LoginAsAsync(userLeavingFeedbackType);
+        var response = await client.PostAsJsonAsync(endpoint, request);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -126,10 +130,10 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
             new { productId = productToLeaveFeedback.Id }
         );
 
-        await RequestService.LoginAsAsync(userLeavingFeedbackType);
-        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
+        var client = await RequestService.LoginAsAsync(userLeavingFeedbackType);
+        var response = await client.PostAsJsonAsync(endpoint, request);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
 
     private Product GetFirstProductNotPurchased(UserId customerId)

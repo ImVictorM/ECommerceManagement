@@ -22,6 +22,7 @@ public class GetShippingMethodsTests : BaseIntegrationTest
 {
     private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
     private readonly string? _endpoint;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetShippingMethodsTests"/> class.
@@ -33,11 +34,14 @@ public class GetShippingMethodsTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager
+            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
 
         _endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.GetShippingMethods)
         );
+
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -56,7 +60,7 @@ public class GetShippingMethodsTests : BaseIntegrationTest
                 s.EstimatedDeliveryDays
             ));
 
-        var response = await RequestService.Client.GetAsync(_endpoint);
+        var response = await _client.GetAsync(_endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<ShippingMethodResponse>>();
 

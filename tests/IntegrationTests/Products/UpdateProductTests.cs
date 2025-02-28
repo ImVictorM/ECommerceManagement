@@ -56,7 +56,7 @@ public class UpdateProductTests : BaseIntegrationTest
             new { id = "1" }
         );
 
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var response = await RequestService.CreateClient().PutAsJsonAsync(
             endpoint,
             UpdateProductRequestUtils.CreateRequest()
         );
@@ -83,9 +83,9 @@ public class UpdateProductTests : BaseIntegrationTest
             new { id = "1" }
         );
 
-        await RequestService.LoginAsAsync(customerUserType);
+        var client = await RequestService.LoginAsAsync(customerUserType);
 
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var response = await client.PutAsJsonAsync(
             endpoint,
             UpdateProductRequestUtils.CreateRequest()
         );
@@ -107,8 +107,8 @@ public class UpdateProductTests : BaseIntegrationTest
             new { id = notFoundId }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.PutAsJsonAsync(
             endpoint,
             UpdateProductRequestUtils.CreateRequest()
         );
@@ -159,12 +159,12 @@ public class UpdateProductTests : BaseIntegrationTest
             new { id = productToUpdate.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var putResponse = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var putResponse = await client.PutAsJsonAsync(
             endpointUpdate,
             request
         );
-        var getResponse = await RequestService.Client.GetAsync(
+        var getResponse = await client.GetAsync(
             endpointGetProductById
         );
         var getResponseContent = await getResponse.Content

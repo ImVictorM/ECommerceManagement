@@ -22,6 +22,7 @@ namespace IntegrationTests.ShippingMethods;
 public class GetShippingMethodByIdTests : BaseIntegrationTest
 {
     private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetShippingMethodByIdTests"/> class.
@@ -33,7 +34,10 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager
+            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
+
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -49,7 +53,7 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
             new { id = missingShippingMethodId }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await _client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -58,7 +62,7 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
     /// Verifies getting an existing shipping method returns ok containing the shipping method.
     /// </summary>
     [Fact]
-    public async Task GetShippingMethodById_WhenShippingMethodExists_ReturnsOkContainingShippingMethod()
+    public async Task GetShippingMethodById_WhenShippingMethodExists_ReturnsOk()
     {
         var existingShippingMethod = _seedShippingMethod.GetByType(
             ShippingMethodSeedType.EXPRESS
@@ -69,7 +73,7 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
             new { id = existingShippingMethod.Id.ToString() }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await _client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ShippingMethodResponse>();
 

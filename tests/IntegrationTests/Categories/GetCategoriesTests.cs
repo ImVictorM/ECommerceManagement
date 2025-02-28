@@ -50,7 +50,7 @@ public class GetCategoriesTests : BaseIntegrationTest
             .ListAll()
             .Select(c => new CategoryResponse(c.Id.ToString(), c.Name));
 
-        var response = await RequestService.Client.GetAsync(
+        var response = await RequestService.CreateClient().GetAsync(
             _endpoint
         );
 

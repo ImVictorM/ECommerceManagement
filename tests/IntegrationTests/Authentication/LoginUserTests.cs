@@ -25,6 +25,7 @@ public class LoginUserTests : BaseIntegrationTest
 {
     private readonly ICredentialsProvider<UserSeedType> _credentialsProvider;
     private readonly string? _endpoint;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="LoginUserTests"/> class.
@@ -42,6 +43,8 @@ public class LoginUserTests : BaseIntegrationTest
         _endpoint = LinkGenerator.GetPathByName(
             nameof(AuthenticationEndpoints.LoginUser
         ));
+
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -66,7 +69,7 @@ public class LoginUserTests : BaseIntegrationTest
             activeUserCredentials.Password
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -99,7 +102,7 @@ public class LoginUserTests : BaseIntegrationTest
             inactiveUserCredentials.Password
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -129,7 +132,7 @@ public class LoginUserTests : BaseIntegrationTest
             credentials.Password
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -158,7 +161,7 @@ public class LoginUserTests : BaseIntegrationTest
             "IncorrectPassword123"
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );

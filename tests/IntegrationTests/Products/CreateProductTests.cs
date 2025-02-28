@@ -61,8 +61,8 @@ public class CreateProductTests : BaseIntegrationTest
     {
         var request = CreateProductRequestUtils.CreateRequest();
 
-        await RequestService.LoginAsAsync(customerType);
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(customerType);
+        var response = await client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -80,7 +80,10 @@ public class CreateProductTests : BaseIntegrationTest
     {
         var request = CreateProductRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PostAsJsonAsync(_endpoint, request);
+        var response = await RequestService.CreateClient().PostAsJsonAsync(
+            _endpoint,
+            request
+        );
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -111,14 +114,14 @@ public class CreateProductTests : BaseIntegrationTest
             ]
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseCreate = await RequestService.Client.PostAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var responseCreate = await client.PostAsJsonAsync(
             _endpoint,
             request
         );
         var createdResourceLocation = responseCreate.Headers.Location;
 
-        var responseGetCreated = await RequestService.Client.GetAsync(
+        var responseGetCreated = await client.GetAsync(
             createdResourceLocation
         );
 

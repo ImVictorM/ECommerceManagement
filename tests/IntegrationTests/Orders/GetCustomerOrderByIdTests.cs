@@ -16,6 +16,7 @@ using WebApi.Orders;
 using FluentAssertions;
 using Xunit.Abstractions;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Orders;
 
@@ -58,9 +59,9 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await RequestService.CreateClient().GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -83,10 +84,10 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(otherCustomerType);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(otherCustomerType);
+        var response = await client.GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -106,10 +107,10 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     /// <summary>
@@ -139,12 +140,12 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(userWithPermission);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(userWithPermission);
+        var response = await client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<OrderDetailedResponse>();
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(customerOrder);
     }
 

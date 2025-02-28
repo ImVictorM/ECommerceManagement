@@ -58,8 +58,8 @@ public class DeactivateUserTests : BaseIntegrationTest
             new { id = otherUser.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -79,8 +79,8 @@ public class DeactivateUserTests : BaseIntegrationTest
             new { id = otherAdmin.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -92,14 +92,17 @@ public class DeactivateUserTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateUser_WhenAdminTriesToDeactivateThemselves_ReturnsForbidden()
     {
-        var authenticatedAdmin = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var adminType = UserSeedType.ADMIN;
+        var admin = _seedUser.GetByType(adminType);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.DeactivateUser),
-            new { id = authenticatedAdmin.Id.ToString() }
+            new { id = admin.Id.ToString() }
         );
 
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(adminType);
+
+        var response = await client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -132,11 +135,12 @@ public class DeactivateUserTests : BaseIntegrationTest
             new { active = "false" }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseDeactivate = await RequestService.Client.DeleteAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+
+        var responseDeactivate = await client.DeleteAsync(
             endpointDeactivate
         );
-        var responseGetInactiveUsers = await RequestService.Client.GetAsync(
+        var responseGetInactiveUsers = await client.GetAsync(
             endpointGetDeactivateUsers
         );
 
@@ -159,7 +163,8 @@ public class DeactivateUserTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateUser_WhenCustomerTriesToDeactivateThemselves_ReturnsNoContent()
     {
-        var customer = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var customerType = UserSeedType.CUSTOMER;
+        var customer = _seedUser.GetByType(customerType);
 
         var endpointDeactivate = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.DeactivateUser),
@@ -171,12 +176,13 @@ public class DeactivateUserTests : BaseIntegrationTest
             new { active = "false" }
         );
 
-        var responseDeactivate = await RequestService.Client.DeleteAsync(
+        var clientCustomer = await RequestService.LoginAsAsync(customerType);
+        var clientAdmin = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+
+        var responseDeactivate = await clientCustomer.DeleteAsync(
             endpointDeactivate
         );
-
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseGetInactiveUsers = await RequestService.Client.GetAsync(
+        var responseGetInactiveUsers = await clientAdmin.GetAsync(
             endpointGetDeactivateUsers
         );
 

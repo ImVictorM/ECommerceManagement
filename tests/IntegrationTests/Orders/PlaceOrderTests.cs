@@ -1,3 +1,4 @@
+using Domain.UserAggregate;
 using Domain.ProductAggregate;
 using Domain.CouponAggregate;
 using Domain.ShippingMethodAggregate;
@@ -41,6 +42,7 @@ public class PlaceOrderTests : BaseIntegrationTest
     private readonly IDataSeed<CouponSeedType, Coupon> _seedCoupon;
     private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
     private readonly IDataSeed<SaleSeedType, Sale> _seedSale;
+    private readonly IDataSeed<UserSeedType, User> _seedUser;
     private readonly IDiscountService _discountService;
     private readonly string? _endpoint;
 
@@ -58,6 +60,7 @@ public class PlaceOrderTests : BaseIntegrationTest
         _seedCoupon = SeedManager.GetSeed<CouponSeedType, Coupon>();
         _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
         _seedSale = SeedManager.GetSeed<SaleSeedType, Sale>();
+        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
         _discountService = factory.Services.GetRequiredService<IDiscountService>();
         _endpoint = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.PlaceOrder)
@@ -73,7 +76,7 @@ public class PlaceOrderTests : BaseIntegrationTest
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await RequestService.CreateClient().PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -97,13 +100,11 @@ public class PlaceOrderTests : BaseIntegrationTest
     {
         var request = PlaceOrderRequestUtils.CreateRequest();
 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Idempotency-Key",
-            Guid.NewGuid().ToString()
-        );
+        var client = await RequestService.LoginAsAsync(userWithoutCustomerRoleType);
 
-        await RequestService.LoginAsAsync(userWithoutCustomerRoleType);
-        var response = await RequestService.Client.PostAsJsonAsync(
+        client.SetIdempotencyKeyHeader(Guid.NewGuid().ToString());
+
+        var response = await client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -124,6 +125,7 @@ public class PlaceOrderTests : BaseIntegrationTest
         UserSeedType userWithCustomerRoleType
     )
     {
+        var orderOwner = _seedUser.GetByType(userWithCustomerRoleType);
         var pencil = _seedProduct.GetByType(ProductSeedType.PENCIL);
         var computer = _seedProduct.GetByType(ProductSeedType.COMPUTER_ON_SALE);
         var couponApplied = _seedCoupon.GetByType(CouponSeedType.TECH_COUPON);
@@ -173,22 +175,19 @@ public class PlaceOrderTests : BaseIntegrationTest
 
         var expectedTotalPrice = expectedProductsTotal + shippingMethod.Price;
 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Idempotency-Key",
-            Guid.NewGuid().ToString()
-        );
+        var clientCustomer = await RequestService.LoginAsAsync(userWithCustomerRoleType);
 
-        var orderOwner = await RequestService.LoginAsAsync(userWithCustomerRoleType);
-        var responseCreate = await RequestService.Client.PostAsJsonAsync(
+        clientCustomer.SetIdempotencyKeyHeader(Guid.NewGuid().ToString());
+
+        var responseCreate = await clientCustomer.PostAsJsonAsync(
             _endpoint,
             request
         );
         var createdResourceLocation = responseCreate.Headers.Location;
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseGetCreated = await RequestService.Client.GetAsync(
-            createdResourceLocation
-        );
+        var clientAdmin = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+
+        var responseGetCreated = await clientAdmin.GetAsync(createdResourceLocation);
 
         var responseGetCreatedContent = await responseGetCreated.Content
             .ReadRequiredFromJsonAsync<OrderDetailedResponse>();
@@ -253,14 +252,11 @@ public class PlaceOrderTests : BaseIntegrationTest
             ]
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Idempotency-Key",
-            Guid.NewGuid().ToString()
-        );
+        client.SetIdempotencyKeyHeader(Guid.NewGuid().ToString());
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await client.PostAsJsonAsync(
             _endpoint,
             request
         );

@@ -14,6 +14,7 @@ using WebApi.Orders;
 using FluentAssertions;
 using Xunit.Abstractions;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Orders;
 
@@ -54,10 +55,10 @@ public class GetOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     /// <summary>
@@ -79,9 +80,9 @@ public class GetOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await RequestService.CreateClient().GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -101,10 +102,12 @@ public class GetOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER_WITH_ADDRESS);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(
+            UserSeedType.CUSTOMER_WITH_ADDRESS
+        );
+        var response = await client.GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -128,12 +131,12 @@ public class GetOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        await RequestService.LoginAsAsync(allowedUser);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(allowedUser);
+        var response = await client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<OrderDetailedResponse>();
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(order);
     }
 }

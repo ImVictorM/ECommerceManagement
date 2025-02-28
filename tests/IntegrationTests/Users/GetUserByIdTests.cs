@@ -58,8 +58,8 @@ public class GetUserByIdTests : BaseIntegrationTest
             new { id = userToGet.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.GetAsync(endpoint);
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<UserResponse>();
@@ -89,8 +89,8 @@ public class GetUserByIdTests : BaseIntegrationTest
             new { id = userToGet.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -107,7 +107,9 @@ public class GetUserByIdTests : BaseIntegrationTest
             new { id = "1" }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await RequestService
+            .CreateClient()
+            .GetAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -126,8 +128,8 @@ public class GetUserByIdTests : BaseIntegrationTest
             new { id = userNotFoundId }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.GetAsync(endpoint);
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ProblemDetails>();

@@ -48,8 +48,8 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WithAdminRole_ReturnsOk()
     {
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync(_endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.GetAsync(_endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -61,8 +61,8 @@ public class GetAllUsersTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsers_WithoutAdminRole_ReturnsForbidden()
     {
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.GetAsync(_endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.GetAsync(_endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -72,9 +72,9 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// not authenticated.
     /// </summary>
     [Fact]
-    public async Task GetAllUsers_WithAuthentication_ReturnsUnauthorized()
+    public async Task GetAllUsers_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var response = await RequestService.Client.GetAsync(_endpoint);
+        var response = await RequestService.CreateClient().GetAsync(_endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -101,8 +101,8 @@ public class GetAllUsersTests : BaseIntegrationTest
             endpoint += $"?active={activeFilter}";
         }
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<UserResponse>>();
 

@@ -46,7 +46,7 @@ public class CreateShippingMethodTests : BaseIntegrationTest
     {
         var request = CreateShippingMethodRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await RequestService.CreateClient().PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -63,8 +63,8 @@ public class CreateShippingMethodTests : BaseIntegrationTest
     {
         var request = CreateShippingMethodRequestUtils.CreateRequest();
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -85,15 +85,14 @@ public class CreateShippingMethodTests : BaseIntegrationTest
             price: 20m
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseCreate = await RequestService.Client.PostAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var responseCreate = await client.PostAsJsonAsync(
             _endpoint,
             request
         );
         var createdResourceLocation = responseCreate.Headers.Location;
 
-        var getCreatedResponse = await RequestService.Client
-            .GetAsync(createdResourceLocation);
+        var getCreatedResponse = await client.GetAsync(createdResourceLocation);
 
         var createdShippingMethod = await getCreatedResponse.Content
             .ReadRequiredFromJsonAsync<ShippingMethodResponse>();

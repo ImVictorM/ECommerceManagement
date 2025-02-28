@@ -26,6 +26,7 @@ public class GetAllProductsTests : BaseIntegrationTest
     private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
     private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
     private readonly string? _endpoint;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetAllProductsTests"/> class.
@@ -42,6 +43,7 @@ public class GetAllProductsTests : BaseIntegrationTest
         _endpoint = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.GetAllProducts)
         );
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -53,7 +55,7 @@ public class GetAllProductsTests : BaseIntegrationTest
     {
         var activeProduct = _seedProduct.ListAll(product => product.IsActive);
 
-        var response = await RequestService.Client.GetAsync(_endpoint);
+        var response = await _client.GetAsync(_endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
@@ -70,8 +72,9 @@ public class GetAllProductsTests : BaseIntegrationTest
         var page = 1;
         var pageSize = 2;
 
-        var response = await RequestService.Client
-            .GetAsync($"{_endpoint}?page={page}&pageSize={pageSize}");
+        var response = await _client.GetAsync(
+            $"{_endpoint}?page={page}&pageSize={pageSize}"
+        );
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
@@ -89,8 +92,9 @@ public class GetAllProductsTests : BaseIntegrationTest
     {
         var fashionCategory = _seedCategory.GetByType(CategorySeedType.FASHION);
 
-        var response = await RequestService.Client
-            .GetAsync($"{_endpoint}?category={fashionCategory.Id}");
+        var response = await _client.GetAsync(
+            $"{_endpoint}?category={fashionCategory.Id}"
+        );
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();

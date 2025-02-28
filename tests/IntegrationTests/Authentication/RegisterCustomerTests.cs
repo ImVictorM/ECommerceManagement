@@ -29,6 +29,7 @@ public class RegisterCustomerTests : BaseIntegrationTest
     private readonly IDataSeed<UserSeedType, User> _userSeed;
     private readonly string? _registerEndpoint;
     private readonly string? _loginEndpoint;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="RegisterCustomerTests"/> class.
@@ -49,6 +50,8 @@ public class RegisterCustomerTests : BaseIntegrationTest
         _loginEndpoint = LinkGenerator.GetPathByName(
             nameof(AuthenticationEndpoints.LoginUser
         ));
+
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -88,11 +91,11 @@ public class RegisterCustomerTests : BaseIntegrationTest
     {
         var loginRequest = new LoginUserRequest(registerRequest.Email, registerRequest.Password);
 
-        var registerHttpResponse = await RequestService.Client.PostAsJsonAsync(
+        var registerHttpResponse = await _client.PostAsJsonAsync(
             _registerEndpoint,
             registerRequest
         );
-        var loginHttpResponse = await RequestService.Client.PostAsJsonAsync(
+        var loginHttpResponse = await _client.PostAsJsonAsync(
             _loginEndpoint,
             loginRequest
         );
@@ -120,12 +123,12 @@ public class RegisterCustomerTests : BaseIntegrationTest
             email: existingUser.Email.ToString()
         );
 
-        await RequestService.Client.PostAsJsonAsync(
+        await _client.PostAsJsonAsync(
             _registerEndpoint,
             registerRequest
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _registerEndpoint,
             registerRequest
         );

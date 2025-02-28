@@ -44,10 +44,12 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PostAsJsonAsync(
-            _endpoint,
-            request
-        );
+        var response = await RequestService
+            .CreateClient()
+            .PostAsJsonAsync(
+                _endpoint,
+                request
+            );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -60,9 +62,9 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest();
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -78,16 +80,16 @@ public class CreateCategoryTests : BaseIntegrationTest
     {
         var request = CreateCategoryRequestUtils.CreateRequest(name: "new_category");
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var responseCreate = await RequestService.Client.PostAsJsonAsync(
+        var responseCreate = await client.PostAsJsonAsync(
             _endpoint,
             request
         );
 
         var createdResourceLocation = responseCreate.Headers.Location;
 
-        var responseGetCreated = await RequestService.Client.GetAsync(
+        var responseGetCreated = await client.GetAsync(
             createdResourceLocation
         );
 

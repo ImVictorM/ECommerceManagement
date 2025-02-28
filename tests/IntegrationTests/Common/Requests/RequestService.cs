@@ -1,6 +1,3 @@
-using Domain.CarrierAggregate;
-using Domain.UserAggregate;
-
 using Contracts.Authentication;
 
 using IntegrationTests.Common.Requests.Abstracts;
@@ -23,14 +20,9 @@ public sealed class RequestService : IRequestService
 {
     private readonly ICredentialsProvider<UserSeedType> _userCredentialsProvider;
     private readonly ICredentialsProvider<CarrierSeedType> _carrierCredentialsProvider;
-
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
-    private readonly IDataSeed<CarrierSeedType, Carrier> _seedCarrier;
+    private readonly IHttpClientFactory _clientFactory;
 
     private readonly LinkGenerator _linkGenerator;
-
-    /// <inheritdoc/>
-    public HttpClient Client { get; }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="RequestService"/> class.
@@ -38,27 +30,25 @@ public sealed class RequestService : IRequestService
     /// <param name="clientFactory">The client factory to create and expose client.</param>
     /// <param name="userCredentialsProvider">The user credentials provider.</param>
     /// <param name="carrierCredentialsProvider">The carrier credentials provider.</param>
-    /// <param name="seedManager">The seed manager.</param>
     /// <param name="linkGenerator">The link generator.</param>
     public RequestService(
         IHttpClientFactory clientFactory,
         ICredentialsProvider<UserSeedType> userCredentialsProvider,
         ICredentialsProvider<CarrierSeedType> carrierCredentialsProvider,
-        ISeedManager seedManager,
         LinkGenerator linkGenerator
     )
     {
-        Client = clientFactory.CreateClient();
+        _clientFactory = clientFactory;
         _userCredentialsProvider = userCredentialsProvider;
         _carrierCredentialsProvider = carrierCredentialsProvider;
-        _seedUser = seedManager.GetSeed<UserSeedType, User>();
-        _seedCarrier = seedManager.GetSeed<CarrierSeedType, Carrier>();
         _linkGenerator = linkGenerator;
     }
 
     /// <inheritdoc/>
-    public async Task<User> LoginAsAsync(UserSeedType userType)
+    public async Task<HttpClient> LoginAsAsync(UserSeedType userType)
     {
+        var client = CreateClient();
+
         var credentials = _userCredentialsProvider.GetCredentials(userType);
 
         var request = new LoginUserRequest(credentials.Email, credentials.Password);
@@ -67,19 +57,21 @@ public sealed class RequestService : IRequestService
             nameof(AuthenticationEndpoints.LoginUser)
         );
 
-        var response = await Client.PostAsJsonAsync(endpoint, request);
+        var response = await client.PostAsJsonAsync(endpoint, request);
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<AuthenticationResponse>();
 
-        Client.SetJwtBearerAuthorizationHeader(responseContent.Token);
+        client.SetJwtBearerAuthorizationHeader(responseContent.Token);
 
-        return _seedUser.GetByType(userType);
+        return client;
     }
 
     /// <inheritdoc/>
-    public async Task<Carrier> LoginAsAsync(CarrierSeedType carrierType)
+    public async Task<HttpClient> LoginAsAsync(CarrierSeedType carrierType)
     {
+        var client = CreateClient();
+
         var credentials = _carrierCredentialsProvider.GetCredentials(carrierType);
 
         var request = new LoginCarrierRequest(credentials.Email, credentials.Password);
@@ -88,13 +80,19 @@ public sealed class RequestService : IRequestService
             nameof(AuthenticationEndpoints.LoginCarrier)
         );
 
-        var response = await Client.PostAsJsonAsync(endpoint, request);
+        var response = await client.PostAsJsonAsync(endpoint, request);
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<AuthenticationResponse>();
 
-        Client.SetJwtBearerAuthorizationHeader(responseContent.Token);
+        client.SetJwtBearerAuthorizationHeader(responseContent.Token);
 
-        return _seedCarrier.GetByType(carrierType);
+        return client;
+    }
+
+    /// <inheritdoc/>
+    public HttpClient CreateClient()
+    {
+        return _clientFactory.CreateClient();
     }
 }

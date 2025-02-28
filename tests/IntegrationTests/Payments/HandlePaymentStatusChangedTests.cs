@@ -21,6 +21,7 @@ using System.Net.Http.Json;
 using System.Text;
 using Xunit.Abstractions;
 using FluentAssertions;
+using System.Net;
 
 namespace IntegrationTests.Payments;
 
@@ -32,6 +33,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     private readonly IHmacSignatureProvider _hmacSignatureProvider;
     private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
     private readonly string? _endpoint;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="HandlePaymentStatusChangedTests"/> class.
@@ -49,6 +51,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
         _endpoint = LinkGenerator.GetPathByName(
             nameof(PaymentWebhookEndpoints.HandlePaymentStatusChanged)
         );
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -60,12 +63,12 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     {
         var request = PaymentStatusChangedRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     /// <summary>
@@ -81,16 +84,14 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
             Encoding.UTF8.GetBytes("xyz")
         );
 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Provider-Signature",
-            invalidBase64Signature
-        );
-        var response = await RequestService.Client.PostAsJsonAsync(
+        _client.SetProviderSignatureHeader(invalidBase64Signature);
+
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -108,17 +109,14 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
             JsonSerializerUtils.SerializeForWeb(request)
         );
 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Provider-Signature",
-            validSignature
-        );
+        _client.SetProviderSignatureHeader(validSignature);
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     /// <summary>
@@ -137,18 +135,15 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
         var validSignature = _hmacSignatureProvider.ComputeHmac(
             JsonSerializerUtils.SerializeForWeb(request)
         );
- 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Provider-Signature",
-            validSignature
-        );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        _client.SetProviderSignatureHeader(validSignature);
+
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
     /// <summary>
@@ -167,17 +162,14 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
             JsonSerializerUtils.SerializeForWeb(request)
         );
 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Provider-Signature",
-            validSignature
-        );
+        _client.SetProviderSignatureHeader(validSignature);
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     private async Task<OrderPaymentResponse> GetExistingOrderPayment()
@@ -189,8 +181,9 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
             new { id = existingOrder.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var order = await RequestService.Client.GetAsync(endpointGetOrderById);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+
+        var order = await client.GetAsync(endpointGetOrderById);
 
         var orderContent = await order.Content
             .ReadRequiredFromJsonAsync<OrderDetailedResponse>();

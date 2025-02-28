@@ -58,8 +58,8 @@ public class UpdateUserTests : BaseIntegrationTest
             new { id = otherUser.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.PutAsJsonAsync(
             endpoint,
             request
         );
@@ -73,13 +73,14 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenCustomerTriesToUpdateThemselves_ReturnsNoContentAndUpdatesUser()
     {
+        var userToBeUpdatedType = UserSeedType.CUSTOMER;
+        var userToBeUpdated = _seedUser.GetByType(userToBeUpdatedType);
+
         var request = UpdateUserRequestUtils.CreateRequest(
             name: "marcos rogério",
             phone: "19982748242",
             email: "marcao@email.com"
         );
-
-        var userToBeUpdated = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
 
         var endpointUpdate = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.UpdateUser),
@@ -90,12 +91,14 @@ public class UpdateUserTests : BaseIntegrationTest
             nameof(UserEndpoints.GetUserByAuthenticationToken)
         );
 
-        var responseUpdate = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(userToBeUpdatedType);
+
+        var responseUpdate = await client.PutAsJsonAsync(
             endpointUpdate,
             request
         );
 
-        var responseGetUpdated = await RequestService.Client.GetAsync(
+        var responseGetUpdated = await client.GetAsync(
             endpointGetSelf
         );
 
@@ -123,8 +126,8 @@ public class UpdateUserTests : BaseIntegrationTest
             new { id = otherAdmin.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.PutAsJsonAsync(
             endpoint,
             request
         );
@@ -139,6 +142,9 @@ public class UpdateUserTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateUser_WhenCustomerTriesToUpdateEmailWithExistingOne_ReturnsConflict()
     {
+        var userToBeUpdatedType = UserSeedType.CUSTOMER;
+        var userToBeUpdated = _seedUser.GetByType(userToBeUpdatedType);
+
         var anotherUserEmail = _seedUser
             .GetByType(UserSeedType.CUSTOMER_WITH_ADDRESS)
             .Email;
@@ -147,19 +153,19 @@ public class UpdateUserTests : BaseIntegrationTest
             email: anotherUserEmail.ToString()
         );
 
-        var userToBeUpdated = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.UpdateUser),
             new { id = userToBeUpdated.Id.ToString() }
         );
 
-        var updateResponse = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(userToBeUpdatedType);
+
+        var response = await client.PutAsJsonAsync(
             endpoint,
             requestContainingAnotherUserEmail
         );
 
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 
     /// <summary>
@@ -186,14 +192,14 @@ public class UpdateUserTests : BaseIntegrationTest
             new { id = customerToBeUpdated.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var responseUpdate = await RequestService.Client.PutAsJsonAsync(
+        var responseUpdate = await client.PutAsJsonAsync(
             endpointUpdate,
             request
         );
 
-        var responseGetUpdated = await RequestService.Client.GetAsync(endpointGetUserById);
+        var responseGetUpdated = await client.GetAsync(endpointGetUserById);
         var responseGetUpdatedContent = await responseGetUpdated.Content
             .ReadRequiredFromJsonAsync<UserResponse>();
 

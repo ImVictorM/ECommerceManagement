@@ -24,6 +24,7 @@ public class LoginCarrierTests : BaseIntegrationTest
 {
     private readonly ICredentialsProvider<CarrierSeedType> _credentialsProvider;
     private readonly string? _endpoint;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="LoginCarrierTests"/> class.
@@ -37,6 +38,8 @@ public class LoginCarrierTests : BaseIntegrationTest
     {
         _credentialsProvider = factory.Services
             .GetRequiredService<ICredentialsProvider<CarrierSeedType>>();
+
+        _client = RequestService.CreateClient();
 
         _endpoint = LinkGenerator.GetPathByName(
             nameof(AuthenticationEndpoints.LoginCarrier
@@ -59,7 +62,7 @@ public class LoginCarrierTests : BaseIntegrationTest
             carrierCredentials.Password
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -88,7 +91,7 @@ public class LoginCarrierTests : BaseIntegrationTest
             credentials.Password
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );
@@ -115,7 +118,7 @@ public class LoginCarrierTests : BaseIntegrationTest
             "IncorrectPassword123"
         );
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await _client.PostAsJsonAsync(
             _endpoint,
             request
         );

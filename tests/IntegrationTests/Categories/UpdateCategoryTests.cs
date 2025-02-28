@@ -15,6 +15,7 @@ using Xunit.Abstractions;
 using FluentAssertions;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Categories;
 
@@ -53,12 +54,12 @@ public class UpdateCategoryTests : BaseIntegrationTest
             new { id = existingCategory.Id.ToString() }
         );
 
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var response = await RequestService.CreateClient().PutAsJsonAsync(
             endpoint,
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -75,13 +76,13 @@ public class UpdateCategoryTests : BaseIntegrationTest
             new { id = existingCategory.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.PutAsJsonAsync(
             endpoint,
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -108,22 +109,20 @@ public class UpdateCategoryTests : BaseIntegrationTest
             new { id = categoryToBeUpdated.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var responseUpdate = await RequestService.Client.PutAsJsonAsync(
+        var responseUpdate = await client.PutAsJsonAsync(
             endpointUpdate,
             request
         );
 
-        var responseGetUpdated = await RequestService.Client.GetAsync(
-            endpointGetById
-        );
+        var responseGetUpdated = await client.GetAsync(endpointGetById);
 
         var responseGetUpdatedContent = await responseGetUpdated.Content
             .ReadRequiredFromJsonAsync<CategoryResponse>();
 
-        responseUpdate.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
-        responseGetUpdated.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        responseUpdate.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        responseGetUpdated.StatusCode.Should().Be(HttpStatusCode.OK);
         responseGetUpdatedContent.Name.Should().Be(request.Name);
     }
 }

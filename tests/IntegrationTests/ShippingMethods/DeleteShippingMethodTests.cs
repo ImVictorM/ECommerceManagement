@@ -31,7 +31,8 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager
+            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
     }
 
     /// <summary>
@@ -49,7 +50,9 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
             new { id = existingShippingMethod.Id.ToString() }
         );
 
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var response = await RequestService
+            .CreateClient()
+            .DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -70,8 +73,8 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
             new { id = existingShippingMethod.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -96,11 +99,11 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
             new { id = shippingMethodToDelete.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseDelete = await RequestService.Client.DeleteAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var responseDelete = await client.DeleteAsync(
             endpointDelete
         );
-        var responseGetDeleted = await RequestService.Client.GetAsync(
+        var responseGetDeleted = await client.GetAsync(
             endpointGetShippingMethodById
         );
 

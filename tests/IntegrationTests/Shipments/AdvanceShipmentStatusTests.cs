@@ -64,7 +64,9 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
             new { id = "1" }
         );
 
-        var response = await RequestService.Client.PatchAsync(endpoint, null);
+        var response = await RequestService
+            .CreateClient()
+            .PatchAsync(endpoint, null);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -80,8 +82,8 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
             new { id = "1" }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PatchAsync(endpoint, null);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.PatchAsync(endpoint, null);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -99,8 +101,8 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
             new { id = invalidShipmentId }
         );
 
-        await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
-        var response = await RequestService.Client.PatchAsync(
+        var client = await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
+        var response = await client.PatchAsync(
             endpoint,
             null
         );
@@ -126,8 +128,10 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
         );
 
         await PayOrder(orderPendingDetails);
-        await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
-        var response = await RequestService.Client.PatchAsync(
+
+        var client = await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
+
+        var response = await client.PatchAsync(
             endpoint,
             null
         );
@@ -154,22 +158,22 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
             new { id = shipmentId.ToString() }
         );
 
-        await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
-        var response = await RequestService.Client.PatchAsync(endpoint, null);
+        var client = await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
+        var response = await client.PatchAsync(endpoint, null);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     private async Task<OrderDetailedResponse> GetOrderDetailsById(OrderId id)
     {
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-
         var endpointGetOrderById = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.GetOrderById),
             new { id = id.ToString() }
         );
 
-        var response = await RequestService.Client.GetAsync(endpointGetOrderById);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+
+        var response = await client.GetAsync(endpointGetOrderById);
 
         var orderDetails = await response.Content
             .ReadRequiredFromJsonAsync<OrderDetailedResponse>();
@@ -181,24 +185,23 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     {
         var existingPayment = order.Payment;
 
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(PaymentWebhookEndpoints.HandlePaymentStatusChanged)
+        );
+
         var request = PaymentStatusChangedRequestUtils.CreateRequest(
-            paymentId: existingPayment.PaymentId,
-            paymentStatus: PaymentStatus.Authorized.Name
+           paymentId: existingPayment.PaymentId,
+           paymentStatus: PaymentStatus.Authorized.Name
         );
 
         var validSignature = _hmacSignatureProvider
             .ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
 
-        var endpoint = LinkGenerator.GetPathByName(
-            nameof(PaymentWebhookEndpoints.HandlePaymentStatusChanged)
-        );
+        var client = RequestService.CreateClient();
 
-        RequestService.Client.DefaultRequestHeaders.Add(
-            "X-Provider-Signature",
-            validSignature
-        );
+        client.SetProviderSignatureHeader(validSignature);
 
-        var response = await RequestService.Client.PostAsJsonAsync(
+        var response = await client.PostAsJsonAsync(
             endpoint,
             request
         );

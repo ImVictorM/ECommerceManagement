@@ -35,7 +35,8 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager
+            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
     }
 
     /// <summary>
@@ -54,7 +55,7 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
             new { id = existingShippingMethod.Id.ToString() }
         );
 
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var response = await RequestService.CreateClient().PutAsJsonAsync(
             endpoint,
             request
         );
@@ -78,9 +79,8 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
             new { id = existingShippingMethod.Id.ToString() }
         );
 
-
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.PutAsJsonAsync(
             endpoint,
             request
         );
@@ -115,12 +115,12 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
             new { id = shippingMethodToUpdate.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var updateResponse = await RequestService.Client.PutAsJsonAsync(
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var updateResponse = await client.PutAsJsonAsync(
             endpointUpdate,
             request
         );
-        var updatedShippingMethodResponse = await RequestService.Client.GetAsync(
+        var updatedShippingMethodResponse = await client.GetAsync(
             endpointGetShippingMethodById
         );
 

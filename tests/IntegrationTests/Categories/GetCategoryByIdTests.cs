@@ -12,6 +12,7 @@ using WebApi.Categories;
 using Xunit.Abstractions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Categories;
 
@@ -21,6 +22,7 @@ namespace IntegrationTests.Categories;
 public class GetCategoryByIdTests : BaseIntegrationTest
 {
     private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoryByIdTests"/> class.
@@ -33,6 +35,7 @@ public class GetCategoryByIdTests : BaseIntegrationTest
     ) : base(factory, output)
     {
         _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -48,9 +51,9 @@ public class GetCategoryByIdTests : BaseIntegrationTest
             new { id = nonexistingCategoryId }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await _client.GetAsync(endpoint);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     /// <summary>
@@ -67,11 +70,11 @@ public class GetCategoryByIdTests : BaseIntegrationTest
             new { id = existingCategory.Id.ToString() }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await _client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<CategoryResponse>();
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent.Id.Should().Be(existingCategory.Id.ToString());
         responseContent.Name.Should().Be(existingCategory.Name);
     }

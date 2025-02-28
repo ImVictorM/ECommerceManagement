@@ -24,6 +24,7 @@ namespace IntegrationTests.Products;
 public class GetProductByIdTests : BaseIntegrationTest
 {
     private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetProductByIdTests"/> class.
@@ -36,6 +37,7 @@ public class GetProductByIdTests : BaseIntegrationTest
     ) : base(factory, output)
     {
         _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
@@ -54,7 +56,8 @@ public class GetProductByIdTests : BaseIntegrationTest
             new { id = productToFetch.Id.ToString() }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await _client.GetAsync(endpoint);
+
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ProductResponse>();
 
@@ -77,7 +80,7 @@ public class GetProductByIdTests : BaseIntegrationTest
             new { id = invalidProductId }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await _client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ProblemDetails>();
 
@@ -104,7 +107,7 @@ public class GetProductByIdTests : BaseIntegrationTest
             new { id = productInactive.Id.ToString() }
         );
 
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await _client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ProblemDetails>();
 

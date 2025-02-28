@@ -47,7 +47,7 @@ public class DeactivateProductsTests : BaseIntegrationTest
             new { id = "1" }
         );
 
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var response = await RequestService.CreateClient().DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -69,8 +69,8 @@ public class DeactivateProductsTests : BaseIntegrationTest
             new { id = "1" }
         );
 
-        await RequestService.LoginAsAsync(customerType);
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(customerType);
+        var response = await client.DeleteAsync(endpoint);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
@@ -89,13 +89,13 @@ public class DeactivateProductsTests : BaseIntegrationTest
             new { id = notFoundId }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.DeleteAsync(endpoint);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.DeleteAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent!.Status.Should().Be((int)HttpStatusCode.NotFound);
+        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
         responseContent.Detail.Should().Be(
             $"Product with id {notFoundId} could not be deactivated because" +
@@ -129,12 +129,10 @@ public class DeactivateProductsTests : BaseIntegrationTest
             new { id = productToBeDeactivate.Id.ToString() }
         );
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var responseDelete = await RequestService.Client
-            .DeleteAsync(endpointDeactivate);
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var responseGet = await RequestService.Client
-            .GetAsync(endpointGetProductById);
+        var responseDelete = await client.DeleteAsync(endpointDeactivate);
+        var responseGet = await client.GetAsync(endpointGetProductById);
 
         responseDelete.StatusCode.Should().Be(HttpStatusCode.NoContent);
         responseGet.StatusCode.Should().Be(HttpStatusCode.NotFound);
