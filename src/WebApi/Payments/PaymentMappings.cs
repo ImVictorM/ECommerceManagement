@@ -12,6 +12,9 @@ internal sealed class PaymentMappings : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<PaymentStatusChangedRequest, UpdatePaymentStatusCommand>()
-            .MapWith(src => new UpdatePaymentStatusCommand(src.PaymentId, src.PaymentStatus));
+            .MapWith(src => new UpdatePaymentStatusCommand(
+                src.PaymentId,
+                src.PaymentStatus
+            ));
     }
 }

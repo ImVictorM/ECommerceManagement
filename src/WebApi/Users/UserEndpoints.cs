@@ -30,21 +30,25 @@ public sealed class UserEndpoints : ICarterModule
 
         userGroup
             .MapGet("/self", GetUserByAuthenticationToken)
-            .WithName("GetUserByAuthenticationToken")
+            .WithName(nameof(GetUserByAuthenticationToken))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get User By Authentication Token",
-                Description = "Retrieves the authenticated user details. Authentication is required.",
+                Description =
+                "Retrieves the authenticated user details. " +
+                "Authentication is required.",
             })
             .RequireAuthorization();
 
         userGroup
             .MapGet("/{id:long}", GetUserById)
-            .WithName("GetUserById")
+            .WithName(nameof(GetUserById))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get User By Id",
-                Description = "Retrieves a user by its identifier. Admin authentication required.",
+                Description =
+                "Retrieves a user by its identifier. " +
+                "Admin authentication required.",
                 Parameters =
                 [
                     new()
@@ -61,7 +65,7 @@ public sealed class UserEndpoints : ICarterModule
 
         userGroup
             .MapGet("/", GetAllUsers)
-            .WithName("GetAllUsers")
+            .WithName(nameof(GetAllUsers))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get All Users",
@@ -84,7 +88,7 @@ public sealed class UserEndpoints : ICarterModule
 
         userGroup
             .MapPut("/{id:long}", UpdateUser)
-            .WithName("UpdateUserById")
+            .WithName(nameof(UpdateUser))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update User By Id",
@@ -107,12 +111,14 @@ public sealed class UserEndpoints : ICarterModule
 
         userGroup
             .MapDelete("/{id:long}", DeactivateUser)
-            .WithName("DeactivateUser")
+            .WithName(nameof(DeactivateUser))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Deactivate User",
-                Description = "Deactivates a user by setting them as inactive. " +
-                "Users can deactivate their accounts, while administrators can deactivate any non-administrator user's account.",
+                Description =
+                "Deactivates a user by setting them as inactive. " +
+                "Users can deactivate their accounts, while administrators can " +
+                "deactivate any non-administrator user's account.",
                 Parameters =
                 [
                     new()
@@ -128,7 +134,11 @@ public sealed class UserEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<Ok<UserResponse>, NotFound, UnauthorizedHttpResult>> GetUserByAuthenticationToken(
+    internal async Task<Results<
+        Ok<UserResponse>,
+        NotFound,
+        UnauthorizedHttpResult
+    >> GetUserByAuthenticationToken(
         ISender sender,
         IMapper mapper
     )
@@ -140,7 +150,12 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserResponse>(result));
     }
 
-    private async Task<Results<Ok<UserResponse>, NotFound, ForbidHttpResult, UnauthorizedHttpResult>> GetUserById(
+    internal async Task<Results<
+        Ok<UserResponse>,
+        NotFound,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> GetUserById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper
@@ -153,7 +168,11 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<UserResponse>(result));
     }
 
-    private async Task<Results<Ok<IEnumerable<UserResponse>>, ForbidHttpResult, UnauthorizedHttpResult>> GetAllUsers(
+    internal async Task<Results<
+        Ok<IEnumerable<UserResponse>>,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> GetAllUsers(
         [FromQuery(Name = "active")] bool? IsActive,
         ISender sender,
         IMapper mapper
@@ -166,7 +185,13 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.Ok(result.Select(mapper.Map<UserResponse>));
     }
 
-    private async Task<Results<NoContent, BadRequest, Conflict, ForbidHttpResult, UnauthorizedHttpResult>> UpdateUser(
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        Conflict,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> UpdateUser(
         [FromRoute] string id,
         [FromBody] UpdateUserRequest request,
         ISender sender,
@@ -180,7 +205,11 @@ public sealed class UserEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, ForbidHttpResult, UnauthorizedHttpResult>> DeactivateUser(
+    internal async Task<Results<
+        NoContent,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> DeactivateUser(
         [FromRoute] string id,
         ISender sender
     )

@@ -32,17 +32,19 @@ public sealed class ProductEndpoints : ICarterModule
 
         productGroup
             .MapPost("/", CreateProduct)
-            .WithName("CreateProduct")
+            .WithName(nameof(CreateProduct))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Create Product",
-                Description = "Creates a new product. Admin authentication is required.",
+                Description =
+                "Creates a new product." +
+                " Admin authentication is required.",
             })
             .RequireAuthorization();
 
         productGroup
             .MapGet("/{id:long}", GetProductById)
-            .WithName("GetProductById")
+            .WithName(nameof(GetProductById))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Product By Id",
@@ -62,11 +64,13 @@ public sealed class ProductEndpoints : ICarterModule
 
         productGroup
             .MapGet("/", GetAllProducts)
-            .WithName("GetAllProducts")
+            .WithName(nameof(GetAllProducts))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Products",
-                Description = "Retrieves all active products with pagination. Optionally, products can be filtered by category.",
+                Description =
+                "Retrieves all active products with pagination." +
+                " Optionally, products can be filtered by category.",
                 Parameters =
                 [
                     new()
@@ -74,7 +78,11 @@ public sealed class ProductEndpoints : ICarterModule
                         Name = "category",
                         In = ParameterLocation.Query,
                         Description = "Filters products by category identifier.",
-                        Schema = new() { Type = "array", Items = new() { Type = "string" } },
+                        Schema = new()
+                        {
+                            Type = "array",
+                            Items = new() { Type = "string" }
+                        },
                         Required = false
                     },
                     new()
@@ -82,15 +90,24 @@ public sealed class ProductEndpoints : ICarterModule
                         Name = "page",
                         In = ParameterLocation.Query,
                         Description = "Specifies the page number (default: 1).",
-                        Schema = new() { Type = "integer", Default = new OpenApiInteger(1) },
+                        Schema = new()
+                        {
+                            Type = "integer",
+                            Default = new OpenApiInteger(1)
+                        },
                         Required = false
                     },
                     new()
                     {
                         Name = "pageSize",
                         In = ParameterLocation.Query,
-                        Description = "Defines the number of products per page (default: 20).",
-                        Schema = new() { Type = "integer", Default = new OpenApiInteger(20) },
+                        Description =
+                        "Defines the number of products per page (default: 20).",
+                        Schema = new()
+                        {
+                            Type = "integer",
+                            Default = new OpenApiInteger(20)
+                        },
                         Required = false
                     }
                 ],
@@ -98,11 +115,13 @@ public sealed class ProductEndpoints : ICarterModule
 
         productGroup
             .MapPut("/{id:long}", UpdateProduct)
-            .WithName("UpdateProduct")
+            .WithName(nameof(UpdateProduct))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product",
-                Description = "Updates the details of an active product. Admin authentication is required.",
+                Description =
+                "Updates the details of an active product." +
+                " Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -119,11 +138,13 @@ public sealed class ProductEndpoints : ICarterModule
 
         productGroup
             .MapDelete("/{id:long}", DeactivateProduct)
-            .WithName("DeactivateProduct")
+            .WithName(nameof(DeactivateProduct))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Deactivate Product",
-                Description = "Deactivates a product and resets its inventory. Admin authentication is required.",
+                Description =
+                "Deactivates a product and resets its inventory." +
+                " Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -140,11 +161,13 @@ public sealed class ProductEndpoints : ICarterModule
 
         productGroup
             .MapPut("/{id:long}/inventory", UpdateProductInventory)
-            .WithName("UpdateProductInventory")
+            .WithName(nameof(UpdateProductInventory))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Product Inventory",
-                Description = "Increments the inventory quantity available for an active product. Admin authentication is required.",
+                Description =
+                "Increments the inventory quantity available for an active product." +
+                " Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -161,7 +184,7 @@ public sealed class ProductEndpoints : ICarterModule
 
     }
 
-    private async Task<Results<Ok<ProductResponse>, NotFound>> GetProductById(
+    internal async Task<Results<Ok<ProductResponse>, NotFound>> GetProductById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper
@@ -174,7 +197,12 @@ public sealed class ProductEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<ProductResponse>(result));
     }
 
-    private async Task<Results<Created, BadRequest, UnauthorizedHttpResult, ForbidHttpResult>> CreateProduct(
+    internal async Task<Results<
+        Created,
+        BadRequest,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> CreateProduct(
         [FromBody] CreateProductRequest request,
         IMapper mapper,
         ISender sender
@@ -187,7 +215,7 @@ public sealed class ProductEndpoints : ICarterModule
         return TypedResults.Created($"/products/{createdResponse.Id}");
     }
 
-    private async Task<Ok<IEnumerable<ProductResponse>>> GetAllProducts(
+    internal async Task<Ok<IEnumerable<ProductResponse>>> GetAllProducts(
         ISender sender,
         IMapper mapper,
         [FromQuery(Name = "page")] int? page = null,
@@ -202,7 +230,13 @@ public sealed class ProductEndpoints : ICarterModule
         return TypedResults.Ok(result.Select(mapper.Map<ProductResponse>));
     }
 
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> UpdateProduct(
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> UpdateProduct(
         [FromRoute] string id,
         [FromBody] UpdateProductRequest request,
         IMapper mapper,
@@ -216,7 +250,12 @@ public sealed class ProductEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> DeactivateProduct(
+    internal async Task<Results<
+        NoContent,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> DeactivateProduct(
         [FromRoute] string id,
         ISender sender
     )
@@ -228,7 +267,13 @@ public sealed class ProductEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> UpdateProductInventory
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> UpdateProductInventory
     (
         [FromRoute] string id,
         [FromBody] UpdateProductInventoryRequest request,

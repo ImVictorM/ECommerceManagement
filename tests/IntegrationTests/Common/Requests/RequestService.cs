@@ -7,10 +7,12 @@ using IntegrationTests.Common.Requests.Abstracts;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Carriers;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.TestUtils.Constants;
 using IntegrationTests.TestUtils.Extensions.Http;
 
+using WebApi.Authentication;
+
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Routing;
 
 namespace IntegrationTests.Common.Requests;
 
@@ -25,6 +27,8 @@ public sealed class RequestService : IRequestService
     private readonly IDataSeed<UserSeedType, User> _seedUser;
     private readonly IDataSeed<CarrierSeedType, Carrier> _seedCarrier;
 
+    private readonly LinkGenerator _linkGenerator;
+
     /// <inheritdoc/>
     public HttpClient Client { get; }
 
@@ -35,11 +39,13 @@ public sealed class RequestService : IRequestService
     /// <param name="userCredentialsProvider">The user credentials provider.</param>
     /// <param name="carrierCredentialsProvider">The carrier credentials provider.</param>
     /// <param name="seedManager">The seed manager.</param>
+    /// <param name="linkGenerator">The link generator.</param>
     public RequestService(
         IHttpClientFactory clientFactory,
         ICredentialsProvider<UserSeedType> userCredentialsProvider,
         ICredentialsProvider<CarrierSeedType> carrierCredentialsProvider,
-        ISeedManager seedManager
+        ISeedManager seedManager,
+        LinkGenerator linkGenerator
     )
     {
         Client = clientFactory.CreateClient();
@@ -47,6 +53,7 @@ public sealed class RequestService : IRequestService
         _carrierCredentialsProvider = carrierCredentialsProvider;
         _seedUser = seedManager.GetSeed<UserSeedType, User>();
         _seedCarrier = seedManager.GetSeed<CarrierSeedType, Carrier>();
+        _linkGenerator = linkGenerator;
     }
 
     /// <inheritdoc/>
@@ -56,9 +63,14 @@ public sealed class RequestService : IRequestService
 
         var request = new LoginUserRequest(credentials.Email, credentials.Password);
 
-        var response = await Client.PostAsJsonAsync(TestConstants.AuthenticationEndpoints.LoginUser, request);
+        var endpoint = _linkGenerator.GetPathByName(
+            nameof(AuthenticationEndpoints.LoginUser)
+        );
 
-        var responseContent = await response.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
+        var response = await Client.PostAsJsonAsync(endpoint, request);
+
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<AuthenticationResponse>();
 
         Client.SetJwtBearerAuthorizationHeader(responseContent.Token);
 
@@ -72,9 +84,14 @@ public sealed class RequestService : IRequestService
 
         var request = new LoginCarrierRequest(credentials.Email, credentials.Password);
 
-        var response = await Client.PostAsJsonAsync(TestConstants.AuthenticationEndpoints.LoginCarrier, request);
+        var endpoint = _linkGenerator.GetPathByName(
+            nameof(AuthenticationEndpoints.LoginCarrier)
+        );
 
-        var responseContent = await response.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
+        var response = await Client.PostAsJsonAsync(endpoint, request);
+
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<AuthenticationResponse>();
 
         Client.SetJwtBearerAuthorizationHeader(responseContent.Token);
 

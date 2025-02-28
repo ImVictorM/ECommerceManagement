@@ -4,43 +4,56 @@ using IntegrationTests.Categories.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
-using IntegrationTests.TestUtils.Constants;
 
+using WebApi.Categories;
+
+using Microsoft.AspNetCore.Routing;
+using System.Net.Http.Json;
 using Xunit.Abstractions;
 using FluentAssertions;
-using System.Net.Http.Json;
 
 namespace IntegrationTests.Categories;
 
 /// <summary>
-/// Integration tests for the category creation process.
+/// Integration tests for the create category feature.
 /// </summary>
 public class CreateCategoryTests : BaseIntegrationTest
 {
+    private readonly string? _endpoint;
+
     /// <summary>
     /// Initiates a new instance of the <see cref="CreateCategoryTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public CreateCategoryTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public CreateCategoryTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
+        _endpoint = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.CreateCategory)
+        );
     }
 
     /// <summary>
-    /// Tests creating a category without authentication returns unauthorized.
+    /// Verifies creating a category without authentication returns unauthorized.
     /// </summary>
     [Fact]
     public async Task CreateCategory_WithoutAuthentication_ReturnsUnauthorized()
     {
         var request = CreateCategoryRequestUtils.CreateRequest();
 
-        var response = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
+        var response = await RequestService.Client.PostAsJsonAsync(
+            _endpoint,
+            request
+        );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
-    /// Tests creating a category without admin role returns a forbidden response.
+    /// Verifies creating a category without admin role returns a forbidden response.
     /// </summary>
     [Fact]
     public async Task CreateCategory_WithoutAdminPermission_ReturnsForbidden()
@@ -48,13 +61,17 @@ public class CreateCategoryTests : BaseIntegrationTest
         var request = CreateCategoryRequestUtils.CreateRequest();
 
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
+
+        var response = await RequestService.Client.PostAsJsonAsync(
+            _endpoint,
+            request
+        );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Tests creating a category with admin role creates the category correctly.
+    /// Verifies creating a category with admin role creates the category correctly.
     /// </summary>
     [Fact]
     public async Task CreateCategory_WithAdminPermission_ReturnsCreated()
@@ -62,13 +79,23 @@ public class CreateCategoryTests : BaseIntegrationTest
         var request = CreateCategoryRequestUtils.CreateRequest(name: "new_category");
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var createResponse = await RequestService.Client.PostAsJsonAsync(TestConstants.CategoryEndpoints.CreateCategory, request);
-        var resourceLocation = createResponse.Headers.Location;
-        var getCreatedResponse = await RequestService.Client.GetAsync(resourceLocation);
-        var createdCategory = await getCreatedResponse.Content.ReadRequiredFromJsonAsync<CategoryResponse>();
 
-        createResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
-        createdCategory.Id.Should().NotBeNullOrWhiteSpace();
-        createdCategory.Name.Should().Be(request.Name);
+        var responseCreate = await RequestService.Client.PostAsJsonAsync(
+            _endpoint,
+            request
+        );
+
+        var createdResourceLocation = responseCreate.Headers.Location;
+
+        var responseGetCreated = await RequestService.Client.GetAsync(
+            createdResourceLocation
+        );
+
+        var responseGetCreatedContent = await responseGetCreated.Content
+            .ReadRequiredFromJsonAsync<CategoryResponse>();
+
+        responseCreate.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+        responseGetCreatedContent.Id.Should().NotBeNullOrWhiteSpace();
+        responseGetCreatedContent.Name.Should().Be(request.Name);
     }
 }

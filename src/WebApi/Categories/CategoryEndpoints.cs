@@ -32,21 +32,25 @@ public sealed class CategoryEndpoints : ICarterModule
 
         categoryGroup
             .MapPost("/", CreateCategory)
-            .WithName("CreateCategory")
+            .WithName(nameof(CreateCategory))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Create New Category",
-                Description = "Create a new category. Admin authentication is required."
+                Description =
+                "Create a new category. " +
+                "Admin authentication is required."
             })
             .RequireAuthorization();
 
         categoryGroup
             .MapDelete("/{id:long}", DeleteCategory)
-            .WithName("DeleteCategory")
+            .WithName(nameof(DeleteCategory))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Delete Category",
-                Description = "Deletes an existing category. Admin authentication is required.",
+                Description =
+                "Deletes an existing category. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -63,11 +67,13 @@ public sealed class CategoryEndpoints : ICarterModule
 
         categoryGroup
             .MapPut("/{id:long}", UpdateCategory)
-            .WithName("UpdateCategory")
+            .WithName(nameof(UpdateCategory))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Update Category",
-                Description = "Updates an existing category. Admin authentication is required.",
+                Description =
+                "Updates an existing category. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -84,7 +90,7 @@ public sealed class CategoryEndpoints : ICarterModule
 
         categoryGroup
             .MapGet("/", GetCategories)
-            .WithName("GetCategories")
+            .WithName(nameof(GetCategories))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Categories",
@@ -93,7 +99,7 @@ public sealed class CategoryEndpoints : ICarterModule
 
         categoryGroup
             .MapGet("/{id:long}", GetCategoryById)
-            .WithName("GetCategoryById")
+            .WithName(nameof(GetCategoryById))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Category By Identifier",
@@ -112,7 +118,12 @@ public sealed class CategoryEndpoints : ICarterModule
             });
     }
 
-    private async Task<Results<Created, BadRequest, UnauthorizedHttpResult, ForbidHttpResult>> CreateCategory(
+    internal async Task<Results<
+        Created,
+        BadRequest,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> CreateCategory(
         [FromBody] CreateCategoryRequest request,
         IMapper mapper,
         ISender sender
@@ -125,7 +136,12 @@ public sealed class CategoryEndpoints : ICarterModule
         return TypedResults.Created($"{BaseEndpoint}/{result.Id}");
     }
 
-    private async Task<Results<NoContent, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> DeleteCategory(
+    internal async Task<Results<
+        NoContent,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> DeleteCategory(
         [FromRoute] string id,
         ISender sender
     )
@@ -137,7 +153,13 @@ public sealed class CategoryEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> UpdateCategory(
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> UpdateCategory(
         [FromRoute] string id,
         [FromBody] UpdateCategoryRequest request,
         ISender sender,
@@ -151,7 +173,7 @@ public sealed class CategoryEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Ok<IEnumerable<CategoryResponse>>> GetCategories(
+    internal async Task<Ok<IEnumerable<CategoryResponse>>> GetCategories(
         ISender sender,
         IMapper mapper
     )
@@ -163,7 +185,7 @@ public sealed class CategoryEndpoints : ICarterModule
         return TypedResults.Ok(result.Select(mapper.Map<CategoryResponse>));
     }
 
-    private async Task<Results<Ok<CategoryResponse>, NotFound>> GetCategoryById(
+    internal async Task<Results<Ok<CategoryResponse>, NotFound>> GetCategoryById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper

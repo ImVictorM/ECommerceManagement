@@ -11,91 +11,106 @@ using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.TestUtils.Extensions.Orders;
 using IntegrationTests.TestUtils.Extensions.Http;
-using IntegrationTests.TestUtils.Constants;
+
+using WebApi.Orders;
 
 using FluentAssertions;
 using Xunit.Abstractions;
+using Microsoft.AspNetCore.Routing;
 
 namespace IntegrationTests.Orders;
 
 /// <summary>
-/// Integration tests for the process of getting orders.
+/// Integration tests for the get orders feature.
 /// </summary>
 public class GetOrdersTests : BaseIntegrationTest
 {
     private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+    private readonly string? _endpoint;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrdersTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public GetOrdersTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public GetOrdersTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
         _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+
+        _endpoint = LinkGenerator.GetPathByName(
+            nameof(OrderEndpoints.GetOrders)
+        );
     }
 
     /// <summary>
-    /// Tests that accessing the orders endpoint without authentication returns Unauthorized.
+    /// Verifies that accessing the orders endpoint without
+    /// authentication returns Unauthorized.
     /// </summary>
     [Fact]
     public async Task GetOrders_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var endpoint = TestConstants.OrderEndpoints.GetOrders;
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await RequestService.Client.GetAsync(_endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
-    /// Tests that accessing the orders endpoint without an admin role returns Forbidden.
+    /// Verifies that accessing the orders endpoint without the admin
+    /// role returns Forbidden.
     /// </summary>
     [Fact]
     public async Task GetOrders_WithoutAdminRole_ReturnsForbidden()
     {
-        var endpoint = TestConstants.OrderEndpoints.GetOrders;
-
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await RequestService.Client.GetAsync(_endpoint);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Tests that accessing the orders endpoint with an admin role returns the list of all orders with a OK response.
+    /// Verifies that accessing the orders endpoint with the admin role
+    /// returns the list of all orders with an OK response.
     /// </summary>
     [Fact]
-    public async Task GetOrders_WithAdminRole_ReturnOrders()
+    public async Task GetOrders_WithAdminRole_ReturnOk()
     {
         var expectedReturnedOrders = _seedOrder.ListAll();
-        var endpoint = TestConstants.OrderEndpoints.GetOrders;
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync(endpoint);
+        var response = await RequestService.Client.GetAsync(_endpoint);
 
-        var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(expectedReturnedOrders);
     }
 
     /// <summary>
-    /// Tests that accessing the orders endpoint with an admin role and a valid status filter returns the filtered list of orders with a OK response.
+    /// Tests that accessing the orders endpoint with the admin role and a valid
+    /// status filter returns an OK response containing the filtered orders.
     /// </summary>
     /// <param name="statusName">The order status to filter by.</param>
     [Theory]
     [InlineData(nameof(OrderStatus.Canceled))]
     [InlineData(nameof(OrderStatus.Pending))]
     [InlineData(nameof(OrderStatus.Paid))]
-    public async Task GetOrders_WithAdminRoleAndStatusFilter_ReturnFilteredOrders(string statusName)
+    public async Task GetOrders_WithAdminRoleAndStatusFilter_ReturnsOk(
+        string statusName
+    )
     {
         var status = BaseEnumeration.FromDisplayName<OrderStatus>(statusName);
         var expectedOrders = GetOrdersByStatus(status);
-        var endpoint = TestConstants.OrderEndpoints.GetOrders;
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.GetAsync($"{endpoint}?status={statusName}");
-        var responseContent = await response.Content.ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
+        var response = await RequestService.Client
+            .GetAsync($"{_endpoint}?status={statusName}");
+
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<IEnumerable<OrderResponse>>();
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(expectedOrders);

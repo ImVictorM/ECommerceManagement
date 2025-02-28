@@ -4,15 +4,17 @@ using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
-using IntegrationTests.TestUtils.Constants;
+
+using WebApi.Categories;
 
 using Xunit.Abstractions;
 using FluentAssertions;
+using Microsoft.AspNetCore.Routing;
 
 namespace IntegrationTests.Categories;
 
 /// <summary>
-/// Integration tests for the process of deleting a category.
+/// Integration tests for the delete category feature.
 /// </summary>
 public class DeleteCategoryTests : BaseIntegrationTest
 {
@@ -23,59 +25,88 @@ public class DeleteCategoryTests : BaseIntegrationTest
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public DeleteCategoryTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public DeleteCategoryTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
         _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
     }
 
     /// <summary>
-    /// Tests deleting a category without authentication returns unauthorized.
+    /// Verifies deleting a category without authentication returns unauthorized.
     /// </summary>
     [Fact]
     public async Task DeleteCategory_WithoutAuthentication_ReturnsUnauthorized()
     {
         var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
 
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.DeleteCategory),
+            new { id = existingCategory.Id.ToString() }
+        );
+
         var response = await RequestService.Client.DeleteAsync(
-            TestConstants.CategoryEndpoints.DeleteCategory(existingCategory.Id.ToString())
+           endpoint
         );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
-    /// Tests deleting a category without admin role returns a forbidden response.
+    /// Verifies deleting a category without admin role returns a forbidden response.
     /// </summary>
     [Fact]
     public async Task DeleteCategory_WithoutAdminPermission_ReturnsForbidden()
     {
         var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
 
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.DeleteCategory),
+            new { id = existingCategory.Id.ToString() }
+        );
+
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
 
         var response = await RequestService.Client.DeleteAsync(
-            TestConstants.CategoryEndpoints.DeleteCategory(existingCategory.Id.ToString())
+            endpoint
         );
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Tests deleting a category with admin role deletes the category correctly.
+    /// Verifies deleting a category with admin role deletes the category correctly.
     /// </summary>
     [Fact]
-    public async Task DeleteCategory_WithAdminPermission_ReturnsNoContentAndDeletesIt()
+    public async Task DeleteCategory_WithAdminPermission_ReturnsNoContent()
     {
         var categoryToBeDeleted = _seedCategory.GetByType(CategorySeedType.JEWELRY);
 
+        var endpointDelete = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.DeleteCategory),
+            new { id = categoryToBeDeleted.Id.ToString() }
+        );
+
+        var endpointGetById = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.GetCategoryById),
+            new { id = categoryToBeDeleted.Id.ToString() }
+        );
+
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var deleteResponse = await RequestService.Client
-            .DeleteAsync(TestConstants.CategoryEndpoints.DeleteCategory(categoryToBeDeleted.Id.ToString()));
-        var getDeletedCategoryResponse = await RequestService.Client
-            .GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(categoryToBeDeleted.Id.ToString()));
+        var deleteResponse = await RequestService.Client.DeleteAsync(
+            endpointDelete
+        );
+
+        var getDeletedCategoryResponse = await RequestService.Client.GetAsync(
+            endpointGetById
+        );
 
         deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
-        getDeletedCategoryResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+
+        getDeletedCategoryResponse.StatusCode
+            .Should()
+            .Be(System.Net.HttpStatusCode.NotFound);
     }
 }

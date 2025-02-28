@@ -34,7 +34,10 @@ internal sealed class ProductMappings : IRegister
                 src.Request.CategoryIds
             ));
 
-        config.NewConfig<(string Id, UpdateProductInventoryRequest Request), UpdateProductInventoryCommand>()
+        config.NewConfig<
+            (string Id, UpdateProductInventoryRequest Request),
+            UpdateProductInventoryCommand
+            >()
             .ConstructUsing(src => new UpdateProductInventoryCommand(
                 src.Id,
                 src.Request.QuantityToIncrement
@@ -46,8 +49,14 @@ internal sealed class ProductMappings : IRegister
             .Map(dest => dest.Description, src => src.Product.Description)
             .Map(dest => dest.BasePrice, src => src.Product.BasePrice)
             .Map(dest => dest.PriceWithDiscount, src => src.PriceWithDiscount)
-            .Map(dest => dest.QuantityAvailable, src => src.Product.Inventory.QuantityAvailable)
+            .Map(
+                dest => dest.QuantityAvailable,
+                src => src.Product.Inventory.QuantityAvailable
+            )
             .Map(dest => dest.Categories, src => src.Categories)
-            .Map(dest => dest.Images, src => src.Product.ProductImages.Select(pi => pi.Url));
+            .Map(
+                dest => dest.Images,
+                src => src.Product.ProductImages.Select(pi => pi.Url)
+            );
     }
 }

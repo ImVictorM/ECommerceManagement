@@ -30,21 +30,25 @@ public sealed class OrderEndpoints : ICarterModule
 
         orderGroup
             .MapPost("/", PlaceOrder)
-            .WithName("PlaceOrder")
+            .WithName(nameof(PlaceOrder))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Place Order",
-                Description = "As a customer, places an order. Customer authentication is required.",
+                Description =
+                "Allows a customer to place an order. " +
+                "Customer authentication is required.",
             })
             .RequireAuthorization();
 
         orderGroup
             .MapGet("/{id:long}", GetOrderById)
-            .WithName("GetOrderById")
+            .WithName(nameof(GetOrderById))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Order By Id",
-                Description = "Retrieves an order by its identifier. Admin authentication is required.",
+                Description =
+                "Retrieves an order by its identifier. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -61,11 +65,13 @@ public sealed class OrderEndpoints : ICarterModule
 
         orderGroup
             .MapGet("/", GetOrders)
-            .WithName("GetOrders")
+            .WithName(nameof(GetOrders))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Orders",
-                Description = "Retrieves all the orders. Admin authentication is required.",
+                Description =
+                "Retrieves all the orders. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -81,7 +87,13 @@ public sealed class OrderEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<Created, BadRequest, BadRequest<string>, ForbidHttpResult, UnauthorizedHttpResult>> PlaceOrder(
+    internal async Task<Results<
+        Created,
+        BadRequest,
+        BadRequest<string>,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> PlaceOrder(
         [FromHeader(Name = "X-Idempotency-Key")] string requestId,
         [FromBody] PlaceOrderRequest request,
         IMapper mapper,
@@ -100,7 +112,12 @@ public sealed class OrderEndpoints : ICarterModule
         return TypedResults.Created($"/{BaseEndpoint}/{response.Id}");
     }
 
-    private async Task<Results<Ok<OrderDetailedResponse>, ForbidHttpResult, UnauthorizedHttpResult, NotFound>> GetOrderById(
+    internal async Task<Results<
+        Ok<OrderDetailedResponse>,
+        ForbidHttpResult,
+        UnauthorizedHttpResult,
+        NotFound
+    >> GetOrderById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper
@@ -113,7 +130,11 @@ public sealed class OrderEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<OrderDetailedResponse>(result));
     }
 
-    private async Task<Results<Ok<IEnumerable<OrderResponse>>, UnauthorizedHttpResult, ForbidHttpResult>> GetOrders(
+    internal async Task<Results<
+        Ok<IEnumerable<OrderResponse>>,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> GetOrders(
         [FromQuery(Name = "status")] string? status,
         ISender sender,
         IMapper mapper

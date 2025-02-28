@@ -16,8 +16,12 @@ public static class CreateShippingMethodRequestUtils
     /// </summary>
     /// <param name="name">The shipping method name.</param>
     /// <param name="price">The shipping method price.</param>
-    /// <param name="estimatedDeliveryDays">The shipping method estimated delivery days.</param>
-    /// <returns>A new instance of the <see cref="CreateShippingMethodRequest"/> class.</returns>
+    /// <param name="estimatedDeliveryDays">
+    /// The shipping method estimated delivery days.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="CreateShippingMethodRequest"/> class.
+    /// </returns>
     public static CreateShippingMethodRequest CreateRequest(
         string? name = null,
         decimal? price = null,

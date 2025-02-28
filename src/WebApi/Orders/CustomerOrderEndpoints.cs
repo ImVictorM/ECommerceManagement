@@ -27,11 +27,13 @@ public sealed class CustomerOrderEndpoints : ICarterModule
 
         userOrderGroup
             .MapGet("/", GetCustomerOrders)
-            .WithName("GetCustomerOrders")
+            .WithName(nameof(GetCustomerOrders))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Customer Orders",
-                Description = "Retrieves a customer orders. Requires authentication as order owner or administrator.",
+                Description =
+                "Retrieves a customer orders. " +
+                "Requires authentication as order owner or administrator.",
                 Parameters =
                 [
                     new()
@@ -40,7 +42,11 @@ public sealed class CustomerOrderEndpoints : ICarterModule
                         In = ParameterLocation.Path,
                         Description = "The customer identifier.",
                         Required = true,
-                        Schema = new() { Type = "integer", Format = "int64" }
+                        Schema = new()
+                        {
+                            Type = "integer",
+                            Format = "int64"
+                        }
                     },
                     new()
                     {
@@ -56,11 +62,13 @@ public sealed class CustomerOrderEndpoints : ICarterModule
 
         userOrderGroup
             .MapGet("/{orderId:long}", GetCustomerOrderById)
-            .WithName("GetCustomerOrderById")
+            .WithName(nameof(GetCustomerOrderById))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Customer Order By Id",
-                Description = "Retrieves a customer's order by its identifier. Requires authentication as order owner or administrator.",
+                Description =
+                "Retrieves a customer's order by its identifier. " +
+                "Requires authentication as order owner or administrator.",
                 Parameters =
                 [
                     new()
@@ -69,7 +77,11 @@ public sealed class CustomerOrderEndpoints : ICarterModule
                         In = ParameterLocation.Path,
                         Description = "The customer identifier.",
                         Required = true,
-                        Schema = new() { Type = "integer", Format = "int64" }
+                        Schema = new()
+                        {
+                            Type = "integer",
+                            Format = "int64"
+                        }
                     },
                     new()
                     {
@@ -77,14 +89,22 @@ public sealed class CustomerOrderEndpoints : ICarterModule
                         In = ParameterLocation.Path,
                         Description = "The order identifier.",
                         Required = true,
-                        Schema = new() { Type = "integer", Format = "int64" }
+                        Schema = new()
+                        {
+                            Type = "integer",
+                            Format = "int64"
+                        }
                     },
                 ],
             })
             .RequireAuthorization();
     }
 
-    private async Task<Results<Ok<IEnumerable<OrderResponse>>, ForbidHttpResult, UnauthorizedHttpResult>> GetCustomerOrders(
+    internal async Task<Results<
+        Ok<IEnumerable<OrderResponse>>,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> GetCustomerOrders(
         [FromRoute] string userId,
         [FromQuery(Name = "status")] string? status,
         ISender sender,
@@ -98,7 +118,11 @@ public sealed class CustomerOrderEndpoints : ICarterModule
         return TypedResults.Ok(result.Select(mapper.Map<OrderResponse>));
     }
 
-    private async Task<Results<Ok<OrderDetailedResponse>, ForbidHttpResult, UnauthorizedHttpResult>> GetCustomerOrderById(
+    internal async Task<Results<
+        Ok<OrderDetailedResponse>,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> GetCustomerOrderById(
         [FromRoute] string userId,
         [FromRoute] string orderId,
         ISender sender,

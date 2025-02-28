@@ -23,11 +23,13 @@ public sealed class ShipmentEndpoints : ICarterModule
 
         shipmentsGroup
             .MapPatch("/{id:long}/status", AdvanceShipmentStatus)
-            .WithName("AdvanceShipmentStatus")
+            .WithName(nameof(AdvanceShipmentStatus))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Advance Shipment Status",
-                Description = "Advances a shipment status to the next state. Carrier authentication is required.",
+                Description =
+                "Advances a shipment status to the next state." +
+                " Carrier authentication is required.",
                 Parameters =
                 [
                     new()
@@ -43,7 +45,13 @@ public sealed class ShipmentEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> AdvanceShipmentStatus(
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> AdvanceShipmentStatus(
         [FromRoute] string id,
         ISender sender
     )

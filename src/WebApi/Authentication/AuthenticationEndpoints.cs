@@ -26,36 +26,45 @@ public sealed class AuthenticationEndpoints : ICarterModule
 
         authenticationGroup
             .MapPost("/register/users/customers", RegisterCustomer)
-            .WithName("RegisterCustomer")
+            .WithName(nameof(RegisterCustomer))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Register Customer",
-                Description = "Allows a new customer user to register for an account."
+                Description =
+                "Allows a new customer user to register for an account."
             });
 
         authenticationGroup
             .MapPost("/login/users", LoginUser)
-            .WithName("LoginUser")
+            .WithName(nameof(LoginUser))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Login User",
-                Description = "Allows a user to log in using their email and password. Inactive users cannot log in."
+                Description =
+                "Allows a user to log in using their email and password." +
+                " Inactive users cannot log in."
             });
 
         authenticationGroup
             .MapPost("/login/carriers", LoginCarrier)
-            .WithName("LoginCarrier")
+            .WithName(nameof(LoginCarrier))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Login Carrier",
-                Description = "Allows a carrier to log in using their email and password."
+                Description =
+                "Allows a carrier to log in using their email and password."
             });
     }
 
-    private async Task<Results<Created<AuthenticationResponse>, BadRequest, Conflict>> RegisterCustomer(
+    internal async Task<Results<
+        Created<AuthenticationResponse>,
+        BadRequest,
+        Conflict
+    >> RegisterCustomer(
         RegisterCustomerRequest request,
         ISender sender,
-        IMapper mapper
+        IMapper mapper,
+        LinkGenerator linkGenerator
     )
     {
         var command = mapper.Map<RegisterCustomerCommand>(request);
@@ -64,10 +73,13 @@ public sealed class AuthenticationEndpoints : ICarterModule
 
         var authenticationResponse = mapper.Map<AuthenticationResponse>(result);
 
-        return TypedResults.Created($"/users/{authenticationResponse.Id}", authenticationResponse);
+        return TypedResults.Created(
+            $"/users/{authenticationResponse.Id}",
+            authenticationResponse
+        );
     }
 
-    private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> LoginUser(
+    internal async Task<Results<Ok<AuthenticationResponse>, BadRequest>> LoginUser(
         LoginUserRequest request,
         ISender sender,
         IMapper mapper
@@ -80,7 +92,7 @@ public sealed class AuthenticationEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<AuthenticationResponse>(result));
     }
 
-    private async Task<Results<Ok<AuthenticationResponse>, BadRequest>> LoginCarrier(
+    internal async Task<Results<Ok<AuthenticationResponse>, BadRequest>> LoginCarrier(
         LoginCarrierRequest request,
         ISender sender,
         IMapper mapper

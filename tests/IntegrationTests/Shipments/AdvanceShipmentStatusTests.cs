@@ -6,21 +6,27 @@ using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.Enumerations;
 using Domain.ShipmentAggregate.ValueObjects;
+using Domain.PaymentAggregate.Enumerations;
 
 using WebApi.Common.Utilities;
-
-using Contracts.Payments;
+using WebApi.Orders;
+using WebApi.Payments;
+using WebApi.Shipments;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Orders;
-using IntegrationTests.TestUtils.Constants;
+using IntegrationTests.Common.Seeds.Users;
+using IntegrationTests.Common.Seeds.Carriers;
+using IntegrationTests.Payments.TestUtils;
 using IntegrationTests.TestUtils.Extensions.Http;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Routing;
 using FluentAssertions;
 using Xunit.Abstractions;
 using System.Net.Http.Json;
-using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
 namespace IntegrationTests.Shipments;
 
@@ -37,10 +43,14 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public AdvanceShipmentStatusTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public AdvanceShipmentStatusTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
         _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
-        _hmacSignatureProvider = factory.Services.GetRequiredService<IHmacSignatureProvider>();
+        _hmacSignatureProvider = factory.Services
+            .GetRequiredService<IHmacSignatureProvider>();
     }
 
     /// <summary>
@@ -49,11 +59,14 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     [Fact]
     public async Task AdvanceShipmentStatus_WithoutAuthorization_ReturnsUnauthorized()
     {
-        var endpoint = TestConstants.ShipmentEndpoints.AdvanceShipmentStatus("1");
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ShipmentEndpoints.AdvanceShipmentStatus),
+            new { id = "1" }
+        );
 
         var response = await RequestService.Client.PatchAsync(endpoint, null);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -62,12 +75,15 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     [Fact]
     public async Task AdvanceShipmentStatus_WithoutCarrierRole_ReturnsForbidden()
     {
-        var endpoint = TestConstants.ShipmentEndpoints.AdvanceShipmentStatus("1");
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ShipmentEndpoints.AdvanceShipmentStatus),
+            new { id = "1" }
+        );
 
-        await RequestService.LoginAsAsync(Common.Seeds.Users.UserSeedType.ADMIN);
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
         var response = await RequestService.Client.PatchAsync(endpoint, null);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -78,60 +94,85 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     {
         var invalidShipmentId = "999999";
 
-        var endpoint = TestConstants.ShipmentEndpoints.AdvanceShipmentStatus(invalidShipmentId);
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ShipmentEndpoints.AdvanceShipmentStatus),
+            new { id = invalidShipmentId }
+        );
 
-        await RequestService.LoginAsAsync(Common.Seeds.Carriers.CarrierSeedType.INTERNAL);
-        var response = await RequestService.Client.PatchAsync(endpoint, null);
+        await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
+        var response = await RequestService.Client.PatchAsync(
+            endpoint,
+            null
+        );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     /// <summary>
     /// Verifies the shipment status is advanced when the authenticated
-    /// user has the permissions required, the shipment exists, and the shipment status is not pending.
+    /// user has the permissions required, the shipment exists,
+    /// and the shipment status is not pending.
     /// </summary>
     [Fact]
-    public async Task AdvanceShipmentStatus_WithAuthorizationAndExistingShipment_AdvancesShipmentStatusAndReturnsNoContent()
+    public async Task AdvanceShipmentStatus_WithoutPendingShipment_ReturnsNoContent()
     {
         var orderPending = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
         var orderPendingDetails = await GetOrderDetailsById(orderPending.Id);
         var shipmentId = ShipmentId.Create(orderPendingDetails.Shipment.ShipmentId);
 
-        var endpoint = TestConstants.ShipmentEndpoints.AdvanceShipmentStatus(shipmentId.ToString());
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ShipmentEndpoints.AdvanceShipmentStatus),
+            new { id = shipmentId.ToString() }
+        );
 
         await PayOrder(orderPendingDetails);
-        await RequestService.LoginAsAsync(Common.Seeds.Carriers.CarrierSeedType.INTERNAL);
-        var response = await RequestService.Client.PatchAsync(endpoint, null);
-        var orderDetailedResponse = await GetOrderDetailsById(orderPending.Id);
+        await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
+        var response = await RequestService.Client.PatchAsync(
+            endpoint,
+            null
+        );
+        var responseOrderDetailed = await GetOrderDetailsById(orderPending.Id);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
-        orderDetailedResponse.Shipment.Status.Should().Be(ShipmentStatus.Shipped.Name);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        responseOrderDetailed.Shipment.Status
+            .Should()
+            .Be(ShipmentStatus.Shipped.Name);
     }
 
     /// <summary>
     /// Verifies it is not possible to advance manually a pending order.
     /// </summary>
     [Fact]
-    public async Task AdvanceShipmentStatus_WithAuthorizationAndExistingPendingShipment_ReturnsBadRequest()
+    public async Task AdvanceShipmentStatus_WithPendingShipment_ReturnsBadRequest()
     {
         var orderPending = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
         var orderPendingDetails = await GetOrderDetailsById(orderPending.Id);
         var shipmentId = ShipmentId.Create(orderPendingDetails.Shipment.ShipmentId);
 
-        var endpoint = TestConstants.ShipmentEndpoints.AdvanceShipmentStatus(shipmentId.ToString());
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ShipmentEndpoints.AdvanceShipmentStatus),
+            new { id = shipmentId.ToString() }
+        );
 
-        await RequestService.LoginAsAsync(Common.Seeds.Carriers.CarrierSeedType.INTERNAL);
+        await RequestService.LoginAsAsync(CarrierSeedType.INTERNAL);
         var response = await RequestService.Client.PatchAsync(endpoint, null);
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     private async Task<OrderDetailedResponse> GetOrderDetailsById(OrderId id)
     {
-        await RequestService.LoginAsAsync(Common.Seeds.Users.UserSeedType.ADMIN);
-        var orderByIdEndpoint = TestConstants.OrderEndpoints.GetOrderById(id.ToString());
-        var response = await RequestService.Client.GetAsync(orderByIdEndpoint);
-        var orderDetails = await response.Content.ReadRequiredFromJsonAsync<OrderDetailedResponse>();
+        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+
+        var endpointGetOrderById = LinkGenerator.GetPathByName(
+            nameof(OrderEndpoints.GetOrderById),
+            new { id = id.ToString() }
+        );
+
+        var response = await RequestService.Client.GetAsync(endpointGetOrderById);
+
+        var orderDetails = await response.Content
+            .ReadRequiredFromJsonAsync<OrderDetailedResponse>();
 
         return orderDetails;
     }
@@ -139,13 +180,29 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     private async Task PayOrder(OrderDetailedResponse order)
     {
         var existingPayment = order.Payment;
-        var request = new PaymentStatusChangedRequest(existingPayment.PaymentId, "Authorized");
-        var validSignature = _hmacSignatureProvider.ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
-        var endpoint = TestConstants.PaymentEndpoints.PaymentStatusChanged;
 
-        RequestService.Client.DefaultRequestHeaders.Add("X-Provider-Signature", validSignature);
-        var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
+        var request = PaymentStatusChangedRequestUtils.CreateRequest(
+            paymentId: existingPayment.PaymentId,
+            paymentStatus: PaymentStatus.Authorized.Name
+        );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        var validSignature = _hmacSignatureProvider
+            .ComputeHmac(JsonSerializerUtils.SerializeForWeb(request));
+
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(PaymentWebhookEndpoints.HandlePaymentStatusChanged)
+        );
+
+        RequestService.Client.DefaultRequestHeaders.Add(
+            "X-Provider-Signature",
+            validSignature
+        );
+
+        var response = await RequestService.Client.PostAsJsonAsync(
+            endpoint,
+            request
+        );
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 }

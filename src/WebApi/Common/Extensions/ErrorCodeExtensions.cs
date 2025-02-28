@@ -20,7 +20,9 @@ internal static class ErrorCodeExtensions
     /// Parses an <see cref="ErrorCode"/> to <see cref="HttpStatusCode"/>.
     /// </summary>
     /// <param name="errorCode">The current error code.</param>
-    /// <returns>An <see cref="HttpStatusCode"/> that represents the error code.</returns>
+    /// <returns>
+    /// An <see cref="HttpStatusCode"/> that represents the error code.
+    /// </returns>
     public static HttpStatusCode ToHttpStatusCode(this ErrorCode errorCode)
     {
         return _map.TryGetValue(errorCode, out var statusCode)

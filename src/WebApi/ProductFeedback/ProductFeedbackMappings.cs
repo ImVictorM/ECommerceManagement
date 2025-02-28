@@ -12,7 +12,10 @@ internal class ProductFeedbackMappings : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config
-            .NewConfig<(string ProductId, LeaveProductFeedbackRequest Request), LeaveProductFeedbackCommand>()
+            .NewConfig<
+                (string ProductId, LeaveProductFeedbackRequest Request),
+                LeaveProductFeedbackCommand
+            >()
             .Map(dest => dest.ProductId, src => src.ProductId)
             .Map(dest => dest, src => src.Request);
     }

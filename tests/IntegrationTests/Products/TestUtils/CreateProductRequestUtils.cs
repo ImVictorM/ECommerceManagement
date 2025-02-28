@@ -7,8 +7,7 @@ using Bogus;
 namespace IntegrationTests.Products.TestUtils;
 
 /// <summary>
-/// Utility class for creating instances of <see cref="CreateProductRequest"/> with default or customized values.
-/// Provides methods to simplify test setup for product creation requests by allowing specific fields to be overridden.
+/// Utilities for the <see cref="CreateProductRequest"/> class.
 /// </summary>
 public static class CreateProductRequestUtils
 {
@@ -23,7 +22,9 @@ public static class CreateProductRequestUtils
     /// <param name="basePrice">The product base price.</param>
     /// <param name="categoryIds">The product categories.</param>
     /// <param name="images">The product images.</param>
-    /// <returns>A new instance of the <see cref="CreateProductRequest"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CreateProductRequest"/> class.
+    /// </returns>
     public static CreateProductRequest CreateRequest(
         string? name = null,
         string? description = null,

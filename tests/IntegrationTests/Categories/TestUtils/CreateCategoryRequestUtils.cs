@@ -13,7 +13,9 @@ public static class CreateCategoryRequestUtils
     /// Creates a new instance of the <see cref="CreateCategoryRequest"/> class.
     /// </summary>
     /// <param name="name">The category name.</param>
-    /// <returns>A new instance of the <see cref="CreateCategoryRequest"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CreateCategoryRequest"/> class.
+    /// </returns>
     public static CreateCategoryRequest CreateRequest(
         string? name = null
     )

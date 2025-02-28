@@ -34,9 +34,12 @@ public static class PlaceOrderRequestUtils
         int? installments = null
     )
     {
-        var requestOrderProducts = products ?? OrderUtils.CreateReservedProducts(4).Select(
-            rp => new OrderProductRequest(rp.ProductId.ToString(), rp.Quantity)
-        );
+        var requestOrderProducts = products ?? OrderUtils
+            .CreateReservedProducts(4)
+            .Select(rp => new OrderProductRequest(
+                rp.ProductId.ToString(),
+                rp.Quantity
+            ));
 
         return new PlaceOrderRequest(
             shippingMethodId ?? NumberUtils.CreateRandomLongAsString(),

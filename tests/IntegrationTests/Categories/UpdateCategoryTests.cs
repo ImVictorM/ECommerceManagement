@@ -8,16 +8,18 @@ using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
-using IntegrationTests.TestUtils.Constants;
+
+using WebApi.Categories;
 
 using Xunit.Abstractions;
 using FluentAssertions;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Routing;
 
 namespace IntegrationTests.Categories;
 
 /// <summary>
-/// Integration tests for the process of updating a category.
+/// Integration tests for the update category feature.
 /// </summary>
 public class UpdateCategoryTests : BaseIntegrationTest
 {
@@ -28,14 +30,17 @@ public class UpdateCategoryTests : BaseIntegrationTest
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public UpdateCategoryTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public UpdateCategoryTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
 
         _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
     }
 
     /// <summary>
-    /// Tests updating a category without authentication returns unauthorized.
+    /// Verifies updating a category without authentication returns unauthorized.
     /// </summary>
     [Fact]
     public async Task UpdateCategory_WithoutAuthentication_ReturnsUnauthorized()
@@ -43,8 +48,13 @@ public class UpdateCategoryTests : BaseIntegrationTest
         var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
         var request = UpdateCategoryRequestUtils.CreateRequest();
 
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.UpdateCategory),
+            new { id = existingCategory.Id.ToString() }
+        );
+
         var response = await RequestService.Client.PutAsJsonAsync(
-            TestConstants.CategoryEndpoints.UpdateCategory(existingCategory.Id.ToString()),
+            endpoint,
             request
         );
 
@@ -52,7 +62,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests updating a category without admin role returns a forbidden response.
+    /// Verifies updating a category without the admin role returns a forbidden response.
     /// </summary>
     [Fact]
     public async Task UpdateCategory_WithoutAdminPermission_ReturnsForbidden()
@@ -60,9 +70,14 @@ public class UpdateCategoryTests : BaseIntegrationTest
         var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
         var request = UpdateCategoryRequestUtils.CreateRequest();
 
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.UpdateCategory),
+            new { id = existingCategory.Id.ToString() }
+        );
+
         await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
         var response = await RequestService.Client.PutAsJsonAsync(
-            TestConstants.CategoryEndpoints.UpdateCategory(existingCategory.Id.ToString()),
+            endpoint,
             request
         );
 
@@ -70,25 +85,45 @@ public class UpdateCategoryTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests updating a category with admin role updates the category correctly.
+    /// Verifies updating a category with the admin role updates the category correctly.
     /// </summary>
     [Fact]
-    public async Task UpdateCategory_WithAdminPermission_ReturnsNoContentAndUpdatesIt()
+    public async Task UpdateCategory_WithAdminPermission_ReturnsNoContent()
     {
-        var categoryToBeUpdated = _seedCategory.GetByType(CategorySeedType.JEWELRY);
-        var request = UpdateCategoryRequestUtils.CreateRequest(name: "new_category_name");
+        var categoryToBeUpdated = _seedCategory.GetByType(
+            CategorySeedType.JEWELRY
+        );
+
+        var request = UpdateCategoryRequestUtils.CreateRequest(
+            name: "new_category_name"
+        );
+
+        var endpointUpdate = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.UpdateCategory),
+            new { id = categoryToBeUpdated.Id.ToString() }
+        );
+
+        var endpointGetById = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.GetCategoryById),
+            new { id = categoryToBeUpdated.Id.ToString() }
+        );
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var updateResponse = await RequestService.Client
-            .PutAsJsonAsync(TestConstants.CategoryEndpoints.UpdateCategory(categoryToBeUpdated.Id.ToString()), request);
-        var getUpdatedCategoryResponse = await RequestService.Client
-            .GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(categoryToBeUpdated.Id.ToString()));
+        var responseUpdate = await RequestService.Client.PutAsJsonAsync(
+            endpointUpdate,
+            request
+        );
 
-        var updatedCategory = await getUpdatedCategoryResponse.Content.ReadRequiredFromJsonAsync<CategoryResponse>();
+        var responseGetUpdated = await RequestService.Client.GetAsync(
+            endpointGetById
+        );
 
-        updateResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
-        getUpdatedCategoryResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        updatedCategory.Name.Should().Be(request.Name);
+        var responseGetUpdatedContent = await responseGetUpdated.Content
+            .ReadRequiredFromJsonAsync<CategoryResponse>();
+
+        responseUpdate.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        responseGetUpdated.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        responseGetUpdatedContent.Name.Should().Be(request.Name);
     }
 }

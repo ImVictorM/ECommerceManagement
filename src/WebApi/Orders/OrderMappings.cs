@@ -19,7 +19,10 @@ internal sealed class OrderMappings : IRegister
             .MapWith(src => new PlaceOrderCommand(
                 src.RequestId,
                 src.Request.ShippingMethodId,
-                src.Request.Products.Select(p => new OrderProductInput(p.ProductId, p.Quantity)),
+                src.Request.Products.Select(p => new OrderProductInput(
+                    p.ProductId,
+                    p.Quantity
+                )),
                 src.Request.BillingAddress.Adapt<Address>(),
                 src.Request.DeliveryAddress.Adapt<Address>(),
                 src.Request.PaymentMethod.Adapt<IPaymentMethod>(),

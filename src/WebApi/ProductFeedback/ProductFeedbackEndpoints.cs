@@ -30,7 +30,9 @@ public class ProductFeedbackEndpoints : ICarterModule
             .WithOpenApi(op => new(op)
             {
                 Summary = "Leave Product Feedback",
-                Description = "Allows a user to leave feedback for a product they have purchased.",
+                Description =
+                "Allows a user to leave feedback for a product they have purchased." +
+                "Customer authentication is required.",
                 Parameters =
                 [
                     new()
@@ -46,7 +48,12 @@ public class ProductFeedbackEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    internal async Task<Results<Created, BadRequest, ForbidHttpResult, UnauthorizedHttpResult>> LeaveProductFeedback(
+    internal async Task<Results<
+        Created,
+        BadRequest,
+        ForbidHttpResult,
+        UnauthorizedHttpResult
+    >> LeaveProductFeedback(
         [FromRoute] string productId,
         [FromBody] LeaveProductFeedbackRequest request,
         ISender sender,

@@ -9,19 +9,21 @@ using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
-using IntegrationTests.TestUtils.Constants;
 using IntegrationTests.Products.TestUtils;
+
+using WebApi.Products;
 
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
+using Microsoft.AspNetCore.Routing;
 
 namespace IntegrationTests.Products;
 
 /// <summary>
-/// Integration tests for the process of updating a product.
+/// Integration tests for the update product feature.
 /// </summary>
 public class UpdateProductTests : BaseIntegrationTest
 {
@@ -33,67 +35,103 @@ public class UpdateProductTests : BaseIntegrationTest
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public UpdateProductTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public UpdateProductTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
         _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
         _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
     }
 
     /// <summary>
-    /// Tests that when an unauthenticated user tries to update a product the response is unauthorized.
+    /// Verifies when an unauthenticated user tries to update a product
+    /// the response is unauthorized.
     /// </summary>
     [Fact]
-    public async Task UpdateProduct_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
+    public async Task UpdateProduct_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var endpoint = TestConstants.ProductEndpoints.UpdateProduct("1");
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ProductEndpoints.UpdateProduct),
+            new { id = "1" }
+        );
 
-        var response = await RequestService.Client.PutAsJsonAsync(endpoint, UpdateProductRequestUtils.CreateRequest());
+        var response = await RequestService.Client.PutAsJsonAsync(
+            endpoint,
+            UpdateProductRequestUtils.CreateRequest()
+        );
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
-    /// Tests that when a user that is not admin tries to update a product it returns forbidden.
+    /// Verifies when a user that is not an admin tries to update a product
+    /// it is returned a forbidden response.
     /// </summary>
-    /// <param name="customerUserType">The customer type to be authenticated.</param>
+    /// <param name="customerUserType">
+    /// The customer type to be authenticated.
+    /// </param>
     [Theory]
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
     [InlineData(UserSeedType.CUSTOMER)]
-    public async Task UpdateProduct_WhenUserIsNotAdmin_ReturnsForbidden(UserSeedType customerUserType)
+    public async Task UpdateProduct_WithNonAdminUser_ReturnsForbidden(
+        UserSeedType customerUserType
+    )
     {
-        var endpoint = TestConstants.ProductEndpoints.UpdateProduct("1");
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ProductEndpoints.UpdateProduct),
+            new { id = "1" }
+        );
 
         await RequestService.LoginAsAsync(customerUserType);
-        var response = await RequestService.Client.PutAsJsonAsync(endpoint, UpdateProductRequestUtils.CreateRequest());
+
+        var response = await RequestService.Client.PutAsJsonAsync(
+            endpoint,
+            UpdateProductRequestUtils.CreateRequest()
+        );
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Tests that when the product to be updated does not exist the response is not found.
+    /// Verifies when the product to be updated does not exist the response
+    /// is not found.
     /// </summary>
     [Fact]
     public async Task UpdateProduct_WhenProductDoesNotExist_ReturnsNotFound()
     {
         var notFoundId = "404";
-        var endpoint = TestConstants.ProductEndpoints.UpdateProduct(notFoundId);
+
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(ProductEndpoints.UpdateProduct),
+            new { id = notFoundId }
+        );
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PutAsJsonAsync(endpoint, UpdateProductRequestUtils.CreateRequest());
-        var responseContent = await response.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
+        var response = await RequestService.Client.PutAsJsonAsync(
+            endpoint,
+            UpdateProductRequestUtils.CreateRequest()
+        );
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
-        responseContent.Detail.Should().Be($"The product with id {notFoundId} could not be updated because it does not exist");
+        responseContent.Detail.Should().Be(
+            $"The product with id {notFoundId} could not be" +
+            $" updated because it does not exist"
+        );
     }
 
     /// <summary>
-    /// Tests when updating the product with right credentials and request parameters the product is updated successfully returning a no content response.
-    /// Also, after updating the product, fetches and tests it to be sure if it was updated.
+    /// Verifies updating a product with admin permission and valid request
+    /// parameters updates the product and returns a no content response.
+    /// Also, after updating the product, fetches and tests it
+    /// to be sure if it was updated.
     /// </summary>
     [Fact]
-    public async Task UpdateProduct_WhenUserIsAdminAndRequestIsValid_UpdatesProductAndReturnsNoContent()
+    public async Task UpdateProduct_WithAdminRoleAndValidRequest_ReturnsNoContent()
     {
         var productCategories = new[]
         {
@@ -111,19 +149,34 @@ public class UpdateProductTests : BaseIntegrationTest
             images: [new Uri("tech-pencil.png", UriKind.Relative)]
         );
 
-        var updateEndpoint = TestConstants.ProductEndpoints.UpdateProduct(productToUpdate.Id.ToString());
-        var getEndpoint = TestConstants.ProductEndpoints.GetProductById(productToUpdate.Id.ToString());
+        var endpointUpdate = LinkGenerator.GetPathByName(
+            nameof(ProductEndpoints.UpdateProduct),
+            new { id = productToUpdate.Id.ToString() }
+        );
+
+        var endpointGetProductById = LinkGenerator.GetPathByName(
+            nameof(ProductEndpoints.GetProductById),
+            new { id = productToUpdate.Id.ToString() }
+        );
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var putResponse = await RequestService.Client.PutAsJsonAsync(updateEndpoint, request);
-        var getResponse = await RequestService.Client.GetAsync(getEndpoint);
-        var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<ProductResponse>();
+        var putResponse = await RequestService.Client.PutAsJsonAsync(
+            endpointUpdate,
+            request
+        );
+        var getResponse = await RequestService.Client.GetAsync(
+            endpointGetProductById
+        );
+        var getResponseContent = await getResponse.Content
+            .ReadRequiredFromJsonAsync<ProductResponse>();
 
         putResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         getResponseContent.Name.Should().Be(request.Name);
         getResponseContent.Description.Should().Be(request.Description);
         getResponseContent.Images.Should().BeEquivalentTo(request.Images);
         getResponseContent.BasePrice.Should().Be(request.BasePrice);
-        getResponseContent.Categories.Should().BeEquivalentTo(productCategories.Select(c => c.Name));
+        getResponseContent.Categories
+            .Should()
+            .BeEquivalentTo(productCategories.Select(c => c.Name));
     }
 }

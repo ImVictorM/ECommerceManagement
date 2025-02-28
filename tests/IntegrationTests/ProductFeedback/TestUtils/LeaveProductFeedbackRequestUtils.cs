@@ -17,7 +17,9 @@ public static class LeaveProductFeedbackRequestUtils
     /// <param name="title">The feedback title.</param>
     /// <param name="content">The feedback content.</param>
     /// <param name="starRating">The feedback star rating.</param>
-    /// <returns>A new instance of the <see cref="LeaveProductFeedbackRequest"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="LeaveProductFeedbackRequest"/> class.
+    /// </returns>
     public static LeaveProductFeedbackRequest CreateRequest(
         string? title = null,
         string? content = null,

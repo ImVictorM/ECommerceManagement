@@ -79,7 +79,6 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
         );
 
         await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-
         var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -94,15 +93,17 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
         var userLeavingFeedbackType = UserSeedType.CUSTOMER;
         var userLeavingFeedback = _seedUser.GetByType(userLeavingFeedbackType);
 
-        var productNotAllowedToLeaveFeedback = GetFirstProductNotPurchased(userLeavingFeedback.Id);
+        var productNotAllowedToLeaveFeedback = GetFirstProductNotPurchased(
+            userLeavingFeedback.Id
+        );
         var request = LeaveProductFeedbackRequestUtils.CreateRequest();
 
-        await RequestService.LoginAsAsync(userLeavingFeedbackType);
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
             new { productId = productNotAllowedToLeaveFeedback.Id }
         );
 
+        await RequestService.LoginAsAsync(userLeavingFeedbackType);
         var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -120,12 +121,12 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
         var productToLeaveFeedback = GetFirstProductPurchased(userLeavingFeedback.Id);
         var request = LeaveProductFeedbackRequestUtils.CreateRequest();
 
-        await RequestService.LoginAsAsync(userLeavingFeedbackType);
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
             new { productId = productToLeaveFeedback.Id }
         );
 
+        await RequestService.LoginAsAsync(userLeavingFeedbackType);
         var response = await RequestService.Client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);

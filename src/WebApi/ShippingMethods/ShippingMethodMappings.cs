@@ -15,7 +15,10 @@ internal sealed class ShippingMethodMappings : IRegister
     {
         config.NewConfig<CreateShippingMethodRequest, CreateShippingMethodCommand>();
 
-        config.NewConfig<(string ShippingMethodId, UpdateShippingMethodRequest Request), UpdateShippingMethodCommand>()
+        config.NewConfig<
+                (string ShippingMethodId, UpdateShippingMethodRequest Request),
+                UpdateShippingMethodCommand
+            >()
             .Map(dest => dest.ShippingMethodId, src => src.ShippingMethodId)
             .Map(dest => dest, src => src.Request);
 
