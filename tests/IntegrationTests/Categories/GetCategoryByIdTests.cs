@@ -1,9 +1,6 @@
-using Domain.CategoryAggregate;
-
 using Contracts.Categories;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -21,7 +18,7 @@ namespace IntegrationTests.Categories;
 /// </summary>
 public class GetCategoryByIdTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly ICategorySeed _seedCategory;
     private readonly HttpClient _client;
 
     /// <summary>
@@ -34,7 +31,7 @@ public class GetCategoryByIdTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
         _client = RequestService.CreateClient();
     }
 
@@ -63,11 +60,12 @@ public class GetCategoryByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetCategoryById_WithExistingCategoryId_ReturnsOk()
     {
-        var existingCategory = _seedCategory.GetByType(CategorySeedType.TECHNOLOGY);
+        var existingCategory = _seedCategory.GetEntity(CategorySeedType.TECHNOLOGY);
+        var existingCategoryId = existingCategory.Id.ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.GetCategoryById),
-            new { id = existingCategory.Id.ToString() }
+            new { id = existingCategoryId }
         );
 
         var response = await _client.GetAsync(endpoint);
@@ -75,7 +73,7 @@ public class GetCategoryByIdTests : BaseIntegrationTest
             .ReadRequiredFromJsonAsync<CategoryResponse>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        responseContent.Id.Should().Be(existingCategory.Id.ToString());
+        responseContent.Id.Should().Be(existingCategoryId);
         responseContent.Name.Should().Be(existingCategory.Name);
     }
 }

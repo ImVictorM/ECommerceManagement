@@ -2,7 +2,6 @@ using Contracts.Orders;
 
 using Application.Common.Security.Authentication;
 
-using Domain.OrderAggregate;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShipmentAggregate.Enumerations;
 using Domain.ShipmentAggregate.ValueObjects;
@@ -14,7 +13,6 @@ using WebApi.Payments;
 using WebApi.Shipments;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Carriers;
@@ -35,7 +33,7 @@ namespace IntegrationTests.Shipments;
 /// </summary>
 public class AdvanceShipmentStatusTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+    private readonly IOrderSeed _seedOrder;
     private readonly IHmacSignatureProvider _hmacSignatureProvider;
 
     /// <summary>
@@ -48,7 +46,7 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+        _seedOrder = SeedManager.GetSeed<IOrderSeed>();
         _hmacSignatureProvider = factory.Services
             .GetRequiredService<IHmacSignatureProvider>();
     }
@@ -118,7 +116,7 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     [Fact]
     public async Task AdvanceShipmentStatus_WithoutPendingShipment_ReturnsNoContent()
     {
-        var orderPending = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
+        var orderPending = _seedOrder.GetEntity(OrderSeedType.CUSTOMER_ORDER_PENDING);
         var orderPendingDetails = await GetOrderDetailsById(orderPending.Id);
         var shipmentId = ShipmentId.Create(orderPendingDetails.Shipment.ShipmentId);
 
@@ -149,7 +147,7 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     [Fact]
     public async Task AdvanceShipmentStatus_WithPendingShipment_ReturnsBadRequest()
     {
-        var orderPending = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
+        var orderPending = _seedOrder.GetEntity(OrderSeedType.CUSTOMER_ORDER_PENDING);
         var orderPendingDetails = await GetOrderDetailsById(orderPending.Id);
         var shipmentId = ShipmentId.Create(orderPendingDetails.Shipment.ShipmentId);
 

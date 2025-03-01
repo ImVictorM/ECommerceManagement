@@ -1,10 +1,7 @@
-using Domain.ShippingMethodAggregate;
-
 using Contracts.ShippingMethods;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.ShippingMethods;
 using IntegrationTests.ShippingMethods.TestUtils;
 using IntegrationTests.TestUtils.Extensions.Http;
@@ -24,7 +21,7 @@ namespace IntegrationTests.ShippingMethods;
 /// </summary>
 public class UpdateShippingMethodTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
+    private readonly IShippingMethodSeed _seedShippingMethod;
     /// <summary>
     /// Initiates a new instance of the <see cref="CreateShippingMethodTests"/> class.
     /// </summary>
@@ -35,8 +32,7 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager
-            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager.GetSeed<IShippingMethodSeed>();
     }
 
     /// <summary>
@@ -46,13 +42,14 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateShippingMethod_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var existingShippingMethod = _seedShippingMethod.GetByType(
-            ShippingMethodSeedType.EXPRESS
-        );
+        var idExistingShippingMethod = _seedShippingMethod
+            .GetEntityId(ShippingMethodSeedType.EXPRESS)
+            .ToString();
+
         var request = UpdateShippingMethodRequestUtils.CreateRequest();
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.UpdateShippingMethod),
-            new { id = existingShippingMethod.Id.ToString() }
+            new { id = idExistingShippingMethod }
         );
 
         var response = await RequestService.CreateClient().PutAsJsonAsync(
@@ -70,13 +67,14 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateShippingMethod_WithoutAdminPermission_ReturnsForbidden()
     {
-        var existingShippingMethod = _seedShippingMethod.GetByType(
-            ShippingMethodSeedType.EXPRESS
-        );
+        var idExistingShippingMethod = _seedShippingMethod
+            .GetEntityId(ShippingMethodSeedType.EXPRESS)
+            .ToString();
+
         var request = UpdateShippingMethodRequestUtils.CreateRequest();
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.UpdateShippingMethod),
-            new { id = existingShippingMethod.Id.ToString() }
+            new { id = idExistingShippingMethod }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -95,9 +93,9 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateShippingMethod_WithAdminPermission_ReturnsNoContent()
     {
-        var shippingMethodToUpdate = _seedShippingMethod.GetByType(
-            ShippingMethodSeedType.EXPRESS
-        );
+        var idShippingMethodToUpdate = _seedShippingMethod
+            .GetEntityId(ShippingMethodSeedType.EXPRESS)
+            .ToString();
 
         var request = UpdateShippingMethodRequestUtils.CreateRequest(
             name: "ECommerceExpressDelivery",
@@ -107,12 +105,12 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
 
         var endpointUpdate = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.UpdateShippingMethod),
-            new { id = shippingMethodToUpdate.Id.ToString() }
+            new { id = idShippingMethodToUpdate }
         );
 
         var endpointGetShippingMethodById = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.GetShippingMethodById),
-            new { id = shippingMethodToUpdate.Id.ToString() }
+            new { id = idShippingMethodToUpdate }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);

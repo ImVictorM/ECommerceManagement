@@ -1,6 +1,5 @@
 using Domain.OrderAggregate;
 using Domain.UserAggregate.ValueObjects;
-using Domain.UserAggregate;
 using Domain.OrderAggregate.Enumerations;
 
 using SharedKernel.Models;
@@ -8,7 +7,6 @@ using SharedKernel.Models;
 using Contracts.Orders;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.TestUtils.Extensions.Http;
@@ -28,8 +26,8 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class GetCustomerOrdersTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
-    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+    private readonly IUserSeed _seedUser;
+    private readonly IOrderSeed _seedOrder;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCustomerOrdersTests"/> class.
@@ -41,8 +39,8 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
         factory, ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
-        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
+        _seedOrder = SeedManager.GetSeed<IOrderSeed>();
     }
 
     /// <summary>
@@ -74,7 +72,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     {
         var customerWithOrdersType = UserSeedType.CUSTOMER;
         var otherCustomerType = UserSeedType.CUSTOMER_WITH_ADDRESS;
-        var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
+        var customerWithOrders = _seedUser.GetEntity(customerWithOrdersType);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CustomerOrderEndpoints.GetCustomerOrders),
@@ -105,7 +103,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     )
     {
         var customerWithOrdersType = UserSeedType.CUSTOMER;
-        var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
+        var customerWithOrders = _seedUser.GetEntity(customerWithOrdersType);
         var expectedCustomerOrders = GetUserOrders(customerWithOrders.Id);
 
         var endpoint = LinkGenerator.GetPathByName(
@@ -141,7 +139,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     {
         var status = BaseEnumeration.FromDisplayName<OrderStatus>(statusName);
         var customerWithOrdersType = UserSeedType.CUSTOMER;
-        var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
+        var customerWithOrders = _seedUser.GetEntity(customerWithOrdersType);
         var expectedFilteredOrders = GetUserOrderByStatus(
             customerWithOrders.Id,
             status

@@ -1,9 +1,6 @@
 using Contracts.ShippingMethods;
 
-using Domain.ShippingMethodAggregate;
-
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.ShippingMethods;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -20,7 +17,7 @@ namespace IntegrationTests.ShippingMethods;
 /// </summary>
 public class GetShippingMethodsTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
+    private readonly IShippingMethodSeed _seedShippingMethod;
     private readonly string? _endpoint;
     private readonly HttpClient _client;
 
@@ -34,8 +31,7 @@ public class GetShippingMethodsTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager
-            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager.GetSeed<IShippingMethodSeed>();
 
         _endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.GetShippingMethods)

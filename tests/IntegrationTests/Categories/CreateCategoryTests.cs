@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using System.Net.Http.Json;
 using Xunit.Abstractions;
 using FluentAssertions;
+using System.Net;
 
 namespace IntegrationTests.Categories;
 
@@ -51,7 +52,7 @@ public class CreateCategoryTests : BaseIntegrationTest
                 request
             );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     /// <summary>
@@ -69,7 +70,7 @@ public class CreateCategoryTests : BaseIntegrationTest
             request
         );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
@@ -96,7 +97,7 @@ public class CreateCategoryTests : BaseIntegrationTest
         var responseGetCreatedContent = await responseGetCreated.Content
             .ReadRequiredFromJsonAsync<CategoryResponse>();
 
-        responseCreate.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+        responseCreate.StatusCode.Should().Be(HttpStatusCode.Created);
         responseGetCreatedContent.Id.Should().NotBeNullOrWhiteSpace();
         responseGetCreatedContent.Name.Should().Be(request.Name);
     }

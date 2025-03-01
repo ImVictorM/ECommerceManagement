@@ -1,6 +1,8 @@
 
 using Infrastructure.Common.Persistence;
 
+using SharedKernel.Models;
+
 namespace IntegrationTests.Common.Seeds.Abstracts;
 
 /// <summary>
@@ -8,9 +10,12 @@ namespace IntegrationTests.Common.Seeds.Abstracts;
 /// </summary>
 /// <typeparam name="TEnum">The seed available data type.</typeparam>
 /// <typeparam name="TEntity">The seed entity type.</typeparam>
-public abstract class DataSeed<TEnum, TEntity> : IDataSeed<TEnum, TEntity>
+/// <typeparam name="TEntityId">The seed entity id type.</typeparam>
+public abstract class DataSeed<TEnum, TEntity, TEntityId>
+    : IDataSeed<TEnum, TEntity, TEntityId>
     where TEnum : Enum
-    where TEntity : class
+    where TEntity : AggregateRoot<TEntityId>
+    where TEntityId : notnull
 {
     private readonly Dictionary<TEnum, TEntity> _data;
 
@@ -31,26 +36,26 @@ public abstract class DataSeed<TEnum, TEntity> : IDataSeed<TEnum, TEntity>
         _data = data;
     }
 
-    /// <summary>
-    /// Retrieves a seed entity by key.
-    /// </summary>
-    /// <param name="key">The entity type.</param>
-    /// <returns>The entity data.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the data was not initialized correctly.</exception>
-    public virtual TEntity GetByType(TEnum key)
+    /// <inheritdoc/>
+    public virtual TEntity GetEntity(TEnum key)
     {
         if (Data.TryGetValue(key, out var entity))
         {
             return entity;
         }
 
-        throw new InvalidOperationException($"{typeof(TEntity).Name} of type {key} has not been initialized.");
+        throw new InvalidOperationException(
+            $"{typeof(TEntity).Name} of type {key} has not been initialized."
+        );
     }
 
-    /// <summary>
-    /// Lists all seed entities.
-    /// </summary>
-    /// <returns>A list containing all entities.</returns>
+    /// <inheritdoc/>
+    public TEntityId GetEntityId(TEnum key)
+    {
+        return GetEntity(key).Id;
+    }
+
+    /// <inheritdoc/>
     public virtual IReadOnlyList<TEntity> ListAll(Func<TEntity, bool>? filter = null)
     {
         return filter != null

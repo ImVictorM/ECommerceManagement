@@ -1,9 +1,6 @@
-using Domain.UserAggregate;
-
 using Contracts.Users;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.Users.TestUtils;
@@ -23,7 +20,7 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class UpdateUserTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IUserSeed _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateUserTests"/> class.
@@ -35,7 +32,7 @@ public class UpdateUserTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
     }
 
     /// <summary>
@@ -48,14 +45,14 @@ public class UpdateUserTests : BaseIntegrationTest
         UserSeedType otherUserType
     )
     {
-        var otherUser = _seedUser.GetByType(otherUserType);
+        var idOtherUser = _seedUser.GetEntityId(otherUserType).ToString();
         var request = UpdateUserRequestUtils.CreateRequest(
             name: "a dumb name for another user"
         );
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.UpdateUser),
-            new { id = otherUser.Id.ToString() }
+            new { id = idOtherUser }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -68,13 +65,77 @@ public class UpdateUserTests : BaseIntegrationTest
     }
 
     /// <summary>
+    /// Verifies an admin cannot update the information of another admin.
+    /// </summary>
+    [Fact]
+    public async Task UpdateUser_WhenAdminTriesToUpdateAnotherAdmin_ReturnsForbidden()
+    {
+        var idOtherAdmin = _seedUser
+            .GetEntityId(UserSeedType.OTHER_ADMIN)
+            .ToString();
+
+        var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb admin");
+
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.UpdateUser),
+            new { id = idOtherAdmin }
+        );
+
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.PutAsJsonAsync(
+            endpoint,
+            request
+        );
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    /// <summary>
+    /// Verifies when a customer tries to update their email to one that already
+    /// exists a conflict response is returned.
+    /// </summary>
+    [Fact]
+    public async Task UpdateUser_WhenCustomerTriesToUpdateEmailWithExistingOne_ReturnsConflict()
+    {
+        var userToBeUpdatedType = UserSeedType.CUSTOMER;
+
+        var idUserToBeUpdated = _seedUser
+            .GetEntityId(userToBeUpdatedType)
+            .ToString();
+
+        var anotherUserEmail = _seedUser
+            .GetEntity(UserSeedType.CUSTOMER_WITH_ADDRESS)
+            .Email;
+
+        var requestContainingAnotherUserEmail = UpdateUserRequestUtils.CreateRequest(
+            email: anotherUserEmail.ToString()
+        );
+
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.UpdateUser),
+            new { id = idUserToBeUpdated }
+        );
+
+        var client = await RequestService.LoginAsAsync(userToBeUpdatedType);
+
+        var response = await client.PutAsJsonAsync(
+            endpoint,
+            requestContainingAnotherUserEmail
+        );
+
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+    }
+
+    /// <summary>
     /// Verifies a customer can update their own information.
     /// </summary>
     [Fact]
-    public async Task UpdateUser_WhenCustomerTriesToUpdateThemselves_ReturnsNoContentAndUpdatesUser()
+    public async Task UpdateUser_WhenCustomerTriesToUpdateThemselves_ReturnsNoContent()
     {
         var userToBeUpdatedType = UserSeedType.CUSTOMER;
-        var userToBeUpdated = _seedUser.GetByType(userToBeUpdatedType);
+        var userToBeUpdatedId = _seedUser
+            .GetEntityId(userToBeUpdatedType)
+            .ToString();
 
         var request = UpdateUserRequestUtils.CreateRequest(
             name: "marcos rogério",
@@ -84,7 +145,7 @@ public class UpdateUserTests : BaseIntegrationTest
 
         var endpointUpdate = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.UpdateUser),
-            new { id = userToBeUpdated.Id.ToString() }
+            new { id = userToBeUpdatedId }
         );
 
         var endpointGetSelf = LinkGenerator.GetPathByName(
@@ -113,68 +174,14 @@ public class UpdateUserTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies an admin cannot update the information of another admin.
-    /// </summary>
-    [Fact]
-    public async Task UpdateUser_WhenAdminTriesToUpdateAnotherAdmin_ReturnsForbidden()
-    {
-        var otherAdmin = _seedUser.GetByType(UserSeedType.OTHER_ADMIN);
-        var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb admin");
-
-        var endpoint = LinkGenerator.GetPathByName(
-            nameof(UserEndpoints.UpdateUser),
-            new { id = otherAdmin.Id.ToString() }
-        );
-
-        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await client.PutAsJsonAsync(
-            endpoint,
-            request
-        );
-
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-    }
-
-    /// <summary>
-    /// Verifies when a customer tries to update their email to one that already
-    /// exists a conflict response is returned.
-    /// </summary>
-    [Fact]
-    public async Task UpdateUser_WhenCustomerTriesToUpdateEmailWithExistingOne_ReturnsConflict()
-    {
-        var userToBeUpdatedType = UserSeedType.CUSTOMER;
-        var userToBeUpdated = _seedUser.GetByType(userToBeUpdatedType);
-
-        var anotherUserEmail = _seedUser
-            .GetByType(UserSeedType.CUSTOMER_WITH_ADDRESS)
-            .Email;
-
-        var requestContainingAnotherUserEmail = UpdateUserRequestUtils.CreateRequest(
-            email: anotherUserEmail.ToString()
-        );
-
-        var endpoint = LinkGenerator.GetPathByName(
-            nameof(UserEndpoints.UpdateUser),
-            new { id = userToBeUpdated.Id.ToString() }
-        );
-
-        var client = await RequestService.LoginAsAsync(userToBeUpdatedType);
-
-        var response = await client.PutAsJsonAsync(
-            endpoint,
-            requestContainingAnotherUserEmail
-        );
-
-        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
-    }
-
-    /// <summary>
     /// Verifies an admin can successfully update a customer's information.
     /// </summary>
     [Fact]
-    public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsNoContentAndUpdatesUser()
+    public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsNoContent()
     {
-        var customerToBeUpdated = _seedUser.GetByType(UserSeedType.CUSTOMER);
+        var idCustomerToBeUpdated = _seedUser
+            .GetEntityId(UserSeedType.CUSTOMER)
+            .ToString();
 
         var request = UpdateUserRequestUtils.CreateRequest(
             name: "User new name",
@@ -184,12 +191,12 @@ public class UpdateUserTests : BaseIntegrationTest
 
         var endpointUpdate = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.UpdateUser),
-            new { id = customerToBeUpdated.Id.ToString() }
+            new { id = idCustomerToBeUpdated }
         );
 
         var endpointGetUserById = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.GetUserById),
-            new { id = customerToBeUpdated.Id.ToString() }
+            new { id = idCustomerToBeUpdated }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);

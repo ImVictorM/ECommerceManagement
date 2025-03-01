@@ -1,10 +1,7 @@
-using Domain.OrderAggregate;
-
 using Contracts.Orders;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.TestUtils.Extensions.Orders;
 using IntegrationTests.TestUtils.Extensions.Http;
@@ -23,7 +20,7 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class GetOrderByIdTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+    private readonly IOrderSeed _seedOrder;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetOrderByIdTests"/> class.
@@ -35,7 +32,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+        _seedOrder = SeedManager.GetSeed<IOrderSeed>();
     }
 
     /// <summary>
@@ -68,15 +65,15 @@ public class GetOrderByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetOrderById_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
     {
-        var existingOrder = _seedOrder.GetByType(
-            OrderSeedType.CUSTOMER_ORDER_PENDING
-        );
+        var idExistingOrder = _seedOrder
+            .GetEntityId(OrderSeedType.CUSTOMER_ORDER_PENDING)
+            .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.GetOrderById),
             new
             {
-                id = existingOrder.Id.ToString(),
+                id = idExistingOrder,
             }
         );
 
@@ -92,13 +89,15 @@ public class GetOrderByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetOrderById_WhenUserIsNotAllowedToReadOrder_ReturnsForbidden()
     {
-        var order = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
+        var existingOrderId = _seedOrder
+            .GetEntityId(OrderSeedType.CUSTOMER_ORDER_PENDING)
+            .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.GetOrderById),
             new
             {
-                id = order.Id.ToString(),
+                id = existingOrderId,
             }
         );
 
@@ -121,7 +120,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
         UserSeedType allowedUser
     )
     {
-        var order = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
+        var order = _seedOrder.GetEntity(OrderSeedType.CUSTOMER_ORDER_PENDING);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.GetOrderById),

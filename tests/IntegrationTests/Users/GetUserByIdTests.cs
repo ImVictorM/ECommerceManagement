@@ -1,7 +1,4 @@
-using Domain.UserAggregate;
-
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Users;
@@ -23,7 +20,7 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class GetUserByIdTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IUserSeed _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetUserByIdTests"/> class.
@@ -35,7 +32,7 @@ public class GetUserByIdTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
     }
 
     /// <summary>
@@ -51,7 +48,7 @@ public class GetUserByIdTests : BaseIntegrationTest
         UserSeedType userType
     )
     {
-        var userToGet = _seedUser.GetByType(userType);
+        var userToGet = _seedUser.GetEntity(userType);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.GetUserById),
@@ -82,11 +79,13 @@ public class GetUserByIdTests : BaseIntegrationTest
         UserSeedType userToRetrieveType
     )
     {
-        var userToGet = _seedUser.GetByType(userToRetrieveType);
+        var idUserToRetrieve = _seedUser
+            .GetEntityId(userToRetrieveType)
+            .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.GetUserById),
-            new { id = userToGet.Id.ToString() }
+            new { id = idUserToRetrieve }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);

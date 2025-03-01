@@ -3,7 +3,6 @@ using Domain.UserAggregate;
 using Contracts.Users;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.TestUtils.Extensions.Users;
@@ -22,7 +21,7 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class GetAllUsersTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IUserSeed _seedUser;
     private readonly string? _endpoint;
 
     /// <summary>
@@ -35,7 +34,8 @@ public class GetAllUsersTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
+
         _endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.GetAllUsers)
         );

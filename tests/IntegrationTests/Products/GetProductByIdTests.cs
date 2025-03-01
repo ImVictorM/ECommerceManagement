@@ -1,8 +1,5 @@
-using Domain.ProductAggregate;
-
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Products;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Products;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -23,7 +20,7 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class GetProductByIdTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+    private readonly IProductSeed _seedProduct;
     private readonly HttpClient _client;
 
     /// <summary>
@@ -36,7 +33,7 @@ public class GetProductByIdTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
         _client = RequestService.CreateClient();
     }
 
@@ -47,7 +44,7 @@ public class GetProductByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetProductById_WhenProductExists_ReturnsOk()
     {
-        var productToFetch = _seedProduct.GetByType(
+        var productToFetch = _seedProduct.GetEntity(
             ProductSeedType.COMPUTER_ON_SALE
         );
 
@@ -98,13 +95,13 @@ public class GetProductByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetProductById_WhenProductIsInactive_ReturnsNotFound()
     {
-        var productInactive = _seedProduct.GetByType(
-            ProductSeedType.JACKET_INACTIVE
-        );
+        var idProductInactive = _seedProduct
+            .GetEntityId(ProductSeedType.JACKET_INACTIVE)
+            .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.GetProductById),
-            new { id = productInactive.Id.ToString() }
+            new { id = idProductInactive }
         );
 
         var response = await _client.GetAsync(endpoint);
@@ -115,7 +112,7 @@ public class GetProductByIdTests : BaseIntegrationTest
         responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
         responseContent.Title.Should().Be("Product Not Found");
         responseContent.Detail.Should().Be(
-            $"The product with id {productInactive.Id} does not exist"
+            $"The product with id {idProductInactive} does not exist"
         );
     }
 }

@@ -1,10 +1,7 @@
-using Domain.UserAggregate;
-
 using IntegrationTests.Authentication.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Authentication;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Http;
 
 using Contracts.Authentication;
@@ -26,7 +23,7 @@ namespace IntegrationTests.Authentication;
 /// </summary>
 public class RegisterCustomerTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _userSeed;
+    private readonly IUserSeed _userSeed;
     private readonly string? _registerEndpoint;
     private readonly string? _loginEndpoint;
     private readonly HttpClient _client;
@@ -41,7 +38,7 @@ public class RegisterCustomerTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _userSeed = SeedManager.GetSeed<UserSeedType, User>();
+        _userSeed = SeedManager.GetSeed<IUserSeed>();
 
         _registerEndpoint = LinkGenerator.GetPathByName(
             nameof(AuthenticationEndpoints.RegisterCustomer
@@ -89,7 +86,10 @@ public class RegisterCustomerTests : BaseIntegrationTest
         RegisterCustomerRequest registerRequest
     )
     {
-        var loginRequest = new LoginUserRequest(registerRequest.Email, registerRequest.Password);
+        var loginRequest = new LoginUserRequest(
+            registerRequest.Email,
+            registerRequest.Password
+        );
 
         var registerHttpResponse = await _client.PostAsJsonAsync(
             _registerEndpoint,
@@ -117,7 +117,7 @@ public class RegisterCustomerTests : BaseIntegrationTest
     [Fact]
     public async Task RegisterCustomer_WithDuplicatedEmail_ReturnsConflictErrorResponse()
     {
-        var existingUser = _userSeed.GetByType(UserSeedType.CUSTOMER);
+        var existingUser = _userSeed.GetEntity(UserSeedType.CUSTOMER);
 
         var registerRequest = RegisterCustomerRequestUtils.CreateRequest(
             email: existingUser.Email.ToString()

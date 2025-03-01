@@ -11,12 +11,14 @@ namespace IntegrationTests.Common.Seeds.ShippingMethods;
 /// <summary>
 /// Provides seed data for shipping methods in the database.
 /// </summary>
-internal sealed class ShippingMethodSeed : DataSeed<ShippingMethodSeedType, ShippingMethod>
+internal sealed class ShippingMethodSeed :
+    DataSeed<ShippingMethodSeedType, ShippingMethod, ShippingMethodId>,
+    IShippingMethodSeed
 {
     /// <inheritdoc/>
     public override int Order => 10;
 
-    private static Dictionary<ShippingMethodSeedType, ShippingMethod> _shippingMethods => new()
+    private static Dictionary<ShippingMethodSeedType, ShippingMethod> _data => new()
     {
         [ShippingMethodSeedType.FREE] = ShippingMethodUtils.CreateShippingMethod
         (
@@ -37,7 +39,7 @@ internal sealed class ShippingMethodSeed : DataSeed<ShippingMethodSeedType, Ship
     /// <summary>
     /// Initiates a new instance of the <see cref="ShippingMethodSeed"/> class.
     /// </summary>
-    public ShippingMethodSeed() : base(_shippingMethods)
+    public ShippingMethodSeed() : base(_data)
     {
     }
 

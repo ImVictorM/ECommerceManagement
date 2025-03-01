@@ -1,10 +1,6 @@
-using Domain.UserAggregate;
 using Domain.ProductAggregate;
-using Domain.CouponAggregate;
-using Domain.ShippingMethodAggregate;
 using Domain.ShipmentAggregate.Enumerations;
 using Domain.SaleAggregate.ValueObjects;
-using Domain.SaleAggregate;
 using Domain.OrderAggregate.Enumerations;
 
 using Contracts.Orders;
@@ -13,7 +9,6 @@ using SharedKernel.Interfaces;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.ShippingMethods;
 using IntegrationTests.Common.Seeds.Sales;
@@ -38,11 +33,11 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class PlaceOrderTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
-    private readonly IDataSeed<CouponSeedType, Coupon> _seedCoupon;
-    private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
-    private readonly IDataSeed<SaleSeedType, Sale> _seedSale;
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IProductSeed _seedProduct;
+    private readonly ICouponSeed _seedCoupon;
+    private readonly IShippingMethodSeed _seedShippingMethod;
+    private readonly ISaleSeed _seedSale;
+    private readonly IUserSeed _seedUser;
     private readonly IDiscountService _discountService;
     private readonly string? _endpoint;
 
@@ -56,12 +51,14 @@ public class PlaceOrderTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
-        _seedCoupon = SeedManager.GetSeed<CouponSeedType, Coupon>();
-        _seedShippingMethod = SeedManager.GetSeed<ShippingMethodSeedType, ShippingMethod>();
-        _seedSale = SeedManager.GetSeed<SaleSeedType, Sale>();
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
+        _seedCoupon = SeedManager.GetSeed<ICouponSeed>();
+        _seedShippingMethod = SeedManager.GetSeed<IShippingMethodSeed>();
+        _seedSale = SeedManager.GetSeed<ISaleSeed>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
+
         _discountService = factory.Services.GetRequiredService<IDiscountService>();
+
         _endpoint = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.PlaceOrder)
         );
@@ -125,11 +122,11 @@ public class PlaceOrderTests : BaseIntegrationTest
         UserSeedType userWithCustomerRoleType
     )
     {
-        var orderOwner = _seedUser.GetByType(userWithCustomerRoleType);
-        var pencil = _seedProduct.GetByType(ProductSeedType.PENCIL);
-        var computer = _seedProduct.GetByType(ProductSeedType.COMPUTER_ON_SALE);
-        var couponApplied = _seedCoupon.GetByType(CouponSeedType.TECH_COUPON);
-        var shippingMethod = _seedShippingMethod.GetByType(
+        var orderOwner = _seedUser.GetEntity(userWithCustomerRoleType);
+        var pencil = _seedProduct.GetEntity(ProductSeedType.PENCIL);
+        var computer = _seedProduct.GetEntity(ProductSeedType.COMPUTER_ON_SALE);
+        var couponApplied = _seedCoupon.GetEntity(CouponSeedType.TECH_COUPON);
+        var shippingMethod = _seedShippingMethod.GetEntity(
             ShippingMethodSeedType.EXPRESS
         );
 
@@ -243,7 +240,7 @@ public class PlaceOrderTests : BaseIntegrationTest
     [Fact]
     public async Task PlaceOrder_WithUnavailableProducts_ReturnsBadRequest()
     {
-        var pencil = _seedProduct.GetByType(ProductSeedType.PENCIL);
+        var pencil = _seedProduct.GetEntity(ProductSeedType.PENCIL);
         var quantityToBuy = pencil.Inventory.QuantityAvailable + 1;
 
         var request = PlaceOrderRequestUtils.CreateRequest(

@@ -1,7 +1,4 @@
-using Domain.ProductAggregate;
-
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
@@ -21,7 +18,7 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class DeactivateProductsTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+    private readonly IProductSeed _seedProduct;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeactivateProductsTests"/> class.
@@ -33,7 +30,7 @@ public class DeactivateProductsTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
     }
 
     /// <summary>
@@ -118,15 +115,17 @@ public class DeactivateProductsTests : BaseIntegrationTest
         ProductSeedType productToBeDeactivatedType
     )
     {
-        var productToBeDeactivate = _seedProduct.GetByType(productToBeDeactivatedType);
+        var idProductToBeDeactivate = _seedProduct
+            .GetEntityId(productToBeDeactivatedType)
+            .ToString();
 
         var endpointDeactivate = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.DeactivateProduct),
-            new { id = productToBeDeactivate.Id.ToString() }
+            new { id = idProductToBeDeactivate }
         );
         var endpointGetProductById = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.GetProductById),
-            new { id = productToBeDeactivate.Id.ToString() }
+            new { id = idProductToBeDeactivate }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);

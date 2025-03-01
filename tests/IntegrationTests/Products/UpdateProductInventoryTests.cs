@@ -1,10 +1,7 @@
-using Domain.ProductAggregate;
-
 using Contracts.Products;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Products;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.Products.TestUtils;
@@ -25,7 +22,7 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class UpdateProductInventoryTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+    private readonly IProductSeed _seedProduct;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateProductInventoryTests"/> class.
@@ -37,7 +34,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
     }
 
     /// <summary>
@@ -142,7 +139,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         int quantityToIncrement
     )
     {
-        var product = _seedProduct.GetByType(productType);
+        var product = _seedProduct.GetEntity(productType);
         var initialQuantity = product.Inventory.QuantityAvailable;
         var request = UpdateProductInventoryRequestUtils.CreateRequest(
             quantityToIncrement: quantityToIncrement

@@ -1,9 +1,6 @@
-using Domain.ShippingMethodAggregate;
-
 using Contracts.ShippingMethods;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.ShippingMethods;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -21,7 +18,7 @@ namespace IntegrationTests.ShippingMethods;
 /// </summary>
 public class GetShippingMethodByIdTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
+    private readonly IShippingMethodSeed _seedShippingMethod;
     private readonly HttpClient _client;
 
     /// <summary>
@@ -34,8 +31,7 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager
-            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager.GetSeed<IShippingMethodSeed>();
 
         _client = RequestService.CreateClient();
     }
@@ -64,7 +60,7 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
     [Fact]
     public async Task GetShippingMethodById_WhenShippingMethodExists_ReturnsOk()
     {
-        var existingShippingMethod = _seedShippingMethod.GetByType(
+        var existingShippingMethod = _seedShippingMethod.GetEntity(
             ShippingMethodSeedType.EXPRESS
         );
 

@@ -15,7 +15,8 @@ namespace IntegrationTests.Common;
 /// <summary>
 /// Defines the test server for the integration tests.
 /// </summary>
-public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public class IntegrationTestWebAppFactory
+    : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private PostgreSqlContainer _dbContainer = null!;
     private Respawner _respawner = null!;
@@ -104,7 +105,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     {
         using var scope = Services.CreateScope();
 
-        var dbContext = scope.ServiceProvider.GetRequiredService<IECommerceDbContext>();
+        var dbContext = scope.ServiceProvider
+            .GetRequiredService<IECommerceDbContext>();
 
         await dbContext.Database.EnsureCreatedAsync();
     }

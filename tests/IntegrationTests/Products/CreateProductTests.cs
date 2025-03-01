@@ -1,10 +1,7 @@
-using Domain.CategoryAggregate;
-
 using Contracts.Products;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Products.TestUtils;
 using IntegrationTests.TestUtils.Extensions.Products;
@@ -25,7 +22,7 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class CreateProductTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly ICategorySeed _seedCategory;
     private readonly string? _endpoint;
 
     /// <summary>
@@ -38,7 +35,8 @@ public class CreateProductTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
+
         _endpoint = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.CreateProduct)
         );
@@ -98,16 +96,19 @@ public class CreateProductTests : BaseIntegrationTest
     {
         var productCategories = new[]
         {
-           _seedCategory.GetByType(CategorySeedType.BOOKS_STATIONERY),
-            _seedCategory.GetByType(CategorySeedType.TECHNOLOGY)
+           _seedCategory.GetEntity(CategorySeedType.BOOKS_STATIONERY),
+            _seedCategory.GetEntity(CategorySeedType.TECHNOLOGY)
         };
+
+        var productCategoryIds = productCategories.Select(c => c.Id.ToString());
+        var productCategoryNames = productCategories.Select(c => c.Name);
 
         var request = CreateProductRequestUtils.CreateRequest(
             name: "Techy pen",
             description: "very cool, you should buy it",
             initialQuantity: 10,
             basePrice: 2000m,
-            categoryIds: productCategories.Select(c => c.Id.ToString()),
+            categoryIds: productCategoryIds,
             images:
             [
                 new Uri("pen-photo.png", UriKind.Relative)
@@ -133,6 +134,6 @@ public class CreateProductTests : BaseIntegrationTest
         responseGetCreatedContent.EnsureCreatedFromRequest(request);
         responseGetCreatedContent.Categories
             .Should()
-            .BeEquivalentTo(productCategories.Select(c => c.Name));
+            .BeEquivalentTo(productCategoryNames);
     }
 }

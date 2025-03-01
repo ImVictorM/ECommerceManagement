@@ -11,7 +11,8 @@ namespace IntegrationTests.Common.Seeds.Categories;
 /// <summary>
 /// Provides seed data for carriers in the database.
 /// </summary>
-public sealed class CategorySeed : DataSeed<CategorySeedType, Category>
+public sealed class CategorySeed
+    : DataSeed<CategorySeedType, Category, CategoryId>, ICategorySeed
 {
     private static Dictionary<CategorySeedType, Category> _categories => new()
     {

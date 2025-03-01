@@ -1,10 +1,6 @@
-using Domain.CategoryAggregate;
-using Domain.ProductAggregate;
-
 using Contracts.Products;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Users;
@@ -27,8 +23,8 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class UpdateProductTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
-    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
+    private readonly ICategorySeed _seedCategory;
+    private readonly IProductSeed _seedProduct;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateProductTests"/> class.
@@ -40,8 +36,8 @@ public class UpdateProductTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
-        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
     }
 
     /// <summary>
@@ -135,15 +131,20 @@ public class UpdateProductTests : BaseIntegrationTest
     {
         var productCategories = new[]
         {
-            _seedCategory.GetByType(CategorySeedType.BOOKS_STATIONERY),
-            _seedCategory.GetByType(CategorySeedType.TECHNOLOGY)
+            _seedCategory.GetEntity(CategorySeedType.BOOKS_STATIONERY),
+            _seedCategory.GetEntity(CategorySeedType.TECHNOLOGY)
         };
 
-        var productToUpdate = _seedProduct.GetByType(ProductSeedType.PENCIL);
+        var productCategoryIds = productCategories.Select(c => c.Id.ToString());
+        var productCategoryNames = productCategories.Select(c => c.Name);
+
+        var idProductToUpdate = _seedProduct
+            .GetEntityId(ProductSeedType.PENCIL)
+            .ToString();
 
         var request = UpdateProductRequestUtils.CreateRequest(
             name: "Techy pen",
-            categoryIds: productCategories.Select(c => c.Id.ToString()),
+            categoryIds: productCategoryIds,
             description: "New tech pen coming in",
             basePrice: 150m,
             images: [new Uri("tech-pencil.png", UriKind.Relative)]
@@ -151,12 +152,12 @@ public class UpdateProductTests : BaseIntegrationTest
 
         var endpointUpdate = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.UpdateProduct),
-            new { id = productToUpdate.Id.ToString() }
+            new { id = idProductToUpdate }
         );
 
         var endpointGetProductById = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.GetProductById),
-            new { id = productToUpdate.Id.ToString() }
+            new { id = idProductToUpdate }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
@@ -177,6 +178,6 @@ public class UpdateProductTests : BaseIntegrationTest
         getResponseContent.BasePrice.Should().Be(request.BasePrice);
         getResponseContent.Categories
             .Should()
-            .BeEquivalentTo(productCategories.Select(c => c.Name));
+            .BeEquivalentTo(productCategoryNames);
     }
 }

@@ -1,10 +1,7 @@
-using Domain.OrderAggregate;
 using Domain.ProductAggregate;
-using Domain.UserAggregate;
 using Domain.UserAggregate.ValueObjects;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Users;
@@ -25,9 +22,9 @@ namespace IntegrationTests.ProductFeedback;
 /// </summary>
 public class LeaveProductFeedbackTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
-    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IProductSeed _seedProduct;
+    private readonly IOrderSeed _seedOrder;
+    private readonly IUserSeed _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="LeaveProductFeedbackTests"/> class.
@@ -39,9 +36,9 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedProduct = SeedManager.GetSeed<IDataSeed<ProductSeedType, Product>>();
-        _seedUser = SeedManager.GetSeed<IDataSeed<UserSeedType, User>>();
-        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
+        _seedOrder = SeedManager.GetSeed<IOrderSeed>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
     }
 
     /// <summary>
@@ -50,13 +47,15 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
     [Fact]
     public async Task LeaveProductFeedback_WithoutAuthorization_ReturnsUnauthorized()
     {
-        var existingProductId = _seedProduct.GetByType(ProductSeedType.PENCIL).Id;
+        var idExistingProduct = _seedProduct
+            .GetEntityId(ProductSeedType.PENCIL)
+            .ToString();
 
         var request = LeaveProductFeedbackRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
-            new { productId = existingProductId }
+            new { productId = idExistingProduct }
         );
 
         var response = await RequestService.CreateClient().PostAsJsonAsync(
@@ -73,13 +72,15 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
     [Fact]
     public async Task LeaveProductFeedback_WithoutCustomerRole_ReturnsForbidden()
     {
-        var existingProductId = _seedProduct.GetByType(ProductSeedType.PENCIL).Id;
+        var idExistingProduct = _seedProduct
+            .GetEntityId(ProductSeedType.PENCIL)
+            .ToString();
 
         var request = LeaveProductFeedbackRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
-            new { productId = existingProductId }
+            new { productId = idExistingProduct }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
@@ -95,11 +96,12 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
     public async Task LeaveProductFeedback_WithoutHavingPurchasedTheProduct_ReturnsForbidden()
     {
         var userLeavingFeedbackType = UserSeedType.CUSTOMER;
-        var userLeavingFeedback = _seedUser.GetByType(userLeavingFeedbackType);
+        var userLeavingFeedback = _seedUser.GetEntity(userLeavingFeedbackType);
 
         var productNotAllowedToLeaveFeedback = GetFirstProductNotPurchased(
             userLeavingFeedback.Id
         );
+
         var request = LeaveProductFeedbackRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
@@ -120,7 +122,7 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
     public async Task LeaveProductFeedback_WhenTheCustomerPurchasedTheProduct_ReturnsCreated()
     {
         var userLeavingFeedbackType = UserSeedType.CUSTOMER;
-        var userLeavingFeedback = _seedUser.GetByType(userLeavingFeedbackType);
+        var userLeavingFeedback = _seedUser.GetEntity(userLeavingFeedbackType);
 
         var productToLeaveFeedback = GetFirstProductPurchased(userLeavingFeedback.Id);
         var request = LeaveProductFeedbackRequestUtils.CreateRequest();

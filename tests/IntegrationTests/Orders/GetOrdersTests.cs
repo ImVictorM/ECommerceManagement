@@ -7,7 +7,6 @@ using SharedKernel.Models;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.TestUtils.Extensions.Orders;
 using IntegrationTests.TestUtils.Extensions.Http;
@@ -26,7 +25,7 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class GetOrdersTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+    private readonly IOrderSeed _seedOrder;
     private readonly string? _endpoint;
 
     /// <summary>
@@ -39,7 +38,7 @@ public class GetOrdersTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+        _seedOrder = SeedManager.GetSeed<IOrderSeed>();
 
         _endpoint = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.GetOrders)
@@ -119,7 +118,6 @@ public class GetOrdersTests : BaseIntegrationTest
 
     private IReadOnlyList<Order> GetOrdersByStatus(OrderStatus status)
     {
-        return _seedOrder
-            .ListAll(o => o.OrderStatus == status);
+        return _seedOrder.ListAll(o => o.OrderStatus == status);
     }
 }

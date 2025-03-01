@@ -21,19 +21,13 @@ public sealed class SeedManager : ISeedManager
     }
 
     /// <inheritdoc/>
-    public IDataSeed<TEnum, TEntity> GetSeed<TEnum, TEntity>()
-        where TEnum : Enum
-        where TEntity : class
+    public TSeed GetSeed<TSeed>()
+        where TSeed : ISeed
     {
-        return _seeds.OfType<IDataSeed<TEnum, TEntity>>().FirstOrDefault()
-            ?? throw new InvalidOperationException($"Seed for {typeof(TEntity).Name} not found.");
-    }
-
-    /// <inheritdoc/>
-    public T GetSeed<T>() where T : ISeed
-    {
-        return _seeds.OfType<T>().FirstOrDefault()
-            ?? throw new InvalidOperationException($"Seed of type {typeof(T).Name} not found.");
+        return _seeds.OfType<TSeed>().FirstOrDefault()
+            ?? throw new InvalidOperationException(
+                $"Seed of type {typeof(TSeed).Name} not found."
+            );
     }
 
     /// <inheritdoc/>

@@ -1,4 +1,3 @@
-using Domain.UserAggregate;
 using Domain.OrderAggregate;
 using Domain.UserAggregate.ValueObjects;
 
@@ -7,7 +6,6 @@ using Contracts.Orders;
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Orders;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Orders;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -25,8 +23,8 @@ namespace IntegrationTests.Orders;
 /// </summary>
 public class GetCustomerOrderByIdTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
-    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+    private readonly IUserSeed _seedUser;
+    private readonly IOrderSeed _seedOrder;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCustomerOrderByIdTests"/> class.
@@ -39,8 +37,8 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     )
         : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
-        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
+        _seedOrder = SeedManager.GetSeed<IOrderSeed>();
     }
 
     /// <summary>
@@ -72,7 +70,7 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     {
         var customerWithOrdersType = UserSeedType.CUSTOMER;
         var otherCustomerType = UserSeedType.CUSTOMER_WITH_ADDRESS;
-        var customerWithOrders = _seedUser.GetByType(customerWithOrdersType);
+        var customerWithOrders = _seedUser.GetEntity(customerWithOrdersType);
         var customerOrder = GetCustomerFistOrder(customerWithOrders.Id);
 
         var endpoint = LinkGenerator.GetPathByName(
@@ -128,7 +126,7 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     )
     {
         var orderOwnerType = UserSeedType.CUSTOMER;
-        var orderOwner = _seedUser.GetByType(orderOwnerType);
+        var orderOwner = _seedUser.GetEntity(orderOwnerType);
         var customerOrder = GetCustomerFistOrder(orderOwner.Id);
 
         var endpoint = LinkGenerator.GetPathByName(

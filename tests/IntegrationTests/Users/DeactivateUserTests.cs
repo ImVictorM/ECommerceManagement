@@ -1,10 +1,7 @@
-using Domain.UserAggregate;
-
 using Contracts.Users;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Http;
 
 using WebApi.Users;
@@ -21,7 +18,7 @@ namespace IntegrationTests.Users;
 /// </summary>
 public class DeactivateUserTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IUserSeed _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeactivateUserTests"/> class.
@@ -33,7 +30,7 @@ public class DeactivateUserTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
     }
 
     /// <summary>
@@ -51,11 +48,11 @@ public class DeactivateUserTests : BaseIntegrationTest
         UserSeedType otherUserType
     )
     {
-        var otherUser = _seedUser.GetByType(otherUserType);
+        var idOtherUser = _seedUser.GetEntityId(otherUserType).ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.DeactivateUser),
-            new { id = otherUser.Id.ToString() }
+            new { id = idOtherUser }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -72,11 +69,13 @@ public class DeactivateUserTests : BaseIntegrationTest
     [Fact]
     public async Task DeactivateUser_WhenAdminTriesToDeactivateAnotherAdmin_ReturnsForbidden()
     {
-        var otherAdmin = _seedUser.GetByType(UserSeedType.OTHER_ADMIN);
+        var idOtherAdmin = _seedUser
+            .GetEntityId(UserSeedType.OTHER_ADMIN)
+            .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.DeactivateUser),
-            new { id = otherAdmin.Id.ToString() }
+            new { id = idOtherAdmin }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
@@ -93,11 +92,11 @@ public class DeactivateUserTests : BaseIntegrationTest
     public async Task DeactivateUser_WhenAdminTriesToDeactivateThemselves_ReturnsForbidden()
     {
         var adminType = UserSeedType.ADMIN;
-        var admin = _seedUser.GetByType(adminType);
+        var adminId = _seedUser.GetEntityId(adminType).ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.DeactivateUser),
-            new { id = admin.Id.ToString() }
+            new { id = adminId }
         );
 
         var client = await RequestService.LoginAsAsync(adminType);
@@ -123,11 +122,13 @@ public class DeactivateUserTests : BaseIntegrationTest
         UserSeedType seedCustomerType
     )
     {
-        var customerToDeactivate = _seedUser.GetByType(seedCustomerType);
+        var idCustomerToDeactivate = _seedUser
+            .GetEntityId(seedCustomerType)
+            .ToString();
 
         var endpointDeactivate = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.DeactivateUser),
-            new { id = customerToDeactivate.Id.ToString() }
+            new { id = idCustomerToDeactivate }
         );
 
         var endpointGetDeactivateUsers = LinkGenerator.GetPathByName(
@@ -152,7 +153,7 @@ public class DeactivateUserTests : BaseIntegrationTest
         responseGetInactiveUsersContent
             .Select(u => u.Id)
             .Should()
-            .Contain(customerToDeactivate.Id.ToString());
+            .Contain(idCustomerToDeactivate);
     }
 
     /// <summary>
@@ -164,11 +165,11 @@ public class DeactivateUserTests : BaseIntegrationTest
     public async Task DeactivateUser_WhenCustomerTriesToDeactivateThemselves_ReturnsNoContent()
     {
         var customerType = UserSeedType.CUSTOMER;
-        var customer = _seedUser.GetByType(customerType);
+        var customerId = _seedUser.GetEntityId(customerType).ToString();
 
         var endpointDeactivate = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.DeactivateUser),
-            new { id = customer.Id.ToString() }
+            new { id = customerId }
         );
 
         var endpointGetDeactivateUsers = LinkGenerator.GetPathByName(
@@ -194,6 +195,6 @@ public class DeactivateUserTests : BaseIntegrationTest
         responseGetInactiveUsersContent
             .Select(u => u.Id)
             .Should()
-            .Contain(customer.Id.ToString());
+            .Contain(customerId);
     }
 }

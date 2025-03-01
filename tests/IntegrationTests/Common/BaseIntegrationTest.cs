@@ -10,7 +10,8 @@ using Xunit.Abstractions;
 namespace IntegrationTests.Common;
 
 /// <summary>
-/// Base integration test that uses the shared database and has a pre-configured setup and teardown for each test.
+/// Base integration test that uses the shared database and has a pre-configured
+/// setup and teardown for each test.
 /// </summary>
 [Collection(nameof(SharedDatabaseCollectionFixture))]
 public class BaseIntegrationTest : IAsyncLifetime
@@ -42,7 +43,10 @@ public class BaseIntegrationTest : IAsyncLifetime
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">A log helper.</param>
-    public BaseIntegrationTest(IntegrationTestWebAppFactory factory, ITestOutputHelper output)
+    public BaseIntegrationTest(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    )
     {
         _factory = factory;
         Output = output;
@@ -70,7 +74,8 @@ public class BaseIntegrationTest : IAsyncLifetime
     {
         using var scope = _factory.Services.CreateScope();
 
-        var dbContext = scope.ServiceProvider.GetRequiredService<IECommerceDbContext>();
+        var dbContext = scope.ServiceProvider
+            .GetRequiredService<IECommerceDbContext>();
 
         await SeedManager.SeedAsync(dbContext);
     }

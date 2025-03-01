@@ -4,6 +4,7 @@ namespace IntegrationTests.Common;
 /// Defines a shared database context.
 /// </summary>
 [CollectionDefinition(nameof(SharedDatabaseCollectionFixture))]
-public class SharedDatabaseCollectionFixture : ICollectionFixture<IntegrationTestWebAppFactory>
+public class SharedDatabaseCollectionFixture
+    : ICollectionFixture<IntegrationTestWebAppFactory>
 {
 }

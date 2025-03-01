@@ -1,7 +1,5 @@
 using Application.Common.Security.Authentication;
 
-using Domain.OrderAggregate;
-
 using Contracts.Orders;
 
 using WebApi.Common.Utilities;
@@ -11,7 +9,6 @@ using WebApi.Payments;
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.Common.Seeds.Orders;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.Payments.TestUtils;
 
@@ -31,7 +28,7 @@ namespace IntegrationTests.Payments;
 public class HandlePaymentStatusChangedTests : BaseIntegrationTest
 {
     private readonly IHmacSignatureProvider _hmacSignatureProvider;
-    private readonly IDataSeed<OrderSeedType, Order> _seedOrder;
+    private readonly IOrderSeed _seedOrder;
     private readonly string? _endpoint;
     private readonly HttpClient _client;
 
@@ -47,10 +44,13 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     {
         _hmacSignatureProvider = factory.Services
             .GetRequiredService<IHmacSignatureProvider>();
-        _seedOrder = SeedManager.GetSeed<OrderSeedType, Order>();
+
+        _seedOrder = SeedManager.GetSeed<IOrderSeed>();
+
         _endpoint = LinkGenerator.GetPathByName(
             nameof(PaymentWebhookEndpoints.HandlePaymentStatusChanged)
         );
+
         _client = RequestService.CreateClient();
     }
 
@@ -174,7 +174,7 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
 
     private async Task<OrderPaymentResponse> GetExistingOrderPayment()
     {
-        var existingOrder = _seedOrder.GetByType(OrderSeedType.CUSTOMER_ORDER_PENDING);
+        var existingOrder = _seedOrder.GetEntity(OrderSeedType.CUSTOMER_ORDER_PENDING);
 
         var endpointGetOrderById = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.GetOrderById),

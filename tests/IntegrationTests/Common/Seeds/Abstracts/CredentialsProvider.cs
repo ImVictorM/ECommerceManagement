@@ -32,6 +32,18 @@ public abstract class CredentialsProvider<TEnum> : ICredentialsProvider<TEnum>
     }
 
     /// <inheritdoc/>
+    public string GetEmail(TEnum seedType)
+    {
+        return GetCredentials(seedType).Email;
+    }
+
+    /// <inheritdoc/>
+    public string GetPassword(TEnum seedType)
+    {
+        return GetCredentials(seedType).Password;
+    }
+
+    /// <inheritdoc/>
     public IReadOnlyList<AuthenticationCredentials> ListCredentials()
     {
         return _credentials.Values.ToList();

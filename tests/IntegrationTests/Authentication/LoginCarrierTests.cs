@@ -1,7 +1,6 @@
 using Contracts.Authentication;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Carriers;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -22,7 +21,7 @@ namespace IntegrationTests.Authentication;
 /// </summary>
 public class LoginCarrierTests : BaseIntegrationTest
 {
-    private readonly ICredentialsProvider<CarrierSeedType> _credentialsProvider;
+    private readonly ICarrierCredentialsProvider _credentialsProvider;
     private readonly string? _endpoint;
     private readonly HttpClient _client;
 
@@ -37,7 +36,7 @@ public class LoginCarrierTests : BaseIntegrationTest
     ) : base(factory, output)
     {
         _credentialsProvider = factory.Services
-            .GetRequiredService<ICredentialsProvider<CarrierSeedType>>();
+            .GetRequiredService<ICarrierCredentialsProvider>();
 
         _client = RequestService.CreateClient();
 

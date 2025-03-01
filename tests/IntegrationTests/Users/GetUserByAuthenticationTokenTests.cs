@@ -11,8 +11,6 @@ using Xunit.Abstractions;
 using FluentAssertions;
 using System.Net;
 using Microsoft.AspNetCore.Routing;
-using IntegrationTests.Common.Seeds.Abstracts;
-using Domain.UserAggregate;
 
 namespace IntegrationTests.Users;
 
@@ -22,7 +20,7 @@ namespace IntegrationTests.Users;
 public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
 {
     private readonly string? _endpoint;
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IUserSeed _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the
@@ -35,7 +33,8 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
+
         _endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.GetUserByAuthenticationToken)
         );
@@ -55,7 +54,7 @@ public class GetUserByAuthenticationTokenTests : BaseIntegrationTest
         UserSeedType userType
     )
     {
-        var currentUser = _seedUser.GetByType(userType);
+        var currentUser = _seedUser.GetEntity(userType);
 
         var client = await RequestService.LoginAsAsync(userType);
 

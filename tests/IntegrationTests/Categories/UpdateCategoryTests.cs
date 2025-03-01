@@ -1,11 +1,8 @@
-using Domain.CategoryAggregate;
-
 using Contracts.Categories;
 
 using IntegrationTests.Categories.TestUtils;
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Categories;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -24,7 +21,7 @@ namespace IntegrationTests.Categories;
 /// </summary>
 public class UpdateCategoryTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly ICategorySeed _seedCategory;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateCategoryTests"/> class.
@@ -37,7 +34,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
     ) : base(factory, output)
     {
 
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
     }
 
     /// <summary>
@@ -46,12 +43,15 @@ public class UpdateCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateCategory_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
+        var idExistingCategory = _seedCategory
+            .GetEntityId(CategorySeedType.JEWELRY)
+            .ToString();
+
         var request = UpdateCategoryRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.UpdateCategory),
-            new { id = existingCategory.Id.ToString() }
+            new { id = idExistingCategory }
         );
 
         var response = await RequestService.CreateClient().PutAsJsonAsync(
@@ -68,12 +68,15 @@ public class UpdateCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateCategory_WithoutAdminPermission_ReturnsForbidden()
     {
-        var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
+        var idExistingCategory = _seedCategory
+            .GetEntityId(CategorySeedType.JEWELRY)
+            .ToString();
+
         var request = UpdateCategoryRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.UpdateCategory),
-            new { id = existingCategory.Id.ToString() }
+            new { id = idExistingCategory }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -91,9 +94,9 @@ public class UpdateCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateCategory_WithAdminPermission_ReturnsNoContent()
     {
-        var categoryToBeUpdated = _seedCategory.GetByType(
-            CategorySeedType.JEWELRY
-        );
+        var idCategoryToBeUpdated = _seedCategory
+            .GetEntityId(CategorySeedType.JEWELRY)
+            .ToString();
 
         var request = UpdateCategoryRequestUtils.CreateRequest(
             name: "new_category_name"
@@ -101,12 +104,12 @@ public class UpdateCategoryTests : BaseIntegrationTest
 
         var endpointUpdate = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.UpdateCategory),
-            new { id = categoryToBeUpdated.Id.ToString() }
+            new { id = idCategoryToBeUpdated }
         );
 
         var endpointGetById = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.GetCategoryById),
-            new { id = categoryToBeUpdated.Id.ToString() }
+            new { id = idCategoryToBeUpdated }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);

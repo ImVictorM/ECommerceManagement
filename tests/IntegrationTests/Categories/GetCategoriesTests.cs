@@ -1,9 +1,6 @@
-using Domain.CategoryAggregate;
-
 using Contracts.Categories;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -20,7 +17,7 @@ namespace IntegrationTests.Categories;
 /// </summary>
 public class GetCategoriesTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly ICategorySeed _seedCategory;
     private readonly string? _endpoint;
 
     /// <summary>
@@ -33,7 +30,7 @@ public class GetCategoriesTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
 
         _endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.GetCategories)

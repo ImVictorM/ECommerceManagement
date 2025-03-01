@@ -2,7 +2,6 @@ using IntegrationTests.Common;
 
 using Contracts.Authentication;
 
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 
@@ -23,7 +22,7 @@ namespace IntegrationTests.Authentication;
 /// </summary>
 public class LoginUserTests : BaseIntegrationTest
 {
-    private readonly ICredentialsProvider<UserSeedType> _credentialsProvider;
+    private readonly IUserCredentialsProvider _credentialsProvider;
     private readonly string? _endpoint;
     private readonly HttpClient _client;
 
@@ -38,7 +37,7 @@ public class LoginUserTests : BaseIntegrationTest
     ) : base(factory, output)
     {
         _credentialsProvider = factory.Services
-            .GetRequiredService<ICredentialsProvider<UserSeedType>>();
+            .GetRequiredService<IUserCredentialsProvider>();
 
         _endpoint = LinkGenerator.GetPathByName(
             nameof(AuthenticationEndpoints.LoginUser

@@ -1,7 +1,4 @@
-using Domain.ShippingMethodAggregate;
-
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.ShippingMethods;
 using IntegrationTests.Common.Seeds.Users;
 
@@ -19,7 +16,7 @@ namespace IntegrationTests.ShippingMethods;
 /// </summary>
 public class DeleteShippingMethodTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _seedShippingMethod;
+    private readonly IShippingMethodSeed _seedShippingMethod;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeleteShippingMethodTests"/> class.
@@ -31,8 +28,7 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedShippingMethod = SeedManager
-            .GetSeed<ShippingMethodSeedType, ShippingMethod>();
+        _seedShippingMethod = SeedManager.GetSeed<IShippingMethodSeed>();
     }
 
     /// <summary>
@@ -41,13 +37,13 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteShippingMethod_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var existingShippingMethod = _seedShippingMethod.GetByType(
-            ShippingMethodSeedType.FREE
-        );
+        var idExistingShippingMethod = _seedShippingMethod
+            .GetEntityId(ShippingMethodSeedType.FREE)
+            .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.DeleteShippingMethod),
-            new { id = existingShippingMethod.Id.ToString() }
+            new { id = idExistingShippingMethod }
         );
 
         var response = await RequestService
@@ -64,13 +60,13 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteShippingMethod_WithoutAdminPermission_ReturnsForbidden()
     {
-        var existingShippingMethod = _seedShippingMethod.GetByType(
-            ShippingMethodSeedType.FREE
-        );
+        var idExistingShippingMethod = _seedShippingMethod
+            .GetEntityId(ShippingMethodSeedType.FREE)
+            .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.DeleteShippingMethod),
-            new { id = existingShippingMethod.Id.ToString() }
+            new { id = idExistingShippingMethod }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -85,18 +81,18 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteShippingMethod_WithAdminPermission_ReturnsNoContent()
     {
-        var shippingMethodToDelete = _seedShippingMethod.GetByType(
-            ShippingMethodSeedType.FREE
-        );
+        var idShippingMethodToDelete = _seedShippingMethod
+            .GetEntityId(ShippingMethodSeedType.FREE)
+            .ToString();
 
         var endpointDelete = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.DeleteShippingMethod),
-            new { id = shippingMethodToDelete.Id.ToString() }
+            new { id = idShippingMethodToDelete }
         );
 
         var endpointGetShippingMethodById = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.GetShippingMethodById),
-            new { id = shippingMethodToDelete.Id.ToString() }
+            new { id = idShippingMethodToDelete }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);

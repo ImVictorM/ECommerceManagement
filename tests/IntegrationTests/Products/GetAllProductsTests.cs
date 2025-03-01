@@ -1,10 +1,6 @@
-using Domain.CategoryAggregate;
-using Domain.ProductAggregate;
-
 using Contracts.Products;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.TestUtils.Extensions.Http;
@@ -23,8 +19,8 @@ namespace IntegrationTests.Products;
 /// </summary>
 public class GetAllProductsTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<ProductSeedType, Product> _seedProduct;
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly IProductSeed _seedProduct;
+    private readonly ICategorySeed _seedCategory;
     private readonly string? _endpoint;
     private readonly HttpClient _client;
 
@@ -38,11 +34,13 @@ public class GetAllProductsTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedProduct = SeedManager.GetSeed<ProductSeedType, Product>();
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
+
         _endpoint = LinkGenerator.GetPathByName(
             nameof(ProductEndpoints.GetAllProducts)
         );
+
         _client = RequestService.CreateClient();
     }
 
@@ -90,7 +88,7 @@ public class GetAllProductsTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllProducts_WithCategoryFilter_ReturnsOkContainingCorrectProducts()
     {
-        var fashionCategory = _seedCategory.GetByType(CategorySeedType.FASHION);
+        var fashionCategory = _seedCategory.GetEntity(CategorySeedType.FASHION);
 
         var response = await _client.GetAsync(
             $"{_endpoint}?category={fashionCategory.Id}"

@@ -1,8 +1,5 @@
-using Domain.CategoryAggregate;
-
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 
 using WebApi.Categories;
@@ -19,7 +16,7 @@ namespace IntegrationTests.Categories;
 /// </summary>
 public class DeleteCategoryTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly ICategorySeed _seedCategory;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="DeleteCategoryTests"/> class.
@@ -31,7 +28,7 @@ public class DeleteCategoryTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
     }
 
     /// <summary>
@@ -40,11 +37,11 @@ public class DeleteCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteCategory_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
+        var idExistingCategory = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.DeleteCategory),
-            new { id = existingCategory.Id.ToString() }
+            new { id = idExistingCategory.ToString() }
         );
 
         var response = await RequestService.CreateClient().DeleteAsync(
@@ -60,11 +57,11 @@ public class DeleteCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteCategory_WithoutAdminPermission_ReturnsForbidden()
     {
-        var existingCategory = _seedCategory.GetByType(CategorySeedType.JEWELRY);
+        var idExistingCategory = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.DeleteCategory),
-            new { id = existingCategory.Id.ToString() }
+            new { id = idExistingCategory.ToString() }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -80,29 +77,29 @@ public class DeleteCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteCategory_WithAdminPermission_ReturnsNoContent()
     {
-        var categoryToBeDeleted = _seedCategory.GetByType(CategorySeedType.JEWELRY);
+        var idCategoryToBeDeleted = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
 
         var endpointDelete = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.DeleteCategory),
-            new { id = categoryToBeDeleted.Id.ToString() }
+            new { id = idCategoryToBeDeleted.ToString() }
         );
 
         var endpointGetById = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.GetCategoryById),
-            new { id = categoryToBeDeleted.Id.ToString() }
+            new { id = idCategoryToBeDeleted.ToString() }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var deleteResponse = await client.DeleteAsync(
+        var responseDelete = await client.DeleteAsync(
             endpointDelete
         );
 
-        var getDeletedCategoryResponse = await client.GetAsync(
+        var responseGetDeletedCategory = await client.GetAsync(
             endpointGetById
         );
 
-        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        getDeletedCategoryResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        responseDelete.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        responseGetDeletedCategory.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
