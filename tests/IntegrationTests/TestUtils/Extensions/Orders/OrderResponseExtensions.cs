@@ -12,11 +12,15 @@ namespace IntegrationTests.TestUtils.Extensions.Orders;
 public static class OrderResponseExtensions
 {
     /// <summary>
-    /// Verifies if an <see cref="IEnumerable{OrderResponse}"/> corresponds to the expected orders.
+    /// Verifies if an <see cref="IEnumerable{OrderResponse}"/>
+    /// corresponds to the expected orders.
     /// </summary>
     /// <param name="response">The current response.</param>
     /// <param name="expectedOrders">The expected orders.</param>
-    public static void EnsureCorrespondsTo(this IEnumerable<OrderResponse>? response, IEnumerable<Order> expectedOrders)
+    public static void EnsureCorrespondsTo(
+        this IEnumerable<OrderResponse>? response,
+        IEnumerable<Order> expectedOrders
+    )
     {
         response.Should().NotBeNull();
 
