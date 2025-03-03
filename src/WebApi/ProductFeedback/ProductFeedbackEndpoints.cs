@@ -1,4 +1,5 @@
 using Application.ProductFeedback.Commands.LeaveProductFeedback;
+using Application.ProductFeedback.Queries.GetProductFeedback;
 
 using Contracts.ProductFeedback;
 
@@ -46,6 +47,27 @@ public class ProductFeedbackEndpoints : ICarterModule
                 ],
             })
             .RequireAuthorization();
+
+        productFeedbackGroup
+            .MapGet("/", GetProductFeedback)
+            .WithName(nameof(GetProductFeedback))
+            .WithOpenApi(op => new(op)
+            {
+                Summary = "Get Product Feedback",
+                Description =
+                "Retrieves a list of active feedback items for a specific product.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "productId",
+                        In = ParameterLocation.Path,
+                        Description = "The product identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    }
+                ],
+            });
     }
 
     internal async Task<Results<
@@ -65,5 +87,18 @@ public class ProductFeedbackEndpoints : ICarterModule
         var result = await sender.Send(command);
 
         return TypedResults.Created($"/products/{productId}/feedback/{result}");
+    }
+
+    internal async Task<Ok<IEnumerable<ProductFeedbackResponse>>> GetProductFeedback(
+        [FromRoute] string productId,
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var query = new GetProductFeedbackQuery(productId);
+
+        var result = await sender.Send(query);
+
+        return TypedResults.Ok(result.Select(mapper.Map<ProductFeedbackResponse>));
     }
 }
