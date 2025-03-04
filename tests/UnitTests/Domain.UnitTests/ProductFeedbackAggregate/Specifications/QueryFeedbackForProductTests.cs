@@ -7,7 +7,7 @@ using FluentAssertions;
 namespace Domain.UnitTests.ProductFeedbackAggregate.Specifications;
 
 /// <summary>
-/// Unit tests for the <see cref="QueryFeedbackForProduct"/> class.
+/// Unit tests for the <see cref="QueryFeedbackForProduct"/> specification.
 /// </summary>
 public class QueryFeedbackForProductTests
 {

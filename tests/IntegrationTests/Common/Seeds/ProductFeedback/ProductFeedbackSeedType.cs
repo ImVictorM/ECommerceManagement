@@ -30,8 +30,21 @@ public enum ProductFeedbackSeedType
     TSHIRT_FEEDBACK_1,
 
     /// <summary>
+    /// Represents the second and inactive feedback entry for the
+    /// <see cref="Products.ProductSeedType.TSHIRT"/> product.
+    /// </summary>
+    TSHIRT_FEEDBACK_2_INACTIVE,
+
+    /// <summary>
     /// Represents the first feedback entry for the.
     /// <see cref="Products.ProductSeedType.CHAIN_BRACELET"/> product.
     /// </summary>
     CHAIN_BRACELET_FEEDBACK_1,
+
+    /// <summary>
+    /// Represents the first and inactive feedback entry for the
+    /// <see cref="Products.ProductSeedType.JACKET_INACTIVE"/> inactive
+    /// product.
+    /// </summary>
+    JACKET_INACTIVE_FEEDBACK_1_INACTIVE
 }

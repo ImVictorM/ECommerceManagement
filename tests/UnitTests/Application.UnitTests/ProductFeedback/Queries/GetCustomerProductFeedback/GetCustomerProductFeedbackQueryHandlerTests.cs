@@ -1,6 +1,6 @@
 using Application.Common.Persistence.Repositories;
 using Application.ProductFeedback.DTOs;
-using Application.ProductFeedback.Queries.GetProductFeedback;
+using Application.ProductFeedback.Queries.GetCustomerProductFeedback;
 using Application.UnitTests.ProductFeedback.Queries.TestUtils;
 
 using Domain.ProductAggregate.ValueObjects;
@@ -10,68 +10,65 @@ using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
 
 using SharedKernel.Interfaces;
 
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using FluentAssertions;
 using Moq;
 
-namespace Application.UnitTests.ProductFeedback.Queries.GetProductFeedback;
+namespace Application.UnitTests.ProductFeedback.Queries.GetCustomerProductFeedback;
 
 /// <summary>
-/// Unit tests for the <see cref="GetProductFeedbackQueryHandler"/> handler.
+/// Unit tests for the <see cref="GetCustomerProductFeedbackQueryHandler"/> handler.
 /// </summary>
-public class GetProductFeedbackQueryHandlerTests
+public class GetCustomerProductFeedbackQueryHandlerTests
 {
     private readonly Mock<IProductFeedbackRepository> _mockProductFeedbackRepository;
-    private readonly GetProductFeedbackQueryHandler _handler;
+    private readonly GetCustomerProductFeedbackQueryHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GetProductFeedbackQueryHandlerTests"/> class.
+    /// Initializes a new instance of the
+    /// <see cref="GetCustomerProductFeedbackQueryHandlerTests"/> class.
     /// </summary>
-    public GetProductFeedbackQueryHandlerTests()
+    public GetCustomerProductFeedbackQueryHandlerTests()
     {
         _mockProductFeedbackRepository = new Mock<IProductFeedbackRepository>();
 
-        _handler = new GetProductFeedbackQueryHandler(
+        _handler = new GetCustomerProductFeedbackQueryHandler(
             _mockProductFeedbackRepository.Object,
-            Mock.Of<ILogger<GetProductFeedbackQueryHandler>>()
+            Mock.Of<ILogger<GetCustomerProductFeedbackQueryHandler>>()
         );
     }
 
     /// <summary>
-    /// Verifies when feedback exists for a product, it is returned.
+    /// Verifies when feedback exists for a customer, it is returned.
     /// </summary>
     [Fact]
-    public async Task HandleGetProductFeedback_WhenFeedbackExists_ReturnsFeedbackResults()
+    public async Task HandleGetCustomerProductFeedback_WhenFeedbackExists_ReturnsFeedbackResults()
     {
-        var query = GetProductFeedbackQueryUtils.CreateQuery(productId: "1");
-        var productId = ProductId.Create(query.ProductId);
+        var query = GetCustomerProductFeedbackQueryUtils.CreateQuery(userId: "1");
+        var userId = UserId.Create(query.UserId);
 
-        var feedbackResults = new List<ProductFeedbackDetailedResult>
+        var feedbackResults = new List<ProductFeedbackResult>
         {
             new(
                 ProductFeedbackUtils.CreateProductFeedback(
-                    productId: productId,
+                    productId: ProductId.Create(1),
                     title: "Feedback 1",
-                    content: "Feedback 1 content"
-                ),
-                new ProductFeedbackUserResult(
-                    UserId.Create(1), "User 1"
+                    content: "Feedback 1 content",
+                    userId: userId
                 )
             ),
             new(
                 ProductFeedbackUtils.CreateProductFeedback(
-                    productId: productId,
+                    productId: ProductId.Create(2),
                     title: "Feedback 2",
-                    content: "Feedback 2 content"
-                ),
-                new ProductFeedbackUserResult(
-                    UserId.Create(2), "User 2"
+                    content: "Feedback 2 content",
+                    userId: userId
                 )
             ),
         };
 
         _mockProductFeedbackRepository
-            .Setup(r => r.GetProductFeedbackDetailedSatisfyingAsync(
+            .Setup(r => r.GetProductFeedbackSatisfyingAsync(
                 It.IsAny<ISpecificationQuery<DomainProductFeedback>>(),
                 It.IsAny<CancellationToken>()
             ))
@@ -83,15 +80,15 @@ public class GetProductFeedbackQueryHandlerTests
     }
 
     /// <summary>
-    /// Verifies when no feedback exists for a product, an empty collection is returned.
+    /// Verifies when no feedback exists for a customer, an empty collection is returned.
     /// </summary>
     [Fact]
-    public async Task HandleGetProductFeedback_WhenNoFeedbackExists_ReturnsEmptyCollection()
+    public async Task HandleGetCustomerProductFeedback_WhenNoFeedbackExists_ReturnsEmptyCollection()
     {
-        var query = GetProductFeedbackQueryUtils.CreateQuery(productId: "2");
+        var query = GetCustomerProductFeedbackQueryUtils.CreateQuery(userId: "2");
 
         _mockProductFeedbackRepository
-            .Setup(r => r.GetProductFeedbackDetailedSatisfyingAsync(
+            .Setup(r => r.GetProductFeedbackSatisfyingAsync(
                 It.IsAny<ISpecificationQuery<DomainProductFeedback>>(),
                 It.IsAny<CancellationToken>()
             ))

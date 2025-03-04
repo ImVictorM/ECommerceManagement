@@ -30,7 +30,7 @@ public class GetProductFeedbackTests : BaseIntegrationTest
     private readonly HttpClient _client;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="LeaveProductFeedbackTests"/> class.
+    /// Initiates a new instance of the <see cref="GetProductFeedbackTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -61,7 +61,7 @@ public class GetProductFeedbackTests : BaseIntegrationTest
     {
         var productId = _seedProduct.GetEntityId(productSeedType);
 
-        var expectedProductFeedback = GetProductFeedbackItems(productId);
+        var expectedProductFeedback = GetProductFeedbackActiveItems(productId);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ProductFeedbackEndpoints.GetProductFeedback),
@@ -79,10 +79,10 @@ public class GetProductFeedbackTests : BaseIntegrationTest
         responseContent.EnsureCorrespondsTo(expectedProductFeedback, _seedUser);
     }
 
-    private IReadOnlyList<DomainProductFeedback> GetProductFeedbackItems(
+    private IReadOnlyList<DomainProductFeedback> GetProductFeedbackActiveItems(
         ProductId productId
     )
     {
-        return _seedProductFeedback.ListAll(f => f.ProductId == productId);
+        return _seedProductFeedback.ListAll(f => f.ProductId == productId && f.IsActive);
     }
 }

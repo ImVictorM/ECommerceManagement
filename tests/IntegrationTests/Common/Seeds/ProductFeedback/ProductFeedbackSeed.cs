@@ -85,9 +85,19 @@ public sealed class ProductFeedbackSeed :
                     starRating: StarRating.Create(2)
                 ),
 
-            [ProductFeedbackSeedType.CHAIN_BRACELET_FEEDBACK_1] = ProductFeedbackUtils
+            [ProductFeedbackSeedType.TSHIRT_FEEDBACK_2_INACTIVE] = ProductFeedbackUtils
                 .CreateProductFeedback(
                     id: ProductFeedbackId.Create(-5),
+                    userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
+                    productId: productSeed.GetEntityId(ProductSeedType.TSHIRT),
+                    title: "AAAAAAAAA",
+                    content: "I do not know why I am leaving this review.",
+                    starRating: StarRating.Create(1)
+                ),
+
+            [ProductFeedbackSeedType.CHAIN_BRACELET_FEEDBACK_1] = ProductFeedbackUtils
+                .CreateProductFeedback(
+                    id: ProductFeedbackId.Create(-6),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
                     productId: productSeed.GetEntityId(ProductSeedType.CHAIN_BRACELET),
                     title: "Beautiful but fragile",
@@ -95,6 +105,15 @@ public sealed class ProductFeedbackSeed :
                     " a week of wear. " +
                     "It's not durable enough for daily use.",
                     starRating: StarRating.Create(2)
+                ),
+            [ProductFeedbackSeedType.JACKET_INACTIVE_FEEDBACK_1_INACTIVE] = ProductFeedbackUtils
+                .CreateProductFeedback(
+                    id: ProductFeedbackId.Create(-7),
+                    userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
+                    productId: productSeed.GetEntityId(ProductSeedType.CHAIN_BRACELET),
+                    title: "Came in the wrong color",
+                    content: "The jacket is good, but I did no order an orange one.",
+                    starRating: StarRating.Create(3)
                 )
         };
     }
