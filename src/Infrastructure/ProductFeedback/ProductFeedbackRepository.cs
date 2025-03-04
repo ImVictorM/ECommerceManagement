@@ -23,7 +23,7 @@ internal sealed class ProductFeedbackRepository :
 
     /// <inheritdoc/>
     public async Task<
-        IEnumerable<ProductFeedbackResult>
+        IEnumerable<ProductFeedbackDetailedResult>
     > GetProductFeedbackDetailedSatisfyingAsync(
         ISpecificationQuery<DomainProductFeedback> specification,
         CancellationToken cancellationToken = default
@@ -31,7 +31,7 @@ internal sealed class ProductFeedbackRepository :
     {
         return await Context.ProductFeedback
             .Where(specification.Criteria)
-            .Select(productFeedback => new ProductFeedbackResult(
+            .Select(productFeedback => new ProductFeedbackDetailedResult(
                 productFeedback,
                 Context.Users
                     .Where(user => user.Id == productFeedback.UserId)
@@ -41,6 +41,19 @@ internal sealed class ProductFeedbackRepository :
                     ))
                     .First()
             ))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<
+        IEnumerable<ProductFeedbackResult>
+    > GetProductFeedbackSatisfyingAsync(
+        ISpecificationQuery<DomainProductFeedback> specification,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await Context.ProductFeedback
+            .Where(specification.Criteria)
+            .Select(productFeedback => new ProductFeedbackResult(productFeedback))
             .ToListAsync(cancellationToken);
     }
 }

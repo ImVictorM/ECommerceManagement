@@ -89,7 +89,7 @@ public class ProductFeedbackEndpoints : ICarterModule
         return TypedResults.Created($"/products/{productId}/feedback/{result}");
     }
 
-    internal async Task<Ok<IEnumerable<ProductFeedbackResponse>>> GetProductFeedback(
+    internal async Task<Ok<IEnumerable<ProductFeedbackDetailedResponse>>> GetProductFeedback(
         [FromRoute] string productId,
         ISender sender,
         IMapper mapper
@@ -99,6 +99,6 @@ public class ProductFeedbackEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<ProductFeedbackResponse>));
+        return TypedResults.Ok(result.Select(mapper.Map<ProductFeedbackDetailedResponse>));
     }
 }

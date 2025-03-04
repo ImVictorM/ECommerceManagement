@@ -73,7 +73,7 @@ public class GetProductFeedbackTests : BaseIntegrationTest
 
         var response = await _client.GetAsync(endpoint);
         var responseContent = await response.Content
-            .ReadRequiredFromJsonAsync<IEnumerable<ProductFeedbackResponse>>();
+            .ReadRequiredFromJsonAsync<IEnumerable<ProductFeedbackDetailedResponse>>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent.EnsureCorrespondsTo(expectedProductFeedback, _seedUser);

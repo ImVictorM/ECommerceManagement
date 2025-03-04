@@ -10,7 +10,7 @@ using FluentAssertions;
 namespace IntegrationTests.TestUtils.Extensions.ProductFeedback;
 
 /// <summary>
-/// Extension methods for the <see cref="ProductFeedbackResponse"/> class.
+/// Extension methods for the <see cref="ProductFeedbackDetailedResponse"/> class.
 /// </summary>
 public static class ProductFeedbackResponseExtensions
 {
@@ -22,7 +22,7 @@ public static class ProductFeedbackResponseExtensions
     /// <param name="feedback">The expected product feedback.</param>
     /// <param name="userSeed">The user seed.</param>
     public static void EnsureCorrespondsTo(
-        this ProductFeedbackResponse response,
+        this ProductFeedbackDetailedResponse response,
         DomainProductFeedback feedback,
         IUserSeed userSeed
     )
@@ -48,7 +48,7 @@ public static class ProductFeedbackResponseExtensions
     /// </param>
     /// <param name="userSeed">The user seed.</param>
     public static void EnsureCorrespondsTo(
-        this IEnumerable<ProductFeedbackResponse> response,
+        this IEnumerable<ProductFeedbackDetailedResponse> response,
         IEnumerable<DomainProductFeedback> expectedProductFeedback,
         IUserSeed userSeed
     )

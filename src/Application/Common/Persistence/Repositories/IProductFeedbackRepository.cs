@@ -14,12 +14,25 @@ public interface IProductFeedbackRepository
     : IBaseRepository<DomainProductFeedback, ProductFeedbackId>
 {
     /// <summary>
+    /// Retrieves detailed product feedback satisfying the specified specification.
+    /// </summary>
+    /// <param name="specification">The specification</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>Detailed product feedback results.</returns>
+    Task<
+        IEnumerable<ProductFeedbackDetailedResult>
+    > GetProductFeedbackDetailedSatisfyingAsync(
+        ISpecificationQuery<DomainProductFeedback> specification,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     /// Retrieves product feedback satisfying the specified specification.
     /// </summary>
     /// <param name="specification">The specification</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A detailed product feedback result.</returns>
-    Task<IEnumerable<ProductFeedbackResult>> GetProductFeedbackDetailedSatisfyingAsync(
+    /// <returns>Product feedback results.</returns>
+    Task<IEnumerable<ProductFeedbackResult>> GetProductFeedbackSatisfyingAsync(
         ISpecificationQuery<DomainProductFeedback> specification,
         CancellationToken cancellationToken = default
     );
