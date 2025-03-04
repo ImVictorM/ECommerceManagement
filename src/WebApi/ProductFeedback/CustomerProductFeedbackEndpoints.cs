@@ -1,3 +1,4 @@
+using Application.ProductFeedback.Commands.DeactivateCustomerProductFeedback;
 using Application.ProductFeedback.Queries.GetCustomerProductFeedback;
 
 using Contracts.ProductFeedback;
@@ -33,7 +34,7 @@ public class CustomerProductFeedbackEndpoints : ICarterModule
                 Description =
                 "Retrieves a list of active product feedback items " +
                 "for a specific customer. " +
-                "Customer authentication is required.",
+                "Customer or admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -41,6 +42,45 @@ public class CustomerProductFeedbackEndpoints : ICarterModule
                         Name = "userId",
                         In = ParameterLocation.Path,
                         Description = "The customer identifier.",
+                        Required = true,
+                        Schema = new()
+                        {
+                            Type = "integer",
+                            Format = "int64"
+                        }
+                    }
+                ],
+            })
+            .RequireAuthorization();
+
+        customerProductFeedbackGroup
+            .MapDelete("/{feedbackId:long}", DeactivateCustomerProductFeedback)
+            .WithName(nameof(DeactivateCustomerProductFeedback))
+            .WithOpenApi(op => new(op)
+            {
+                Summary = "Deactivate Customer Product Feedback",
+                Description =
+                "Deactivates a customer specific product feedback item. " +
+                "Customer or admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "userId",
+                        In = ParameterLocation.Path,
+                        Description = "The customer identifier.",
+                        Required = true,
+                        Schema = new()
+                        {
+                            Type = "integer",
+                            Format = "int64"
+                        }
+                    },
+                    new()
+                    {
+                        Name = "feedbackId",
+                        In = ParameterLocation.Path,
+                        Description = "The feedback item identifier.",
                         Required = true,
                         Schema = new()
                         {
@@ -68,5 +108,26 @@ public class CustomerProductFeedbackEndpoints : ICarterModule
         var result = await sender.Send(query);
 
         return TypedResults.Ok(result.Select(mapper.Map<ProductFeedbackResponse>));
+    }
+
+    internal async Task<Results<
+        NoContent,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> DeactivateCustomerProductFeedback(
+        [FromRoute] string userId,
+        [FromRoute] string feedbackId,
+        ISender sender
+    )
+    {
+        var query = new DeactivateCustomerProductFeedbackCommand(
+            userId,
+            feedbackId
+        );
+
+        await sender.Send(query);
+
+        return TypedResults.NoContent();
     }
 }
