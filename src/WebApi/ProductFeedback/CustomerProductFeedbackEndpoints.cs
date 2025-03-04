@@ -32,8 +32,8 @@ public class CustomerProductFeedbackEndpoints : ICarterModule
             {
                 Summary = "Get Customer Product Feedback",
                 Description =
-                "Retrieves a list of active product feedback items " +
-                "for a specific customer. " +
+                "Retrieves a list of active product feedback items left " +
+                "by a specific customer. " +
                 "Customer or admin authentication is required.",
                 Parameters =
                 [
@@ -60,7 +60,7 @@ public class CustomerProductFeedbackEndpoints : ICarterModule
             {
                 Summary = "Deactivate Customer Product Feedback",
                 Description =
-                "Deactivates a customer specific product feedback item. " +
+                "Deactivates a specific product feedback entry from a customer. " +
                 "Customer or admin authentication is required.",
                 Parameters =
                 [

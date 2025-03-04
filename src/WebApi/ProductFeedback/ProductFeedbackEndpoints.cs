@@ -32,7 +32,7 @@ public class ProductFeedbackEndpoints : ICarterModule
             {
                 Summary = "Leave Product Feedback",
                 Description =
-                "Allows a user to leave feedback for a product they have purchased." +
+                "Allows a customer to leave feedback for a purchased product. " +
                 "Customer authentication is required.",
                 Parameters =
                 [
@@ -86,7 +86,7 @@ public class ProductFeedbackEndpoints : ICarterModule
 
         var result = await sender.Send(command);
 
-        return TypedResults.Created($"/products/{productId}/feedback/{result}");
+        return TypedResults.Created($"/products/{productId}/feedback/{result.Id}");
     }
 
     internal async Task<Ok<IEnumerable<ProductFeedbackDetailedResponse>>> GetProductFeedback(
