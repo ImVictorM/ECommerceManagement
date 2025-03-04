@@ -4,7 +4,8 @@ namespace WebApi.Common.Utilities;
 
 internal static class JsonSerializerUtils
 {
-    private static readonly JsonSerializerOptions _webOptions = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions _webOptions =
+        new(JsonSerializerDefaults.Web);
 
     /// <summary>
     /// Serializes the content for web.
@@ -21,7 +22,9 @@ internal static class JsonSerializerUtils
     /// </summary>
     /// <typeparam name="T">The target object type.</typeparam>
     /// <param name="utf8json">The json text representation.</param>
-    /// <returns>A <typeparamref name="T"/> representation of the json value.</returns>
+    /// <returns>
+    /// A <typeparamref name="T"/> representation of the json value.
+    /// </returns>
     public static async ValueTask<T?> DeserializeFromWebAsync<T>(Stream utf8json)
     {
         return await JsonSerializer.DeserializeAsync<T>(utf8json, _webOptions);

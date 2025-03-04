@@ -1,5 +1,3 @@
-using Domain.OrderAggregate;
-using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.ProductFeedbackAggregate.ValueObjects;
@@ -66,30 +64,22 @@ internal sealed class ProductFeedbackConfigurations : EntityTypeConfigurationDep
             .IsRequired();
 
         builder
-            .HasOne<Order>()
-            .WithOne()
-            .HasForeignKey<DomainProductFeedback>(productFeedback => productFeedback.OrderId)
-            .IsRequired();
-
-        builder
-            .Property(productFeedback => productFeedback.OrderId)
-            .HasConversion(
-                id => id.Value,
-                value => OrderId.Create(value)
-            )
-            .IsRequired();
-
-        builder
-            .Property(productFeedback => productFeedback.Subject)
+            .Property(productFeedback => productFeedback.Title)
             .HasMaxLength(60)
             .IsRequired();
 
         builder
             .Property(productFeedback => productFeedback.Content)
+            .HasMaxLength(200)
             .IsRequired();
 
         builder
-           .Property(productFeedback => productFeedback.StarRating);
+           .Property(productFeedback => productFeedback.StarRating)
+           .HasConversion(
+                rating => rating.Value,
+                value => StarRating.Create(value)
+           )
+           .IsRequired();
 
         builder
            .Property(productFeedback => productFeedback.IsActive)

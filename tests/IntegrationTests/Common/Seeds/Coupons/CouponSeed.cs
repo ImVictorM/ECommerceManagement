@@ -2,13 +2,12 @@ using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.CouponAggregate.ValueObjects.Restrictions;
 using Domain.UnitTests.TestUtils;
-using Domain.CategoryAggregate;
 
 using SharedKernel.UnitTests.TestUtils;
 
 using Infrastructure.Common.Persistence;
-using IntegrationTests.Common.Seeds.Categories;
 
+using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common.Seeds.Abstracts;
 
 namespace IntegrationTests.Common.Seeds.Coupons;
@@ -16,7 +15,8 @@ namespace IntegrationTests.Common.Seeds.Coupons;
 /// <summary>
 /// Provides seed data for coupons in the database.
 /// </summary>
-public sealed class CouponSeed : DataSeed<CouponSeedType, Coupon>
+public sealed class CouponSeed
+    : DataSeed<CouponSeedType, Coupon, CouponId>, ICouponSeed
 {
     /// <inheritdoc/>
     public override int Order { get; }
@@ -25,12 +25,15 @@ public sealed class CouponSeed : DataSeed<CouponSeedType, Coupon>
     /// Initializes a new instance of the <see cref="CouponSeed"/> class.
     /// </summary>
     /// <param name="categorySeed">The category seed.</param>
-    public CouponSeed(IDataSeed<CategorySeedType, Category> categorySeed) : base(CreateSeedData(categorySeed))
+    public CouponSeed(ICategorySeed categorySeed)
+        : base(CreateSeedData(categorySeed))
     {
         Order = categorySeed.Order + 20;
     }
 
-    private static Dictionary<CouponSeedType, Coupon> CreateSeedData(IDataSeed<CategorySeedType, Category> categorySeed)
+    private static Dictionary<CouponSeedType, Coupon> CreateSeedData(
+        ICategorySeed categorySeed
+    )
     {
         return new()
         {
@@ -50,7 +53,9 @@ public sealed class CouponSeed : DataSeed<CouponSeedType, Coupon>
                     CategoryRestriction.Create(
                         categoriesAllowed:
                         [
-                            CouponCategory.Create(categorySeed.GetByType(CategorySeedType.TECHNOLOGY).Id)
+                            CouponCategory.Create(categorySeed.GetEntityId(
+                                CategorySeedType.TECHNOLOGY
+                            ))
                         ],
                         productsFromCategoryNotAllowed: []
                     )

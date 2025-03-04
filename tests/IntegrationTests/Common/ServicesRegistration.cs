@@ -37,10 +37,12 @@ internal static class ServicesRegistration
     {
         services
             .AddTestDbContext(connection)
-            .AddSingleton<IHttpClientFactory>(new TestHttpClientFactory<TStartup>(appFactory))
+            .AddSingleton<IHttpClientFactory>(
+                new TestHttpClientFactory<TStartup>(appFactory)
+            )
             .AddSingleton<IPasswordHasher, PasswordHasher>()
-            .AddSeed()
             .AddCredentialsProviders()
+            .AddSeed()
             .AddHmacSignatureProvider(configurations);
 
         services.AddTransient<IDiscountService, DiscountService>();
@@ -49,7 +51,10 @@ internal static class ServicesRegistration
         return services;
     }
 
-    private static IServiceCollection AddTestDbContext(this IServiceCollection services, DbConnection connection)
+    private static IServiceCollection AddTestDbContext(
+        this IServiceCollection services,
+        DbConnection connection
+    )
     {
         services.RemoveAll(typeof(DbContextOptions<ECommerceDbContext>));
 
@@ -72,16 +77,24 @@ internal static class ServicesRegistration
                 .Select(typeInfo => typeInfo.AsType())
                 .ToList();
 
-        foreach (var type in seedTypes)
+        foreach (var seedType in seedTypes)
         {
-            services.AddSingleton(type);
-            services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(ISeed), type));
+            services.TryAddEnumerable(ServiceDescriptor.Singleton(
+                typeof(ISeed),
+                seedType
+            ));
 
-            var dataSeedInterfaceType = type
+            var seedInterfaceType = seedType
                 .GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDataSeed<,>));
+                .First(i =>
+                    !i.IsGenericType
+                    && i.GetInterfaces().Any(i =>
+                        i.IsGenericType
+                        && i.GetGenericTypeDefinition() == typeof(IDataSeed<,,>)
+                    )
+                );
 
-            services.AddSingleton(dataSeedInterfaceType, sp => sp.GetRequiredService(type));
+            services.AddSingleton(seedInterfaceType, seedType);
         }
 
         services.AddSingleton<ISeedManager, SeedManager>();
@@ -89,34 +102,55 @@ internal static class ServicesRegistration
         return services;
     }
 
-    private static IServiceCollection AddCredentialsProviders(this IServiceCollection services)
+    private static IServiceCollection AddCredentialsProviders(
+        this IServiceCollection services
+    )
     {
         var credentialsProviderTypes = _assembly.DefinedTypes
-                .Where(t =>
-                    !t.IsAbstract
-                    && !t.IsGenericTypeDefinition
-                    && t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICredentialsProvider<>)))
-                .Select(t => t.AsType())
-                .ToList();
+            .Where(t =>
+                !t.IsAbstract
+                && !t.IsGenericTypeDefinition
+                && t.GetInterfaces().Any(i =>
+                    i.IsGenericType
+                    && i.GetGenericTypeDefinition() == typeof(ICredentialsProvider<>)
+                )
+            )
+            .Select(t => t.AsType())
+            .ToList();
 
-        foreach (var type in credentialsProviderTypes)
+        foreach (var credentialsProviderType in credentialsProviderTypes)
         {
-            var credentialsProviderInterfaceType = type
+            var credentialsProviderInterfaceType = credentialsProviderType
                 .GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICredentialsProvider<>));
+                .First(i =>
+                    !i.IsGenericType
+                    && i.GetInterfaces().Any(i =>
+                        i.IsGenericType
+                        && i.GetGenericTypeDefinition() == typeof(ICredentialsProvider<>)
+                    )
+                );
 
-            services.AddSingleton(credentialsProviderInterfaceType, type);
+            services.AddSingleton(
+                credentialsProviderInterfaceType,
+                credentialsProviderType
+            );
         }
 
         return services;
     }
 
-    private static IServiceCollection AddHmacSignatureProvider(this IServiceCollection services, IConfiguration configurations)
+    private static IServiceCollection AddHmacSignatureProvider(
+        this IServiceCollection services,
+        IConfiguration configurations
+    )
     {
         var hmacSignatureSettings = new HmacSignatureSettings();
+
         configurations.Bind(HmacSignatureSettings.SectionName, hmacSignatureSettings);
 
-        services.AddSingleton<IHmacSignatureProvider>(new HmacSignatureProvider(Options.Create(hmacSignatureSettings)));
+        services.AddSingleton<IHmacSignatureProvider>(new HmacSignatureProvider(
+            Options.Create(hmacSignatureSettings)
+        ));
 
         return services;
     }

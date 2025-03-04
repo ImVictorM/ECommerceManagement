@@ -21,7 +21,8 @@ public class InventoryInsufficientException : BaseException
     {
     }
 
-    internal InventoryInsufficientException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    internal InventoryInsufficientException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }

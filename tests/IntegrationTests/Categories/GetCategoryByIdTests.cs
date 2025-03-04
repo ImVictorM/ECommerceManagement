@@ -1,61 +1,79 @@
-using Domain.CategoryAggregate;
-
 using Contracts.Categories;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.TestUtils.Extensions.Http;
-using IntegrationTests.TestUtils.Constants;
+
+using WebApi.Categories;
 
 using Xunit.Abstractions;
 using FluentAssertions;
+using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Categories;
 
 /// <summary>
-/// Integration tests for the process of retrieving a category by its identifier.
+/// Integration tests for the get category by id feature.
 /// </summary>
 public class GetCategoryByIdTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<CategorySeedType, Category> _seedCategory;
+    private readonly ICategorySeed _seedCategory;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="GetCategoryByIdTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public GetCategoryByIdTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public GetCategoryByIdTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
-        _seedCategory = SeedManager.GetSeed<CategorySeedType, Category>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
-    /// Tests getting an category that does not exist returns not found.
+    /// Verifies a not found response is returned when the category does not exist.
     /// </summary>
     [Fact]
-    public async Task GetCategoryById_WhenCategoryDoesNotExist_ReturnsNotFound()
+    public async Task GetCategoryById_WithNonexistingCategoryId_ReturnsNotFound()
     {
-        var missingCategoryId = "111111";
+        var nonexistingCategoryId = "111111";
 
-        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(missingCategoryId));
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.GetCategoryById),
+            new { id = nonexistingCategoryId }
+        );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        var response = await _client.GetAsync(endpoint);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     /// <summary>
-    /// Tests getting an existing category returns ok containing the category.
+    /// Verifies an OK response is returned when a category with the specified
+    /// identifier exists.
     /// </summary>
     [Fact]
-    public async Task GetCategoryById_WhenCategoryExists_ReturnsOkContainingCategory()
+    public async Task GetCategoryById_WithExistingCategoryId_ReturnsOk()
     {
-        var existingCategory = _seedCategory.GetByType(CategorySeedType.TECHNOLOGY);
+        var existingCategory = _seedCategory.GetEntity(CategorySeedType.TECHNOLOGY);
+        var existingCategoryId = existingCategory.Id.ToString();
 
-        var response = await RequestService.Client.GetAsync(TestConstants.CategoryEndpoints.GetCategoryById(existingCategory.Id.ToString()));
-        var responseContent = await response.Content.ReadRequiredFromJsonAsync<CategoryResponse>();
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(CategoryEndpoints.GetCategoryById),
+            new { id = existingCategoryId }
+        );
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        responseContent.Id.Should().Be(existingCategory.Id.ToString());
+        var response = await _client.GetAsync(endpoint);
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<CategoryResponse>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        responseContent.Id.Should().Be(existingCategoryId);
         responseContent.Name.Should().Be(existingCategory.Name);
     }
 }

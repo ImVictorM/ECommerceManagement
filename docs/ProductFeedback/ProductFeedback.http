@@ -1,0 +1,35 @@
+@id_product = 2
+@id_user = 2
+@id_feedback = 1
+@token_customer = insert-token-here
+@base_product_feedback_endpoint = http://localhost:8000/products/{{id_product}}/feedback
+@base_customer_product_feedback_endpoint = http://localhost:8000/users/customers/{{id_user}}/feedback
+
+### Allows a customer to leave feedback for a purchased product.
+### Customer authentication is required.
+### Returns a 201 CREATED response in case of success.
+POST {{base_product_feedback_endpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token_customer}}
+
+{
+  "title": "Very Good Product",
+  "content": "Yes it is",
+  "starRating": 5
+}
+
+### Retrieves a list of active feedback items for a specific product.
+### Returns an 200 OK response in case of success.
+GET {{base_product_feedback_endpoint}}
+
+### Retrieves a list of active product feedback items left by a specific customer.
+### Customer or admin authentication is required.
+### Returns an 200 OK response in case of success.
+GET {{base_customer_product_feedback_endpoint}}
+Authorization: Bearer {{token_customer}}
+
+### Deactivates a specific product feedback entry from a customer.
+### Customer or admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+DELETE {{base_customer_product_feedback_endpoint}}/{{id_feedback}}
+Authorization: Bearer {{token_customer}}

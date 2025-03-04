@@ -1,7 +1,6 @@
 using Domain.UnitTests.TestUtils;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
-using Domain.ProductAggregate;
 
 using SharedKernel.UnitTests.TestUtils;
 
@@ -15,7 +14,7 @@ namespace IntegrationTests.Common.Seeds.Sales;
 /// <summary>
 /// Provides seed data for sales in the database.
 /// </summary>
-public sealed class SaleSeed : DataSeed<SaleSeedType, Sale>
+public sealed class SaleSeed : DataSeed<SaleSeedType, Sale, SaleId>, ISaleSeed
 {
     /// <inheritdoc/>
     public override int Order { get; }
@@ -24,12 +23,15 @@ public sealed class SaleSeed : DataSeed<SaleSeedType, Sale>
     /// Initiates a new instance of the <see cref="SaleSeed"/> class.
     /// </summary>
     /// <param name="productSeed">The product seed.</param>
-    public SaleSeed(IDataSeed<ProductSeedType, Product> productSeed) : base(CreateSeedData(productSeed))
+    public SaleSeed(IProductSeed productSeed)
+        : base(CreateSeedData(productSeed))
     {
         Order = productSeed.Order + 20;
     }
 
-    private static Dictionary<SaleSeedType, Sale> CreateSeedData(IDataSeed<ProductSeedType, Product> productSeed)
+    private static Dictionary<SaleSeedType, Sale> CreateSeedData(
+        IProductSeed productSeed
+    )
     {
         return new()
         {
@@ -42,10 +44,12 @@ public sealed class SaleSeed : DataSeed<SaleSeedType, Sale>
                     startingDate: DateTimeOffset.UtcNow.AddHours(-5),
                     endingDate: DateTimeOffset.UtcNow.AddDays(5)
                 ),
-                categoriesInSale: new HashSet<CategoryReference>() { },
+                categoriesInSale: new HashSet<CategoryReference>(),
                 productsInSale: new HashSet<ProductReference>()
                 {
-                    ProductReference.Create(productSeed.GetByType(ProductSeedType.COMPUTER_ON_SALE).Id)
+                    ProductReference.Create(productSeed.GetEntityId(
+                        ProductSeedType.COMPUTER_ON_SALE
+                    ))
                 },
                 productsExcludeFromSale: new HashSet<ProductReference>()
             )

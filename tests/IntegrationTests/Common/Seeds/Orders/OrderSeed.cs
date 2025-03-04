@@ -3,10 +3,7 @@ using Application.Orders.DTOs;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.ProductAggregate;
-using Domain.ShippingMethodAggregate;
 using Domain.UnitTests.TestUtils;
-using Domain.UserAggregate;
 
 using Infrastructure.Common.Persistence;
 
@@ -20,11 +17,12 @@ namespace IntegrationTests.Common.Seeds.Orders;
 /// <summary>
 /// Provides seed data for orders in the database.
 /// </summary>
-public sealed class OrderSeed : AsyncDataSeed<OrderSeedType, Order>
+public sealed class OrderSeed
+    : AsyncDataSeed<OrderSeedType, Order, OrderId>, IOrderSeed
 {
-    private readonly IDataSeed<UserSeedType, User> _userSeed;
-    private readonly IDataSeed<ProductSeedType, Product> _productSeed;
-    private readonly IDataSeed<ShippingMethodSeedType, ShippingMethod> _shippingMethodSeed;
+    private readonly IUserSeed _userSeed;
+    private readonly IProductSeed _productSeed;
+    private readonly IShippingMethodSeed _shippingMethodSeed;
 
     /// <inheritdoc/>
     public override int Order { get; }
@@ -36,9 +34,9 @@ public sealed class OrderSeed : AsyncDataSeed<OrderSeedType, Order>
     /// <param name="productSeed">The product seed.</param>
     /// <param name="shippingMethodSeed">The shipping method seed.</param>
     public OrderSeed(
-        IDataSeed<UserSeedType, User> userSeed,
-        IDataSeed<ProductSeedType, Product> productSeed,
-        IDataSeed<ShippingMethodSeedType, ShippingMethod> shippingMethodSeed
+        IUserSeed userSeed,
+        IProductSeed productSeed,
+        IShippingMethodSeed shippingMethodSeed
     ) : base()
     {
         _userSeed = userSeed;
@@ -55,35 +53,56 @@ public sealed class OrderSeed : AsyncDataSeed<OrderSeedType, Order>
         {
             [OrderSeedType.CUSTOMER_ORDER_PENDING] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-1),
-                ownerId: _userSeed.GetByType(UserSeedType.CUSTOMER).Id,
+                ownerId: _userSeed.GetEntityId(UserSeedType.CUSTOMER),
                 orderProducts:
                 [
-                    new OrderProductInput(_productSeed.GetByType(ProductSeedType.TSHIRT).Id.ToString(), 1)
+                    new OrderProductInput(
+                        _productSeed
+                            .GetEntityId(ProductSeedType.TSHIRT)
+                            .ToString(),
+                        1
+                    )
                 ],
                 installments: 1,
-                shippingMethodId: _shippingMethodSeed.GetByType(ShippingMethodSeedType.FREE).Id
+                shippingMethodId: _shippingMethodSeed.GetEntityId(
+                    ShippingMethodSeedType.FREE
+                )
             ),
             [OrderSeedType.CUSTOMER_ORDER_CANCELED] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-2),
-                ownerId: _userSeed.GetByType(UserSeedType.CUSTOMER).Id,
+                ownerId: _userSeed.GetEntityId(UserSeedType.CUSTOMER),
                 orderProducts:
                 [
-                    new OrderProductInput(_productSeed.GetByType(ProductSeedType.PENCIL).Id.ToString(), 1)
+                    new OrderProductInput(
+                        _productSeed
+                            .GetEntityId(ProductSeedType.PENCIL)
+                            .ToString(),
+                        1
+                    )
                 ],
                 installments: 1,
                 initialOrderStatus: OrderStatus.Canceled,
-                shippingMethodId: _shippingMethodSeed.GetByType(ShippingMethodSeedType.FREE).Id
+                shippingMethodId: _shippingMethodSeed.GetEntityId(
+                    ShippingMethodSeedType.FREE
+                )
             ),
             [OrderSeedType.CUSTOMER_ORDER_PAID] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-3),
-                ownerId: _userSeed.GetByType(UserSeedType.CUSTOMER).Id,
+                ownerId: _userSeed.GetEntityId(UserSeedType.CUSTOMER),
                 orderProducts:
                 [
-                    new OrderProductInput(_productSeed.GetByType(ProductSeedType.CHAIN_BRACELET).Id.ToString(), 1)
+                    new OrderProductInput(
+                        _productSeed
+                            .GetEntityId(ProductSeedType.CHAIN_BRACELET)
+                            .ToString(),
+                        1
+                    )
                 ],
                 installments: 1,
                 initialOrderStatus: OrderStatus.Paid,
-                shippingMethodId: _shippingMethodSeed.GetByType(ShippingMethodSeedType.EXPRESS).Id
+                shippingMethodId: _shippingMethodSeed.GetEntityId(
+                    ShippingMethodSeedType.EXPRESS
+                )
             )
         };
 

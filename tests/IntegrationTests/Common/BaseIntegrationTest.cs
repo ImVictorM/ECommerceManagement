@@ -3,13 +3,15 @@ using Infrastructure.Common.Persistence;
 using IntegrationTests.Common.Requests.Abstracts;
 using IntegrationTests.Common.Seeds.Abstracts;
 
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
 namespace IntegrationTests.Common;
 
 /// <summary>
-/// Base integration test that uses the shared database and has a pre-configured setup and teardown for each test.
+/// Base integration test that uses the shared database and has a pre-configured
+/// setup and teardown for each test.
 /// </summary>
 [Collection(nameof(SharedDatabaseCollectionFixture))]
 public class BaseIntegrationTest : IAsyncLifetime
@@ -32,11 +34,19 @@ public class BaseIntegrationTest : IAsyncLifetime
     public IRequestService RequestService { get; }
 
     /// <summary>
+    /// Gets the link generator;
+    /// </summary>
+    public LinkGenerator LinkGenerator { get; }
+
+    /// <summary>
     /// Initiates a new instance of the <see cref="BaseIntegrationTest"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">A log helper.</param>
-    public BaseIntegrationTest(IntegrationTestWebAppFactory factory, ITestOutputHelper output)
+    public BaseIntegrationTest(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    )
     {
         _factory = factory;
         Output = output;
@@ -44,6 +54,7 @@ public class BaseIntegrationTest : IAsyncLifetime
         using var scope = _factory.Services.CreateScope();
         SeedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
         RequestService = scope.ServiceProvider.GetRequiredService<IRequestService>();
+        LinkGenerator = scope.ServiceProvider.GetRequiredService<LinkGenerator>();
     }
 
     /// <inheritdoc/>
@@ -63,7 +74,8 @@ public class BaseIntegrationTest : IAsyncLifetime
     {
         using var scope = _factory.Services.CreateScope();
 
-        var dbContext = scope.ServiceProvider.GetRequiredService<IECommerceDbContext>();
+        var dbContext = scope.ServiceProvider
+            .GetRequiredService<IECommerceDbContext>();
 
         await SeedManager.SeedAsync(dbContext);
     }

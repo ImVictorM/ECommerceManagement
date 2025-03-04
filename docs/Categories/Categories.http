@@ -32,4 +32,5 @@ Authorization: Bearer {{token}}
 GET {{base_endpoint}}
 
 ### Retrieves a category by its identifier. No authentication is required.
+### Returns an 200 OK response in case of success.
 GET {{base_endpoint}}/{{id_category}}

@@ -15,7 +15,8 @@ namespace IntegrationTests.Common.Seeds.Carriers;
 /// <summary>
 /// Provides seed data for carriers in the database.
 /// </summary>
-public sealed class CarrierSeed : DataSeed<CarrierSeedType, Carrier>
+public sealed class CarrierSeed
+    : DataSeed<CarrierSeedType, Carrier, CarrierId>, ICarrierSeed
 {
     /// <inheritdoc/>
     public override int Order => 10;
@@ -23,7 +24,10 @@ public sealed class CarrierSeed : DataSeed<CarrierSeedType, Carrier>
     /// <summary>
     /// Initiates a new instance of the <see cref="CarrierSeed"/> class.
     /// </summary>
-    public CarrierSeed(IPasswordHasher passwordHasher, ICredentialsProvider<CarrierSeedType> credentialsProvider)
+    public CarrierSeed(
+        IPasswordHasher passwordHasher,
+        ICarrierCredentialsProvider credentialsProvider
+    )
         : base(CreateSeedData(passwordHasher, credentialsProvider))
     {
     }
@@ -39,8 +43,12 @@ public sealed class CarrierSeed : DataSeed<CarrierSeedType, Carrier>
             (
                 id: CarrierId.Create(-1),
                 name: "ECommerceManagementCarrier",
-                email: Email.Create(credentialsProvider.GetCredentials(CarrierSeedType.INTERNAL).Email),
-                passwordHash: passwordHasher.Hash(credentialsProvider.GetCredentials(CarrierSeedType.INTERNAL).Password),
+                email: Email.Create(
+                    credentialsProvider.GetEmail(CarrierSeedType.INTERNAL)
+                ),
+                passwordHash: passwordHasher.Hash(
+                    credentialsProvider.GetPassword(CarrierSeedType.INTERNAL)
+                ),
                 phone: "19859284294"
             )
         };

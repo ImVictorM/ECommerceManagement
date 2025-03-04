@@ -2,128 +2,176 @@ using IntegrationTests.Common;
 
 using Contracts.Authentication;
 
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
-using IntegrationTests.TestUtils.Constants;
+
+using WebApi.Authentication;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc;
-using Xunit.Abstractions;
-using System.Net;
 using System.Net.Http.Json;
+using System.Net;
+using Xunit.Abstractions;
 using FluentAssertions;
 
 namespace IntegrationTests.Authentication;
 
 /// <summary>
-/// Integration tests for the user log in feature.
+/// Integration tests for the user login feature.
 /// </summary>
 public class LoginUserTests : BaseIntegrationTest
 {
-    private readonly ICredentialsProvider<UserSeedType> _credentialsProvider;
+    private readonly IUserCredentialsProvider _credentialsProvider;
+    private readonly string? _endpoint;
+    private readonly HttpClient _client;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="LoginUserTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public LoginUserTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public LoginUserTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
-        _credentialsProvider = factory.Services.GetRequiredService<ICredentialsProvider<UserSeedType>>();
+        _credentialsProvider = factory.Services
+            .GetRequiredService<IUserCredentialsProvider>();
+
+        _endpoint = LinkGenerator.GetPathByName(
+            nameof(AuthenticationEndpoints.LoginUser
+        ));
+
+        _client = RequestService.CreateClient();
     }
 
     /// <summary>
-    /// Checks if it is possible to login active users with valid credentials.
+    /// Verifies it is possible to login active users with correct credentials.
     /// </summary>
-    /// <param name="userActiveType">An active user type.</param>
+    /// <param name="userActiveType">The active user type.</param>
     [Theory]
     [InlineData(UserSeedType.CUSTOMER)]
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
     [InlineData(UserSeedType.ADMIN)]
     [InlineData(UserSeedType.OTHER_ADMIN)]
-    public async Task LoginUser_WhenCredentialsAreValidAndUserIsActive_AuthenticateTheUserCorrectly(UserSeedType userActiveType)
+    public async Task LoginUser_WithCorrectActiveUserCredentials_ReturnsOk(
+        UserSeedType userActiveType
+    )
     {
-        var activeUserCredentials = _credentialsProvider.GetCredentials(userActiveType);
-        var request = new LoginUserRequest(activeUserCredentials.Email, activeUserCredentials.Password);
+        var activeUserCredentials = _credentialsProvider.GetCredentials(
+            userActiveType
+        );
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync(
-            TestConstants.AuthenticationEndpoints.LoginUser,
+        var request = new LoginUserRequest(
+            activeUserCredentials.Email,
+            activeUserCredentials.Password
+        );
+
+        var response = await _client.PostAsJsonAsync(
+            _endpoint,
             request
         );
-        var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<AuthenticationResponse>();
 
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        authenticationResponse.Should().NotBeNull();
-        authenticationResponse.Token.Should().NotBeNullOrWhiteSpace();
-        authenticationResponse.Email.Should().Be(request.Email);
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<AuthenticationResponse>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        responseContent.Should().NotBeNull();
+        responseContent.Token.Should().NotBeNullOrWhiteSpace();
+        responseContent.Email.Should().Be(request.Email);
     }
 
     /// <summary>
-    /// Checks if it is not possible to login inactive users with valid credentials.
+    /// Verifies it is not possible to login inactive users with correct credentials.
     /// </summary>
-    /// <param name="userInactiveType">An inactive user type.</param>
+    /// <param name="userInactiveType">The inactive user type.</param>
     [Theory]
     [InlineData(UserSeedType.CUSTOMER_INACTIVE)]
-    public async Task LoginUser_WhenCredentialsAreValidAndUserIsInactive_ReturnsBadRequest(UserSeedType userInactiveType)
+    public async Task LoginUser_WithCorrectInactiveUserCredentials_ReturnsBadRequest(
+        UserSeedType userInactiveType
+    )
     {
-        var inactiveUserCredentials = _credentialsProvider.GetCredentials(userInactiveType);
-        var request = new LoginUserRequest(inactiveUserCredentials.Email, inactiveUserCredentials.Password);
+        var inactiveUserCredentials = _credentialsProvider.GetCredentials(
+            userInactiveType
+        );
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync(
-            TestConstants.AuthenticationEndpoints.LoginUser,
+        var request = new LoginUserRequest(
+            inactiveUserCredentials.Email,
+            inactiveUserCredentials.Password
+        );
+
+        var response = await _client.PostAsJsonAsync(
+            _endpoint,
             request
         );
-        var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        authenticationResponse.Should().NotBeNull();
-        authenticationResponse.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        authenticationResponse.Title.Should().Be("Authentication Failed");
-        authenticationResponse.Detail.Should().Be("User email or password is incorrect");
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<ProblemDetails>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        responseContent.Should().NotBeNull();
+        responseContent.Status.Should().Be((int)HttpStatusCode.BadRequest);
+        responseContent.Title.Should().Be("Authentication Failed");
+        responseContent.Detail.Should().Be("User email or password is incorrect");
     }
 
     /// <summary>
-    /// Verifies it returns a bad request when email is incorrect.
+    /// Verifies a bad request is returned when the email is incorrect.
     /// </summary>
     [Fact]
-    public async Task LoginUser_WhenEmailIsIncorrect_ReturnsBadRequest()
+    public async Task LoginUser_WithIncorrectEmail_ReturnsBadRequest()
     {
-        var credentials = _credentialsProvider.GetCredentials(UserSeedType.CUSTOMER);
-        var request = new LoginUserRequest("incorrect_email@email.com", credentials.Password);
+        var credentials = _credentialsProvider.GetCredentials(
+            UserSeedType.CUSTOMER
+        );
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync(
-            TestConstants.AuthenticationEndpoints.LoginUser,
+        var request = new LoginUserRequest(
+            "incorrect_email@email.com",
+            credentials.Password
+        );
+
+        var response = await _client.PostAsJsonAsync(
+            _endpoint,
             request
         );
-        var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        authenticationResponse.Should().NotBeNull();
-        authenticationResponse.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        authenticationResponse.Title.Should().Be("Authentication Failed");
-        authenticationResponse.Detail.Should().Be("User email or password is incorrect");
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<ProblemDetails>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        responseContent.Should().NotBeNull();
+        responseContent.Status.Should().Be((int)HttpStatusCode.BadRequest);
+        responseContent.Title.Should().Be("Authentication Failed");
+        responseContent.Detail.Should().Be("User email or password is incorrect");
     }
 
     /// <summary>
-    /// Verifies it returns a bad request when password is incorrect.
+    /// Verifies a bad request is returned when the password is incorrect.
     /// </summary>
     [Fact]
-    public async Task LoginUser_WhenPasswordIsIncorrect_ReturnsBadRequest()
+    public async Task LoginUser_WithIncorrectPassword_ReturnsBadRequest()
     {
-        var credentials = _credentialsProvider.GetCredentials(UserSeedType.CUSTOMER);
-        var request = new LoginUserRequest(credentials.Email, "IncorrectPassword123");
+        var credentials = _credentialsProvider.GetCredentials(
+            UserSeedType.CUSTOMER
+        );
+        var request = new LoginUserRequest(
+            credentials.Email,
+            "IncorrectPassword123"
+        );
 
-        var httpResponse = await RequestService.Client.PostAsJsonAsync(
-            TestConstants.AuthenticationEndpoints.LoginUser,
+        var response = await _client.PostAsJsonAsync(
+            _endpoint,
             request
         );
-        var authenticationResponse = await httpResponse.Content.ReadRequiredFromJsonAsync<ProblemDetails>();
 
-        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        authenticationResponse.Should().NotBeNull();
-        authenticationResponse.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        authenticationResponse.Title.Should().Be("Authentication Failed");
-        authenticationResponse.Detail.Should().Be("User email or password is incorrect");
+        var responseContent = await response.Content
+            .ReadRequiredFromJsonAsync<ProblemDetails>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        responseContent.Should().NotBeNull();
+        responseContent.Status.Should().Be((int)HttpStatusCode.BadRequest);
+        responseContent.Title.Should().Be("Authentication Failed");
+        responseContent.Detail.Should().Be("User email or password is incorrect");
     }
 }

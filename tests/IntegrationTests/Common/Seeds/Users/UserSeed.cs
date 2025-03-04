@@ -16,7 +16,7 @@ namespace IntegrationTests.Common.Seeds.Users;
 /// <summary>
 /// Provides seed data for users in the database.
 /// </summary>
-public sealed class UserSeed : DataSeed<UserSeedType, User>
+public sealed class UserSeed : DataSeed<UserSeedType, User, UserId>, IUserSeed
 {
     /// <inheritdoc/>
     public override int Order => 10;
@@ -24,13 +24,16 @@ public sealed class UserSeed : DataSeed<UserSeedType, User>
     /// <summary>
     /// Initiates a new instance of the <see cref="UserSeed"/> class.
     /// </summary>
-    public UserSeed(ICredentialsProvider<UserSeedType> credentialsProvider, IPasswordHasher passwordHasher)
+    public UserSeed(
+        IUserCredentialsProvider credentialsProvider,
+        IPasswordHasher passwordHasher
+    )
         : base(CreateUserData(credentialsProvider, passwordHasher))
     {
     }
 
     private static Dictionary<UserSeedType, User> CreateUserData(
-        ICredentialsProvider<UserSeedType> credentialsProvider,
+        IUserCredentialsProvider credentialsProvider,
         IPasswordHasher passwordHasher
     )
     {
@@ -41,8 +44,12 @@ public sealed class UserSeed : DataSeed<UserSeedType, User>
                (
                    id: UserId.Create(-1),
                    name: "admin",
-                   email: EmailUtils.CreateEmail(credentialsProvider.GetCredentials(UserSeedType.ADMIN).Email),
-                   passwordHash: passwordHasher.Hash(credentialsProvider.GetCredentials(UserSeedType.ADMIN).Password)
+                   email: EmailUtils.CreateEmail(
+                       credentialsProvider.GetEmail(UserSeedType.ADMIN)
+                   ),
+                   passwordHash: passwordHasher.Hash(
+                       credentialsProvider.GetPassword(UserSeedType.ADMIN)
+                   )
                )
             ),
 
@@ -51,8 +58,12 @@ public sealed class UserSeed : DataSeed<UserSeedType, User>
                 (
                    id: UserId.Create(-2),
                    name: "other admin",
-                   email: EmailUtils.CreateEmail(credentialsProvider.GetCredentials(UserSeedType.OTHER_ADMIN).Email),
-                   passwordHash: passwordHasher.Hash(credentialsProvider.GetCredentials(UserSeedType.OTHER_ADMIN).Password)
+                   email: EmailUtils.CreateEmail(
+                       credentialsProvider.GetEmail(UserSeedType.OTHER_ADMIN)
+                   ),
+                   passwordHash: passwordHasher.Hash(
+                       credentialsProvider.GetPassword(UserSeedType.OTHER_ADMIN)
+                   )
                 )
             ),
 
@@ -60,8 +71,12 @@ public sealed class UserSeed : DataSeed<UserSeedType, User>
                UserUtils.CreateCustomer(
                    id: UserId.Create(-3),
                    name: "normal user",
-                   email: EmailUtils.CreateEmail(credentialsProvider.GetCredentials(UserSeedType.CUSTOMER).Email),
-                   passwordHash: passwordHasher.Hash(credentialsProvider.GetCredentials(UserSeedType.CUSTOMER).Password)
+                   email: EmailUtils.CreateEmail(
+                       credentialsProvider.GetEmail(UserSeedType.CUSTOMER)
+                   ),
+                   passwordHash: passwordHasher.Hash(
+                       credentialsProvider.GetPassword(UserSeedType.CUSTOMER)
+                   )
                )
            ),
 
@@ -69,9 +84,13 @@ public sealed class UserSeed : DataSeed<UserSeedType, User>
                UserUtils.CreateCustomer(
                    id: UserId.Create(-4),
                    name: "user with address",
-                   email: EmailUtils.CreateEmail(credentialsProvider.GetCredentials(UserSeedType.CUSTOMER_WITH_ADDRESS).Email),
+                   email: EmailUtils.CreateEmail(
+                       credentialsProvider.GetEmail(UserSeedType.CUSTOMER_WITH_ADDRESS)
+                   ),
                    addresses: new HashSet<Address>() { AddressUtils.CreateAddress() },
-                   passwordHash: passwordHasher.Hash(credentialsProvider.GetCredentials(UserSeedType.CUSTOMER_WITH_ADDRESS).Password)
+                   passwordHash: passwordHasher.Hash(
+                       credentialsProvider.GetPassword(UserSeedType.CUSTOMER_WITH_ADDRESS)
+                   )
                )
            ),
 
@@ -79,8 +98,12 @@ public sealed class UserSeed : DataSeed<UserSeedType, User>
                UserUtils.CreateCustomer(
                    id: UserId.Create(-5),
                    name: "inactive user",
-                   email: EmailUtils.CreateEmail(credentialsProvider.GetCredentials(UserSeedType.CUSTOMER_INACTIVE).Email),
-                   passwordHash: passwordHasher.Hash(credentialsProvider.GetCredentials(UserSeedType.CUSTOMER_INACTIVE).Password),
+                   email: EmailUtils.CreateEmail(
+                       credentialsProvider.GetEmail(UserSeedType.CUSTOMER_INACTIVE)
+                   ),
+                   passwordHash: passwordHasher.Hash(
+                       credentialsProvider.GetPassword(UserSeedType.CUSTOMER_INACTIVE)
+                   ),
                    active: false
                )
            ),

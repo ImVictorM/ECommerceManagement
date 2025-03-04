@@ -13,9 +13,15 @@ public static class UpdateCategoryRequestUtils
     /// Creates a new instance of the <see cref="UpdateCategoryRequest"/> class.
     /// </summary>
     /// <param name="name">The category name.</param>
-    /// <returns>A new instance of the <see cref="UpdateCategoryRequest"/> class.</returns>
-    public static UpdateCategoryRequest CreateRequest(string? name = null)
+    /// <returns>
+    /// A new instance of the <see cref="UpdateCategoryRequest"/> class.
+    /// </returns>
+    public static UpdateCategoryRequest CreateRequest(
+        string? name = null
+    )
     {
-        return new UpdateCategoryRequest(name ?? CategoryUtils.CreateCategoryName());
+        return new UpdateCategoryRequest(
+            name ?? CategoryUtils.CreateCategoryName()
+        );
     }
 }

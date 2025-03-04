@@ -12,12 +12,17 @@ public static class UpdateShippingMethodRequestUtils
     private static readonly Faker _faker = new();
 
     /// <summary>
-    /// Creates a new instance of the <see cref="UpdateShippingMethodRequestUtils"/> class.
+    /// Creates a new instance of the
+    /// <see cref="UpdateShippingMethodRequestUtils"/> class.
     /// </summary>
     /// <param name="name">The shipping method name.</param>
     /// <param name="price">The shipping method price.</param>
-    /// <param name="estimatedDeliveryDays">The shipping method estimated delivery days.</param>
-    /// <returns>A new instance of the <see cref="UpdateShippingMethodRequestUtils"/> class.</returns>
+    /// <param name="estimatedDeliveryDays">
+    /// The shipping method estimated delivery days.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="UpdateShippingMethodRequestUtils"/> class.
+    /// </returns>
     public static UpdateShippingMethodRequest CreateRequest(
         string? name = null,
         decimal? price = null,

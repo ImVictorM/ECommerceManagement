@@ -1,7 +1,7 @@
-using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.ProductFeedbackAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
 
@@ -13,17 +13,17 @@ namespace Domain.ProductFeedbackAggregate;
 public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, IActivatable
 {
     /// <summary>
-    /// Gets the product feedback subject.
+    /// Gets the product feedback title.
     /// </summary>
-    public string Subject { get; private set; } = string.Empty;
+    public string Title { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the product feedback content.
     /// </summary>
     public string Content { get; private set; } = string.Empty;
     /// <summary>
-    /// Gets the product rating.
+    /// Gets the product star rating.
     /// </summary>
-    public int? StarRating { get; private set; }
+    public StarRating StarRating { get; private set; } = null!;
     /// <summary>
     /// A boolean indicating if the feedback is active.
     /// </summary>
@@ -36,40 +36,24 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, IActivat
     /// Gets the id of the user who created the feedback.
     /// </summary>
     public UserId UserId { get; private set; } = null!;
-    /// <summary>
-    /// Gets the id of the order the feedback references to,
-    /// </summary>
-    public OrderId OrderId { get; private set; } = null!;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ProductFeedback"/> class.
-    /// </summary>
     private ProductFeedback() { }
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ProductFeedback"/> class.
-    /// </summary>
-    /// <param name="userId">The user id.</param>
-    /// <param name="productId">The product id.</param>
-    /// <param name="orderId">The order id.</param>
-    /// <param name="subject">The feedback subject.</param>
-    /// <param name="content">The feedback text content.</param>
-    /// <param name="starRating">The feedback star rating (optional).</param>
     private ProductFeedback(
         UserId userId,
         ProductId productId,
-        OrderId orderId,
-        string subject,
+        string title,
         string content,
-        int? starRating = null
+        StarRating starRating
     )
     {
-        Subject = subject;
+        Title = title;
         Content = content;
         StarRating = starRating;
         ProductId = productId;
         UserId = userId;
-        OrderId = orderId;
+
+        IsActive = true;
     }
 
     /// <summary>
@@ -77,25 +61,22 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, IActivat
     /// </summary>
     /// <param name="userId">The user id.</param>
     /// <param name="productId">The product id.</param>
-    /// <param name="orderId">The order id.</param>
-    /// <param name="subject">The feedback subject.</param>
+    /// <param name="title">The feedback title.</param>
     /// <param name="content">The feedback text content.</param>
     /// <param name="starRating">The feedback star rating (optional).</param>
     /// <returns>A new instance of the <see cref="ProductFeedback"/> class.</returns>
     public static ProductFeedback Create(
         UserId userId,
         ProductId productId,
-        OrderId orderId,
-        string subject,
+        string title,
         string content,
-        int? starRating = null
+        StarRating starRating
     )
     {
         return new ProductFeedback(
             userId,
             productId,
-            orderId,
-            subject,
+            title,
             content,
             starRating
         );

@@ -1,134 +1,219 @@
-using Domain.UserAggregate;
-
 using Contracts.Users;
 
 using IntegrationTests.Common;
-using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Users;
 using IntegrationTests.TestUtils.Extensions.Http;
 using IntegrationTests.Users.TestUtils;
-using IntegrationTests.TestUtils.Constants;
+
+using WebApi.Users;
 
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Xunit.Abstractions;
+using Microsoft.AspNetCore.Routing;
 
 namespace IntegrationTests.Users;
 
 /// <summary>
-/// Integration tests for update user functionalities.
+/// Integration tests for the update user feature.
 /// </summary>
 public class UpdateUserTests : BaseIntegrationTest
 {
-    private readonly IDataSeed<UserSeedType, User> _seedUser;
+    private readonly IUserSeed _seedUser;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="UpdateUserTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public UpdateUserTests(IntegrationTestWebAppFactory factory, ITestOutputHelper output) : base(factory, output)
+    public UpdateUserTests(
+        IntegrationTestWebAppFactory factory,
+        ITestOutputHelper output
+    ) : base(factory, output)
     {
-        _seedUser = SeedManager.GetSeed<UserSeedType, User>();
+        _seedUser = SeedManager.GetSeed<IUserSeed>();
     }
 
     /// <summary>
-    /// Tests that a user with customer privileges is unable to update another user's information.
+    /// Verifies that a customer is unable to update another user's information.
     /// </summary>
     [Theory]
     [InlineData(UserSeedType.ADMIN)]
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
-    public async Task UpdateUser_WhenCustomerTriesToUpdateSomeoneElse_ReturnsForbidden(UserSeedType otherUserType)
+    public async Task UpdateUser_WhenCustomerTriesToUpdateSomeoneElse_ReturnsForbidden(
+        UserSeedType otherUserType
+    )
     {
-        var otherUser = _seedUser.GetByType(otherUserType);
-        var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb name for another user");
-        var endpoint = TestConstants.UserEndpoints.UpdateUser(otherUser.Id.ToString());
+        var idOtherUser = _seedUser.GetEntityId(otherUserType).ToString();
+        var request = UpdateUserRequestUtils.CreateRequest(
+            name: "a dumb name for another user"
+        );
 
-        await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var response = await RequestService.Client.PutAsJsonAsync(endpoint, request);
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.UpdateUser),
+            new { id = idOtherUser }
+        );
+
+        var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
+        var response = await client.PutAsJsonAsync(
+            endpoint,
+            request
+        );
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Tests that a customer can update their own information.
-    /// Verifies that the response status and checks that the user's details are updated correctly.
-    /// </summary>
-    [Fact]
-    public async Task UpdateUser_WhenCustomerTriesToUpdateThemselves_ReturnsNoContentAndUpdatesUser()
-    {
-        var request = UpdateUserRequestUtils.CreateRequest(name: "marcos rogério", phone: "19982748242", email: "marcao@email.com");
-
-        var userToBeUpdated = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var endpoint = TestConstants.UserEndpoints.UpdateUser(userToBeUpdated.Id.ToString());
-        var updateResponse = await RequestService.Client.PutAsJsonAsync(endpoint, request);
-
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-
-        var getResponse = await RequestService.Client.GetAsync("/users/self");
-        var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<UserResponse>();
-
-        getResponseContent.Should().NotBeNull();
-        getResponseContent.Name.Should().Be(request.Name);
-        getResponseContent.Phone.Should().Be(request.Phone);
-        getResponseContent.Email.ToString().Should().Be(request.Email);
-    }
-
-    /// <summary>
-    /// Tests that an admin user cannot update the information of another admin user.
+    /// Verifies an admin cannot update the information of another admin.
     /// </summary>
     [Fact]
     public async Task UpdateUser_WhenAdminTriesToUpdateAnotherAdmin_ReturnsForbidden()
     {
-        var otherAdmin = _seedUser.GetByType(UserSeedType.OTHER_ADMIN);
-        var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb admin");
-        var endpoint = TestConstants.UserEndpoints.UpdateUser(otherAdmin.Id.ToString());
+        var idOtherAdmin = _seedUser
+            .GetEntityId(UserSeedType.OTHER_ADMIN)
+            .ToString();
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await RequestService.Client.PutAsJsonAsync(endpoint, request);
+        var request = UpdateUserRequestUtils.CreateRequest(name: "a dumb admin");
+
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.UpdateUser),
+            new { id = idOtherAdmin }
+        );
+
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+        var response = await client.PutAsJsonAsync(
+            endpoint,
+            request
+        );
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Tests that a customer attempting to update their email to one that already exists in the system receives a conflict response.
+    /// Verifies when a customer tries to update their email to one that already
+    /// exists a conflict response is returned.
     /// </summary>
     [Fact]
     public async Task UpdateUser_WhenCustomerTriesToUpdateEmailWithExistingOne_ReturnsConflict()
     {
-        var anotherUserEmail = _seedUser.GetByType(UserSeedType.CUSTOMER_WITH_ADDRESS).Email;
-        var requestContainingAnotherUserEmail = UpdateUserRequestUtils.CreateRequest(email: anotherUserEmail.ToString());
+        var userToBeUpdatedType = UserSeedType.CUSTOMER;
 
-        var userToBeUpdated = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
-        var endpoint = TestConstants.UserEndpoints.UpdateUser(userToBeUpdated.Id.ToString());
-        var updateResponse = await RequestService.Client.PutAsJsonAsync(endpoint, requestContainingAnotherUserEmail);
+        var idUserToBeUpdated = _seedUser
+            .GetEntityId(userToBeUpdatedType)
+            .ToString();
 
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        var anotherUserEmail = _seedUser
+            .GetEntity(UserSeedType.CUSTOMER_WITH_ADDRESS)
+            .Email;
+
+        var requestContainingAnotherUserEmail = UpdateUserRequestUtils.CreateRequest(
+            email: anotherUserEmail.ToString()
+        );
+
+        var endpoint = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.UpdateUser),
+            new { id = idUserToBeUpdated }
+        );
+
+        var client = await RequestService.LoginAsAsync(userToBeUpdatedType);
+
+        var response = await client.PutAsJsonAsync(
+            endpoint,
+            requestContainingAnotherUserEmail
+        );
+
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 
     /// <summary>
-    /// Tests that an admin user can successfully update a customer's information.
-    /// Verifies that the update succeeds and checks that the user's details are updated correctly.
+    /// Verifies a customer can update their own information.
     /// </summary>
     [Fact]
-    public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsNoContentAndUpdatesUser()
+    public async Task UpdateUser_WhenCustomerTriesToUpdateThemselves_ReturnsNoContent()
     {
-        var customerToBeUpdated = _seedUser.GetByType(UserSeedType.CUSTOMER);
-        var request = UpdateUserRequestUtils.CreateRequest(name: "User new name", phone: "19982748242", email: "newemail@email.com");
-        var updateEndpoint = TestConstants.UserEndpoints.UpdateUser(customerToBeUpdated.Id.ToString());
-        var getEndpoint = TestConstants.UserEndpoints.GetUserById(customerToBeUpdated.Id.ToString());
+        var userToBeUpdatedType = UserSeedType.CUSTOMER;
+        var userToBeUpdatedId = _seedUser
+            .GetEntityId(userToBeUpdatedType)
+            .ToString();
 
-        await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var updateResponse = await RequestService.Client.PutAsJsonAsync(updateEndpoint, request);
+        var request = UpdateUserRequestUtils.CreateRequest(
+            name: "marcos rogério",
+            phone: "19982748242",
+            email: "marcao@email.com"
+        );
 
-        var getResponse = await RequestService.Client.GetAsync(getEndpoint);
-        var getResponseContent = await getResponse.Content.ReadRequiredFromJsonAsync<UserResponse>();
+        var endpointUpdate = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.UpdateUser),
+            new { id = userToBeUpdatedId }
+        );
 
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        getResponseContent.Should().NotBeNull();
-        getResponseContent.Name.Should().Be(request.Name);
-        getResponseContent.Phone.Should().Be(request.Phone);
-        getResponseContent.Email.ToString().Should().Be(request.Email);
+        var endpointGetSelf = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.GetUserByAuthenticationToken)
+        );
+
+        var client = await RequestService.LoginAsAsync(userToBeUpdatedType);
+
+        var responseUpdate = await client.PutAsJsonAsync(
+            endpointUpdate,
+            request
+        );
+
+        var responseGetUpdated = await client.GetAsync(
+            endpointGetSelf
+        );
+
+        var responseGetUpdatedContent = await responseGetUpdated.Content
+            .ReadRequiredFromJsonAsync<UserResponse>();
+
+        responseUpdate.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        responseGetUpdatedContent.Should().NotBeNull();
+        responseGetUpdatedContent.Name.Should().Be(request.Name);
+        responseGetUpdatedContent.Phone.Should().Be(request.Phone);
+        responseGetUpdatedContent.Email.ToString().Should().Be(request.Email);
+    }
+
+    /// <summary>
+    /// Verifies an admin can successfully update a customer's information.
+    /// </summary>
+    [Fact]
+    public async Task UpdateUser_WhenAdminTriesToUpdateCustomer_ReturnsNoContent()
+    {
+        var idCustomerToBeUpdated = _seedUser
+            .GetEntityId(UserSeedType.CUSTOMER)
+            .ToString();
+
+        var request = UpdateUserRequestUtils.CreateRequest(
+            name: "User new name",
+            phone: "19982748242",
+            email: "newemail@email.com"
+        );
+
+        var endpointUpdate = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.UpdateUser),
+            new { id = idCustomerToBeUpdated }
+        );
+
+        var endpointGetUserById = LinkGenerator.GetPathByName(
+            nameof(UserEndpoints.GetUserById),
+            new { id = idCustomerToBeUpdated }
+        );
+
+        var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
+
+        var responseUpdate = await client.PutAsJsonAsync(
+            endpointUpdate,
+            request
+        );
+
+        var responseGetUpdated = await client.GetAsync(endpointGetUserById);
+        var responseGetUpdatedContent = await responseGetUpdated.Content
+            .ReadRequiredFromJsonAsync<UserResponse>();
+
+        responseUpdate.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        responseGetUpdatedContent.Should().NotBeNull();
+        responseGetUpdatedContent.Name.Should().Be(request.Name);
+        responseGetUpdatedContent.Phone.Should().Be(request.Phone);
+        responseGetUpdatedContent.Email.ToString().Should().Be(request.Email);
     }
 }

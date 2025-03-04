@@ -30,21 +30,25 @@ public sealed class ShippingMethodEndpoints : ICarterModule
 
         group
             .MapPost("/", CreateShippingMethod)
-            .WithName("CreateShippingMethod")
+            .WithName(nameof(CreateShippingMethod))
             .WithOpenApi(op => new(op)
             {
                 Summary = "Create Shipping Method",
-                Description = "Creates a new shipping method. Admin authentication is required."
+                Description =
+                "Creates a new shipping method. " +
+                "Admin authentication is required."
             })
             .RequireAuthorization();
 
         group
             .MapPut("/{id:long}", UpdateShippingMethod)
-            .WithName("UpdateShippingMethod")
+            .WithName(nameof(UpdateShippingMethod))
             .WithOpenApi(op => new(op)
             {
                 Summary = "Update Shipping Method",
-                Description = "Updates a shipping method. Admin authentication is required.",
+                Description =
+                "Updates a shipping method. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -61,11 +65,13 @@ public sealed class ShippingMethodEndpoints : ICarterModule
 
         group
             .MapDelete("/{id:long}", DeleteShippingMethod)
-            .WithName("DeleteShippingMethod")
+            .WithName(nameof(DeleteShippingMethod))
             .WithOpenApi(op => new(op)
             {
                 Summary = "Delete Shipping Method",
-                Description = "Deletes a shipping method by its identifier. Admin authentication is required.",
+                Description =
+                "Deletes a shipping method by its identifier. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -82,7 +88,7 @@ public sealed class ShippingMethodEndpoints : ICarterModule
 
         group
             .MapGet("/{id:long}", GetShippingMethodById)
-            .WithName("GetShippingMethodById")
+            .WithName(nameof(GetShippingMethodById))
             .WithOpenApi(op => new(op)
             {
                 Summary = "Get Shipping Method By Id",
@@ -102,7 +108,7 @@ public sealed class ShippingMethodEndpoints : ICarterModule
 
         group
             .MapGet("/", GetShippingMethods)
-            .WithName("GetShippingMethods")
+            .WithName(nameof(GetShippingMethods))
             .WithOpenApi(op => new(op)
             {
                 Summary = "Get Shipping Methods",
@@ -110,7 +116,12 @@ public sealed class ShippingMethodEndpoints : ICarterModule
             });
     }
 
-    private async Task<Results<Created, BadRequest, UnauthorizedHttpResult, ForbidHttpResult>> CreateShippingMethod(
+    internal async Task<Results<
+        Created,
+        BadRequest,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> CreateShippingMethod(
         [FromBody] CreateShippingMethodRequest request,
         IMapper mapper,
         ISender sender
@@ -123,7 +134,13 @@ public sealed class ShippingMethodEndpoints : ICarterModule
         return TypedResults.Created($"/shipping/methods/{response.Id}");
     }
 
-    private async Task<Results<NoContent, BadRequest, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> UpdateShippingMethod(
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> UpdateShippingMethod(
         [FromRoute] string id,
         [FromBody] UpdateShippingMethodRequest request,
         IMapper mapper,
@@ -137,7 +154,12 @@ public sealed class ShippingMethodEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<NoContent, NotFound, UnauthorizedHttpResult, ForbidHttpResult>> DeleteShippingMethod(
+    internal async Task<Results<
+        NoContent,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> DeleteShippingMethod(
         [FromRoute] string id,
         ISender sender
     )
@@ -149,7 +171,10 @@ public sealed class ShippingMethodEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    private async Task<Results<Ok<ShippingMethodResponse>, NotFound>> GetShippingMethodById(
+    internal async Task<Results<
+        Ok<ShippingMethodResponse>,
+        NotFound
+    >> GetShippingMethodById(
         [FromRoute] string id,
         ISender sender,
         IMapper mapper)
@@ -161,7 +186,7 @@ public sealed class ShippingMethodEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<ShippingMethodResponse>(response));
     }
 
-    private async Task<Ok<IEnumerable<ShippingMethodResponse>>> GetShippingMethods(
+    internal async Task<Ok<IEnumerable<ShippingMethodResponse>>> GetShippingMethods(
         ISender sender,
         IMapper mapper
     )

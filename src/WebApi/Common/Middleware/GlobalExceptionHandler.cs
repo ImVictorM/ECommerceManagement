@@ -25,19 +25,25 @@ public sealed class GlobalExceptionHandler : ICarterModule
         app.Map(BaseEndpoint, Handle);
     }
 
-    private Results<ProblemHttpResult, ValidationProblem> Handle(HttpContext httpContext)
+    private Results<ProblemHttpResult, ValidationProblem> Handle(
+        HttpContext httpContext
+    )
     {
         var exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
         return exception switch
         {
-            BaseException baseException => CreateBaseExceptionProblem(baseException),
-            ValidationException validationException => CreateValidationProblem(validationException),
+            BaseException baseException =>
+                CreateBaseExceptionProblem(baseException),
+            ValidationException validationException =>
+                CreateValidationProblem(validationException),
             _ => CreateGenericProblem(exception),
         };
     }
 
-    private static ProblemHttpResult CreateBaseExceptionProblem(BaseException baseException)
+    private static ProblemHttpResult CreateBaseExceptionProblem(
+        BaseException baseException
+    )
     {
         return TypedResults.Problem(
             statusCode: (int)baseException.ErrorCode.ToHttpStatusCode(),
@@ -47,7 +53,9 @@ public sealed class GlobalExceptionHandler : ICarterModule
         );
     }
 
-    private static ValidationProblem CreateValidationProblem(ValidationException validationException)
+    private static ValidationProblem CreateValidationProblem(
+        ValidationException validationException
+    )
     {
         var errors = validationException.Errors
             .GroupBy(e => e.PropertyName)

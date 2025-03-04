@@ -10,14 +10,58 @@ namespace IntegrationTests.TestUtils.Extensions.Http;
 public static class HttpClientExtensions
 {
     /// <summary>
-    /// Sets the client header to contain an authorization header with an JWT Bearer authentication token.
+    /// Adds an Authorization header containing the given token.
     /// </summary>
     /// <param name="httpClient">The current client.</param>
     /// <param name="token">The token to be set.</param>
-    public static void SetJwtBearerAuthorizationHeader(this HttpClient httpClient, string token)
+    public static void SetJwtBearerAuthorizationHeader(
+        this HttpClient httpClient,
+        string token
+    )
     {
-        var authenticationValue = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);
+        var authenticationValue = new AuthenticationHeaderValue(
+            JwtBearerDefaults.AuthenticationScheme,
+            token
+        );
 
         httpClient.DefaultRequestHeaders.Authorization = authenticationValue;
+    }
+
+    /// <summary>
+    /// Adds the X-Idempotency-Key header to the current http client
+    /// containing the specified idempotency key.
+    /// </summary>
+    /// <param name="httpClient">The current client.</param>
+    /// <param name="idempotencyKey">
+    /// The idempotency key to be added to the header.
+    /// </param>
+    public static void SetIdempotencyKeyHeader(
+        this HttpClient httpClient,
+        string idempotencyKey
+    )
+    {
+        httpClient.DefaultRequestHeaders.Add(
+            "X-Idempotency-Key",
+            idempotencyKey
+        );
+    }
+
+    /// <summary>
+    /// Adds the X-Provider-Signature header to the current http client
+    /// containing the specified provider signature.
+    /// </summary>
+    /// <param name="httpClient">The current client.</param>
+    /// <param name="providerSignature">
+    /// The provider signature to add to the header.
+    /// </param>
+    public static void SetProviderSignatureHeader(
+        this HttpClient httpClient,
+        string providerSignature
+    )
+    {
+        httpClient.DefaultRequestHeaders.Add(
+             "X-Provider-Signature",
+             providerSignature
+        );
     }
 }

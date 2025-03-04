@@ -21,7 +21,9 @@ public static class RegisterCustomerRequestUtils
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="password">The user password.</param>
-    /// <returns>A new instance of the <see cref="RegisterCustomerRequest"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="RegisterCustomerRequest"/> class.
+    /// </returns>
     public static RegisterCustomerRequest CreateRequest(
         string? name = null,
         string? email = null,

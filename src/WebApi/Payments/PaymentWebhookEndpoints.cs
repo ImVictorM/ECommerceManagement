@@ -30,15 +30,21 @@ public sealed class PaymentWebhookEndpoints : ICarterModule
 
         paymentNotificationGroup
             .MapPost("/", HandlePaymentStatusChanged)
-            .WithName("HandlePaymentStatusChangedNotification")
+            .WithName(nameof(HandlePaymentStatusChanged))
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Handle Payment Status Changed Notification",
-                Description = "Updates internal data based on the changed payment status."
+                Summary = "Handle Payment Status Changed",
+                Description =
+                "Allows payment gateways to send notifications " +
+                "regarding payment status changes."
             });
     }
 
-    private async Task<Results<NoContent, BadRequest, UnauthorizedHttpResult>> HandlePaymentStatusChanged(
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        UnauthorizedHttpResult
+    >> HandlePaymentStatusChanged(
         [FromHeader(Name = "X-Provider-Signature")] string providerSignature,
         HttpRequest request,
         IHmacSignatureProvider hmacSignatureProvider,
@@ -61,9 +67,10 @@ public sealed class PaymentWebhookEndpoints : ICarterModule
         //  Rewind the stream to the beginning for deserialization
         request.Body.Position = 0;
 
-        var notification = await JsonSerializerUtils.DeserializeFromWebAsync<PaymentStatusChangedRequest>(
-            requestBodyReader.BaseStream
-        );
+        var notification = await JsonSerializerUtils
+            .DeserializeFromWebAsync<PaymentStatusChangedRequest>(
+                requestBodyReader.BaseStream
+            );
 
         if (notification == null)
         {

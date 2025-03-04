@@ -21,7 +21,9 @@ public static class UpdateProductRequestUtils
     /// <param name="basePrice">The product base price.</param>
     /// <param name="images">The product images.</param>
     /// <param name="categoryIds">The product categories.</param>
-    /// <returns>A new instance of the <see cref="UpdateProductRequest"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="UpdateProductRequest"/> class.
+    /// </returns>
     public static UpdateProductRequest CreateRequest(
         string? name = null,
         string? description = null,
