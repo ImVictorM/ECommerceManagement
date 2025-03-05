@@ -83,12 +83,14 @@ public class CouponTests
     ];
 
     /// <summary>
-    /// Tests it is possible to assign different kind of restrictions to a coupon.
+    /// Verifies it is possible to assign different kind of restrictions to a coupon.
     /// </summary>
     /// <param name="restriction">The restriction.</param>
     [Theory]
     [MemberData(nameof(CouponRestrictions))]
-    public void AssignRestriction_WhenAssigningDifferentKindOfRestrictions_AddsCorrectly(CouponRestriction restriction)
+    public void AssignRestriction_WithDifferentRestrictions_AssignsCorrectly(
+        CouponRestriction restriction
+    )
     {
         var coupon = CouponUtils.CreateCoupon();
 
@@ -98,14 +100,16 @@ public class CouponTests
     }
 
     /// <summary>
-    /// List with coupon orders and expected result when calling the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method for the test coupon.
+    /// List with coupon orders and expected result when calling the
+    /// <see cref="Coupon.CanBeApplied(CouponOrder)"/> method for the
+    /// test coupon.
     /// </summary>
     public static IEnumerable<object[]> CanOrderApplyCoupon =>
     [
         [
             CouponOrder.Create(
                 [
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(1),
                         new HashSet<CategoryId>()
                         {
@@ -120,14 +124,15 @@ public class CouponTests
         [
             CouponOrder.Create(
                 [
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(5),
                         new HashSet<CategoryId>()
                         {
                             CategoryId.Create(5)
                         }
                     ),
-                    (
+
+                    CouponOrderProduct.Create(
                         ProductId.Create(6),
                         new HashSet<CategoryId>()
                         {
@@ -142,20 +147,20 @@ public class CouponTests
         [
             CouponOrder.Create(
                 [
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(2),
                         new HashSet<CategoryId>()
                         {
                             CategoryId.Create(1)
                         }
                     ),
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(6),
                         new HashSet<CategoryId>()
                         {
                             CategoryId.Create(6)
                         }
-                    )
+                    ),
                 ],
                 100m
             ),
@@ -164,20 +169,20 @@ public class CouponTests
         [
             CouponOrder.Create(
                 [
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(5),
                         new HashSet<CategoryId>()
                         {
                             CategoryId.Create(1)
                         }
                     ),
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(3),
                         new HashSet<CategoryId>()
                         {
                             CategoryId.Create(6)
                         }
-                    )
+                    ),
                 ],
                 200m
             ),
@@ -186,20 +191,20 @@ public class CouponTests
         [
             CouponOrder.Create(
                 [
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(1),
                         new HashSet<CategoryId>()
                         {
                             CategoryId.Create(6)
                         }
                     ),
-                    (
+                    CouponOrderProduct.Create(
                         ProductId.Create(6),
                         new HashSet<CategoryId>()
                         {
                             CategoryId.Create(1)
                         }
-                    )
+                    ),
                 ],
                 100m
             ),
@@ -208,13 +213,14 @@ public class CouponTests
     ];
 
     /// <summary>
-    /// Tests that the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method returns the expected valid for certain type of inputs.
+    /// Verifies the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method
+    /// returns the expected valid for certain type of inputs.
     /// </summary>
     /// <param name="order">The order input.</param>
     /// <param name="expected">The expected result.</param>
     [Theory]
     [MemberData(nameof(CanOrderApplyCoupon))]
-    public void CanBeApplied_WhenCheckingTheRestrictionsAndMinimumValue_ShouldReturnExpectedValue(
+    public void CanBeApplied_WithRestrictionAndMinimumValue_ReturnsExpectedBoolean(
         CouponOrder order,
         bool expected
     )
@@ -228,21 +234,15 @@ public class CouponTests
             usageLimit: 100
         );
 
-        var productRestriction = ProductRestriction.Create(
-            [
-                CouponProduct.Create(ProductId.Create(1)),
-                CouponProduct.Create(ProductId.Create(2)),
-                CouponProduct.Create(ProductId.Create(3)),
-            ]
-        );
+        var productRestriction = ProductRestriction.Create([
+            CouponProduct.Create(ProductId.Create(1)),
+            CouponProduct.Create(ProductId.Create(2)),
+            CouponProduct.Create(ProductId.Create(3)),
+        ]);
 
         var categoryRestriction = CategoryRestriction.Create(
-            [
-                CouponCategory.Create(CategoryId.Create(1)),
-            ],
-            [
-                CouponProduct.Create(ProductId.Create(2))
-            ]
+            [CouponCategory.Create(CategoryId.Create(1))],
+            [CouponProduct.Create(ProductId.Create(2))]
         );
 
         coupon.AssignRestriction(productRestriction);
@@ -254,10 +254,11 @@ public class CouponTests
     }
 
     /// <summary>
-    /// Tests the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method returns false when the coupon is inactive.
+    /// Verifies the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method returns
+    /// false when the coupon is inactive.
     /// </summary>
     [Fact]
-    public void CanBeApplied_WhenCouponIsInactive_ReturnsFalse()
+    public void CanBeApplied_WithInactiveCoupon_ReturnsFalse()
     {
         var coupon = CouponUtils.CreateCoupon(active: false);
 
@@ -267,10 +268,11 @@ public class CouponTests
     }
 
     /// <summary>
-    /// Tests the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method returns false when usage limit is insufficient.
+    /// Verifies the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method returns
+    /// false when usage limit is insufficient.
     /// </summary>
     [Fact]
-    public void CanBeApplied_WhenUsageLimitIsNotSufficient_ReturnsFalse()
+    public void CanBeApplied_WithZeroUsageLimit_ReturnsFalse()
     {
         var coupon = CouponUtils.CreateCoupon(usageLimit: 0);
 
@@ -280,10 +282,11 @@ public class CouponTests
     }
 
     /// <summary>
-    /// Tests the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method returns false when usage the coupon discount is not valid to date.
+    /// Verifies the <see cref="Coupon.CanBeApplied(CouponOrder)"/> method returns
+    /// false when usage the coupon discount is not valid to date.
     /// </summary>
     [Fact]
-    public void CanBeApplied_WhenDiscountIsNotValidToDate_ReturnsFalse()
+    public void CanBeApplied_WithDiscountNotValidToDate_ReturnsFalse()
     {
         var coupon = CouponUtils.CreateCoupon(discount:
             DiscountUtils.CreateDiscount(
@@ -298,10 +301,11 @@ public class CouponTests
     }
 
     /// <summary>
-    /// Tests the <see cref="Coupon.Deactivate"/> method update the fields correct.
+    /// Verifies the <see cref="Coupon.Deactivate"/> method makes the coupon
+    /// inactive and sets the usage limit to zero.
     /// </summary>
     [Fact]
-    public void Deactivate_WhenCallingIt_UpdatesCouponCorrectly()
+    public void Deactivate_WithValidCoupon_SetsUsageLimitToZeroAndDeactivatesIt()
     {
         var coupon = CouponUtils.CreateCoupon(usageLimit: 500);
 

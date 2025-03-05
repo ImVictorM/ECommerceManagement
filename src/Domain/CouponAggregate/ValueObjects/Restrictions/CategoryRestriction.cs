@@ -7,7 +7,8 @@ using SharedKernel.Errors;
 namespace Domain.CouponAggregate.ValueObjects.Restrictions;
 
 /// <summary>
-/// Represents a coupon restriction defined by categories allowed and products excluded.
+/// Represents a coupon restriction defined by categories allowed and products
+/// excluded.
 /// </summary>
 public class CategoryRestriction : CouponRestriction
 {
@@ -34,10 +35,18 @@ public class CategoryRestriction : CouponRestriction
     /// <summary>
     /// /Creates a new instance of the <see cref="CategoryRestriction"/> class.
     /// </summary>
-    /// <param name="categoriesAllowed">The categories allowed.</param>
-    /// <param name="productsFromCategoryNotAllowed">The products from the category not allowed.</param>
-    /// <returns>A new instance of the <see cref="CategoryRestriction"/> class.</returns>
-    /// <exception cref="EmptyArgumentException">Thrown when categories allowed list is empty.</exception>
+    /// <param name="categoriesAllowed">
+    /// The categories allowed.
+    /// </param>
+    /// <param name="productsFromCategoryNotAllowed">
+    /// The products from the category not allowed.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="CategoryRestriction"/> class.
+    /// </returns>
+    /// <exception cref="EmptyArgumentException">
+    /// Thrown when categories allowed list is empty.
+    /// </exception>
     public static CategoryRestriction Create(
         IEnumerable<CouponCategory> categoriesAllowed,
         IEnumerable<CouponProduct>? productsFromCategoryNotAllowed = null
@@ -45,10 +54,15 @@ public class CategoryRestriction : CouponRestriction
     {
         if (!categoriesAllowed.Any())
         {
-            throw new EmptyArgumentException("Restriction must contain at least one category");
+            throw new EmptyArgumentException(
+                "Restriction must contain at least one category"
+            );
         }
 
-        return new CategoryRestriction(categoriesAllowed, productsFromCategoryNotAllowed);
+        return new CategoryRestriction(
+            categoriesAllowed,
+            productsFromCategoryNotAllowed
+        );
     }
 
     /// <inheritdoc/>
@@ -57,20 +71,23 @@ public class CategoryRestriction : CouponRestriction
         return order.Products.Any(IsProductAllowed);
     }
 
-    private bool IsProductAllowed((ProductId ProductId, IReadOnlySet<CategoryId> ProductCategories) product)
+    private bool IsProductAllowed(CouponOrderProduct product)
     {
-        return IsProductNotExcluded(product.ProductId) && HasAnyAllowedCategory(product.ProductCategories);
+        return IsProductNotExcluded(product.ProductId)
+            && HasAnyAllowedCategory(product.ProductCategoryIds);
     }
 
     private bool HasAnyAllowedCategory(IEnumerable<CategoryId> categories)
     {
         var categoryAllowedIds = CategoriesAllowed.Select(ca => ca.CategoryId);
+
         return categories.Intersect(categoryAllowedIds).Any();
     }
 
     private bool IsProductNotExcluded(ProductId productId)
     {
-        var prohibitedProductIds = ProductsFromCategoryNotAllowed.Select(p => p.ProductId);
+        var prohibitedProductIds = ProductsFromCategoryNotAllowed
+            .Select(p => p.ProductId);
 
         return !prohibitedProductIds.Contains(productId);
     }
@@ -78,7 +95,14 @@ public class CategoryRestriction : CouponRestriction
     ///<inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return CategoriesAllowed;
-        yield return ProductsFromCategoryNotAllowed;
+        foreach (var categoryAllowed in CategoriesAllowed)
+        {
+            yield return categoryAllowed;
+        }
+
+        foreach (var productNotAllowed in ProductsFromCategoryNotAllowed)
+        {
+            yield return productNotAllowed;
+        }
     }
 }

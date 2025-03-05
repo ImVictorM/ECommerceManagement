@@ -1,4 +1,5 @@
 using Domain.CouponAggregate.Abstracts;
+
 using SharedKernel.Errors;
 
 namespace Domain.CouponAggregate.ValueObjects.Restrictions;
@@ -24,13 +25,19 @@ public class ProductRestriction : CouponRestriction
     /// Creates a new instance of the <see cref="ProductRestriction"/> class.
     /// </summary>
     /// <param name="productsAllowed">The products allowed.</param>
-    /// <returns>A new instance of the <see cref="ProductRestriction"/> class.</returns>
-    /// <exception cref="EmptyArgumentException">Thrown when the products allowed list is empty.</exception>
+    /// <returns>
+    /// A new instance of the <see cref="ProductRestriction"/> class.
+    /// </returns>
+    /// <exception cref="EmptyArgumentException">
+    /// Thrown when the products allowed list is empty.
+    /// </exception>
     public static ProductRestriction Create(IEnumerable<CouponProduct> productsAllowed)
     {
         if (!productsAllowed.Any())
         {
-            throw new EmptyArgumentException("Restriction must contain at least one product");
+            throw new EmptyArgumentException(
+                "Restriction must contain at least one product"
+            );
         }
 
         return new ProductRestriction(productsAllowed);
@@ -48,6 +55,9 @@ public class ProductRestriction : CouponRestriction
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return ProductsAllowed;
+        foreach (var productAllowed in ProductsAllowed)
+        {
+            yield return productAllowed;
+        }
     }
 }

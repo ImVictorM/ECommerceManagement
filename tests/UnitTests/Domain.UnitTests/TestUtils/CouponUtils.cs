@@ -79,13 +79,13 @@ public static class CouponUtils
     /// <param name="total">The order total.</param>
     /// <returns>A new instance of the <see cref="CouponOrder"/> class.</returns>
     public static CouponOrder CreateCouponOrder(
-        HashSet<(ProductId ProductId, IReadOnlySet<CategoryId> Categories)>? products = null,
+        HashSet<CouponOrderProduct>? products = null,
         decimal? total = null
     )
     {
-        HashSet<(ProductId ProductId, IReadOnlySet<CategoryId> Categories)> productsDefault =
+        HashSet<CouponOrderProduct> productsDefault =
         [
-            (
+            CouponOrderProduct.Create(
                 ProductId.Create(_faker.Random.Int(1, 100)),
                 new HashSet<CategoryId>
                 {

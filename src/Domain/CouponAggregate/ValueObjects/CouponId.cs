@@ -1,6 +1,7 @@
-using System.Globalization;
 using SharedKernel.Extensions;
 using SharedKernel.Models;
+
+using System.Globalization;
 
 namespace Domain.CouponAggregate.ValueObjects;
 
@@ -14,15 +15,8 @@ public sealed class CouponId : ValueObject
     /// </summary>
     public long Value { get; }
 
-    /// <summary>
-    /// Initiates a new instance of <see cref="CouponId"/> class.
-    /// </summary>
     private CouponId() { }
 
-    /// <summary>
-    /// Initiates a new instance of <see cref="CouponId"/> class.
-    /// </summary>
-    /// <param name="value">The identifier value.</param>
     private CouponId(long value)
     {
         Value = value;
@@ -32,7 +26,9 @@ public sealed class CouponId : ValueObject
     /// Creates a new instance of <see cref="CouponId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of <see cref="CouponId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of <see cref="CouponId"/> class with the specified identifier.
+    /// </returns>
     public static CouponId Create(long value)
     {
         return new CouponId(value);
@@ -42,7 +38,9 @@ public sealed class CouponId : ValueObject
     /// Creates a new instance of <see cref="CouponId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of <see cref="CouponId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of <see cref="CouponId"/> class with the specified identifier.
+    /// </returns>
     public static CouponId Create(string value)
     {
         return new CouponId(value.ToLongId());

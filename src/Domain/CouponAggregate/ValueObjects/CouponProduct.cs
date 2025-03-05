@@ -1,4 +1,5 @@
 using Domain.ProductAggregate.ValueObjects;
+
 using SharedKernel.Models;
 
 namespace Domain.CouponAggregate.ValueObjects;
@@ -24,7 +25,9 @@ public class CouponProduct : ValueObject
     /// Creates a new instance of the <see cref="CouponProduct"/> class.
     /// </summary>
     /// <param name="productId">The product id.</param>
-    /// <returns>A new instance of the <see cref="CouponProduct"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CouponProduct"/> class.
+    /// </returns>
     public static CouponProduct Create(ProductId productId)
     {
         return new CouponProduct(productId);

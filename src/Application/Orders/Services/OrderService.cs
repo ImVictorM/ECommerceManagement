@@ -43,7 +43,8 @@ internal sealed class OrderService : IOrderService
         CancellationToken cancellationToken = default
     )
     {
-        var shippingMethod = await _shippingMethodRepository.FindByIdAsync(shippingMethodId, cancellationToken)
+        var shippingMethod = await _shippingMethodRepository
+            .FindByIdAsync(shippingMethodId, cancellationToken)
             ?? throw new InvalidShippingMethodException();
 
         var productsTotal = orderProducts.Sum(p => p.CalculateTransactionPrice());
@@ -76,10 +77,11 @@ internal sealed class OrderService : IOrderService
             cancellationToken
         );
 
-        var productOnSalePrices = await _productService.CalculateProductsPriceApplyingSaleAsync(
-            products,
-            cancellationToken
-        );
+        var productOnSalePrices = await _productService
+            .CalculateProductsPriceApplyingSaleAsync(
+                products,
+                cancellationToken
+            );
 
         var productsMap = products.ToDictionary(p => p.Id);
 
@@ -93,7 +95,9 @@ internal sealed class OrderService : IOrderService
             }
             catch (Exception)
             {
-                throw new OrderProductNotAvailableException($"The product with id {op.ProductId} is not available at the moment");
+                throw new OrderProductNotAvailableException(
+                    $"The product with id {op.ProductId} is not available at the moment"
+                );
             }
         }
 
@@ -102,7 +106,9 @@ internal sealed class OrderService : IOrderService
             op.Quantity,
             productsMap[op.ProductId].BasePrice,
             productOnSalePrices[op.ProductId],
-            productsMap[op.ProductId].ProductCategories.Select(c => c.CategoryId).ToHashSet()
+            productsMap[op.ProductId].ProductCategories
+                .Select(c => c.CategoryId)
+                .ToHashSet()
         ));
     }
 
@@ -122,14 +128,23 @@ internal sealed class OrderService : IOrderService
 
         var couponsMap = coupons.ToDictionary(c => c.Id);
 
-        var productsWithCategoryIds = orderProducts.Select(p => (p.ProductId, p.ProductCategoryIds)).ToHashSet();
+        var couponOrderProducts = orderProducts
+            .Select(p => CouponOrderProduct.Create(
+                p.ProductId,
+                p.ProductCategoryIds
+            ))
+            .ToHashSet();
 
         foreach (var couponId in couponIds)
         {
             try
             {
                 var coupon = couponsMap[couponId];
-                var couponCanBeApplied = coupon.CanBeApplied(CouponOrder.Create(productsWithCategoryIds, total));
+
+                var couponCanBeApplied = coupon.CanBeApplied(CouponOrder.Create(
+                    couponOrderProducts,
+                    total
+                ));
 
                 if (!couponCanBeApplied)
                 {

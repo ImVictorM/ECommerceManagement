@@ -14,6 +14,7 @@ namespace Domain.CouponAggregate;
 public class Coupon : AggregateRoot<CouponId>, IActivatable
 {
     private readonly HashSet<CouponRestriction> _restrictions = [];
+
     /// <summary>
     /// Gets the coupon discount.
     /// </summary>
@@ -92,7 +93,9 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     /// Verifies if the coupon can be applied.
     /// </summary>
     /// <param name="order">The order context.</param>
-    /// <returns>A boolean value indicating if the coupon can be applied.</returns>
+    /// <returns>
+    /// A boolean value indicating if the coupon can be applied.
+    /// </returns>
     public bool CanBeApplied(CouponOrder order)
     {
         var restrictionsPass = _restrictions.All(r => r.PassRestriction(order));
