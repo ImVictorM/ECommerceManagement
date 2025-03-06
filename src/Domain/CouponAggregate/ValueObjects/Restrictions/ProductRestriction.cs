@@ -9,16 +9,18 @@ namespace Domain.CouponAggregate.ValueObjects.Restrictions;
 /// </summary>
 public class ProductRestriction : CouponRestriction
 {
+    private readonly IReadOnlyList<CouponProduct> _productsAllowed = null!;
+
     /// <summary>
     /// Gets the products allowed.
     /// </summary>
-    public IEnumerable<CouponProduct> ProductsAllowed { get; } = null!;
+    public IReadOnlyList<CouponProduct> ProductsAllowed => _productsAllowed;
 
     private ProductRestriction() { }
 
     private ProductRestriction(IEnumerable<CouponProduct> productsAllowed)
     {
-        ProductsAllowed = productsAllowed;
+        _productsAllowed = productsAllowed.ToList();
     }
 
     /// <summary>

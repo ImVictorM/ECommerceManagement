@@ -12,14 +12,19 @@ namespace Domain.CouponAggregate.ValueObjects.Restrictions;
 /// </summary>
 public class CategoryRestriction : CouponRestriction
 {
+    private readonly IReadOnlyList<CouponCategory> _categoriesAllowed = null!;
+    private readonly IReadOnlyList<CouponProduct> _productsFromCategoryNotAllowed = null!;
+
     /// <summary>
     /// Gets the categories the restriction allows.
     /// </summary>
-    public IEnumerable<CouponCategory> CategoriesAllowed { get; } = null!;
+    public IReadOnlyList<CouponCategory> CategoriesAllowed => _categoriesAllowed;
+
     /// <summary>
     /// Gets the products that are not allowed.
     /// </summary>
-    public IEnumerable<CouponProduct> ProductsFromCategoryNotAllowed { get; } = null!;
+    public IReadOnlyList<CouponProduct> ProductsFromCategoryNotAllowed
+        => _productsFromCategoryNotAllowed;
 
     private CategoryRestriction() { }
 
@@ -28,8 +33,8 @@ public class CategoryRestriction : CouponRestriction
         IEnumerable<CouponProduct>? productsFromNotAllowed = null
     )
     {
-        CategoriesAllowed = categoriesAllowed;
-        ProductsFromCategoryNotAllowed = productsFromNotAllowed ?? [];
+        _categoriesAllowed = categoriesAllowed.ToList();
+        _productsFromCategoryNotAllowed = productsFromNotAllowed?.ToList() ?? [];
     }
 
     /// <summary>
