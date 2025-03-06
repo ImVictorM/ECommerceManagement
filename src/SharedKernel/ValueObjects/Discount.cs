@@ -76,17 +76,24 @@ public sealed class Discount : ValueObject
     private void ValidateDiscount()
     {
         var now = DateTimeOffset.UtcNow;
-        var isDateRangeValid = StartingDate > now.AddDays(-1) && EndingDate > StartingDate.AddHours(1);
+        var isDateRangeValid =
+            StartingDate > now.AddDays(-1)
+            && EndingDate > StartingDate.AddHours(1);
+
         var isPercentageRangeValid = Percentage.IsWithinRange(1, 100);
 
         if (!isDateRangeValid)
         {
-            throw new OutOfRangeException("The date range between the starting and ending date is invalid");
+            throw new OutOfRangeException(
+                "The date range between the starting and ending date is invalid"
+            );
         }
 
         if (!isPercentageRangeValid)
         {
-            throw new OutOfRangeException("Discount percentage must be between 1 and 100");
+            throw new OutOfRangeException(
+                "Discount percentage must be between 1 and 100"
+            );
         }
     }
 

@@ -9,7 +9,6 @@ namespace Domain.CouponAggregate.Abstracts;
 /// </summary>
 public abstract class CouponRestriction : ValueObject
 {
-
     /// <summary>
     /// Initiates a new instance of the <see cref="CouponRestriction"/> class.
     /// </summary>

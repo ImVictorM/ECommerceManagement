@@ -826,12 +826,12 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "id", "created_at", "email", "is_active", "name", "password_hash", "phone", "updated_at" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6809), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "A37E1032240117E618E8A3D0CD72D1890265109B0019566E97EC0E70869FB04A-C8458BD5E9EB62CE5853452731E41585", null, new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6816), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 836, DateTimeKind.Unspecified).AddTicks(9564), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "D604E4299379FD264911BBC0ADE6C9E87A3C0964D79E84FF05FB40B34FA05ACB-F5583CFFEB0342C118D97B1B3206A378", null, new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 836, DateTimeKind.Unspecified).AddTicks(9569), new TimeSpan(0, 0, 0, 0, 0)) });
 
             migrationBuilder.InsertData(
                 table: "carriers",
                 columns: new[] { "id", "created_at", "email", "name", "password_hash", "phone", "updated_at", "id_role" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7975), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "3410EF2A448742774017B1FD5D995DE96FCC97CFE3BA4475D79187B52FC744FD-2435C630C8790196F24DD9C399BA875C", "", new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7983), new TimeSpan(0, 0, 0, 0, 0)), 3L });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 851, DateTimeKind.Unspecified).AddTicks(2738), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "0AEF8A8F1045137B17C1ABD46929A9EC9B076C4BECC9051796953D0C7C6A1CC8-42A3FE17C6E0AD707DA1BFD79432BE5F", "", new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 851, DateTimeKind.Unspecified).AddTicks(2742), new TimeSpan(0, 0, 0, 0, 0)), 3L });
 
             migrationBuilder.InsertData(
                 table: "users_roles",

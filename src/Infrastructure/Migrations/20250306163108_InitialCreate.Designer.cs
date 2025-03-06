@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20250227200324_InitialCreate")]
+    [Migration("20250306163108_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -84,12 +84,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7975), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 851, DateTimeKind.Unspecified).AddTicks(2738), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "carrier@email.com",
                             Name = "ECommerceManagementCarrier",
-                            PasswordHash = "3410EF2A448742774017B1FD5D995DE96FCC97CFE3BA4475D79187B52FC744FD-2435C630C8790196F24DD9C399BA875C",
+                            PasswordHash = "0AEF8A8F1045137B17C1ABD46929A9EC9B076C4BECC9051796953D0C7C6A1CC8-42A3FE17C6E0AD707DA1BFD79432BE5F",
                             Phone = "",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7983), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 851, DateTimeKind.Unspecified).AddTicks(2742), new TimeSpan(0, 0, 0, 0, 0)),
                             _roleId = 3L
                         });
                 });
@@ -691,12 +691,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6809), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 836, DateTimeKind.Unspecified).AddTicks(9564), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@email.com",
                             IsActive = true,
                             Name = "admin",
-                            PasswordHash = "A37E1032240117E618E8A3D0CD72D1890265109B0019566E97EC0E70869FB04A-C8458BD5E9EB62CE5853452731E41585",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6816), new TimeSpan(0, 0, 0, 0, 0))
+                            PasswordHash = "D604E4299379FD264911BBC0ADE6C9E87A3C0964D79E84FF05FB40B34FA05ACB-F5583CFFEB0342C118D97B1B3206A378",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 836, DateTimeKind.Unspecified).AddTicks(9569), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
