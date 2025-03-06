@@ -6,6 +6,6 @@ namespace Contracts.Coupons.Restrictions;
 /// Represents a polymorphic coupon restriction.
 /// </summary>
 [JsonPolymorphic]
-[JsonDerivedType(typeof(CategoryRestriction))]
-[JsonDerivedType(typeof(ProductRestriction))]
+[JsonDerivedType(typeof(ProductRestriction), nameof(ProductRestriction))]
+[JsonDerivedType(typeof(CategoryRestriction), nameof(CategoryRestriction))]
 public abstract record CouponRestriction();

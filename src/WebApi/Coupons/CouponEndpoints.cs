@@ -36,7 +36,7 @@ public sealed class CouponEndpoints : ICarterModule
             .RequireAuthorization();
     }
 
-    private async Task<Results<
+    internal async Task<Results<
         Created,
         BadRequest,
         UnauthorizedHttpResult,

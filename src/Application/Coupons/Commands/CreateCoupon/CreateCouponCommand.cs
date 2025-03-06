@@ -14,7 +14,7 @@ namespace Application.Coupons.Commands.CreateCoupon;
 /// <param name="UsageLimit">The coupon usage limit.</param>
 /// <param name="AutoApply">A boolean indicating if the coupon auto apply.</param>
 /// <param name="MinPrice">The coupon minimum price.</param>
-/// <param name="Restrictions">The coupon restrictions (Optional).</param>
+/// <param name="Restrictions">The coupon restrictions (optional).</param>
 [Authorize(roleName: nameof(Role.Admin))]
 public record CreateCouponCommand(
     Discount Discount,

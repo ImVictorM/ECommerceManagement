@@ -1,6 +1,9 @@
+using Application.Coupons.Abstracts;
 using Application.Coupons.Commands.CreateCoupon;
+using Application.Coupons.DTOs;
 
 using Contracts.Coupons;
+using Contracts.Coupons.Restrictions;
 
 using Mapster;
 
@@ -12,6 +15,10 @@ internal sealed class CouponMappings : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config
-            .NewConfig<CreateCouponRequest, CreateCouponCommand>();
+            .NewConfig<CouponRestriction, ICouponRestrictionInput>()
+            .Include<ProductRestriction, ProductRestrictionInput>()
+            .Include<CategoryRestriction, CategoryRestrictionInput>();
+
+        config.NewConfig<CreateCouponRequest, CreateCouponCommand>();
     }
 }
