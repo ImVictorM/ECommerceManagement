@@ -1,4 +1,3 @@
-using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate.ValueObjects;
@@ -10,39 +9,71 @@ using SharedKernel.ValueObjects;
 namespace Domain.OrderAggregate.Factories;
 
 /// <summary>
-/// Factory to create orders.
+/// Factory responsible for orchestrating the creation of <see cref="Order"/>
+/// objects.
 /// </summary>
 public class OrderFactory
 {
-    private readonly IOrderService _orderService;
+    private readonly IOrderAssemblyService _orderAssemblyService;
+    private readonly IOrderPricingService _orderPricingService;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderFactory"/> class.
+    /// Initializes a new instance of the <see cref="OrderFactory"/> class.
     /// </summary>
-    /// <param name="orderService">The order service.</param>
-    public OrderFactory(IOrderService orderService)
+    /// <param name="orderAssemblyService">
+    /// The order assembly service.
+    /// </param>
+    /// <param name="orderPricingService">
+    /// The order pricing service.
+    /// </param>
+    public OrderFactory(
+        IOrderAssemblyService orderAssemblyService,
+        IOrderPricingService orderPricingService
+    )
     {
-        _orderService = orderService;
+        _orderAssemblyService = orderAssemblyService;
+        _orderPricingService = orderPricingService;
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="Order"/> class.
+    /// Creates a new <see cref="Order"/> by assembling line items from draft
+    /// data and computing the final total.
     /// </summary>
-    /// <param name="requestId">The current request identifier.</param>
-    /// <param name="ownerId">The order owner id.</param>
-    /// <param name="shippingMethodId">The shipping method id.</param>
-    /// <param name="products">The order products.</param>
-    /// <param name="paymentMethod">The order payment method.</param>
-    /// <param name="billingAddress">The order payment billing address.</param>
-    /// <param name="deliveryAddress">The order delivery address.</param>
-    /// <param name="installments">The installments.</param>
-    /// <param name="couponsApplied">The coupons applied.</param>
-    /// <returns>A new instance of the <see cref="Order"/> class.</returns>
+    /// <param name="requestId">
+    /// The unique identifier for the current request.
+    /// </param>
+    /// <param name="ownerId">
+    /// The identifier of the user who owns the order.
+    /// </param>
+    /// <param name="shippingMethodId">
+    /// The identifier of the shipping method selected for the order.
+    /// </param>
+    /// <param name="orderLineItemsDraft">
+    /// The collection of draft line items representing the raw ordered product data.
+    /// </param>
+    /// <param name="paymentMethod">
+    /// The payment method to be used for the order.
+    /// </param>
+    /// <param name="billingAddress">
+    /// The billing address.
+    /// </param>
+    /// <param name="deliveryAddress">
+    /// The delivery address.
+    /// </param>
+    /// <param name="installments">
+    /// The number of installments for payment.
+    /// </param>
+    /// <param name="couponsApplied">
+    /// A collection of coupons to be applied to the order.
+    /// </param>
+    /// <returns>
+    /// A new instance of <see cref="Order"/> class.
+    /// </returns>
     public async Task<Order> CreateOrderAsync(
         Guid requestId,
         UserId ownerId,
         ShippingMethodId shippingMethodId,
-        IEnumerable<IOrderProductReserved> products,
+        IEnumerable<OrderLineItemDraft> orderLineItemsDraft,
         IPaymentMethod paymentMethod,
         Address billingAddress,
         Address deliveryAddress,
@@ -50,15 +81,20 @@ public class OrderFactory
         IEnumerable<OrderCoupon>? couponsApplied = null
     )
     {
-        var orderProductsWithPrice = await _orderService.PrepareOrderProductsAsync(products);
+        var orderLineItems = await _orderAssemblyService
+            .AssembleOrderLineItemsAsync(orderLineItemsDraft);
 
-        var total = await _orderService.CalculateTotalAsync(orderProductsWithPrice, shippingMethodId, couponsApplied);
+        var total = await _orderPricingService.CalculateTotalAsync(
+            orderLineItems,
+            shippingMethodId,
+            couponsApplied
+        );
 
         return Order.Create(
             requestId,
             ownerId,
             shippingMethodId,
-            orderProductsWithPrice,
+            orderLineItems,
             total,
             paymentMethod,
             billingAddress,

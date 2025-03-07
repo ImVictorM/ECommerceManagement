@@ -17,17 +17,17 @@ internal sealed partial class GetProductsQueryHandler
     : IRequestHandler<GetProductsQuery, IEnumerable<ProductResult>>
 {
     private readonly IProductRepository _productRepository;
-    private readonly IProductService _productService;
+    private readonly IProductPricingService _productPricingService;
     private const int DefaultInitialPage = 1;
     private const int DefaultPageSize = 20;
 
     public GetProductsQueryHandler(
         IProductRepository productRepository,
-        IProductService productService,
+        IProductPricingService productPricingService,
         ILogger<GetProductsQueryHandler> logger
     )
     {
-        _productService = productService;
+        _productPricingService = productPricingService;
         _productRepository = productRepository;
         _logger = logger;
     }
@@ -63,7 +63,7 @@ internal sealed partial class GetProductsQueryHandler
 
         LogProductsRetrieved(productsWithCategories.Count());
 
-        var productPricesOnSale = await _productService.CalculateProductsPriceApplyingSaleAsync(
+        var productPricesOnSale = await _productPricingService.CalculateProductsPriceApplyingSaleAsync(
             productsWithCategories.Select(p => p.Product),
             cancellationToken
         );

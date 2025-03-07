@@ -8,12 +8,12 @@ using SharedKernel.Interfaces;
 
 namespace Application.Products.Services;
 
-internal sealed class ProductService : IProductService
+internal sealed class ProductPricingService : IProductPricingService
 {
     private readonly ISaleService _saleService;
     private readonly IDiscountService _discountService;
 
-    public ProductService(
+    public ProductPricingService(
         ISaleService saleService,
         IDiscountService discountService
     )

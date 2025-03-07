@@ -48,8 +48,10 @@ public static class ServicesRegistration
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
         services.AddValidatorsFromAssembly(assembly);
 
-        services.AddScoped<IOrderService, OrderService>();
-        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IOrderAssemblyService, OrderAssemblyService>();
+        services.AddScoped<IOrderPricingService, OrderPricingService>();
+        services.AddScoped<IProductPricingService, ProductPricingService>();
+        services.AddScoped<IInventoryManagementService, InventoryManagementService>();
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<IProductFeedbackService, ProductFeedbackService>();
 

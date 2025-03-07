@@ -15,16 +15,16 @@ internal sealed partial class GetProductByIdQueryHandler
     : IRequestHandler<GetProductByIdQuery, ProductResult>
 {
     private readonly IProductRepository _productRepository;
-    private readonly IProductService _productService;
+    private readonly IProductPricingService _productPricingService;
 
     public GetProductByIdQueryHandler(
         IProductRepository productRepository,
-        IProductService productService,
+        IProductPricingService productPricingService,
         ILogger<GetProductByIdQueryHandler> logger
     )
     {
         _productRepository = productRepository;
-        _productService = productService;
+        _productPricingService = productPricingService;
         _logger = logger;
     }
 
@@ -48,7 +48,7 @@ internal sealed partial class GetProductByIdQueryHandler
 
         LogProductRetrieved();
 
-        var productPrice = await _productService.CalculateProductPriceApplyingSaleAsync(
+        var productPrice = await _productPricingService.CalculateProductPriceApplyingSaleAsync(
             productWithCategories.Product,
             cancellationToken
         );

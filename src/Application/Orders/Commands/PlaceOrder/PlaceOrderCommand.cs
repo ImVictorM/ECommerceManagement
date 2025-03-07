@@ -1,6 +1,7 @@
 using Application.Common.DTOs;
 using Application.Common.Security.Authorization.Requests;
-using Application.Orders.DTOs;
+
+using Domain.OrderAggregate.ValueObjects;
 
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
@@ -22,7 +23,7 @@ namespace Application.Orders.Commands.PlaceOrder;
 public record PlaceOrderCommand(
     Guid RequestId,
     string ShippingMethodId,
-    IEnumerable<OrderProductInput> Products,
+    IEnumerable<OrderLineItemDraft> Products,
     Address BillingAddress,
     Address DeliveryAddress,
     IPaymentMethod PaymentMethod,
