@@ -1,5 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.Orders.Errors;
+using Application.Coupons.Errors;
 
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.Services;
@@ -30,8 +30,8 @@ internal sealed class CouponApplicationService : ICouponApplicationService
         CancellationToken cancellationToken = default
     )
     {
-        var coupons = await _couponRepository.FindAllAsync(
-            c => couponToApplyIds.Contains(c.Id),
+        var coupons = await _couponRepository.GetCouponsByIdsAsync(
+            couponToApplyIds,
             cancellationToken
         );
 
@@ -56,17 +56,12 @@ internal sealed class CouponApplicationService : ICouponApplicationService
         {
             if (!couponsMap.TryGetValue(couponId, out var coupon))
             {
-                throw new InvalidCouponAppliedException(
-                    $"The coupon with id {couponId} is expired or invalid"
-                );
+                throw new CouponNotFoundException();
             }
 
             if (!coupon.CanBeApplied(order))
             {
-                throw new InvalidCouponAppliedException(
-                    $"The coupon with id {coupon.Id} cannot be applied because" +
-                    $" the order does not meet the requirements"
-                );
+                throw new CouponApplicationFailedException();
             }
         }
     }
