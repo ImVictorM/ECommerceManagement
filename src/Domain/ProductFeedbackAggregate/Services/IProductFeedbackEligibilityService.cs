@@ -6,7 +6,7 @@ namespace Domain.ProductFeedbackAggregate.Services;
 /// <summary>
 /// Represents a contract for product feedback services.
 /// </summary>
-public interface IProductFeedbackService
+public interface IProductFeedbackEligibilityService
 {
     /// <summary>
     /// Verifies if a user can leave a feedback for the specified

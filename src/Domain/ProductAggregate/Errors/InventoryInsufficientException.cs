@@ -9,15 +9,18 @@ namespace Domain.ProductAggregate.Errors;
 public class InventoryInsufficientException : BaseException
 {
     private const string DefaultTitle = "Inventory Insufficient";
-    private const string DefaultMessage = "The product does not have available stock to complete the operation";
+    private const string DefaultMessage =
+        "The product does not have available stock to complete the operation";
 
     private static readonly ErrorCode _defaultErrorCode = ErrorCode.InvalidOperation;
 
-    internal InventoryInsufficientException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
+    internal InventoryInsufficientException()
+        : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal InventoryInsufficientException(string message) : base(message, DefaultTitle, _defaultErrorCode)
+    internal InventoryInsufficientException(string message)
+        : base(message, DefaultTitle, _defaultErrorCode)
     {
     }
 

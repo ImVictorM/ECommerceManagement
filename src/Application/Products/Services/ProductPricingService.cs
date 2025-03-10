@@ -10,11 +10,11 @@ namespace Application.Products.Services;
 
 internal sealed class ProductPricingService : IProductPricingService
 {
-    private readonly ISaleService _saleService;
+    private readonly ISaleApplicationService _saleService;
     private readonly IDiscountService _discountService;
 
     public ProductPricingService(
-        ISaleService saleService,
+        ISaleApplicationService saleService,
         IDiscountService discountService
     )
     {
@@ -44,7 +44,10 @@ internal sealed class ProductPricingService : IProductPricingService
             p.ProductCategories.Select(c => c.CategoryId).ToHashSet())
         );
 
-        var productSales = await _saleService.GetProductsSalesAsync(saleProducts, cancellationToken);
+        var productSales = await _saleService.GetApplicableSalesForProductsAsync(
+            saleProducts,
+            cancellationToken
+        );
 
         return products.ToDictionary(
             p => p.Id,

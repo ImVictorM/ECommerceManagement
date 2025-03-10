@@ -1,4 +1,5 @@
 using Application.Common.Persistence.Repositories;
+
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.Services;
@@ -6,17 +7,17 @@ using Domain.SaleAggregate.ValueObjects;
 
 namespace Application.Sales.Services;
 
-internal sealed class SaleService : ISaleService
+internal sealed class SaleApplicationService : ISaleApplicationService
 {
     private readonly ISaleRepository _saleRepository;
 
-    public SaleService(ISaleRepository saleRepository)
+    public SaleApplicationService(ISaleRepository saleRepository)
     {
         _saleRepository = saleRepository;
     }
 
     /// <inheritdoc/>
-    public async Task<IDictionary<ProductId, IEnumerable<Sale>>> GetProductsSalesAsync(
+    public async Task<IDictionary<ProductId, IEnumerable<Sale>>> GetApplicableSalesForProductsAsync(
         IEnumerable<SaleProduct> products,
         CancellationToken cancellationToken = default
     )

@@ -6,11 +6,12 @@ using Domain.UserAggregate.ValueObjects;
 
 namespace Application.ProductFeedback.Services;
 
-internal sealed class ProductFeedbackService : IProductFeedbackService
+internal sealed class ProductFeedbackEligibilityService
+    : IProductFeedbackEligibilityService
 {
     private readonly IOrderRepository _orderRepository;
 
-    public ProductFeedbackService(IOrderRepository orderRepository)
+    public ProductFeedbackEligibilityService(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
     }
