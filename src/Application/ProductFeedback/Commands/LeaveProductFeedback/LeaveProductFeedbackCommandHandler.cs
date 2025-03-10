@@ -19,13 +19,13 @@ internal sealed partial class LeaveProductFeedbackCommandHandler
     : IRequestHandler<LeaveProductFeedbackCommand, CreatedResult>
 {
     private readonly IProductFeedbackRepository _productFeedbackRepository;
-    private readonly IProductFeedbackService _productFeedbackService;
+    private readonly IProductFeedbackEligibilityService _productFeedbackService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IIdentityProvider _identityProvider;
 
     public LeaveProductFeedbackCommandHandler(
         IProductFeedbackRepository productFeedbackRepository,
-        IProductFeedbackService productFeedbackService,
+        IProductFeedbackEligibilityService productFeedbackService,
         IUnitOfWork unitOfWork,
         IIdentityProvider identityProvider,
         ILogger<LeaveProductFeedbackCommandHandler> logger

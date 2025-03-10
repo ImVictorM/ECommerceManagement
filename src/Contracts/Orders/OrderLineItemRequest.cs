@@ -5,7 +5,7 @@ namespace Contracts.Orders;
 /// </summary>
 /// <param name="ProductId">The product id.</param>
 /// <param name="Quantity">The product quantity.</param>
-public record OrderProductRequest(
+public record OrderLineItemRequest(
     string ProductId,
     int Quantity
 );

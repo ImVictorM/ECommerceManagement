@@ -31,11 +31,13 @@ internal sealed class OrderMappings : IRegister
         config.NewConfig<OrderDetailedResult, OrderDetailedResponse>()
             .Map(dest => dest.Id, src => src.Order.Id.ToString())
             .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
-            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name);
+            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name)
+            .Map(dest => dest, src => src.Order);
 
         config.NewConfig<OrderResult, OrderResponse>()
             .Map(dest => dest.Id, src => src.Order.Id.ToString())
             .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
-            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name);
+            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name)
+            .Map(dest => dest, src => src.Order);
     }
 }

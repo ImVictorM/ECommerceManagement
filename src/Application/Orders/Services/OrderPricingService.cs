@@ -37,7 +37,7 @@ internal sealed class OrderPricingService : IOrderPricingService
 
         var productsTotal = lineItems.Sum(p => p.CalculateTransactionPrice());
 
-        if (couponsApplied != null)
+        if (couponsApplied != null && couponsApplied.Any())
         {
             productsTotal = await CalculateTotalApplyingCouponsAsync(
                 lineItems,

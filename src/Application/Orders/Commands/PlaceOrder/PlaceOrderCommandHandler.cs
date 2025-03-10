@@ -9,6 +9,7 @@ using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+using Domain.ProductAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
@@ -61,16 +62,23 @@ internal sealed partial class PlaceOrderCommandHandler
                 .Select(CouponId.Create)
                 .Select(OrderCoupon.Create);
 
+        var orderLineItemDrafts = request.Products
+            .Select(input => OrderLineItemDraft.Create(
+                ProductId.Create(input.ProductId),
+                input.Quantity
+            ));
+
         var order = await _orderFactory.CreateOrderAsync(
             request.RequestId,
             ownerId,
             shippingMethodId,
-            request.Products,
+            orderLineItemDrafts,
             request.PaymentMethod,
             request.BillingAddress,
             request.DeliveryAddress,
             request.Installments,
-            orderCouponsApplied
+            orderCouponsApplied,
+            cancellationToken
         );
 
         LogOrderCreated();

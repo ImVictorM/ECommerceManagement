@@ -35,7 +35,7 @@ public sealed class OrderLineItemDraft : ValueObject
     /// <returns>
     /// A new instance of <see cref="OrderLineItemDraft"/>.
     /// </returns>
-    public static OrderLineItemDraft OrdererProduct(ProductId productId, int quantity)
+    public static OrderLineItemDraft Create(ProductId productId, int quantity)
     {
         return new OrderLineItemDraft(productId, quantity);
     }

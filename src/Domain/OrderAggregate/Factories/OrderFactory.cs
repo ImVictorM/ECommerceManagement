@@ -48,7 +48,7 @@ public class OrderFactory
     /// <param name="shippingMethodId">
     /// The identifier of the shipping method selected for the order.
     /// </param>
-    /// <param name="orderLineItemsDraft">
+    /// <param name="orderLineItemDrafts">
     /// The collection of draft line items representing the raw ordered product data.
     /// </param>
     /// <param name="paymentMethod">
@@ -66,6 +66,7 @@ public class OrderFactory
     /// <param name="couponsApplied">
     /// A collection of coupons to be applied to the order.
     /// </param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
     /// A new instance of <see cref="Order"/> class.
     /// </returns>
@@ -73,21 +74,25 @@ public class OrderFactory
         Guid requestId,
         UserId ownerId,
         ShippingMethodId shippingMethodId,
-        IEnumerable<OrderLineItemDraft> orderLineItemsDraft,
+        IEnumerable<OrderLineItemDraft> orderLineItemDrafts,
         IPaymentMethod paymentMethod,
         Address billingAddress,
         Address deliveryAddress,
         int? installments = null,
-        IEnumerable<OrderCoupon>? couponsApplied = null
+        IEnumerable<OrderCoupon>? couponsApplied = null,
+        CancellationToken cancellationToken = default
     )
     {
-        var orderLineItems = await _orderAssemblyService
-            .AssembleOrderLineItemsAsync(orderLineItemsDraft);
+        var orderLineItems = await _orderAssemblyService.AssembleOrderLineItemsAsync(
+            orderLineItemDrafts,
+            cancellationToken
+        );
 
         var total = await _orderPricingService.CalculateTotalAsync(
             orderLineItems,
             shippingMethodId,
-            couponsApplied
+            couponsApplied,
+            cancellationToken
         );
 
         return Order.Create(
