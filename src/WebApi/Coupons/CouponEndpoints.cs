@@ -1,14 +1,15 @@
 using Application.Coupons.Commands.CreateCoupon;
+using Application.Coupons.Commands.DeleteCoupon;
+using Application.Coupons.Commands.ToggleCouponActivation;
 
 using Contracts.Coupons;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using MapsterMapper;
 using MediatR;
 using Carter;
-using Microsoft.OpenApi.Models;
-using Application.Coupons.Commands.DeleteCoupon;
 
 namespace WebApi.Coupons;
 
@@ -58,6 +59,28 @@ public sealed class CouponEndpoints : ICarterModule
                 ]
             })
             .RequireAuthorization();
+
+        couponGroup
+            .MapPatch("/{id:long}", ToggleCouponActivation)
+            .WithName(nameof(ToggleCouponActivation))
+            .WithOpenApi(op => new(op)
+            {
+                Summary = "Toggle Coupon Activation",
+                Description =
+                "Toggles a coupon active state. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The coupon identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                ]
+            })
+            .RequireAuthorization();
     }
 
     internal async Task<Results<
@@ -89,6 +112,23 @@ public sealed class CouponEndpoints : ICarterModule
     )
     {
         var command = new DeleteCouponCommand(id);
+
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
+    }
+
+    internal async Task<Results<
+        NoContent,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> ToggleCouponActivation(
+        [FromRoute] string id,
+        ISender sender
+    )
+    {
+        var command = new ToggleCouponActivationCommand(id);
 
         await sender.Send(command);
 
