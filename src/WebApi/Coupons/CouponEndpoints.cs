@@ -2,6 +2,8 @@ using Application.Coupons.Commands.CreateCoupon;
 using Application.Coupons.Commands.DeleteCoupon;
 using Application.Coupons.Commands.ToggleCouponActivation;
 using Application.Coupons.Commands.UpdateCoupon;
+using Application.Coupons.Queries.GetCoupons;
+using Application.Coupons.DTOs;
 
 using Contracts.Coupons;
 
@@ -68,7 +70,8 @@ public sealed class CouponEndpoints : ICarterModule
             {
                 Summary = "Toggle Coupon Activation",
                 Description =
-                "Toggles a coupon active state. Admin authentication is required.",
+                "Toggles the active status of an existing coupon. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -90,7 +93,8 @@ public sealed class CouponEndpoints : ICarterModule
             {
                 Summary = "Update Coupon",
                 Description =
-                "Updates an existing coupon. Admin authentication is required.",
+                "Updates the details of an existing coupon. " +
+                "Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -101,6 +105,56 @@ public sealed class CouponEndpoints : ICarterModule
                         Required = true,
                         Schema = new() { Type = "integer", Format = "int64" }
                     },
+                ]
+            })
+            .RequireAuthorization();
+
+        couponGroup
+            .MapGet("/", GetCoupons)
+            .WithName(nameof(GetCoupons))
+            .WithOpenApi(op => new(op)
+            {
+                Summary = "Get Coupons",
+                Description =
+                "Retrieves a list of coupons based on the specified filters. " +
+                "Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "active",
+                        In = ParameterLocation.Query,
+                        Description = "Filter coupons by their activation status.",
+                        Required = false,
+                        Schema = new() { Type = "boolean" }
+                    },
+                    new()
+                    {
+                        Name = "expiringAfter",
+                        In = ParameterLocation.Query,
+                        Description =
+                        "Filter coupons that expire after the specified UTC date.",
+                        Required = false,
+                        Schema = new() { Type = "string", Format = "date-time" }
+                    },
+                    new()
+                    {
+                        Name = "expiringBefore",
+                        In = ParameterLocation.Query,
+                        Description =
+                        "Filter coupons that expire before the specified UTC date.",
+                        Required = false,
+                        Schema = new() { Type = "string", Format = "date-time" }
+                    },
+                    new()
+                    {
+                        Name = "validForDate",
+                        In = ParameterLocation.Query,
+                        Description =
+                        "Filter coupons that are valid on the specified UTC date.",
+                        Required = false,
+                        Schema = new() { Type = "string", Format = "date-time" }
+                    }
                 ]
             })
             .RequireAuthorization();
@@ -176,5 +230,30 @@ public sealed class CouponEndpoints : ICarterModule
         await sender.Send(command);
 
         return TypedResults.NoContent();
+    }
+
+    internal async Task<Results<
+        Ok<IEnumerable<CouponResponse>>,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> GetCoupons(
+        ISender sender,
+        IMapper mapper,
+        [FromQuery(Name = "active")] bool? active = null,
+        [FromQuery(Name = "expiringAfter")] DateTimeOffset? expiringAfter = null,
+        [FromQuery(Name = "expiringBefore")] DateTimeOffset? expiringBefore = null,
+        [FromQuery(Name = "validForDate")] DateTimeOffset? validForDate = null
+    )
+    {
+        var query = new GetCouponsQuery(new CouponFilters(
+            active,
+            expiringAfter,
+            expiringBefore,
+            validForDate
+        ));
+
+        var result = await sender.Send(query);
+
+        return TypedResults.Ok(result.Select(mapper.Map<CouponResponse>));
     }
 }

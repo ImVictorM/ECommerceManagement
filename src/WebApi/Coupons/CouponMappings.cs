@@ -26,5 +26,10 @@ internal sealed class CouponMappings : IRegister
             .NewConfig<(string Id, UpdateCouponRequest Request), UpdateCouponCommand>()
             .Map(dest => dest.CouponId, src => src.Id)
             .Map(dest => dest, src => src.Request);
+
+        config
+            .NewConfig<CouponResult, CouponResponse>()
+            .Map(dest => dest.Id, src => src.Coupon.Id.ToString())
+            .Map(dest => dest, src => src.Coupon);
     }
 }
