@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using MapsterMapper;
 using MediatR;
 using Carter;
+using Microsoft.OpenApi.Models;
+using Application.Coupons.Commands.DeleteCoupon;
 
 namespace WebApi.Coupons;
 
@@ -34,6 +36,28 @@ public sealed class CouponEndpoints : ICarterModule
                 "Admin authentication is required."
             })
             .RequireAuthorization();
+
+        couponGroup
+            .MapDelete("/{id:long}", DeleteCoupon)
+            .WithName(nameof(DeleteCoupon))
+            .WithOpenApi(op => new(op)
+            {
+                Summary = "Delete Coupon",
+                Description =
+                "Deletes an existing coupon. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The coupon identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                ]
+            })
+            .RequireAuthorization();
     }
 
     internal async Task<Results<
@@ -52,5 +76,22 @@ public sealed class CouponEndpoints : ICarterModule
         var result = await sender.Send(command);
 
         return TypedResults.Created($"/coupons/{result.Id}");
+    }
+
+    internal async Task<Results<
+        NoContent,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> DeleteCoupon(
+        [FromRoute] string id,
+        ISender sender
+    )
+    {
+        var command = new DeleteCouponCommand(id);
+
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
     }
 }
