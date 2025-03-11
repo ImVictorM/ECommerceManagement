@@ -1,5 +1,6 @@
 using Application.Coupons.Abstracts;
 using Application.Coupons.Commands.CreateCoupon;
+using Application.Coupons.Commands.UpdateCoupon;
 using Application.Coupons.DTOs;
 
 using Contracts.Coupons;
@@ -20,5 +21,10 @@ internal sealed class CouponMappings : IRegister
             .Include<CategoryRestriction, CategoryRestrictionInput>();
 
         config.NewConfig<CreateCouponRequest, CreateCouponCommand>();
+
+        config
+            .NewConfig<(string Id, UpdateCouponRequest Request), UpdateCouponCommand>()
+            .Map(dest => dest.CouponId, src => src.Id)
+            .Map(dest => dest, src => src.Request);
     }
 }

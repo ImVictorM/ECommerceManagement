@@ -1,6 +1,7 @@
 using Application.Coupons.Commands.CreateCoupon;
 using Application.Coupons.Commands.DeleteCoupon;
 using Application.Coupons.Commands.ToggleCouponActivation;
+using Application.Coupons.Commands.UpdateCoupon;
 
 using Contracts.Coupons;
 
@@ -81,6 +82,28 @@ public sealed class CouponEndpoints : ICarterModule
                 ]
             })
             .RequireAuthorization();
+
+        couponGroup
+            .MapPut("/{id:long}", UpdateCoupon)
+            .WithName(nameof(UpdateCoupon))
+            .WithOpenApi(op => new(op)
+            {
+                Summary = "Update Coupon",
+                Description =
+                "Updates an existing coupon. Admin authentication is required.",
+                Parameters =
+                [
+                    new()
+                    {
+                        Name = "id",
+                        In = ParameterLocation.Path,
+                        Description = "The coupon identifier.",
+                        Required = true,
+                        Schema = new() { Type = "integer", Format = "int64" }
+                    },
+                ]
+            })
+            .RequireAuthorization();
     }
 
     internal async Task<Results<
@@ -129,6 +152,26 @@ public sealed class CouponEndpoints : ICarterModule
     )
     {
         var command = new ToggleCouponActivationCommand(id);
+
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
+    }
+
+    internal async Task<Results<
+        NoContent,
+        BadRequest,
+        NotFound,
+        UnauthorizedHttpResult,
+        ForbidHttpResult
+    >> UpdateCoupon(
+        [FromRoute] string id,
+        [FromBody] UpdateCouponRequest request,
+        ISender sender,
+        IMapper mapper
+    )
+    {
+        var command = mapper.Map<UpdateCouponCommand>((id, request));
 
         await sender.Send(command);
 
