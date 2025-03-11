@@ -2,10 +2,14 @@ using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.Events;
 using Domain.OrderAggregate.ValueObjects;
-using Domain.UnitTests.TestUtils;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.Errors;
+using Domain.OrderAggregate.Factories;
 using Domain.ShippingMethodAggregate.ValueObjects;
+using Domain.UserAggregate.ValueObjects;
+using Domain.UnitTests.TestUtils;
+
+using SharedKernel.UnitTests.TestUtils;
 
 using FluentAssertions;
 using Moq;
@@ -44,64 +48,82 @@ public class OrderTests
     }
 
     /// <summary>
-    /// Tests the order is created correctly when creating it with correct parameters.
+    /// Verifies the order is created correctly with valid parameters.
     /// </summary>
     [Fact]
     public async Task CreateOrder_WithValidParameters_CreatesWithoutThrowing()
     {
-        var mockReservedProducts = OrderUtils.CreateReservedProducts(2);
+        var ownerId = UserId.Create(1);
+        var orderLineItemDrafts = OrderUtils.CreateOrderLineItemDrafts(4);
+        var orderLineItems = orderLineItemDrafts
+            .Select(d => OrderUtils.CreateOrderLineItem(
+                productId: d.ProductId,
+                quantity: d.Quantity
+            ))
+            .ToList();
 
-        var mockOrderProducts = mockReservedProducts.Select(
-            (input) => OrderUtils.CreateOrderProduct(input.ProductId, input.Quantity)
-        ).ToHashSet();
+        var total = orderLineItems.Sum(op => op.CalculateTransactionPrice());
 
-        var mockTotal = mockOrderProducts.Sum(op => op.CalculateTransactionPrice());
+        var mockOrderAssemblyService = new Mock<IOrderAssemblyService>();
+        var mockOrderPricingService = new Mock<IOrderPricingService>();
 
-        var mockOrderService = new Mock<IOrderService>();
-
-        mockOrderService
-            .Setup(s => s.PrepareOrderProductsAsync(
-                mockReservedProducts,
+        mockOrderAssemblyService
+            .Setup(s => s.AssembleOrderLineItemsAsync(
+                orderLineItemDrafts,
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(mockOrderProducts);
+            .ReturnsAsync(orderLineItems);
 
-        mockOrderService
+        mockOrderPricingService
             .Setup(s => s.CalculateTotalAsync(
-                mockOrderProducts,
+                orderLineItems,
                 It.IsAny<ShippingMethodId>(),
                 It.IsAny<IEnumerable<OrderCoupon>>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(mockTotal);
+            .ReturnsAsync(total);
+
+        var factory = new OrderFactory(
+            mockOrderAssemblyService.Object,
+            mockOrderPricingService.Object
+        );
 
         var actionResult = await FluentActions
-            .Invoking(() => OrderUtils.CreateOrderAsync(
-                orderProducts: mockReservedProducts,
+            .Invoking(() => factory.CreateOrderAsync(
+                requestId: Guid.NewGuid(),
+                ownerId: UserId.Create(1),
+                shippingMethodId: ShippingMethodId.Create(2),
+                orderLineItemDrafts: orderLineItemDrafts,
+                paymentMethod: OrderUtils.CreateMockPaymentMethod(),
+                billingAddress: AddressUtils.CreateAddress(),
+                deliveryAddress: AddressUtils.CreateAddress(),
                 installments: 1,
-                orderService: mockOrderService.Object
+                couponsApplied: [],
+                default
             ))
             .Should()
             .NotThrowAsync();
 
         var order = actionResult.Subject;
 
-        order.OwnerId.Should().NotBeNull();
-        order.Total.Should().Be(mockTotal);
+        order.OwnerId.Should().Be(ownerId);
+        order.Total.Should().Be(total);
         order.Description.Should().Be("Order pending. Waiting for payment");
         order.OrderStatus.Should().Be(OrderStatus.Pending);
         order.DomainEvents.Should().HaveCount(1);
         order.DomainEvents.Should().ContainItemsAssignableTo<OrderCreated>();
         order.OrderTrackingEntries.Should().HaveCount(1);
         order.OrderTrackingEntries.First().OrderStatus.Should().Be(OrderStatus.Pending);
-        order.Products.Should().BeEquivalentTo(mockOrderProducts);
+        order.Products.Should().BeEquivalentTo(orderLineItems);
     }
 
     /// <summary>
-    /// Tests that canceling an order sets the order status to canceled, updates the description to match the reason, and increments the order status history.
+    /// Verifies canceling a pending order sets the order status to
+    /// <see cref="OrderStatus.Canceled"/>, updates the description to match the
+    /// reason, and creates a new order tracking entry.
     /// </summary>
     [Fact]
-    public async Task CancelOrder_WhenOrderIsPending_UpdatesItCorrectly()
+    public async Task CancelOrder_WithPendingOrder_CompletesSuccessfully()
     {
         var reasonToCancel = "Important reason";
         var order = await OrderUtils.CreateOrderAsync();
@@ -116,15 +138,21 @@ public class OrderTests
     }
 
     /// <summary>
-    /// Verifies that cancelling an order with status different than pending results in an exception
-    /// being throwed.
+    /// Verifies canceling an order with status different than pending results
+    /// in an exception being throwed.
     /// </summary>
-    /// <param name="status">The status different than pending.</param>
+    /// <param name="initialStatusDifferentThanPending">
+    /// The status different than pending.
+    /// </param>
     [Theory]
     [MemberData(nameof(OrderStatusesDifferentThanPending))]
-    public async Task CancelOrder_WhenOrderIsNotPending_ThrowsError(OrderStatus status)
+    public async Task CancelOrder_WithoutPendingOrder_ThrowsError(
+        OrderStatus initialStatusDifferentThanPending
+    )
     {
-        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: status);
+        var order = await OrderUtils.CreateOrderAsync(
+            initialOrderStatus: initialStatusDifferentThanPending
+        );
 
         FluentActions
             .Invoking(() => order.Cancel("Any"))
@@ -133,12 +161,14 @@ public class OrderTests
     }
 
     /// <summary>
-    /// Tests when order is pending it is possible to mark it as paid.
+    /// Verifies it is possible to mark a pending order as paid.
     /// </summary>
     [Fact]
-    public async Task MarkAsPaid_WhenOrderIsPending_UpdatesItCorrectly()
+    public async Task MarkAsPaid_WithPendingOrder_CompletesSuccessfully()
     {
-        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: OrderStatus.Pending);
+        var order = await OrderUtils.CreateOrderAsync(
+            initialOrderStatus: OrderStatus.Pending
+        );
 
         order.MarkAsPaid();
 
@@ -148,15 +178,21 @@ public class OrderTests
     }
 
     /// <summary>
-    /// Tests an error is thrown when trying to mark order as paid when the
+    /// Verifies an error is thrown when trying to mark an order as paid when the
     /// order status is different than pending.
     /// </summary>
-    /// <param name="statusDifferentThanPending">The order initial status.</param>
+    /// <param name="statusDifferentThanPending">
+    /// The order initial status.
+    /// </param>
     [Theory]
     [MemberData(nameof(OrderStatusesDifferentThanPending))]
-    public async Task MarkAsPaid_WhenOrderIsNotPending_ThrowsError(OrderStatus statusDifferentThanPending)
+    public async Task MarkAsPaid_WithoutPendingOrder_ThrowsError(
+        OrderStatus statusDifferentThanPending
+    )
     {
-        var order = await OrderUtils.CreateOrderAsync(initialOrderStatus: statusDifferentThanPending);
+        var order = await OrderUtils.CreateOrderAsync(
+            initialOrderStatus: statusDifferentThanPending
+        );
 
         FluentActions
             .Invoking(order.MarkAsPaid)

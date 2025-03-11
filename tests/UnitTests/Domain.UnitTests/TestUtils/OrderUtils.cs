@@ -1,13 +1,13 @@
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Factories;
-using Domain.OrderAggregate.Interfaces;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 using Domain.OrderAggregate.Enumerations;
 using Domain.ShippingMethodAggregate.ValueObjects;
+using Domain.CouponAggregate.ValueObjects;
 
 using SharedKernel.Interfaces;
 using SharedKernel.UnitTests.TestUtils;
@@ -33,13 +33,12 @@ public static class OrderUtils
     /// <param name="id">The order id.</param>
     /// <param name="ownerId">The order owner id.</param>
     /// <param name="shippingMethodId">The shipping method id.</param>
-    /// <param name="orderProducts">The order products to be processed.</param>
+    /// <param name="orderLineItemDrafts">The order line item drafts.</param>
     /// <param name="paymentMethod">The order payment method.</param>
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="installments">The order installments.</param>
     /// <param name="couponsApplied">The order coupons applied.</param>
-    /// <param name="orderService">The order service.</param>
     /// <param name="initialOrderStatus">The initial order status.</param>
     /// <returns>A new fake instance of the <see cref="Order"/> class.</returns>
     public static async Task<Order> CreateOrderAsync(
@@ -47,26 +46,24 @@ public static class OrderUtils
         OrderId? id = null,
         UserId? ownerId = null,
         ShippingMethodId? shippingMethodId = null,
-        IEnumerable<IOrderProductReserved>? orderProducts = null,
+        IEnumerable<OrderLineItemDraft>? orderLineItemDrafts = null,
         IPaymentMethod? paymentMethod = null,
         Address? billingAddress = null,
         Address? deliveryAddress = null,
         int? installments = null,
         IEnumerable<OrderCoupon>? couponsApplied = null,
-        IOrderService? orderService = null,
         OrderStatus? initialOrderStatus = null
     )
     {
-        var products = orderProducts ?? CreateReservedProducts();
-        var mockOrderService = orderService ?? CreateMockOrderService(products);
+        var lineItemDrafts = orderLineItemDrafts ?? CreateOrderLineItemDrafts();
 
-        var factory = new OrderFactory(mockOrderService);
+        var factory = CreateMockedOrderFactory(lineItemDrafts);
 
         var order = await factory.CreateOrderAsync(
             requestId ?? _faker.Random.Guid(),
             ownerId ?? UserId.Create(_faker.Random.Long()),
             shippingMethodId ?? ShippingMethodId.Create(_faker.Random.Long()),
-            products,
+            lineItemDrafts,
             paymentMethod ?? CreateMockPaymentMethod(),
             billingAddress ?? AddressUtils.CreateAddress(),
             deliveryAddress ?? AddressUtils.CreateAddress(),
@@ -96,37 +93,51 @@ public static class OrderUtils
     }
 
     /// <summary>
-    /// Generates a single instance of <see cref="IOrderProductReserved"/>.
+    /// Creates a single instance of <see cref="OrderLineItemDraft"/>.
     /// </summary>
     /// <param name="productId">The product id.</param>
     /// <param name="quantity">The product quantity.</param>
-    /// <returns>A new instance of <see cref="IOrderProductReserved"/>.</returns>
-    public static IOrderProductReserved CreateReservedProduct(
+    /// <returns>A new instance of <see cref="OrderLineItemDraft"/>.</returns>
+    public static OrderLineItemDraft CreateOrderLineItemDraft(
         ProductId? productId = null,
         int? quantity = null
     )
     {
-        return new Faker<IOrderProductReserved>()
-            .CustomInstantiator(_ => CreateOrderProductReservedMock(productId, quantity))
-            .Generate();
+        return OrderLineItemDraft.Create(
+            productId ?? ProductId.Create(_faker.Random.Long()),
+            quantity ?? _faker.Random.Int(1, 20)
+        );
     }
 
     /// <summary>
-    /// Generates fake instances of <see cref="IOrderProductReserved"/>.
+    /// Creates a collection of <see cref="OrderLineItemDraft"/>.
     /// </summary>
-    /// <returns>A list of reserved products.</returns>
-    public static IReadOnlyCollection<IOrderProductReserved> CreateReservedProducts(int count = 1)
+    /// <param name="count">
+    /// The quantity of order line item drafts to be created.
+    /// </param>
+    /// <returns>A collection of <see cref="OrderLineItemDraft"/>.</returns>
+    public static IReadOnlyCollection<OrderLineItemDraft> CreateOrderLineItemDrafts(
+        int count = 1
+    )
     {
-        return new Faker<IOrderProductReserved>()
-            .CustomInstantiator(_ => CreateOrderProductReservedMock())
-            .Generate(count);
+        return Enumerable
+            .Range(0, count)
+            .Select(i => CreateOrderLineItemDraft(
+                productId: ProductId.Create(i + 1)
+            ))
+            .ToList();
     }
 
     /// <summary>
-    /// Creates a new fake instance of <see cref="OrderProduct"/>.
+    /// Creates a new instance of <see cref="OrderLineItem"/>.
     /// </summary>
-    /// <returns>A new fake instance of <see cref="OrderProduct"/>.</returns>
-    public static OrderProduct CreateOrderProduct(
+    /// <param name="productId">The line item product id.</param>
+    /// <param name="quantity">The quantity purchased.</param>
+    /// <param name="basePrice">The line item base price.</param>
+    /// <param name="purchasedPrice">The line item purchased price.</param>
+    /// <param name="productCategories">The line item product categories.</param>
+    /// <returns>A new instance of <see cref="OrderLineItem"/>.</returns>
+    public static OrderLineItem CreateOrderLineItem(
         ProductId? productId = null,
         int? quantity = null,
         decimal? basePrice = null,
@@ -134,11 +145,14 @@ public static class OrderUtils
         IReadOnlySet<CategoryId>? productCategories = null
     )
     {
-        return OrderProduct.Create(
+        var lineItemBasePrice = _faker.Finance.Amount(10, 100);
+        var lineItemPurchasePrice = lineItemBasePrice * _faker.Random.Decimal(0.5m, 1m);
+
+        return OrderLineItem.Create(
             productId ?? ProductId.Create(_faker.Random.Int(1, 1000)),
             quantity ?? _faker.Random.Int(1, 10),
-            basePrice ?? _faker.Finance.Amount(10, 100),
-            purchasedPrice ?? _faker.Finance.Amount(10, 100),
+            basePrice ?? lineItemBasePrice,
+            purchasedPrice ?? lineItemPurchasePrice,
             productCategories ?? new HashSet<CategoryId>
             {
                 CategoryId.Create(_faker.Random.Int(1, 10))
@@ -147,9 +161,43 @@ public static class OrderUtils
     }
 
     /// <summary>
-    /// Creates a new fake instance of <see cref="IPaymentMethod"/>.
+    /// Creates a collection of <see cref="OrderLineItem"/>.
     /// </summary>
-    /// <returns>A new fake instance of <see cref="IPaymentMethod"/>.</returns>
+    /// <param name="count">The quantity of line items to be created.</param>
+    /// <returns>A collection of <see cref="OrderLineItem"/>.</returns>
+    public static IReadOnlyCollection<OrderLineItem> CreateOrderLineItems(
+        int count = 1
+    )
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(i => CreateOrderLineItem(
+                productId: ProductId.Create(i + 1)
+            ))
+            .ToList();
+    }
+
+    /// <summary>
+    /// Creates a collection of <see cref="OrderCoupon"/>.
+    /// </summary>
+    /// <param name="count">The quantity of order coupons to be created.</param>
+    /// <returns>A collection of <see cref="OrderCoupon"/>.</returns>
+    public static IReadOnlyCollection<OrderCoupon> CreateOrderCoupons(
+        int count = 1
+    )
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(i => OrderCoupon.Create(
+                CouponId.Create(i + 1)
+            ))
+            .ToList();
+    }
+
+    /// <summary>
+    /// Creates a new instance of <see cref="IPaymentMethod"/>.
+    /// </summary>
+    /// <returns>A new instance of <see cref="IPaymentMethod"/>.</returns>
     public static IPaymentMethod CreateMockPaymentMethod()
     {
         var mock = new Mock<IPaymentMethod>();
@@ -159,44 +207,39 @@ public static class OrderUtils
         return mock.Object;
     }
 
-    private static IOrderService CreateMockOrderService(IEnumerable<IOrderProductReserved> orderProducts)
+    private static OrderFactory CreateMockedOrderFactory(
+        IEnumerable<OrderLineItemDraft> lineItemDrafts
+    )
     {
-        var mock = new Mock<IOrderService>();
+        var lineItems = lineItemDrafts.Select(draft => CreateOrderLineItem(
+            draft.ProductId,
+            draft.Quantity
+        ));
 
-        var preparedProducts = orderProducts.Select(op => CreateOrderProduct(op.ProductId, op.Quantity));
-        var preparedProductsTotal = preparedProducts.Sum(pp => pp.CalculateTransactionPrice());
+        var total = lineItems.Sum(pp => pp.CalculateTransactionPrice());
 
-        mock
-            .Setup(s => s.PrepareOrderProductsAsync(
-                orderProducts,
+        var mockAssemblyService = new Mock<IOrderAssemblyService>();
+        var mockPricingService = new Mock<IOrderPricingService>();
+
+        mockAssemblyService
+            .Setup(s => s.AssembleOrderLineItemsAsync(
+                lineItemDrafts,
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(preparedProducts);
+            .ReturnsAsync(lineItems);
 
-        mock
+        mockPricingService
             .Setup(s => s.CalculateTotalAsync(
-                preparedProducts,
+                lineItems,
                 It.IsAny<ShippingMethodId>(),
                 It.IsAny<IEnumerable<OrderCoupon>>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(preparedProductsTotal);
+            .ReturnsAsync(total);
 
-        return mock.Object;
-    }
-
-    private static IOrderProductReserved CreateOrderProductReservedMock(
-         ProductId? productId = null,
-        int? quantity = null
-    )
-    {
-        var id = productId ?? ProductId.Create(_faker.Random.Int(1, 100));
-        var productQuantity = quantity ?? _faker.Random.Int(1, 10);
-
-        var mock = new Mock<IOrderProductReserved>();
-        mock.SetupGet(op => op.ProductId).Returns(id);
-        mock.SetupGet(op => op.Quantity).Returns(productQuantity);
-
-        return mock.Object;
+        return new OrderFactory(
+            mockAssemblyService.Object,
+            mockPricingService.Object
+        );
     }
 }

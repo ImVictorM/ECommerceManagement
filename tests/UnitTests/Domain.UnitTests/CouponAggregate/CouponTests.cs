@@ -56,7 +56,7 @@ public class CouponTests
         coupon.Discount.Should().NotBeNull();
         coupon.Code.Should().Be(coupon.Code.ToUpperSnakeCase());
         coupon.UsageLimit.Should().BePositive();
-        coupon.MinPrice.Should().BePositive();
+        coupon.MinPrice.Should().BeGreaterThanOrEqualTo(0);
         coupon.IsActive.Should().BeTrue();
     }
 

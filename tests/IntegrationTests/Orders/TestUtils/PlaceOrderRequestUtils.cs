@@ -26,7 +26,7 @@ public static class PlaceOrderRequestUtils
     /// <returns>A new place order object.</returns>
     public static PlaceOrderRequest CreateRequest(
         string? shippingMethodId = null,
-        IEnumerable<OrderProductRequest>? products = null,
+        IEnumerable<OrderLineItemRequest>? products = null,
         AddressContract? billingAddress = null,
         AddressContract? deliveryAddress = null,
         PaymentMethod? paymentMethod = null,
@@ -35,8 +35,8 @@ public static class PlaceOrderRequestUtils
     )
     {
         var requestOrderProducts = products ?? OrderUtils
-            .CreateReservedProducts(4)
-            .Select(rp => new OrderProductRequest(
+            .CreateOrderLineItemDrafts(4)
+            .Select(rp => new OrderLineItemRequest(
                 rp.ProductId.ToString(),
                 rp.Quantity
             ));

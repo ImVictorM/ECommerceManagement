@@ -26,10 +26,14 @@ public static class CouponUtils
     /// <param name="discount">The coupon discount.</param>
     /// <param name="code">The coupon code.</param>
     /// <param name="usageLimit">The coupon usage limit.</param>
-    /// <param name="minPrice">The coupon minimum price.</param>
+    /// <param name="minPrice">
+    /// The coupon minimum price. The default value is 0.
+    /// </param>
     /// <param name="autoApply">The coupon auto apply flag.</param>
     /// <param name="active">The initial state of the coupon.</param>
-    /// <param name="initialRestrictions">The coupon initial restrictions.</param>
+    /// <param name="initialRestrictions">
+    /// The coupon initial restrictions.
+    /// </param>
     /// <returns>A new instance of the <see cref="Coupon"/> class.</returns>
     public static Coupon CreateCoupon(
         CouponId? id = null,
@@ -43,10 +47,10 @@ public static class CouponUtils
     )
     {
         var coupon = Coupon.Create(
-            discount ?? DiscountUtils.CreateDiscount(),
+            discount ?? DiscountUtils.CreateDiscountValidToDate(),
             code ?? _faker.Lorem.Word(),
-            usageLimit ?? _faker.Random.Int(1, 100),
-            minPrice ?? _faker.Finance.Amount(0, 1000),
+            usageLimit ?? _faker.Random.Int(50, 100),
+            minPrice ?? 0m,
             autoApply ?? _faker.Random.Bool()
         );
 
@@ -70,6 +74,21 @@ public static class CouponUtils
         }
 
         return coupon;
+    }
+
+    /// <summary>
+    /// Creates a collection of <see cref="Coupon"/>.
+    /// </summary>
+    /// <param name="count">The quantity of coupons to be created.</param>
+    /// <returns>A collection of <see cref="Coupon"/>.</returns>
+    public static IReadOnlyCollection<Coupon> CreateCoupons(int count = 1)
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(index => CreateCoupon(
+                id: CouponId.Create(index + 1)
+            ))
+            .ToList();
     }
 
     /// <summary>

@@ -13,20 +13,23 @@ using Moq;
 namespace Application.UnitTests.ProductFeedback.Services;
 
 /// <summary>
-/// Unit tests for the <see cref="ProductFeedbackService"/> service.
+/// Unit tests for the <see cref="ProductFeedbackEligibilityService"/> service.
 /// </summary>
-public class ProductFeedbackServiceTests
+public class ProductFeedbackEligibilityServiceTests
 {
     private readonly Mock<IOrderRepository> _mockOrderRepository;
-    private readonly ProductFeedbackService _service;
+    private readonly ProductFeedbackEligibilityService _service;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="ProductFeedbackServiceTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="ProductFeedbackEligibilityServiceTests"/> class.
     /// </summary>
-    public ProductFeedbackServiceTests()
+    public ProductFeedbackEligibilityServiceTests()
     {
         _mockOrderRepository = new Mock<IOrderRepository>();
-        _service = new ProductFeedbackService(_mockOrderRepository.Object);
+        _service = new ProductFeedbackEligibilityService(
+            _mockOrderRepository.Object
+        );
     }
 
     /// <summary>
@@ -40,7 +43,10 @@ public class ProductFeedbackServiceTests
 
         var order = await OrderUtils.CreateOrderAsync(
             ownerId: userId,
-            orderProducts: [OrderUtils.CreateReservedProduct(productId: productId)]
+            orderLineItemDrafts:
+            [
+                OrderUtils.CreateOrderLineItemDraft(productId: productId)
+            ]
         );
 
         _mockOrderRepository

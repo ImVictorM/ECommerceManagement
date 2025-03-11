@@ -21,26 +21,28 @@ namespace Application.UnitTests.Products.Queries.GetProducts;
 public class GetProductsQueryHandlerTests
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
-    private readonly Mock<IProductService> _mockProductService;
+    private readonly Mock<IProductPricingService> _mockProductPricingService;
     private readonly GetProductsQueryHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GetProductsQueryHandlerTests"/> class,
+    /// Initializes a new instance of the <see cref="GetProductsQueryHandlerTests"/>
+    /// class.
     /// </summary>
     public GetProductsQueryHandlerTests()
     {
         _mockProductRepository = new Mock<IProductRepository>();
-        _mockProductService = new Mock<IProductService>();
+        _mockProductPricingService = new Mock<IProductPricingService>();
 
         _handler = new GetProductsQueryHandler(
             _mockProductRepository.Object,
-            _mockProductService.Object,
+            _mockProductPricingService.Object,
             new Mock<ILogger<GetProductsQueryHandler>>().Object
         );
     }
 
     /// <summary>
-    /// Tests that getting the products without specifying pagination details retrieves the first 20 products.
+    /// Verifies getting the products without specifying pagination details
+    /// retrieves the first 20 products.
     /// </summary>
     [Fact]
     public async Task HandleGetAllProducts_WithoutSpecifyingPagination_RetrievesFirstTwentyProducts()
@@ -76,7 +78,7 @@ public class GetProductsQueryHandlerTests
             ))
             .ReturnsAsync(queryResult);
 
-        _mockProductService
+        _mockProductPricingService
             .Setup(s => s.CalculateProductsPriceApplyingSaleAsync(
                 products,
                 It.IsAny<CancellationToken>()
@@ -94,7 +96,7 @@ public class GetProductsQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests that it is possible to fetch products including pagination details.
+    /// Verifies it is possible to fetch products including pagination details.
     /// </summary>
     [Fact]
     public async Task HandleGetAllProducts_SpecifyingPaginationDetails_RetrievesWithPagination()
@@ -136,7 +138,7 @@ public class GetProductsQueryHandlerTests
             ))
             .ReturnsAsync(queryResult);
 
-        _mockProductService
+        _mockProductPricingService
             .Setup(s => s.CalculateProductsPriceApplyingSaleAsync(
                 products,
                 It.IsAny<CancellationToken>()

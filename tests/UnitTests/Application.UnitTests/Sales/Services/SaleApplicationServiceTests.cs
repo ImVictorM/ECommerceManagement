@@ -10,38 +10,50 @@ using Domain.UnitTests.TestUtils;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
-using SharedKernel.UnitTests.TestUtils;
 
 namespace Application.UnitTests.Sales.Services;
 
 /// <summary>
-/// Unit tests for the <see cref="SaleService"/> service.
+/// Unit tests for the <see cref="SaleApplicationService"/> service.
 /// </summary>
-public class SaleServiceTests
+public class SaleApplicationServiceTests
 {
-    private readonly SaleService _service;
+    private readonly SaleApplicationService _service;
     private readonly Mock<ISaleRepository> _mockSaleRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="SaleServiceTests"/> class.
+    /// Initiates a new instance of the <see cref="SaleApplicationServiceTests"/>
+    /// class.
     /// </summary>
-    public SaleServiceTests()
+    public SaleApplicationServiceTests()
     {
         _mockSaleRepository = new Mock<ISaleRepository>();
 
-        _service = new SaleService(_mockSaleRepository.Object);
+        _service = new SaleApplicationService(_mockSaleRepository.Object);
     }
 
     /// <summary>
     /// Verifies that the method returns the correct sales for multiple products.
     /// </summary>
     [Fact]
-    public async Task GetProductsSalesAsync_WhenCalled_ReturnsCorrectSalesForEachProduct()
+    public async Task GetApplicableSalesForProductsAsync_WhenCalled_ReturnsCorrectSalesForEachProduct()
     {
         var products = new[]
         {
-            SaleProduct.Create(ProductId.Create(1), new HashSet<CategoryId> { CategoryId.Create(1) }),
-            SaleProduct.Create(ProductId.Create(2), new HashSet<CategoryId> { CategoryId.Create(2) })
+            SaleProduct.Create(
+                ProductId.Create(1),
+                new HashSet<CategoryId>
+                {
+                    CategoryId.Create(1)
+                }
+            ),
+            SaleProduct.Create(
+                ProductId.Create(2),
+                new HashSet<CategoryId>
+                {
+                    CategoryId.Create(2)
+                }
+            )
         };
 
         var expectedSales = new Dictionary<ProductId, IEnumerable<Sale>>
@@ -49,11 +61,6 @@ public class SaleServiceTests
             [products[0].ProductId] =
             [
                 SaleUtils.CreateSale(
-                    discount: DiscountUtils.CreateDiscount(
-                        percentage: PercentageUtils.Create(10),
-                        startingDate: DateTimeOffset.UtcNow.AddHours(-5),
-                        endingDate: DateTimeOffset.UtcNow.AddHours(5)
-                    ),
                     productsInSale: new HashSet<ProductReference>
                     {
                         ProductReference.Create(products[0].ProductId)
@@ -65,14 +72,9 @@ public class SaleServiceTests
             [products[1].ProductId] =
             [
                 SaleUtils.CreateSale(
-                    discount: DiscountUtils.CreateDiscount(
-                        percentage: PercentageUtils.Create(5),
-                        startingDate: DateTimeOffset.UtcNow.AddHours(-5),
-                        endingDate: DateTimeOffset.UtcNow.AddHours(5)
-                    ),
                     categoriesInSale: new HashSet<CategoryReference>
                     {
-                        CategoryReference.Create(CategoryId.Create(2))
+                        CategoryReference.Create(products[1].Categories.First())
                     },
                     productsExcludeFromSale: new HashSet<ProductReference>(),
                     productsInSale: new HashSet<ProductReference>()
@@ -87,7 +89,7 @@ public class SaleServiceTests
             ))
             .ReturnsAsync(expectedSales.SelectMany(kvp => kvp.Value));
 
-        var result = await _service.GetProductsSalesAsync(products);
+        var result = await _service.GetApplicableSalesForProductsAsync(products);
 
         result.Should().BeEquivalentTo(expectedSales);
     }

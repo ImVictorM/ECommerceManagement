@@ -62,15 +62,42 @@ public static class ProductUtils
     }
 
     /// <summary>
+    /// Creates a collection of <see cref="ProductReserved"/> with random
+    /// quantity reserved.
+    /// </summary>
+    /// <param name="count">
+    /// The quantity of products reserved to be created.
+    /// </param>
+    /// <param name="quantityMin">The minimum quantity reserved.</param>
+    /// <param name="quantityMax">The maximum quantity reserved.</param>
+    /// <returns>A collection of <see cref="ProductReserved"/>.</returns>
+    public static IReadOnlyCollection<ProductReserved> CreateProductsReserved(
+        int count = 1,
+        int quantityMin = 1,
+        int quantityMax = 50
+    )
+    {
+        var sequence = NumberUtils.CreateNumberSequenceAsString(count);
+
+        return sequence
+            .Select(n => ProductReserved.Create(
+                ProductId.Create(n),
+                _faker.Random.Int(quantityMin, quantityMax)
+            ))
+            .ToList();
+    }
+
+    /// <summary>
     /// Creates a list of <see cref="Product"/> items.
     /// </summary>
     /// <param name="count">The quantity of items to be generated.</param>
     /// <returns>A list containing <see cref="Product"/> items.</returns>
-    public static IEnumerable<Product> CreateProducts(int count = 1)
+    public static IReadOnlyCollection<Product> CreateProducts(int count = 1)
     {
         return Enumerable
             .Range(0, count)
-            .Select(index => CreateProduct(id: ProductId.Create(index + 1)));
+            .Select(index => CreateProduct(id: ProductId.Create(index + 1)))
+            .ToList();
     }
 
     /// <summary>
@@ -78,11 +105,15 @@ public static class ProductUtils
     /// </summary>
     /// <param name="count">The quantity of items to be generated.</param>
     /// <returns>A list of product images.</returns>
-    public static IEnumerable<ProductImage> CreateProductImages(int count = 1)
+    public static IReadOnlyCollection<ProductImage> CreateProductImages(
+        int count = 1
+    )
     {
         var imageURIs = CreateImageURIs(count);
 
-        return imageURIs.Select(ProductImage.Create);
+        return imageURIs
+            .Select(ProductImage.Create)
+            .ToList();
     }
 
     /// <summary>
@@ -90,11 +121,15 @@ public static class ProductUtils
     /// </summary>
     /// <param name="count">The quantity of items to be generated.</param>
     /// <returns>A list of product categories.</returns>
-    public static IEnumerable<ProductCategory> CreateProductCategories(int count = 1)
+    public static IReadOnlyCollection<ProductCategory> CreateProductCategories(
+        int count = 1
+    )
     {
         var sequence = NumberUtils.CreateNumberSequenceAsString(count);
 
-        return sequence.Select(n => ProductCategory.Create(CategoryId.Create(n)));
+        return sequence
+            .Select(n => ProductCategory.Create(CategoryId.Create(n)))
+            .ToList();
     }
 
     /// <summary>
@@ -102,10 +137,14 @@ public static class ProductUtils
     /// </summary>
     /// <param name="count">The quantity of images to be generated.</param>
     /// <returns>A list of image URIs.</returns>
-    public static IEnumerable<Uri> CreateImageURIs(int count = 1)
+    public static IReadOnlyCollection<Uri> CreateImageURIs(int count = 1)
     {
         return Enumerable
             .Range(0, count)
-            .Select(index => new Uri(_faker.Internet.UrlRootedPath("png"), UriKind.Relative));
+            .Select(index => new Uri(
+                _faker.Internet.UrlRootedPath("png"),
+                UriKind.Relative
+            ))
+            .ToList();
     }
 }

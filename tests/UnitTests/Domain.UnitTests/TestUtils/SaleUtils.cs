@@ -32,7 +32,7 @@ public static class SaleUtils
     )
     {
         var sale = Sale.Create(
-            discount ?? DiscountUtils.CreateDiscount(),
+            discount ?? DiscountUtils.CreateDiscountValidToDate(),
             categoriesInSale ?? new HashSet<CategoryReference>()
             {
                 CategoryReference.Create(CategoryId.Create(1))
