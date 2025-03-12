@@ -61,7 +61,7 @@ public static class CouponUtils
 
         if (!active)
         {
-            coupon.Deactivate();
+            coupon.ToggleActivation();
         }
 
         if (initialRestrictions != null)

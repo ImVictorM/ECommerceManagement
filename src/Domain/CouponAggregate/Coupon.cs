@@ -104,7 +104,7 @@ public class Coupon : AggregateRoot<CouponId>, IToggleSwitch
     /// <param name="usageLimit">The new coupon usage limit.</param>
     /// <param name="minPrice">The new coupon minimum price.</param>
     /// <param name="autoApply">
-    /// A boolean flag indicating if the coupon should auto apply.
+    /// A boolean value indicating if the coupon should auto apply.
     /// </param>
     public void Update(
         Discount discount,
