@@ -1,5 +1,7 @@
 using Contracts.Common;
 
+using SharedKernel.ValueObjects;
+
 using Bogus;
 
 namespace IntegrationTests.TestUtils.Contracts;
@@ -21,7 +23,7 @@ public static class DiscountContractUtils
     /// <returns>A new instance of the <see cref="DiscountContract"/> class.</returns>
     public static DiscountContract CreateDiscount(
         int? percentage = null,
-        string description = "Ten percent discount",
+        string description = "Default discount description",
         DateTimeOffset? startingDate = null,
         DateTimeOffset? endingDate = null
     )
@@ -42,6 +44,19 @@ public static class DiscountContractUtils
             startingDate ?? startingDateDiscount,
             endingDate ?? endingDateDiscount
         );
+    }
 
+    /// <summary>
+    /// Creates a new valid to date instance of the
+    /// <see cref="Discount"/> class.
+    /// </summary>
+    /// <returns>
+    /// A new valid to date <see cref="Discount"/>.
+    /// </returns>
+    public static DiscountContract CreateDiscountValidToDate()
+    {
+        return CreateDiscount(
+            startingDate: DateTimeOffset.UtcNow.AddHours(-4)
+        );
     }
 }
