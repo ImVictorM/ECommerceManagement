@@ -17,11 +17,15 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
-        if (obj is null || obj.GetType() != GetType()) return false;
+        if (obj is null || obj.GetType() != GetType())
+        {
+            return false;
+        }
 
         var valueObject = (ValueObject)obj;
 
-        return GetEqualityComponents().SequenceEqual(valueObject.GetEqualityComponents());
+        return GetEqualityComponents()
+            .SequenceEqual(valueObject.GetEqualityComponents());
     }
 
     /// <inheritdoc/>
@@ -57,6 +61,6 @@ public abstract class ValueObject : IEquatable<ValueObject>
     {
         return GetEqualityComponents()
             .Select((property) => property?.GetHashCode() ?? 0)
-            .Aggregate((acc, curr) => acc ^ curr);
+            .Aggregate(0, (acc, curr) => acc ^ curr);
     }
 }
