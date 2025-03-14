@@ -10,10 +10,10 @@ namespace Domain.CouponAggregate.ValueObjects.Restrictions;
 /// Represents a coupon restriction defined by categories allowed and products
 /// excluded.
 /// </summary>
-public class CategoryRestriction : CouponRestriction
+public class CouponCategoryRestriction : CouponRestriction
 {
-    private readonly IReadOnlyList<CouponCategory> _categoriesAllowed = null!;
-    private readonly IReadOnlyList<CouponProduct> _productsFromCategoryNotAllowed = null!;
+    private readonly List<CouponCategory> _categoriesAllowed = [];
+    private readonly List<CouponProduct> _productsFromCategoryNotAllowed = [];
 
     /// <summary>
     /// Gets the categories the restriction allows.
@@ -26,9 +26,9 @@ public class CategoryRestriction : CouponRestriction
     public IReadOnlyList<CouponProduct> ProductsFromCategoryNotAllowed
         => _productsFromCategoryNotAllowed;
 
-    private CategoryRestriction() { }
+    private CouponCategoryRestriction() { }
 
-    private CategoryRestriction(
+    private CouponCategoryRestriction(
         IEnumerable<CouponCategory> categoriesAllowed,
         IEnumerable<CouponProduct>? productsFromNotAllowed = null
     )
@@ -38,7 +38,7 @@ public class CategoryRestriction : CouponRestriction
     }
 
     /// <summary>
-    /// /Creates a new instance of the <see cref="CategoryRestriction"/> class.
+    /// /Creates a new instance of the <see cref="CouponCategoryRestriction"/> class.
     /// </summary>
     /// <param name="categoriesAllowed">
     /// The categories allowed.
@@ -47,12 +47,12 @@ public class CategoryRestriction : CouponRestriction
     /// The products from the category not allowed.
     /// </param>
     /// <returns>
-    /// A new instance of the <see cref="CategoryRestriction"/> class.
+    /// A new instance of the <see cref="CouponCategoryRestriction"/> class.
     /// </returns>
     /// <exception cref="EmptyArgumentException">
     /// Thrown when categories allowed list is empty.
     /// </exception>
-    public static CategoryRestriction Create(
+    public static CouponCategoryRestriction Create(
         IEnumerable<CouponCategory> categoriesAllowed,
         IEnumerable<CouponProduct>? productsFromCategoryNotAllowed = null
     )
@@ -64,7 +64,7 @@ public class CategoryRestriction : CouponRestriction
             );
         }
 
-        return new CategoryRestriction(
+        return new CouponCategoryRestriction(
             categoriesAllowed,
             productsFromCategoryNotAllowed
         );

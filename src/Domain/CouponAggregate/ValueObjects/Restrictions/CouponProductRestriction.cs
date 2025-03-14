@@ -7,33 +7,33 @@ namespace Domain.CouponAggregate.ValueObjects.Restrictions;
 /// <summary>
 /// Represents a coupon restriction that defines some products to be allowed.
 /// </summary>
-public class ProductRestriction : CouponRestriction
+public class CouponProductRestriction : CouponRestriction
 {
-    private readonly IReadOnlyList<CouponProduct> _productsAllowed = null!;
+    private readonly List<CouponProduct> _productsAllowed = [];
 
     /// <summary>
     /// Gets the products allowed.
     /// </summary>
     public IReadOnlyList<CouponProduct> ProductsAllowed => _productsAllowed;
 
-    private ProductRestriction() { }
+    private CouponProductRestriction() { }
 
-    private ProductRestriction(IEnumerable<CouponProduct> productsAllowed)
+    private CouponProductRestriction(IEnumerable<CouponProduct> productsAllowed)
     {
         _productsAllowed = productsAllowed.ToList();
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="ProductRestriction"/> class.
+    /// Creates a new instance of the <see cref="CouponProductRestriction"/> class.
     /// </summary>
     /// <param name="productsAllowed">The products allowed.</param>
     /// <returns>
-    /// A new instance of the <see cref="ProductRestriction"/> class.
+    /// A new instance of the <see cref="CouponProductRestriction"/> class.
     /// </returns>
     /// <exception cref="EmptyArgumentException">
     /// Thrown when the products allowed list is empty.
     /// </exception>
-    public static ProductRestriction Create(IEnumerable<CouponProduct> productsAllowed)
+    public static CouponProductRestriction Create(IEnumerable<CouponProduct> productsAllowed)
     {
         if (!productsAllowed.Any())
         {
@@ -42,7 +42,7 @@ public class ProductRestriction : CouponRestriction
             );
         }
 
-        return new ProductRestriction(productsAllowed);
+        return new CouponProductRestriction(productsAllowed);
     }
 
     /// <inheritdoc/>
