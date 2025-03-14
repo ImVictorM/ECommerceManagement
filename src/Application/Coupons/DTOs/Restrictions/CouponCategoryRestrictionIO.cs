@@ -1,6 +1,4 @@
-using Application.Coupons.Abstracts;
-
-namespace Application.Coupons.DTOs;
+namespace Application.Coupons.DTOs.Restrictions;
 
 /// <summary>
 /// Represents a category restriction input.
@@ -11,7 +9,7 @@ namespace Application.Coupons.DTOs;
 /// <param name="ProductFromCategoryNotAllowedIds">
 /// The product from the category ids that are not allowed.
 /// </param>
-public record CategoryRestrictionInput(
+public record CouponCategoryRestrictionIO(
     IEnumerable<string> CategoryAllowedIds,
     IEnumerable<string>? ProductFromCategoryNotAllowedIds = null
-) : ICouponRestrictionInput;
+) : CouponRestrictionIO;

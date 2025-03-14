@@ -1,5 +1,6 @@
 using Application.Common.Persistence.Repositories;
 using Application.Coupons.DTOs;
+using Application.Coupons.Extensions;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
@@ -39,7 +40,16 @@ internal sealed partial class GetCouponsQueryHandler
 
         LogCouponsRetrievedSuccessfully(coupons.Count());
 
-        return coupons
-            .Select(coupon => new CouponResult(coupon));
+        var result = coupons.Select(coupon => new CouponResult(
+            coupon.Id.ToString(),
+            coupon.Discount,
+            coupon.Code,
+            coupon.UsageLimit,
+            coupon.AutoApply,
+            coupon.MinPrice,
+            coupon.Restrictions.ParseRestrictions()
+        ));
+
+        return result;
     }
 }

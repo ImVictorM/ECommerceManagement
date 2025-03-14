@@ -1,5 +1,5 @@
 using Application.Common.Security.Authorization.Requests;
-using Application.Coupons.Abstracts;
+using Application.Coupons.DTOs.Restrictions;
 
 using SharedKernel.ValueObjects;
 
@@ -27,5 +27,5 @@ public record UpdateCouponCommand(
     int UsageLimit,
     bool AutoApply,
     decimal MinPrice,
-    IEnumerable<ICouponRestrictionInput>? Restrictions = null
+    IEnumerable<CouponRestrictionIO>? Restrictions = null
 ) : IRequestWithAuthorization<Unit>;

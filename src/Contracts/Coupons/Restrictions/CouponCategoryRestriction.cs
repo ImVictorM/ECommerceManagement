@@ -9,7 +9,7 @@ namespace Contracts.Coupons.Restrictions;
 /// <param name="ProductFromCategoryNotAllowedIds">
 /// The product from the category ids that are not allowed.
 /// </param>
-public record CategoryRestriction(
+public record CouponCategoryRestriction(
     IEnumerable<string> CategoryAllowedIds,
     IEnumerable<string>? ProductFromCategoryNotAllowedIds = null
 ) : CouponRestriction();

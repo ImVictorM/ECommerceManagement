@@ -4,6 +4,6 @@ namespace Contracts.Coupons.Restrictions;
 /// Represents a product restriction contract.
 /// </summary>
 /// <param name="ProductAllowedIds">The product allowed ids.</param>
-public record ProductRestriction(
+public record CouponProductRestriction(
     IEnumerable<string> ProductAllowedIds
 ) : CouponRestriction();

@@ -1,6 +1,6 @@
-using Application.Common.DTOs;
 using Application.Common.Security.Authorization.Requests;
-using Application.Coupons.Abstracts;
+using Application.Coupons.DTOs.Restrictions;
+using Application.Common.DTOs;
 
 using SharedKernel.ValueObjects;
 
@@ -22,6 +22,6 @@ public record CreateCouponCommand(
     int UsageLimit,
     bool AutoApply,
     decimal MinPrice,
-    IEnumerable<ICouponRestrictionInput>? Restrictions = null
+    IEnumerable<CouponRestrictionIO>? Restrictions = null
 ) : IRequestWithAuthorization<CreatedResult>;
 

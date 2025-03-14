@@ -1,11 +1,9 @@
-using Application.Coupons.Abstracts;
-
-namespace Application.Coupons.DTOs;
+namespace Application.Coupons.DTOs.Restrictions;
 
 /// <summary>
 /// Represents a product restriction input.
 /// </summary>
 /// <param name="ProductAllowedIds">The product allowed ids.</param>
-public record ProductRestrictionInput(
+public record CouponProductRestrictionIO(
     IEnumerable<string> ProductAllowedIds
-) : ICouponRestrictionInput;
+) : CouponRestrictionIO;
