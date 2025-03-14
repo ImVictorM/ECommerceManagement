@@ -1,5 +1,5 @@
-using Application.Coupons.Abstracts;
 using Application.Coupons.Commands.CreateCoupon;
+using Application.Coupons.DTOs.Restrictions;
 
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
@@ -36,7 +36,7 @@ public static class CreateCouponCommandUtils
         string? code = null,
         int? usageLimit = null,
         decimal? minPrice = null,
-        IEnumerable<ICouponRestrictionInput>? restrictions = null,
+        IEnumerable<CouponRestrictionIO>? restrictions = null,
         bool autoApply = false
     )
     {

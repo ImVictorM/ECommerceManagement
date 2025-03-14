@@ -122,7 +122,7 @@ public class CouponTests
     public static readonly IEnumerable<object[]> CouponRestrictions =
     [
         [
-            CategoryRestriction.Create(
+            CouponCategoryRestriction.Create(
                 [
                     CouponCategory.Create(CategoryId.Create(1)),
                     CouponCategory.Create(CategoryId.Create(2))
@@ -130,7 +130,7 @@ public class CouponTests
             )
         ],
         [
-            ProductRestriction.Create(
+            CouponProductRestriction.Create(
                 [
                     CouponProduct.Create(ProductId.Create(1)),
                 ]
@@ -164,12 +164,12 @@ public class CouponTests
     {
         var coupon = CouponUtils.CreateCoupon();
 
-        coupon.AssignRestriction(CategoryRestriction.Create([
+        coupon.AssignRestriction(CouponCategoryRestriction.Create([
             CouponCategory.Create(CategoryId.Create(1)),
             CouponCategory.Create(CategoryId.Create(2))
         ]));
 
-        coupon.AssignRestriction(ProductRestriction.Create([
+        coupon.AssignRestriction(CouponProductRestriction.Create([
             CouponProduct.Create(ProductId.Create(1)),
         ]));
 
@@ -312,13 +312,13 @@ public class CouponTests
             usageLimit: 100
         );
 
-        var productRestriction = ProductRestriction.Create([
+        var productRestriction = CouponProductRestriction.Create([
             CouponProduct.Create(ProductId.Create(1)),
             CouponProduct.Create(ProductId.Create(2)),
             CouponProduct.Create(ProductId.Create(3)),
         ]);
 
-        var categoryRestriction = CategoryRestriction.Create(
+        var categoryRestriction = CouponCategoryRestriction.Create(
             [CouponCategory.Create(CategoryId.Create(1))],
             [CouponProduct.Create(ProductId.Create(2))]
         );

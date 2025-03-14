@@ -1,5 +1,5 @@
-using Application.Coupons.Abstracts;
 using Application.Coupons.Commands.UpdateCoupon;
+using Application.Coupons.DTOs.Restrictions;
 
 using Domain.UnitTests.TestUtils;
 
@@ -36,7 +36,7 @@ public static class UpdateCouponCommandUtils
         string? code = null,
         int? usageLimit = null,
         decimal? minPrice = null,
-        IEnumerable<ICouponRestrictionInput>? restrictions = null,
+        IEnumerable<CouponRestrictionIO>? restrictions = null,
         bool autoApply = false
     )
     {

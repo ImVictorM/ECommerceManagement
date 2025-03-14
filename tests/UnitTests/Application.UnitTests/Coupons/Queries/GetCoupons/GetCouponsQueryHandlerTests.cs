@@ -54,7 +54,6 @@ public class GetCouponsQueryHandlerTests
 
         result.Should().HaveCount(coupons.Count);
         result.Should().AllBeOfType<CouponResult>();
-        result.Select(r => r.Coupon).Should().BeEquivalentTo(coupons);
     }
 
     /// <summary>

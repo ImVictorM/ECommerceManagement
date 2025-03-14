@@ -135,7 +135,7 @@ public class CreateCouponTests : BaseIntegrationTest
             minPrice: 150m,
             restrictions:
             [
-                new CategoryRestriction(
+                new CouponCategoryRestriction(
                     [
                         _seedCategory
                             .GetEntityId(CategorySeedType.TECHNOLOGY)
@@ -147,7 +147,7 @@ public class CreateCouponTests : BaseIntegrationTest
                             .ToString()
                     ]
                 ),
-                new ProductRestriction([
+                new CouponProductRestriction([
                     _seedProduct
                         .GetEntityId(ProductSeedType.PENCIL)
                         .ToString()

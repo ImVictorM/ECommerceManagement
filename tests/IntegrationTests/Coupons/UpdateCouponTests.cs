@@ -132,7 +132,7 @@ public class UpdateCouponTests : BaseIntegrationTest
             minPrice: 0m,
             restrictions:
             [
-                new CategoryRestriction([
+                new CouponCategoryRestriction([
                     _seedCategory
                         .GetEntityId(CategorySeedType.TECHNOLOGY)
                         .ToString()

@@ -2,9 +2,9 @@ using Application.Common.DTOs;
 using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Coupons.Commands.CreateCoupon;
-using Application.Coupons.DTOs;
 using Application.UnitTests.Coupons.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Extensions;
+using Application.Coupons.DTOs.Restrictions;
 
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
@@ -52,8 +52,8 @@ public class CreateCouponCommandHandlerTests
             CreateCouponCommandUtils.CreateCommand(
                 restrictions:
                 [
-                    new ProductRestrictionInput(["1", "3", "401"]),
-                    new CategoryRestrictionInput(
+                    new CouponProductRestrictionIO(["1", "3", "401"]),
+                    new CouponCategoryRestrictionIO(
                         ["1", "3"],
                         ["401"]
                     )
