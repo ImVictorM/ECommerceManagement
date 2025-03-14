@@ -1,0 +1,76 @@
+@base_endpoint = http://localhost:8000/coupons
+@id_coupon = 2
+@token = insert-token-here
+
+### Creates a new coupon. Admin authentication is required.
+### Returns an 201 CREATED response in case of success.
+POST {{base_endpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "discount": {
+    "percentage": 50,
+    "description": "Black Friday",
+    "startingDate": "2025-11-28T16:55:50.273Z",
+    "endingDate": "2025-11-30T16:55:50.273Z"
+  },
+  "code": "BLACK50",
+  "usageLimit": 250,
+  "autoApply": true,
+  "minPrice": 500,
+  "restrictions": []
+}
+
+### Retrieves a list of coupons based on the specified filters.
+### Admin authentication is required.
+### Optional filters:
+### - `active={bool}`: Filter coupons by their activation status.
+### - `expiringAfter={dateTime}`: Filter coupons that expire after the specified UTC date.
+### - `expiringBefore={dateTime}`: Filter coupons that expire before the specified UTC date.
+### - `validForDate={dateTime}`: Filter coupons that are valid on the specified UTC date.
+### Returns an 200 OK response in case of success.
+GET {{base_endpoint}}
+Authorization: Bearer {{token}}
+
+### Deletes an existing coupon. Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+DELETE {{base_endpoint}}/{{id_coupon}}
+Authorization: Bearer {{token}}
+
+### Toggles the active status of an existing coupon.
+### Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+PATCH {{base_endpoint}}/{{id_coupon}}
+Authorization: Bearer {{token}}
+
+### Updates the details of an existing coupon.
+### Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+PUT {{base_endpoint}}/{{id_coupon}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "discount": {
+    "percentage": 50,
+    "description": "Black Friday",
+    "startingDate": "2025-11-28T16:55:50.273Z",
+    "endingDate": "2025-11-30T16:55:50.273Z"
+  },
+  "code": "BLACK50",
+  "usageLimit": 250,
+  "autoApply": true,
+  "minPrice": 500,
+  "restrictions": [
+    {
+      "$type": "CouponCategoryRestriction",
+      "categoryAllowedIds": ["1"],
+      "productFromCategoryNotAllowedIds": []
+    },
+    {
+      "$type": "CouponProductRestriction",
+      "productAllowedIds": ["1"]
+    }
+  ]
+}
