@@ -4,7 +4,7 @@
 
 The Payment Webhooks feature provides an endpoint that acts as a webhook for payment gateways. This endpoint receives notifications from the payment gateway and updates internal data accordingly. Secure communication is ensured through an HMAC-based signature validation.
 
-### Handle Payment Status Changed
+## Handle Payment Status Changed
 
 This endpoint allows payment gateways to send notifications regarding payment status changes. The provided signature is validated to ensure the authenticity of the request.
 
@@ -12,12 +12,19 @@ This endpoint allows payment gateways to send notifications regarding payment st
 POST "/webhooks/payments"
 ```
 
-#### Headers
+### Headers
 
 - `Content-Type: application/json`
 - `X-Provider-Signature: A hashed signature generated using an HMAC algorithm to ensure the request's authenticity.`
 
-#### Request Format
+### Request Format
+
+Field Specifications:
+
+- `paymentId` – A valid identifier for the payment transaction. Cannot be empty.
+- `paymentStatus` – A predefined status indicating the current state of the payment. Must match system-supported statuses.
+
+Example Request:
 
 ```json
 {
@@ -26,7 +33,7 @@ POST "/webhooks/payments"
 }
 ```
 
-#### Response Format
+### Response Format
 
 - 204 NO_CONTENT: The notification was successfully processed, and internal data was updated.
 - 401 UNAUTHORIZED: The provided signature is invalid.

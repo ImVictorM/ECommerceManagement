@@ -4,7 +4,7 @@
 
 The Product Feedback feature allows customers to leave feedback on products they have purchased. Customers can submit ratings and reviews, view feedback left by others, and manage their own feedback. Authentication is required for customer-specific operations.
 
-### Leave Product Feedback
+## Leave Product Feedback
 
 Allows a customer to leave feedback for a purchased product.<br>
 Customer authentication is required.
@@ -13,18 +13,20 @@ Customer authentication is required.
 POST "/products/{{id_product}}/feedback"
 ```
 
-#### Headers
+### Headers
 
 - `Content-Type: application/json`
 - `Authorization: Bearer {{token}}`
 
-#### Request Format
+### Request Format
 
-Field Rules:
+Field Specifications:
 
-- title - must not be empty
-- content - must not be empty
-- starRating - must be an integer between 1 and 5
+- `title` - The review title. Cannot be empty.
+- `content` - The review content message. Cannot be empty.
+- `starRating` - A positive integer representing the rating (1-5).
+
+Example Request:
 
 ```json
 {
@@ -34,14 +36,14 @@ Field Rules:
 }
 ```
 
-#### Response Format
+### Response Format
 
 - 201 CREATED: The feedback was submitted successfully.
 - 400 BAD_REQUEST: The request body is invalid or missing required fields.
 - 401 UNAUTHORIZED: The current user is not authenticated.
 - 403 FORBIDDEN: The user is not allowed to leave feedback for this product.
 
-### Get Product Feedback
+## Get Product Feedback
 
 Retrieves a list of active feedback items for a specific product.
 
@@ -49,9 +51,11 @@ Retrieves a list of active feedback items for a specific product.
 GET "/products/{{id_product}}/feedback"
 ```
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was approved and the product feedback was returned.
+
+Example Response:
 
 ```json
 [
@@ -67,18 +71,26 @@ GET "/products/{{id_product}}/feedback"
 ]
 ```
 
-### Get Customer Product Feedback
+## Get Customer Product Feedback
 
 Retrieves a list of active product feedback items left by a specific customer. <br>
 Customer or admin authentication is required.
 
-#### Headers
+```js
+GET "/users/customers/{{id_user}}/feedback/"
+```
+
+### Headers
 
 - `Authorization: Bearer {{token}}`
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was approved and the customer feedback was returned.
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The user is not authorized to view this feedback.
+
+Example Response:
 
 ```json
 [
@@ -93,10 +105,7 @@ Customer or admin authentication is required.
 ]
 ```
 
-- 401 UNAUTHORIZED: The current user is not authenticated.
-- 403 FORBIDDEN: The user is not authorized to view this feedback.
-
-### Deactivate Customer Product Feedback
+## Deactivate Customer Product Feedback
 
 Deactivates a specific product feedback entry from a customer. <br>
 Customer or admin authentication is required.
@@ -105,11 +114,11 @@ Customer or admin authentication is required.
 DELETE "/users/customers/{{id_user}}/feedback/{{id_feedback}}"
 ```
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 
-#### Response Format
+### Response Format
 
 - 204 NO_CONTENT: The feedback was successfully deactivated.
 - 401 UNAUTHORIZED: The current user is not authenticated.

@@ -131,6 +131,8 @@ GET "/coupons"
 ### Response Format
 
 - 200 OK: Coupons successfully retrieved.
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user is not an administrator.
 
 Example Response:
 
@@ -162,9 +164,6 @@ Example Response:
   }
 ]
 ```
-
-- 401 UNAUTHORIZED: The current user is not authenticated.
-- 403 FORBIDDEN: The current user is not an administrator.
 
 ## Delete Coupon
 
