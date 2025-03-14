@@ -9,17 +9,22 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
-internal sealed class ProductRestrictionConfigurations : EntityTypeConfigurationDependency<ProductRestriction>
+internal sealed class CouponProductRestrictionConfigurations
+    : EntityTypeConfigurationDependency<CouponProductRestriction>
 {
     /// <inheritdoc/>
-    public override void Configure(EntityTypeBuilder<ProductRestriction> builder)
+    public override void Configure(
+        EntityTypeBuilder<CouponProductRestriction> builder
+    )
     {
         builder.ToTable("restriction_products");
 
         ConfigureOwnedProductsAllowedTable(builder);
     }
 
-    private static void ConfigureOwnedProductsAllowedTable(EntityTypeBuilder<ProductRestriction> builder)
+    private static void ConfigureOwnedProductsAllowedTable(
+        EntityTypeBuilder<CouponProductRestriction> builder
+    )
     {
         builder.OwnsMany(pr => pr.ProductsAllowed, productsBuilder =>
         {

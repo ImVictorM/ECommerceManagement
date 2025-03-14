@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
-internal sealed class CouponRestrictionConfigurations : EntityTypeConfigurationDependency<CouponRestriction>
+internal sealed class CouponRestrictionConfigurations
+    : EntityTypeConfigurationDependency<CouponRestriction>
 {
     /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<CouponRestriction> builder)
@@ -22,6 +23,8 @@ internal sealed class CouponRestrictionConfigurations : EntityTypeConfigurationD
 
         builder.HasKey("id");
 
+        // This property is configured in the CouponConfigurations as a foreign
+        // key.
         builder
             .Property<CouponId>("id_coupon")
             .HasConversion(id => id.Value, value => CouponId.Create(value))

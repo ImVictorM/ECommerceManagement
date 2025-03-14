@@ -188,7 +188,8 @@ namespace Infrastructure.Migrations
                         name: "FK_restriction_categories_coupons_id_coupon",
                         column: x => x.id_coupon,
                         principalTable: "coupons",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,7 +206,8 @@ namespace Infrastructure.Migrations
                         name: "FK_restriction_products_coupons_id_coupon",
                         column: x => x.id_coupon,
                         principalTable: "coupons",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -629,8 +631,8 @@ namespace Infrastructure.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    quantity = table.Column<int>(type: "integer", nullable: false),
                     id_product = table.Column<long>(type: "bigint", nullable: false),
+                    quantity = table.Column<int>(type: "integer", nullable: false),
                     base_price = table.Column<decimal>(type: "numeric", nullable: false),
                     purchased_price = table.Column<decimal>(type: "numeric", nullable: false),
                     id_order = table.Column<long>(type: "bigint", nullable: false)
@@ -826,12 +828,12 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "id", "created_at", "email", "is_active", "name", "password_hash", "phone", "updated_at" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 836, DateTimeKind.Unspecified).AddTicks(9564), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "D604E4299379FD264911BBC0ADE6C9E87A3C0964D79E84FF05FB40B34FA05ACB-F5583CFFEB0342C118D97B1B3206A378", null, new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 836, DateTimeKind.Unspecified).AddTicks(9569), new TimeSpan(0, 0, 0, 0, 0)) });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4465), new TimeSpan(0, 0, 0, 0, 0)), "admin@email.com", true, "admin", "FA55DE04791D423A6A3F23B60FF2B59660F96A397C77A87A98A26A3316B9A24C-495A517EF37FC1DF7D8301655D2FDA15", null, new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4469), new TimeSpan(0, 0, 0, 0, 0)) });
 
             migrationBuilder.InsertData(
                 table: "carriers",
                 columns: new[] { "id", "created_at", "email", "name", "password_hash", "phone", "updated_at", "id_role" },
-                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 851, DateTimeKind.Unspecified).AddTicks(2738), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "0AEF8A8F1045137B17C1ABD46929A9EC9B076C4BECC9051796953D0C7C6A1CC8-42A3FE17C6E0AD707DA1BFD79432BE5F", "", new DateTimeOffset(new DateTime(2025, 3, 6, 16, 31, 6, 851, DateTimeKind.Unspecified).AddTicks(2742), new TimeSpan(0, 0, 0, 0, 0)), 3L });
+                values: new object[] { 1L, new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6564), new TimeSpan(0, 0, 0, 0, 0)), "carrier@email.com", "ECommerceManagementCarrier", "0BF7B0638748AA86326E9885E77E44F584D03207237BC8D16AFED4D82BD7F16A-4A782FA88CA45F81509EF1F7EF8BC43D", "", new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6571), new TimeSpan(0, 0, 0, 0, 0)), 3L });
 
             migrationBuilder.InsertData(
                 table: "users_roles",
