@@ -4,6 +4,80 @@
 
 The Orders feature provides functionality for managing orders within the e-commerce system. Authenticated customers can place orders, and administrators can view and manage orders. Customers can retrieve their own orders, while administrators can access all orders. Secure authentication and role-based permissions ensure that only authorized users can perform specific actions.
 
+> Note: No actual charges are applied during order placement or any other operation. Payment processing is simulated using abstractions.
+
+### Payment Methods
+
+When placing an order, you must include a payment method. Payment methods are polymorphic objects, allowing multiple types of payment options. The following payment method types are supported:
+
+#### CreditCard
+
+Represents a payment method using a credit card.
+
+Field Specifications:
+
+- `$type` - Must be set to "CreditCard".
+- `token` - A tokenized representation of the credit card data.
+
+Example:
+
+```json
+{
+  "$type": "CreditCard",
+  "token": "tokenized-credit-card-data"
+}
+```
+
+#### DebitCard
+
+Represents a payment method using a debit card
+
+Field Specifications:
+
+- `$type` - Must be set to "DebitCard".
+- `token` - A tokenized representation of the debit card data.
+
+Example:
+
+```json
+{
+  "$type": "DebitCard",
+  "token": "tokenized-debit-card-data"
+}
+```
+
+#### PaymentSlip
+
+Represents a payment method using a payment slip.
+
+Field Specifications:
+
+- `$type` - Must be set to "PaymentSlip".
+
+Example:
+
+```json
+{
+  "$type": "PaymentSlip"
+}
+```
+
+#### Pix
+
+Represents a payment method using Pix.
+
+Field Specifications:
+
+- `$type` - Must be set to "Pix".
+
+Example:
+
+```json
+{
+  "$type": "Pix"
+}
+```
+
 ## Place Order
 
 Allows a customer to place an order. Customer authentication is required.
@@ -47,7 +121,7 @@ Example Request:
 
 ```json
 {
-  "shippingMethodId": "2",
+  "shippingMethodId": "1",
   "products": [
     {
       "productId": "2",
@@ -69,7 +143,8 @@ Example Request:
     "neighborhood": "Grove Street, home"
   },
   "paymentMethod": {
-    "type": "credit_card"
+    "$type": "CreditCard",
+    "token": "tokenized-credit-card-data"
   },
   "couponAppliedIds": [],
   "installments": 1

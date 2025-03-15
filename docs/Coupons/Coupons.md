@@ -14,9 +14,9 @@ Specifies restrictions based on product categories.
 
 Field Specifications:
 
-- $type: Must be set to "CouponCategoryRestriction".
-- categoryAllowedIds: Array of category IDs for which the coupon is applicable.
-- productFromCategoryNotAllowedIds (optional): Array of product IDs from the allowed categories that should not receive the discount.
+- `$type` - Must be set to "CouponCategoryRestriction".
+- `categoryAllowedIds` - Array of category IDs for which the coupon is applicable.
+- `productFromCategoryNotAllowedIds` (optional) - Array of product IDs from the allowed categories that should not receive the discount.
 
 Example:
 
@@ -34,8 +34,8 @@ Specifies restrictions based on individual products.
 
 Field Rules
 
-- $type: Must be set to "CouponProductRestriction".
-- productAllowedIds: Array of product IDs for which the coupon is applicable.
+- `$type` - Must be set to "CouponProductRestriction".
+- `productAllowedIds` - Array of product IDs for which the coupon is applicable.
 
 Example:
 
