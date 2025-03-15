@@ -18,7 +18,7 @@ public record PlaceOrderRequest(
     IEnumerable<OrderLineItemRequest> Products,
     AddressContract BillingAddress,
     AddressContract DeliveryAddress,
-    PaymentMethod PaymentMethod,
+    BasePaymentMethod PaymentMethod,
     IEnumerable<string>? CouponAppliedIds = null,
     int? installments = null
 );

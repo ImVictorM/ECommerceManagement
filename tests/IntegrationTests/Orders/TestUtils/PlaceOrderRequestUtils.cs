@@ -29,7 +29,7 @@ public static class PlaceOrderRequestUtils
         IEnumerable<OrderLineItemRequest>? products = null,
         AddressContract? billingAddress = null,
         AddressContract? deliveryAddress = null,
-        PaymentMethod? paymentMethod = null,
+        BasePaymentMethod? paymentMethod = null,
         IEnumerable<string>? couponAppliedIds = null,
         int? installments = null
     )
@@ -46,7 +46,7 @@ public static class PlaceOrderRequestUtils
             products ?? requestOrderProducts,
             billingAddress ?? AddressContractUtils.CreateAddress(),
             deliveryAddress ?? AddressContractUtils.CreateAddress(),
-            paymentMethod ?? new CreditCardPayment("token"),
+            paymentMethod ?? new CreditCard("token"),
             couponAppliedIds,
             installments
         );
