@@ -11,19 +11,21 @@ namespace Application.Coupons.Services;
 
 internal sealed class CouponApplicationService : ICouponApplicationService
 {
+    private readonly ICouponUsageService _couponUsageService;
     private readonly ICouponRepository _couponRepository;
     private readonly IDiscountService _discountService;
 
     public CouponApplicationService(
+        ICouponUsageService couponUsageService,
         ICouponRepository couponRepository,
         IDiscountService discountService
     )
     {
+        _couponUsageService = couponUsageService;
         _couponRepository = couponRepository;
         _discountService = discountService;
     }
 
-    /// <inheritdoc/>
     public async Task<decimal> ApplyCouponsAsync(
         CouponOrder order,
         IEnumerable<CouponId> couponToApplyIds,
@@ -35,7 +37,7 @@ internal sealed class CouponApplicationService : ICouponApplicationService
             cancellationToken
         );
 
-        ValidateCouponsApplication(coupons, couponToApplyIds, order);
+        await ValidateCouponsApplication(coupons, couponToApplyIds, order, cancellationToken);
 
         var couponDiscounts = coupons.Select(c => c.Discount);
 
@@ -45,10 +47,27 @@ internal sealed class CouponApplicationService : ICouponApplicationService
         );
     }
 
-    private static void ValidateCouponsApplication(
+    public async Task<bool> IsCouponApplicableAsync(
+        Coupon coupon,
+        CouponOrder order,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return coupon.IsActive
+            && coupon.Restrictions.All(r => r.PassRestriction(order))
+            && coupon.Discount.IsValidToDate
+            && order.Total >= coupon.MinPrice
+            && await _couponUsageService.IsWithinUsageLimitAsync(
+                coupon,
+                cancellationToken);
+    }
+
+    private async Task ValidateCouponsApplication(
         IEnumerable<Coupon> coupons,
         IEnumerable<CouponId> couponToApplyIds,
-        CouponOrder order)
+        CouponOrder order,
+        CancellationToken cancellationToken = default
+    )
     {
         var couponsMap = coupons.ToDictionary(c => c.Id);
 
@@ -59,7 +78,7 @@ internal sealed class CouponApplicationService : ICouponApplicationService
                 throw new CouponNotFoundException();
             }
 
-            if (!coupon.CanBeApplied(order))
+            if (!await IsCouponApplicableAsync(coupon, order, cancellationToken))
             {
                 throw new CouponApplicationFailedException();
             }

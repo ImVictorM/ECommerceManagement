@@ -25,4 +25,17 @@ public interface ICouponApplicationService
         IEnumerable<CouponId> couponToApplyIds,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Checks if a coupon can be applied based on the given order context.
+    /// </summary>
+    /// <param name="coupon">The coupon to be checked.</param>
+    /// <param name="order">The coupon order.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns><c>true</c> if the coupon can be applied; otherwise, <c>false</c>.</returns>
+    Task<bool> IsCouponApplicableAsync(
+        Coupon coupon,
+        CouponOrder order,
+        CancellationToken cancellationToken = default
+    );
 }

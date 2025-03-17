@@ -71,6 +71,7 @@ public static class ServicesRegistration
             ProductFeedbackEligibilityService
         >();
         services.AddScoped<ICouponApplicationService, CouponApplicationService>();
+        services.AddScoped<ICouponUsageService, CouponUsageService>();
 
         return services;
     }

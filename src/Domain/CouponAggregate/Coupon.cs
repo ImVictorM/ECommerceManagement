@@ -122,24 +122,6 @@ public class Coupon : AggregateRoot<CouponId>, IToggleSwitch
     }
 
     /// <summary>
-    /// Verifies if the coupon can be applied.
-    /// </summary>
-    /// <param name="order">The order context.</param>
-    /// <returns>
-    /// A boolean value indicating if the coupon can be applied.
-    /// </returns>
-    public bool CanBeApplied(CouponOrder order)
-    {
-        var restrictionsPass = _restrictions.All(r => r.PassRestriction(order));
-
-        return IsActive
-            && Discount.IsValidToDate
-            && order.Total >= MinPrice
-            && restrictionsPass
-            && UsageLimit > 0;
-    }
-
-    /// <summary>
     /// Assigns a restriction to the coupon.
     /// </summary>
     /// <param name="restriction">The restriction.</param>

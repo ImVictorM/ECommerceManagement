@@ -3,6 +3,7 @@ using Application.Coupons.DTOs;
 
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
+using Domain.OrderAggregate.Enumerations;
 
 using Infrastructure.Common.Persistence;
 
@@ -63,5 +64,18 @@ internal sealed class CouponRepository
         return await DbSet
             .Where(c => couponIds.Contains(c.Id))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> GetCouponUsageCountAsync(
+        CouponId couponId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await Context.Orders
+            .Where(o =>
+                o.CouponsApplied.Select(c => c.CouponId).Contains(couponId)
+                && o.OrderStatus != OrderStatus.Canceled
+            )
+            .CountAsync(cancellationToken);
     }
 }

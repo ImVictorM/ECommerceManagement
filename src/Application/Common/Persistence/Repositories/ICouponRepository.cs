@@ -37,4 +37,17 @@ public interface ICouponRepository : IBaseRepository<Coupon, CouponId>
         CouponFilters filters,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Calculates the number of times a coupon has already been used.
+    /// </summary>
+    /// <param name="couponId">The coupon identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    /// An integer representing the number of times the coupon has already been used.
+    /// </returns>
+    Task<int> GetCouponUsageCountAsync(
+        CouponId couponId,
+        CancellationToken cancellationToken = default
+    );
 }
