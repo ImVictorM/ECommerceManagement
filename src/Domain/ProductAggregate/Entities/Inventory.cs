@@ -43,6 +43,10 @@ public sealed class Inventory : Entity<InventoryId>
     /// Decreases the quantity available by the value specified.
     /// </summary>
     /// <param name="quantity">The quantity to remove.</param>
+    /// <exception cref="InventoryInsufficientException">
+    /// Thrown when it is not possible to remove inventory due to insufficient
+    /// stock.
+    /// </exception>
     public void RemoveStock(int quantity)
     {
         if (!HasSufficientStock(quantity))

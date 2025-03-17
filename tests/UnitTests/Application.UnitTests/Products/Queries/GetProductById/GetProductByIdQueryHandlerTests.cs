@@ -4,8 +4,10 @@ using Application.Products.Errors;
 using Application.Products.Queries.GetProductById;
 using Application.UnitTests.Products.Queries.TestUtils;
 
+using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 using FluentAssertions;
@@ -20,35 +22,48 @@ namespace Application.UnitTests.Products.Queries.GetProductById;
 public class GetProductByIdQueryHandlerTests
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
-    private readonly Mock<IProductService> _mockProductService;
+    private readonly Mock<IProductPricingService> _mockProductPricingService;
     private readonly GetProductByIdQueryHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GetProductByIdQueryHandlerTests"/> class,
+    /// Initializes a new instance of the
+    /// <see cref="GetProductByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetProductByIdQueryHandlerTests()
     {
         _mockProductRepository = new Mock<IProductRepository>();
-        _mockProductService = new Mock<IProductService>();
+        _mockProductPricingService = new Mock<IProductPricingService>();
 
         _handler = new GetProductByIdQueryHandler(
             _mockProductRepository.Object,
-            _mockProductService.Object,
+            _mockProductPricingService.Object,
             new Mock<ILogger<GetProductByIdQueryHandler>>().Object
         );
     }
 
     /// <summary>
-    /// Tests that when the product being retrieved exists it is returned calculating its price and retrieving its category names.
+    /// Verifies the product with details is returned when the product exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetProductById_WhenProductExists_ReturnsProductResult()
+    public async Task HandleGetProductById_WithExistingProduct_ReturnsProductResult()
     {
-        var query = GetProductByIdQueryUtils.CreateQuery(id: "1");
+        var productToFind = ProductUtils.CreateProduct(
+            id: ProductId.Create(1),
+            basePrice: 20m,
+            categories:
+            [
+                ProductCategory.Create(CategoryId.Create(1)),
+                ProductCategory.Create(CategoryId.Create(2))
+            ]
+        );
 
-        var productToFind = ProductUtils.CreateProduct(basePrice: 20m);
         var productPriceWithDiscount = 15m;
         IEnumerable<string> productCategoryNames = ["tech", "home"];
+
+        var query = GetProductByIdQueryUtils.CreateQuery(
+            id: productToFind.Id.ToString()
+
+        );
 
         _mockProductRepository
             .Setup(r => r.GetProductWithCategoriesSatisfyingAsync(
@@ -60,7 +75,7 @@ public class GetProductByIdQueryHandlerTests
                 productCategoryNames
             ));
 
-        _mockProductService
+        _mockProductPricingService
             .Setup(s => s.CalculateProductPriceApplyingSaleAsync(
                 productToFind,
                 It.IsAny<CancellationToken>()
@@ -75,10 +90,11 @@ public class GetProductByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests that when the product being retrieved does not exist throws a not found error.
+    /// Verifies an exception is thrown when the product being queried does not
+    /// exist.
     /// </summary>
     [Fact]
-    public async Task HandleGetProductById_WhenProductDoesNotExistOrIsInactive_ThrowsNotFoundError()
+    public async Task HandleGetProductById_WithNonexistentProduct_ThrowsError()
     {
         var notFoundId = "5";
         var query = GetProductByIdQueryUtils.CreateQuery(id: notFoundId);

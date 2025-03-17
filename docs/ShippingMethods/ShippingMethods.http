@@ -1,6 +1,6 @@
 @base_endpoint = http://localhost:8000/shipping/methods
 @token = insert-token-here
-@id_shipping_method = 2
+@id_shipping_method = 1
 
 ### Creates a new shipping method. Admin authentication is required.
 ### Returns a 201 CREATED response in case of success.

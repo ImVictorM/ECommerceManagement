@@ -2,9 +2,83 @@
 
 ## Orders
 
-The Orders feature provides functionality for managing orders within the e-commerce system. It enables authenticated customers to place orders and allows administrators to view and manage orders. Customers can retrieve their own orders, while administrators can access all orders. Secure authentication and role-based permissions ensure that only authorized users can perform specific actions, such as placing orders or retrieving sensitive order details.
+The Orders feature provides functionality for managing orders within the e-commerce system. Authenticated customers can place orders, and administrators can view and manage orders. Customers can retrieve their own orders, while administrators can access all orders. Secure authentication and role-based permissions ensure that only authorized users can perform specific actions.
 
-### Place Order
+> Note: No actual charges are applied during order placement or any other operation. Payment processing is simulated using abstractions.
+
+### Payment Methods
+
+When placing an order, you must include a payment method. Payment methods are polymorphic objects, allowing multiple types of payment options. The following payment method types are supported:
+
+#### CreditCard
+
+Represents a payment method using a credit card.
+
+Field Specifications:
+
+- `$type` - Must be set to "CreditCard".
+- `token` - A tokenized representation of the credit card data.
+
+Example:
+
+```json
+{
+  "$type": "CreditCard",
+  "token": "tokenized-credit-card-data"
+}
+```
+
+#### DebitCard
+
+Represents a payment method using a debit card
+
+Field Specifications:
+
+- `$type` - Must be set to "DebitCard".
+- `token` - A tokenized representation of the debit card data.
+
+Example:
+
+```json
+{
+  "$type": "DebitCard",
+  "token": "tokenized-debit-card-data"
+}
+```
+
+#### PaymentSlip
+
+Represents a payment method using a payment slip.
+
+Field Specifications:
+
+- `$type` - Must be set to "PaymentSlip".
+
+Example:
+
+```json
+{
+  "$type": "PaymentSlip"
+}
+```
+
+#### Pix
+
+Represents a payment method using Pix.
+
+Field Specifications:
+
+- `$type` - Must be set to "Pix".
+
+Example:
+
+```json
+{
+  "$type": "Pix"
+}
+```
+
+## Place Order
 
 Allows a customer to place an order. Customer authentication is required.
 
@@ -12,22 +86,42 @@ Allows a customer to place an order. Customer authentication is required.
 POST "/orders"
 ```
 
-#### Headers
+### Headers
 
 - `Content-Type: application/json`
 - `X-Idempotency-Key: request-id`
 - `Authorization: Bearer {{token}}`
 
-#### Request Format
+### Request Format
 
-Field Rules:
+Field Specifications:
 
-- products - must not be empty
-- installments - must be greater or equal to 1
+- `shippingMethodId` – A valid identifier of the selected shipping method.
+- `products` – An array of objects representing the products being ordered. Must contain at least one product.
+  - `productId` – A valid identifier of the product being purchased.
+  - `quantity` – A positive integer (≥1) representing the quantity of the product.
+- `billingAddress` – Object representing the billing address.
+  - `postalCode` – The postal code.
+  - `street` – The street address.
+  - `state` – The state.
+  - `city` – The city name..
+  - `neighborhood` – The neighborhood or district.
+- `deliveryAddress` – Object representing the delivery address.
+  - `postalCode` – The postal code.
+  - `street` – The street address.
+  - `state` – The state.
+  - `city` – The city name..
+  - `neighborhood` – The neighborhood or district.
+- `paymentMethod` – Object representing the payment details. Cannot be empty.
+  - `type` – The type of payment method.
+- `couponAppliedIds` (optional) – An array of valid coupon identifiers.
+- `installments` – A positive integer (≥1) representing the number of installments selected for payment.
+
+Example Request:
 
 ```json
 {
-  "shippingMethodId": "2",
+  "shippingMethodId": "1",
   "products": [
     {
       "productId": "2",
@@ -49,40 +143,44 @@ Field Rules:
     "neighborhood": "Grove Street, home"
   },
   "paymentMethod": {
-    "type": "credit_card"
+    "$type": "CreditCard",
+    "token": "tokenized-credit-card-data"
   },
   "couponAppliedIds": [],
   "installments": 1
 }
 ```
 
-#### Response Format
+### Response Format
 
 - 201 CREATED: The order was placed successfully.
 - 400 BAD_REQUEST: The request body is invalid or missing required fields.
 - 401 UNAUTHORIZED: The current user is not authenticated.
 - 403 FORBIDDEN: The current user is not a customer.
 
-### Get All Orders
+## Get All Orders
 
 Retrieves all the orders. Admin authentication is required.
-Can receive an optional status parameter to filter the orders.
 
 ```js
 GET "/orders?status=Pending"
 ```
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 
-#### Query Parameters
+### Query Parameters
 
-- `status` (optional) - Filters orders by status
+- `status` (optional) - Filters orders by status.
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was approved and the orders were returned.
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user is not an administrator.
+
+Example Response:
 
 ```json
 [
@@ -103,10 +201,7 @@ GET "/orders?status=Pending"
 ]
 ```
 
-- 401 UNAUTHORIZED: The current user is not authenticated.
-- 403 FORBIDDEN: The current user is not an administrator.
-
-### Get Order by Id
+## Get Order by Id
 
 Retrieves and order by its identifier. Admin authentication is required.
 
@@ -114,13 +209,18 @@ Retrieves and order by its identifier. Admin authentication is required.
 GET "/orders/{{id_order}}"
 ```
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was approved and the order was found and returned.
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user is not an administrator.
+- 404 NOT_FOUND: The order being queried does not exist.
+
+Example Response:
 
 ```json
 {
@@ -164,30 +264,29 @@ GET "/orders/{{id_order}}"
 }
 ```
 
-- 401 UNAUTHORIZED: The current user is not authenticated.
-- 403 FORBIDDEN: The current user is not an administrator.
-- 404 NOT_FOUND: The order being queried does not exist.
-
-### Get Customer Orders
+## Get Customer Orders
 
 Retrieves all orders related to a customer. Self or admin authentication is required.
-Can receive an optional status parameter to filter the orders.
 
 ```js
 GET "/users/customers/{{id_user}}/orders?status=Pending"
 ```
 
-#### Query Parameters
+### Query Parameters
 
-- `status` (optional) - Filters orders by status
+- `status` (optional) - Filters orders by status.
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was approved and the orders were returned.
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user is not the orders owner or an administrator.
+
+Example Response:
 
 ```json
 [
@@ -208,10 +307,7 @@ GET "/users/customers/{{id_user}}/orders?status=Pending"
 ]
 ```
 
-- 401 UNAUTHORIZED: The current user is not authenticated.
-- 403 FORBIDDEN: The current user is not the orders owner or an administrator.
-
-### Get Customer Order by Id
+## Get Customer Order by Id
 
 Retrieves a customer's order by its identifier. Self or admin authentication is required.
 
@@ -219,13 +315,18 @@ Retrieves a customer's order by its identifier. Self or admin authentication is 
 GET "/users/customers/{{id_user}}/orders/{{id_order}}"
 ```
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was approved and the order was found and returned.
+- 401 UNAUTHORIZED: The current user is not authenticated.
+- 403 FORBIDDEN: The current user is not the order owner or an administrator.
+- 404 NOT_FOUND: The order being queried does not exist.
+
+Example Response:
 
 ```json
 {
@@ -268,7 +369,3 @@ GET "/users/customers/{{id_user}}/orders/{{id_order}}"
   }
 }
 ```
-
-- 401 UNAUTHORIZED: The current user is not authenticated.
-- 403 FORBIDDEN: The current user is not the order owner or an administrator.
-- 404 NOT_FOUND: The order being queried does not exist.

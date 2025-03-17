@@ -26,7 +26,7 @@ namespace Application.UnitTests.ProductFeedback.Commands.LeaveProductFeedback;
 public class LeaveProductFeedbackCommandHandlerTests
 {
     private readonly Mock<IProductFeedbackRepository> _mockProductFeedbackRepository;
-    private readonly Mock<IProductFeedbackService> _mockProductFeedbackService;
+    private readonly Mock<IProductFeedbackEligibilityService> _mockProductFeedbackService;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IIdentityProvider> _mockIdentityProvider;
     private readonly LeaveProductFeedbackCommandHandler _handler;
@@ -38,7 +38,7 @@ public class LeaveProductFeedbackCommandHandlerTests
     public LeaveProductFeedbackCommandHandlerTests()
     {
         _mockProductFeedbackRepository = new Mock<IProductFeedbackRepository>();
-        _mockProductFeedbackService = new Mock<IProductFeedbackService>();
+        _mockProductFeedbackService = new Mock<IProductFeedbackEligibilityService>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockIdentityProvider = new Mock<IIdentityProvider>();
         _handler = new LeaveProductFeedbackCommandHandler(

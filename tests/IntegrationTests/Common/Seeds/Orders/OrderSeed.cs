@@ -1,5 +1,3 @@
-using Application.Orders.DTOs;
-
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
@@ -54,12 +52,10 @@ public sealed class OrderSeed
             [OrderSeedType.CUSTOMER_ORDER_PENDING] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-1),
                 ownerId: _userSeed.GetEntityId(UserSeedType.CUSTOMER),
-                orderProducts:
+                orderLineItemDrafts:
                 [
-                    new OrderProductInput(
-                        _productSeed
-                            .GetEntityId(ProductSeedType.TSHIRT)
-                            .ToString(),
+                    OrderLineItemDraft.Create(
+                        _productSeed.GetEntityId(ProductSeedType.TSHIRT),
                         1
                     )
                 ],
@@ -71,12 +67,10 @@ public sealed class OrderSeed
             [OrderSeedType.CUSTOMER_ORDER_CANCELED] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-2),
                 ownerId: _userSeed.GetEntityId(UserSeedType.CUSTOMER),
-                orderProducts:
+                orderLineItemDrafts:
                 [
-                    new OrderProductInput(
-                        _productSeed
-                            .GetEntityId(ProductSeedType.PENCIL)
-                            .ToString(),
+                    OrderLineItemDraft.Create(
+                        _productSeed.GetEntityId(ProductSeedType.PENCIL),
                         1
                     )
                 ],
@@ -89,12 +83,10 @@ public sealed class OrderSeed
             [OrderSeedType.CUSTOMER_ORDER_PAID] = await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(-3),
                 ownerId: _userSeed.GetEntityId(UserSeedType.CUSTOMER),
-                orderProducts:
+                orderLineItemDrafts:
                 [
-                    new OrderProductInput(
-                        _productSeed
-                            .GetEntityId(ProductSeedType.CHAIN_BRACELET)
-                            .ToString(),
+                    OrderLineItemDraft.Create(
+                        _productSeed.GetEntityId(ProductSeedType.CHAIN_BRACELET),
                         1
                     )
                 ],

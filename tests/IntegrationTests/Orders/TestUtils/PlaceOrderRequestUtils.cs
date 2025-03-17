@@ -26,17 +26,17 @@ public static class PlaceOrderRequestUtils
     /// <returns>A new place order object.</returns>
     public static PlaceOrderRequest CreateRequest(
         string? shippingMethodId = null,
-        IEnumerable<OrderProductRequest>? products = null,
+        IEnumerable<OrderLineItemRequest>? products = null,
         AddressContract? billingAddress = null,
         AddressContract? deliveryAddress = null,
-        PaymentMethod? paymentMethod = null,
+        BasePaymentMethod? paymentMethod = null,
         IEnumerable<string>? couponAppliedIds = null,
         int? installments = null
     )
     {
         var requestOrderProducts = products ?? OrderUtils
-            .CreateReservedProducts(4)
-            .Select(rp => new OrderProductRequest(
+            .CreateOrderLineItemDrafts(4)
+            .Select(rp => new OrderLineItemRequest(
                 rp.ProductId.ToString(),
                 rp.Quantity
             ));
@@ -46,7 +46,7 @@ public static class PlaceOrderRequestUtils
             products ?? requestOrderProducts,
             billingAddress ?? AddressContractUtils.CreateAddress(),
             deliveryAddress ?? AddressContractUtils.CreateAddress(),
-            paymentMethod ?? new CreditCardPayment("token"),
+            paymentMethod ?? new CreditCard("token"),
             couponAppliedIds,
             installments
         );

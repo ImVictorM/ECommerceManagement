@@ -24,7 +24,10 @@ internal sealed class CouponConfigurations : EntityTypeConfigurationDependency<C
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.OwnsOne(c => c.Discount, DiscountNavigationBuilderConfigurations.Configure);
+        builder.OwnsOne(
+            c => c.Discount,
+            DiscountNavigationBuilderConfigurations.Configure
+        );
 
         builder
             .Property(c => c.Code)
@@ -53,8 +56,11 @@ internal sealed class CouponConfigurations : EntityTypeConfigurationDependency<C
             .HasMany(c => c.Restrictions)
             .WithOne()
             .HasForeignKey("id_coupon")
-            .IsRequired(false);
+            .IsRequired();
 
-        builder.Navigation(c => c.Restrictions).UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder
+            .Navigation(c => c.Restrictions)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
     }
 }

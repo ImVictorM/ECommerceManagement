@@ -26,12 +26,22 @@ public static class OrderDetailedResultExtensions
     {
         result.Should().NotBeNull();
         result.Order.Should().BeEquivalentTo(query.Order);
+
         result.Shipment.ShipmentId.Should().Be(query.OrderShipment.ShipmentId);
         result.Shipment.Status.Should().Be(query.OrderShipment.Status);
-        result.Shipment.DeliveryAddress.Should().Be(query.OrderShipment.DeliveryAddress);
-        result.Shipment.ShippingMethod.Name.Should().Be(query.OrderShipment.ShippingMethod.Name);
-        result.Shipment.ShippingMethod.EstimatedDeliveryDays.Should().Be(query.OrderShipment.ShippingMethod.EstimatedDeliveryDays);
-        result.Shipment.ShippingMethod.Price.Should().Be(query.OrderShipment.ShippingMethod.Price);
+        result.Shipment.DeliveryAddress
+            .Should()
+            .Be(query.OrderShipment.DeliveryAddress);
+        result.Shipment.ShippingMethod.Name
+            .Should()
+            .Be(query.OrderShipment.ShippingMethod.Name);
+        result.Shipment.ShippingMethod.EstimatedDeliveryDays
+            .Should()
+            .Be(query.OrderShipment.ShippingMethod.EstimatedDeliveryDays);
+        result.Shipment.ShippingMethod.Price
+            .Should()
+            .Be(query.OrderShipment.ShippingMethod.Price);
+
         result.Payment.PaymentId.Should().Be(query.PaymentId);
         result.Payment.Amount.Should().Be(paymentResponse.Amount);
         result.Payment.Status.Should().Be(paymentResponse.Status.Name);

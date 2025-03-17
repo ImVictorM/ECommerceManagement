@@ -15,10 +15,10 @@ namespace Contracts.Orders;
 /// <param name="CouponAppliedIds">The coupon applied ids.</param>
 public record PlaceOrderRequest(
     string ShippingMethodId,
-    IEnumerable<OrderProductRequest> Products,
+    IEnumerable<OrderLineItemRequest> Products,
     AddressContract BillingAddress,
     AddressContract DeliveryAddress,
-    PaymentMethod PaymentMethod,
+    BasePaymentMethod PaymentMethod,
     IEnumerable<string>? CouponAppliedIds = null,
     int? installments = null
 );

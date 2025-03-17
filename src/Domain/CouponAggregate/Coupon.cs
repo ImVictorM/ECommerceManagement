@@ -11,9 +11,13 @@ namespace Domain.CouponAggregate;
 /// <summary>
 /// Represents a coupon.
 /// </summary>
-public class Coupon : AggregateRoot<CouponId>, IActivatable
+public class Coupon : AggregateRoot<CouponId>, IToggleSwitch
 {
+    private const decimal DefaultMinimumPrice = 0m;
+    private const bool DefaultAutoApply = false;
+
     private readonly HashSet<CouponRestriction> _restrictions = [];
+
     /// <summary>
     /// Gets the coupon discount.
     /// </summary>
@@ -39,9 +43,7 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     /// </summary>
     public decimal MinPrice { get; private set; }
 
-    /// <summary>
-    /// Indicates if the coupon is active.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsActive { get; set; }
 
     /// <summary>
@@ -81,27 +83,42 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
         Discount discount,
         string code,
         int usageLimit,
-        decimal minPrice = 0m,
-        bool autoApply = false
+        decimal minPrice = DefaultMinimumPrice,
+        bool autoApply = DefaultAutoApply
     )
     {
-        return new Coupon(discount, code, usageLimit, minPrice, autoApply);
+        return new Coupon(
+            discount,
+            code,
+            usageLimit,
+            minPrice,
+            autoApply
+        );
     }
 
     /// <summary>
-    /// Verifies if the coupon can be applied.
+    /// Updates the current coupon.
     /// </summary>
-    /// <param name="order">The order context.</param>
-    /// <returns>A boolean value indicating if the coupon can be applied.</returns>
-    public bool CanBeApplied(CouponOrder order)
+    /// <param name="discount">The new coupon discount.</param>
+    /// <param name="code">The new coupon code.</param>
+    /// <param name="usageLimit">The new coupon usage limit.</param>
+    /// <param name="minPrice">The new coupon minimum price.</param>
+    /// <param name="autoApply">
+    /// A boolean value indicating if the coupon should auto apply.
+    /// </param>
+    public void Update(
+        Discount discount,
+        string code,
+        int usageLimit,
+        decimal minPrice = DefaultMinimumPrice,
+        bool autoApply = DefaultAutoApply
+    )
     {
-        var restrictionsPass = _restrictions.All(r => r.PassRestriction(order));
-
-        return IsActive
-            && Discount.IsValidToDate
-            && order.Total >= MinPrice
-            && restrictionsPass
-            && UsageLimit > 0;
+        Discount = discount;
+        Code = code.ToUpperSnakeCase();
+        UsageLimit = usageLimit;
+        AutoApply = autoApply;
+        MinPrice = minPrice;
     }
 
     /// <summary>
@@ -114,11 +131,16 @@ public class Coupon : AggregateRoot<CouponId>, IActivatable
     }
 
     /// <summary>
-    /// Deactivates the coupon.
+    /// Clears the coupon restrictions.
     /// </summary>
-    public void Deactivate()
+    public void ClearRestrictions()
     {
-        IsActive = false;
-        UsageLimit = 0;
+        _restrictions.Clear();
+    }
+
+    /// <inheritdoc/>
+    public void ToggleActivation()
+    {
+        IsActive = !IsActive;
     }
 }

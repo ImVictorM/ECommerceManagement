@@ -4,7 +4,7 @@
 
 The Products feature provides functionality for managing products within the e-commerce system. It enables administrators to create, update, and deactivate products, as well as manage product inventory. Active products can be publicly retrieved, with optional filtering and pagination. Secure authentication and role-based permissions ensure that only administrators can perform sensitive actions, while public access is allowed for viewing active products.
 
-### Create Product
+## Create Product
 
 Creates a new product. Admin authentication is required.
 
@@ -12,21 +12,23 @@ Creates a new product. Admin authentication is required.
 POST "/products"
 ```
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 - `Content-Type: application/json`
 
-#### Request Format
+### Request Format
 
-Field Rules:
+Field Specifications:
 
-- name - must not be empty
-- description - must not be empty
-- initialQuantity - must be greater than 0
-- basePrice - must be greater than 0
-- categoryIds - must have at least one category
-- images - must have at least one image representing the product
+- `name` - The product name. Cannot be empty.
+- `description` - The product description. Cannot be empty.
+- `initialQuantity` - The initial quantity in stock (≥ 1).
+- `basePrice` - The product base price (≥ 0).
+- `categoryIds` - Array of category IDs for which the product is part of. Cannot be empty.
+- `images` - The images representing the product. Cannot be empty.
+
+Request Example:
 
 ```json
 {
@@ -39,14 +41,14 @@ Field Rules:
 }
 ```
 
-#### Response Format
+### Response Format
 
 - 204 NO_CONTENT: The request was successfully processed and a new product was created.
 - 400 BAD_REQUEST: The request body is invalid or missing required fields.
 - 401 UNAUTHORIZED: The current user is not authenticated.
 - 403 FORBIDDEN: The current user is not an administrator.
 
-### Update Product
+## Update Product
 
 Updates the details of an active product. Admin authentication is required.
 
@@ -54,20 +56,22 @@ Updates the details of an active product. Admin authentication is required.
 PUT "/products/{{id_product}}"
 ```
 
-#### Header
+### Header
 
 - `Authorization: Bearer {{token}}`
 - `Content-Type: application/json`
 
-#### Request Format
+### Request Format
 
-Field Rules:
+Field Specifications:
 
-- name - must not be empty
-- description - must not be empty
-- basePrice - must be greater than 0
-- categoryIds - must have at least one category
-- images - must have at least one image representing the product
+- `name` - The product name. Cannot be empty.
+- `description` - The product description. Cannot be empty.
+- `basePrice` - The product base price (≥ 0).
+- `categoryIds` - Array of category IDs for which the product is part of. Cannot be empty.
+- `images` - The images representing the product. Cannot be empty.
+
+Example Request:
 
 ```json
 {
@@ -79,7 +83,7 @@ Field Rules:
 }
 ```
 
-#### Response Format
+### Response Format
 
 - 204 NO_CONTENT: The request was successfully processed and the product was updated.
 - 400 BAD_REQUEST: The request body is invalid or missing required fields.
@@ -87,7 +91,7 @@ Field Rules:
 - 403 FORBIDDEN: The current user is not an administrator.
 - 404 NOT_FOUND: The product to be updated does not exist.
 
-### Update Product Inventory
+## Update Product Inventory
 
 Increments the inventory quantity available for an active product. Admin authentication is required.
 
@@ -95,16 +99,18 @@ Increments the inventory quantity available for an active product. Admin authent
 PUT "/products/{{id_product}}/inventory"
 ```
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 - `Content-Type: application/json`
 
-#### Request Format
+### Request Format
 
-Field Rules:
+Field Specifications:
 
-- quantityToIncrement - must be greater than 0
+- `quantityToIncrement` - The quantity to increment in the stock (≥ 1).
+
+Example Request:
 
 ```json
 {
@@ -112,7 +118,7 @@ Field Rules:
 }
 ```
 
-#### Response Format
+### Response Format
 
 - 204 NO_CONTENT: The request was successfully processed and the product inventory was updated.
 - 400 BAD_REQUEST: The request body is invalid or missing required fields.
@@ -120,7 +126,7 @@ Field Rules:
 - 403 FORBIDDEN: The current user is not an administrator.
 - 404 NOT_FOUND: The product to be updated does not exist.
 
-### Deactivate Product
+## Deactivate Product
 
 Deactivates a product and sets the product inventory to 0 items. Admin authentication is required.
 
@@ -128,36 +134,36 @@ Deactivates a product and sets the product inventory to 0 items. Admin authentic
 DELETE "/products/{{id_product}}"
 ```
 
-#### Headers
+### Headers
 
 - `Authorization: Bearer {{token}}`
 
-#### Response Format
+### Response Format
 
 - 204 NO_CONTENT: The request was successfully processed and the product was deactivated.
 - 401 UNAUTHORIZED: The current user is not authenticated.
 - 403 FORBIDDEN: The current user is not an administrator.
 - 404 NOT_FOUND: The product to be deactivated does not exist.
 
-### Get Products
+## Get Products
 
-Retrieves all active products. It will retrieve the first 20 products if no limit is specified.
-It is possible to filter the products by the specified categories appending &category={category_id} to the URL.
-No authentication is required.
+Retrieves all active products.
 
 ```js
 GET "/products/?category=1&page=1&pageSize=20"
 ```
 
-#### Query Parameters
+### Query Parameters
 
 - `category` (optional) - Filters products by category id
 - `page` (optional, default: 1) - Specifies the page number
 - `pageSize` (optional, default: 20) - Defines the number of products per page
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was successfully processed and all the active products were returned.
+
+Example Response:
 
 ```json
 [
@@ -174,17 +180,20 @@ GET "/products/?category=1&page=1&pageSize=20"
 ]
 ```
 
-### Get Product By Id
+## Get Product By Id
 
-Retrieve an active product by its identifier. No authentication is required.
+Retrieve an active product by its identifier.
 
 ```js
 GET "/products/{{id_product}}"
 ```
 
-#### Response Format
+### Response Format
 
 - 200 OK: The request was successfully processed and the product was returned.
+- 404 NOT_FOUND: The product being queried does not exist (or was deactivated).
+
+Example Response:
 
 ```json
 {
@@ -198,5 +207,3 @@ GET "/products/{{id_product}}"
   "images": ["jacket.png"]
 }
 ```
-
-- 404 NOT_FOUND: The product being queried does not exist (or was deactivated).

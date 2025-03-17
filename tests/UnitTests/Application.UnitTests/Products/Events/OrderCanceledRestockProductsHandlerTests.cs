@@ -44,19 +44,30 @@ public class OrderCanceledRestockProductsHandlerTests
     {
         var products = new[]
         {
-            ProductUtils.CreateProduct(id: ProductId.Create(1), initialQuantityInInventory: 10),
-            ProductUtils.CreateProduct(id: ProductId.Create(2), initialQuantityInInventory: 20),
-            ProductUtils.CreateProduct(id: ProductId.Create(3), initialQuantityInInventory: 30),
+            ProductUtils.CreateProduct(
+                id: ProductId.Create(1),
+                initialQuantityInInventory: 10
+            ),
+            ProductUtils.CreateProduct(
+                id: ProductId.Create(2),
+                initialQuantityInInventory: 20
+            ),
+            ProductUtils.CreateProduct(
+                id: ProductId.Create(3),
+                initialQuantityInInventory: 30
+            ),
         };
 
         var reservedProducts = new[]
         {
-            OrderUtils.CreateReservedProduct(productId: products[0].Id, 1),
-            OrderUtils.CreateReservedProduct(productId: products[1].Id, 2),
-            OrderUtils.CreateReservedProduct(productId: products[2].Id, 3)
+            OrderUtils.CreateOrderLineItemDraft(productId: products[0].Id, 1),
+            OrderUtils.CreateOrderLineItemDraft(productId: products[1].Id, 2),
+            OrderUtils.CreateOrderLineItemDraft(productId: products[2].Id, 3)
         };
 
-        var order = await OrderUtils.CreateOrderAsync(orderProducts: reservedProducts);
+        var order = await OrderUtils.CreateOrderAsync(
+            orderLineItemDrafts: reservedProducts
+        );
 
         var notification = await OrderCanceledUtils.CreateEventAsync(order: order);
 

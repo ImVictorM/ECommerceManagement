@@ -81,12 +81,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7975), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6564), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "carrier@email.com",
                             Name = "ECommerceManagementCarrier",
-                            PasswordHash = "3410EF2A448742774017B1FD5D995DE96FCC97CFE3BA4475D79187B52FC744FD-2435C630C8790196F24DD9C399BA875C",
+                            PasswordHash = "0BF7B0638748AA86326E9885E77E44F584D03207237BC8D16AFED4D82BD7F16A-4A782FA88CA45F81509EF1F7EF8BC43D",
                             Phone = "",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 89, DateTimeKind.Unspecified).AddTicks(7983), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6571), new TimeSpan(0, 0, 0, 0, 0)),
                             _roleId = 3L
                         });
                 });
@@ -688,12 +688,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6809), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4465), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@email.com",
                             IsActive = true,
                             Name = "admin",
-                            PasswordHash = "A37E1032240117E618E8A3D0CD72D1890265109B0019566E97EC0E70869FB04A-C8458BD5E9EB62CE5853452731E41585",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 27, 20, 3, 23, 69, DateTimeKind.Unspecified).AddTicks(6816), new TimeSpan(0, 0, 0, 0, 0))
+                            PasswordHash = "FA55DE04791D423A6A3F23B60FF2B59660F96A397C77A87A98A26A3316B9A24C-495A517EF37FC1DF7D8301655D2FDA15",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4469), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -734,14 +734,14 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CategoryRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CouponCategoryRestriction", b =>
                 {
                     b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
                     b.ToTable("restriction_categories", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.ProductRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CouponProductRestriction", b =>
                 {
                     b.HasBaseType("Domain.CouponAggregate.Abstracts.CouponRestriction");
 
@@ -761,7 +761,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.CouponAggregate.Coupon", null)
                         .WithMany("Restrictions")
-                        .HasForeignKey("id_coupon");
+                        .HasForeignKey("id_coupon")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.CouponAggregate.Coupon", b =>
@@ -851,7 +853,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_order");
                         });
 
-                    b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderProduct", "Products", b1 =>
+                    b.OwnsMany("Domain.OrderAggregate.ValueObjects.OrderLineItem", "Products", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1477,7 +1479,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CategoryRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CouponCategoryRestriction", b =>
                 {
                     b.OwnsMany("Domain.CouponAggregate.ValueObjects.CouponCategory", "CategoriesAllowed", b1 =>
                         {
@@ -1554,7 +1556,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("ProductsFromCategoryNotAllowed");
                 });
 
-            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.ProductRestriction", b =>
+            modelBuilder.Entity("Domain.CouponAggregate.ValueObjects.Restrictions.CouponProductRestriction", b =>
                 {
                     b.OwnsMany("Domain.CouponAggregate.ValueObjects.CouponProduct", "ProductsAllowed", b1 =>
                         {

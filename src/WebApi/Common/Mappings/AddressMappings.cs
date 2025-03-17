@@ -11,13 +11,16 @@ internal sealed class AddressMappings : IRegister
     /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<AddressContract, Address>()
+        config
+            .NewConfig<AddressContract, Address>()
             .MapWith(src => Address.Create(
                 src.PostalCode,
                 src.Street,
                 src.State,
                 src.City,
-                src.Neighborhood)
-            );
+                src.Neighborhood
+            ));
+
+        config.NewConfig<Address, AddressContract>();
     }
 }

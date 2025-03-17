@@ -9,13 +9,15 @@ using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+using Domain.ProductAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
 
 namespace Application.Orders.Commands.PlaceOrder;
 
-internal sealed partial class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, CreatedResult>
+internal sealed partial class PlaceOrderCommandHandler
+    : IRequestHandler<PlaceOrderCommand, CreatedResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
@@ -25,7 +27,8 @@ internal sealed partial class PlaceOrderCommandHandler : IRequestHandler<PlaceOr
     public PlaceOrderCommandHandler(
         IUnitOfWork unitOfWork,
         IOrderRepository orderRepository,
-        IOrderService orderService,
+        IOrderAssemblyService orderAssemblyService,
+        IOrderPricingService orderPricingService,
         IIdentityProvider identityProvider,
         ILogger<PlaceOrderCommandHandler> logger
     )
@@ -33,12 +36,18 @@ internal sealed partial class PlaceOrderCommandHandler : IRequestHandler<PlaceOr
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
         _identityProvider = identityProvider;
-        _orderFactory = new OrderFactory(orderService);
+        _orderFactory = new OrderFactory(
+            orderAssemblyService,
+            orderPricingService
+        );
         _logger = logger;
     }
 
     /// <inheritdoc/>
-    public async Task<CreatedResult> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResult> Handle(
+        PlaceOrderCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingPlaceOrder();
 
@@ -53,16 +62,23 @@ internal sealed partial class PlaceOrderCommandHandler : IRequestHandler<PlaceOr
                 .Select(CouponId.Create)
                 .Select(OrderCoupon.Create);
 
+        var orderLineItemDrafts = request.Products
+            .Select(input => OrderLineItemDraft.Create(
+                ProductId.Create(input.ProductId),
+                input.Quantity
+            ));
+
         var order = await _orderFactory.CreateOrderAsync(
             request.RequestId,
             ownerId,
             shippingMethodId,
-            request.Products,
+            orderLineItemDrafts,
             request.PaymentMethod,
             request.BillingAddress,
             request.DeliveryAddress,
             request.Installments,
-            orderCouponsApplied
+            orderCouponsApplied,
+            cancellationToken
         );
 
         LogOrderCreated();

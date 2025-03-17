@@ -17,7 +17,7 @@ public record OrderDetailedResponse(
     string Description,
     string Status,
     decimal Total,
-    IEnumerable<OrderProductResponse> Products,
+    IEnumerable<OrderLineItemResponse> Products,
     OrderPaymentResponse Payment,
     OrderShipmentResponse Shipment
 );

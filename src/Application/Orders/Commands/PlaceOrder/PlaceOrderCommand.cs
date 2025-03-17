@@ -22,7 +22,7 @@ namespace Application.Orders.Commands.PlaceOrder;
 public record PlaceOrderCommand(
     Guid RequestId,
     string ShippingMethodId,
-    IEnumerable<OrderProductInput> Products,
+    IEnumerable<OrderLineItemInput> Products,
     Address BillingAddress,
     Address DeliveryAddress,
     IPaymentMethod PaymentMethod,

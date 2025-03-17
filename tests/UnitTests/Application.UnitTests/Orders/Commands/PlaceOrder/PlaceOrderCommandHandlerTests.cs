@@ -3,13 +3,13 @@ using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Orders.Commands.PlaceOrder;
 using Application.UnitTests.Orders.Commands.TestUtils;
-using Application.UnitTests.Orders.TestUtils.Extensions;
 using Application.UnitTests.TestUtils.Extensions;
 
 using Domain.OrderAggregate;
 using Domain.OrderAggregate.Services;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.ShippingMethodAggregate.ValueObjects;
+using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
 using SharedKernel.ValueObjects;
@@ -27,44 +27,59 @@ public class PlaceOrderCommandHandlerTests
 {
     private readonly PlaceOrderCommandHandler _handler;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IOrderService> _mockOrdersService;
+    private readonly Mock<IOrderAssemblyService> _mockOrderAssemblyService;
+    private readonly Mock<IOrderPricingService> _mockOrderPricingService;
     private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IIdentityProvider> _mockIdentityProvider;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="PlaceOrderCommandHandlerTests"/> class.
+    /// Initiates a new instance of the <see cref="PlaceOrderCommandHandlerTests"/>
+    /// class.
     /// </summary>
     public PlaceOrderCommandHandlerTests()
     {
         _mockOrderRepository = new Mock<IOrderRepository>();
-        _mockOrdersService = new Mock<IOrderService>();
+        _mockOrderAssemblyService = new Mock<IOrderAssemblyService>();
+        _mockOrderPricingService = new Mock<IOrderPricingService>();
         _mockIdentityProvider = new Mock<IIdentityProvider>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
 
         _handler = new PlaceOrderCommandHandler(
             _mockUnitOfWork.Object,
             _mockOrderRepository.Object,
-            _mockOrdersService.Object,
+            _mockOrderAssemblyService.Object,
+            _mockOrderPricingService.Object,
             _mockIdentityProvider.Object,
-            new Mock<ILogger<PlaceOrderCommandHandler>>().Object
+            Mock.Of<ILogger<PlaceOrderCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Tests the command handler handles a valid command successfully, creating an order and saving it.
+    /// Tests the command handler handles a valid command successfully,
+    /// creating an order and saving it.
     /// </summary>
     [Fact]
-    public async Task HandlePlaceOrder_WhenRequestIsValid_CreatesOrder()
+    public async Task HandlePlaceOrder_WithValidRequest_CreatesOrder()
     {
         var mockIdentityUser = new IdentityUser("1", [Role.Customer]);
-        var reservedProducts = OrderUtils.CreateReservedProducts(3).ToList();
-        var orderProducts = reservedProducts
-            .Select(rp => OrderUtils.CreateOrderProduct(productId: rp.ProductId, quantity: rp.Quantity))
+
+        var lineItemInputs = PlaceOrderCommandUtils.CreateOrderLineItemInputs(3);
+        var lineItemDrafts = lineItemInputs
+            .Select(input => OrderLineItemDraft.Create(
+                ProductId.Create(input.ProductId),
+                input.Quantity
+            ));
+        var lineItems = lineItemDrafts
+            .Select(d => OrderUtils.CreateOrderLineItem(
+                productId: d.ProductId,
+                quantity: d.Quantity
+            ))
             .ToList();
-        var mockTotal = orderProducts.Sum(op => op.CalculateTransactionPrice());
+
+        var mockTotal = lineItems.Sum(op => op.CalculateTransactionPrice());
 
         var command = PlaceOrderCommandUtils.CreateCommand(
-            orderProducts: reservedProducts.ParseToInput(),
+            products: lineItemInputs,
             couponsAppliedIds: ["1", "2"],
             installments: 2
         );
@@ -75,16 +90,16 @@ public class PlaceOrderCommandHandlerTests
             .Setup(i => i.GetCurrentUserIdentity())
             .Returns(mockIdentityUser);
 
-        _mockOrdersService
-            .Setup(s => s.PrepareOrderProductsAsync(
-                command.Products,
+        _mockOrderAssemblyService
+            .Setup(s => s.AssembleOrderLineItemsAsync(
+                lineItemDrafts,
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(orderProducts);
+            .ReturnsAsync(lineItems);
 
-        _mockOrdersService
+        _mockOrderPricingService
             .Setup(s => s.CalculateTotalAsync(
-                orderProducts,
+                lineItems,
                 It.IsAny<ShippingMethodId>(),
                 It.IsAny<IEnumerable<OrderCoupon>>(),
                 It.IsAny<CancellationToken>()
@@ -103,7 +118,7 @@ public class PlaceOrderCommandHandlerTests
         _mockOrderRepository.Verify(
             r => r.AddAsync(It.Is<Order>(o =>
                 o.Total == mockTotal
-                && o.Products.All(orderProducts.Contains)
+                && o.Products.All(lineItems.Contains)
                 && o.OwnerId.ToString() == mockIdentityUser.Id
             )),
             Times.Once()

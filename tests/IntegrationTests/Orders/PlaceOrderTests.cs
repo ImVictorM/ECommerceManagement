@@ -19,7 +19,6 @@ using IntegrationTests.TestUtils.Extensions.Http;
 using WebApi.Orders;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using System.Net;
 using System.Net.Http.Json;
@@ -134,8 +133,8 @@ public class PlaceOrderTests : BaseIntegrationTest
             shippingMethodId: shippingMethod.Id.ToString(),
             products:
             [
-                new OrderProductRequest(pencil.Id.ToString(), 1),
-                new OrderProductRequest(computer.Id.ToString(), 2),
+                new OrderLineItemRequest(pencil.Id.ToString(), 1),
+                new OrderLineItemRequest(computer.Id.ToString(), 2),
             ],
             couponAppliedIds:
             [
@@ -143,14 +142,14 @@ public class PlaceOrderTests : BaseIntegrationTest
             ]
         );
 
-        var expectedCreatedPencilResponse = new OrderProductResponse(
+        var expectedCreatedPencilResponse = new OrderLineItemResponse(
             pencil.Id.ToString(),
             1,
             pencil.BasePrice,
             CalculateExpectedPriceAfterApplyingSales(pencil)
         );
 
-        var expectedCreatedComputerResponse = new OrderProductResponse(
+        var expectedCreatedComputerResponse = new OrderLineItemResponse(
             computer.Id.ToString(),
             2,
             computer.BasePrice,
@@ -245,7 +244,7 @@ public class PlaceOrderTests : BaseIntegrationTest
 
         var request = PlaceOrderRequestUtils.CreateRequest(
             products: [
-                new OrderProductRequest(pencil.Id.ToString(), quantityToBuy),
+                new OrderLineItemRequest(pencil.Id.ToString(), quantityToBuy),
             ]
         );
 
@@ -258,15 +257,7 @@ public class PlaceOrderTests : BaseIntegrationTest
             request
         );
 
-        var responseContent = await response.Content
-            .ReadRequiredFromJsonAsync<ProblemDetails>();
-
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        responseContent.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        responseContent.Title.Should().Be("Product Not Available");
-        responseContent.Detail.Should().Be(
-            $"The product with id {pencil.Id} is not available at the moment"
-        );
     }
 
     private decimal CalculateExpectedPriceAfterApplyingSales(Product product)

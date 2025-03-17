@@ -7,7 +7,8 @@ using MediatR;
 
 namespace Application.Products.Events;
 
-internal sealed class OrderCanceledRestockProductsHandler : INotificationHandler<OrderCanceled>
+internal sealed class OrderCanceledRestockProductsHandler
+    : INotificationHandler<OrderCanceled>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
@@ -22,12 +23,18 @@ internal sealed class OrderCanceledRestockProductsHandler : INotificationHandler
     }
 
     /// <inheritdoc/>
-    public async Task Handle(OrderCanceled notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        OrderCanceled notification,
+        CancellationToken cancellationToken
+    )
     {
         var order = notification.Order;
         var productIds = order.Products.Select(p => p.ProductId);
 
-        var products = await _productRepository.FindAllAsync(p => productIds.Contains(p.Id), cancellationToken);
+        var products = await _productRepository.FindAllAsync(
+            p => productIds.Contains(p.Id),
+            cancellationToken
+        );
 
         var productsHashMap = products.ToDictionary(p => p.Id);
 

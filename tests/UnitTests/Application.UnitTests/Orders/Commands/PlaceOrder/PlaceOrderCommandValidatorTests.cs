@@ -26,7 +26,7 @@ public class PlaceOrderCommandValidatorTests
     [Fact]
     public void ValidatePlaceOrderCommand_WhenProductsAreEmpty_ShouldHaveValidationError()
     {
-        var command = PlaceOrderCommandUtils.CreateCommand(orderProducts: []);
+        var command = PlaceOrderCommandUtils.CreateCommand(products: []);
 
         var result = _validator.TestValidate(command);
 

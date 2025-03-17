@@ -13,7 +13,7 @@ Authorization: Bearer {{token_customer}}
 X-Idempotency-Key: dc6f84e4-0afb-42d4-b72a-261974c3d010
 
 {
-  "shippingMethodId": "2",
+  "shippingMethodId": "1",
   "products": [
     {
       "productId": "1",
@@ -35,7 +35,8 @@ X-Idempotency-Key: dc6f84e4-0afb-42d4-b72a-261974c3d010
     "neighborhood": "Grove Street, home"
   },
   "paymentMethod": {
-    "type": "credit_card"
+    "$type": "CreditCard",
+    "token": "tokenized-credit-card-data"
   },
   "couponAppliedIds": [],
   "installments": 1

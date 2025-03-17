@@ -1,4 +1,5 @@
 using Domain.CategoryAggregate.ValueObjects;
+
 using SharedKernel.Models;
 
 namespace Domain.CouponAggregate.ValueObjects;

@@ -45,14 +45,44 @@ public static class DiscountUtils
     }
 
     /// <summary>
+    /// Creates a new valid to date instance of the
+    /// <see cref="Discount"/> class.
+    /// </summary>
+    /// <returns>
+    /// A new valid to date <see cref="Discount"/>.
+    /// </returns>
+    public static Discount CreateDiscountValidToDate()
+    {
+        return CreateDiscount(
+            startingDate: DateTimeOffset.UtcNow.AddHours(-4)
+        );
+    }
+
+    /// <summary>
+    /// Creates a collection of <see cref="Discount"/> valid to date.
+    /// </summary>
+    /// <param name="count">The quantity of discounts to be created.</param>
+    /// <returns>A collection of <see cref="Discount"/> valid to date.</returns>
+    public static IReadOnlyCollection<Discount> CreateDiscountsValidToDate(
+        int count = 1
+    )
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(_ => CreateDiscountValidToDate())
+            .ToList();
+    }
+
+    /// <summary>
     /// Creates a list of discounts.
     /// </summary>
     /// <param name="count">The number of discounts to be created.</param>
     /// <returns>A list of discounts.</returns>
-    public static IEnumerable<Discount> CreateDiscounts(int count = 1)
+    public static IReadOnlyCollection<Discount> CreateDiscounts(int count = 1)
     {
         return Enumerable
             .Range(0, count)
-            .Select(index => CreateDiscount());
+            .Select(_ => CreateDiscount())
+            .ToList();
     }
 }
