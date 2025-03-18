@@ -20,31 +20,31 @@ public static class SaleUtils
     /// <param name="id">The sale id.</param>
     /// <param name="discount">The sale discount percentage.</param>
     /// <param name="categoriesInSale">The categories in sale.</param>
-    /// <param name="productsInSale">The products in sale.</param>
-    /// <param name="productsExcludeFromSale">The products excluded from sale.</param>
+    /// <param name="productsOnSale">The products on sale.</param>
+    /// <param name="productsExcludedFromSale">The products excluded from sale.</param>
     /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
     public static Sale CreateSale(
         SaleId? id = null,
         Discount? discount = null,
-        IReadOnlySet<CategoryReference>? categoriesInSale = null,
-        IReadOnlySet<ProductReference>? productsInSale = null,
-        IReadOnlySet<ProductReference>? productsExcludeFromSale = null
+        IEnumerable<SaleCategory>? categoriesInSale = null,
+        IEnumerable<SaleProduct>? productsOnSale = null,
+        IEnumerable<SaleProduct>? productsExcludedFromSale = null
     )
     {
         var sale = Sale.Create(
             discount ?? DiscountUtils.CreateDiscountValidToDate(),
-            categoriesInSale ?? new HashSet<CategoryReference>()
-            {
-                CategoryReference.Create(CategoryId.Create(1))
-            },
-            productsInSale ?? new HashSet<ProductReference>()
-            {
-                ProductReference.Create(ProductId.Create(1))
-            },
-            productsExcludeFromSale ?? new HashSet<ProductReference>()
-            {
-                ProductReference.Create(ProductId.Create(2))
-            }
+            categoriesInSale ??
+            [
+                SaleCategory.Create(CategoryId.Create(1))
+            ],
+            productsOnSale ??
+            [
+                SaleProduct.Create(ProductId.Create(1))
+            ],
+            productsExcludedFromSale ??
+            [
+                SaleProduct.Create(ProductId.Create(2))
+            ]
         );
 
         if (id != null)

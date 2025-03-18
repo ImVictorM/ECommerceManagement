@@ -44,14 +44,14 @@ public sealed class SaleSeed : DataSeed<SaleSeedType, Sale, SaleId>, ISaleSeed
                     startingDate: DateTimeOffset.UtcNow.AddHours(-5),
                     endingDate: DateTimeOffset.UtcNow.AddDays(5)
                 ),
-                categoriesInSale: new HashSet<CategoryReference>(),
-                productsInSale: new HashSet<ProductReference>()
-                {
-                    ProductReference.Create(productSeed.GetEntityId(
+                categoriesInSale: [],
+                productsOnSale:
+                [
+                    SaleProduct.Create(productSeed.GetEntityId(
                         ProductSeedType.COMPUTER_ON_SALE
                     ))
-                },
-                productsExcludeFromSale: new HashSet<ProductReference>()
+                ],
+                productsExcludedFromSale: []
             )
         };
     }

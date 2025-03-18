@@ -20,7 +20,7 @@ public interface ISaleApplicationService
     /// of <see cref="Sale"/> objects that apply to the product.
     /// </returns>
     Task<IDictionary<ProductId, IEnumerable<Sale>>> GetApplicableSalesForProductsAsync(
-        IEnumerable<SaleProduct> products,
+        IEnumerable<SaleEligibleProduct> products,
         CancellationToken cancellationToken = default
     );
 }

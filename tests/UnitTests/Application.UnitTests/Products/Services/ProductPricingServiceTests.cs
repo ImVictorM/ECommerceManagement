@@ -62,12 +62,12 @@ public class ProductPricingServiceTests
                 p => new List<Sale>()
                 {
                     SaleUtils.CreateSale(
-                        productsInSale: new HashSet<ProductReference>()
+                        productsOnSale: new HashSet<SaleProduct>()
                         {
-                            ProductReference.Create(p.Id)
+                            SaleProduct.Create(p.Id)
                         },
-                        categoriesInSale: new HashSet<CategoryReference>(),
-                        productsExcludeFromSale: new HashSet<ProductReference>()
+                        categoriesInSale: new HashSet<SaleCategory>(),
+                        productsExcludedFromSale: new HashSet<SaleProduct>()
                     )
                 }
                 .AsEnumerable()
@@ -89,7 +89,7 @@ public class ProductPricingServiceTests
 
         _mockSaleService
             .Setup(s => s.GetApplicableSalesForProductsAsync(
-                It.IsAny<IEnumerable<SaleProduct>>(),
+                It.IsAny<IEnumerable<SaleEligibleProduct>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(productSales);
@@ -139,7 +139,7 @@ public class ProductPricingServiceTests
 
         _mockSaleService
             .Setup(s => s.GetApplicableSalesForProductsAsync(
-                It.IsAny<IEnumerable<SaleProduct>>(),
+                It.IsAny<IEnumerable<SaleEligibleProduct>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(productSales);
@@ -187,7 +187,7 @@ public class ProductPricingServiceTests
 
         _mockSaleService
             .Setup(s => s.GetApplicableSalesForProductsAsync(
-                It.IsAny<IEnumerable<SaleProduct>>(),
+                It.IsAny<IEnumerable<SaleEligibleProduct>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(productSales);

@@ -22,7 +22,6 @@ internal sealed class ProductPricingService : IProductPricingService
         _discountService = discountService;
     }
 
-    /// <inheritdoc/>
     public async Task<decimal> CalculateProductPriceApplyingSaleAsync(
         Product product,
         CancellationToken cancellationToken = default
@@ -33,19 +32,18 @@ internal sealed class ProductPricingService : IProductPricingService
         return result[product.Id];
     }
 
-    /// <inheritdoc/>
     public async Task<Dictionary<ProductId, decimal>> CalculateProductsPriceApplyingSaleAsync(
         IEnumerable<Product> products,
         CancellationToken cancellationToken = default
     )
     {
-        var saleProducts = products.Select(p => SaleProduct.Create(
+        var eligibleProducts = products.Select(p => SaleEligibleProduct.Create(
             p.Id,
-            p.ProductCategories.Select(c => c.CategoryId).ToHashSet())
+            p.ProductCategories.Select(c => c.CategoryId))
         );
 
         var productSales = await _saleService.GetApplicableSalesForProductsAsync(
-            saleProducts,
+            eligibleProducts,
             cancellationToken
         );
 
@@ -53,10 +51,7 @@ internal sealed class ProductPricingService : IProductPricingService
             p => p.Id,
             p => _discountService.CalculateDiscountedPrice(
                 p.BasePrice,
-                productSales[p.Id]
-                    .Where(s => s.IsValidToDate())
-                    .Select(s => s.Discount)
-                    .ToArray()
+                productSales[p.Id].Select(s => s.Discount)
             )
         );
     }

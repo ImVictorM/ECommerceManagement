@@ -11,9 +11,9 @@ namespace Domain.SaleAggregate;
 /// </summary>
 public class Sale : AggregateRoot<SaleId>
 {
-    private readonly HashSet<CategoryReference> _categoriesInSale = [];
-    private readonly HashSet<ProductReference> _productsInSale = [];
-    private readonly HashSet<ProductReference> _productsExcludeFromSale = [];
+    private readonly HashSet<SaleCategory> _categoriesInSale = [];
+    private readonly HashSet<SaleProduct> _productsInSale = [];
+    private readonly HashSet<SaleProduct> _productsExcludeFromSale = [];
 
     /// <summary>
     /// Gets the sale discount;
@@ -22,23 +22,23 @@ public class Sale : AggregateRoot<SaleId>
     /// <summary>
     /// Gets the categories in sale.
     /// </summary>
-    public IReadOnlySet<CategoryReference> CategoriesInSale => _categoriesInSale;
+    public IReadOnlySet<SaleCategory> CategoriesInSale => _categoriesInSale;
     /// <summary>
     /// Gets the products in sale.
     /// </summary>
-    public IReadOnlySet<ProductReference> ProductsInSale => _productsInSale;
+    public IReadOnlySet<SaleProduct> ProductsInSale => _productsInSale;
     /// <summary>
     /// Gets the products excluded from sale.
     /// </summary>
-    public IReadOnlySet<ProductReference> ProductsExcludedFromSale => _productsExcludeFromSale;
+    public IReadOnlySet<SaleProduct> ProductsExcludedFromSale => _productsExcludeFromSale;
 
     private Sale() { }
 
     private Sale(
         Discount discount,
-        IReadOnlySet<CategoryReference> categoriesInSale,
-        IReadOnlySet<ProductReference> productsInSale,
-        IReadOnlySet<ProductReference> productsExcludeFromSale
+        IEnumerable<SaleCategory> categoriesInSale,
+        IEnumerable<SaleProduct> productsInSale,
+        IEnumerable<SaleProduct> productsExcludeFromSale
     )
     {
         Discount = discount;
@@ -59,9 +59,9 @@ public class Sale : AggregateRoot<SaleId>
     /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
     public static Sale Create(
         Discount discount,
-        IReadOnlySet<CategoryReference> categoriesInSale,
-        IReadOnlySet<ProductReference> productsInSale,
-        IReadOnlySet<ProductReference> productsExcludeFromSale
+        IEnumerable<SaleCategory> categoriesInSale,
+        IEnumerable<SaleProduct> productsInSale,
+        IEnumerable<SaleProduct> productsExcludeFromSale
     )
     {
         return new Sale(
@@ -73,46 +73,58 @@ public class Sale : AggregateRoot<SaleId>
     }
 
     /// <summary>
-    /// Checks if the sale is valid to the current date.
-    /// </summary>
-    /// <returns>A boolean value Indicates if the sale is valid to the current date.</returns>
-    public bool IsValidToDate()
-    {
-        return Discount.IsValidToDate;
-    }
-
-    /// <summary>
-    /// Checks if a product is in sale.
+    /// Checks if a product is on sale.
     /// </summary>
     /// <param name="product">The product to be checked.</param>
-    /// <returns>A boolean value indicating if the product is in sale.</returns>
-    /// /// <remarks>
+    /// <returns>A boolean value indicating if the product is on sale.</returns>
+    /// <remarks>
     /// A sale applies to a product if:
-    /// - The product is explicitly included in the sale (exists in <see cref="Sale.ProductsInSale"/>).
-    /// - OR the product belongs to a category that is on sale (exists in <see cref="Sale.CategoriesInSale"/>),
-    ///   and it is NOT explicitly excluded from the sale (exists in <see cref="Sale.ProductsExcludedFromSale"/>).
+    /// - The product is explicitly included in the sale
+    /// (exists in <see cref="ProductsInSale"/>).
+    /// - OR the product belongs to a category that is on sale
+    ///   (exists in <see cref="CategoriesInSale"/>),
+    ///   and it is NOT explicitly excluded from the sale
+    ///   (exists in <see cref="ProductsExcludedFromSale"/>).
     /// </remarks>
-    public bool IsProductInSale(SaleProduct product)
+    public bool IsProductOnSale(SaleEligibleProduct product)
     {
-        var isProductInSaleList = ProductsInSale.Contains(ProductReference.Create(product.ProductId));
-        var isProductExcludedFromSale = ProductsExcludedFromSale.Contains(ProductReference.Create(product.ProductId));
+        if (!Discount.IsValidToDate)
+        {
+            return false;
+        }
 
-        var isAnyProductCategoryInSaleList = CategoriesInSale.Intersect(product.Categories.Select(CategoryReference.Create)).Any();
+        var currentProduct = SaleProduct.Create(product.ProductId);
+        var currentProductCategories = product.CategoryIds.Select(SaleCategory.Create);
 
-        return (isProductInSaleList || isAnyProductCategoryInSaleList) && !isProductExcludedFromSale;
+        var isProductInSaleList = ProductsInSale.Contains(currentProduct);
+        var isProductExcludedFromSale = ProductsExcludedFromSale.Contains(currentProduct);
+
+        var isAnyProductCategoryInSaleList = CategoriesInSale
+            .Intersect(currentProductCategories)
+            .Any();
+
+        return
+            (isProductInSaleList || isAnyProductCategoryInSaleList)
+            && !isProductExcludedFromSale;
     }
 
     private void ValidateSale()
     {
         var hasAnyCategory = CategoriesInSale.Any();
         var hasAnyProduct = ProductsInSale.Any();
-        var productInSaleAndExcludedProductsAreEqual = ProductsInSale.SetEquals(ProductsExcludedFromSale);
 
-        if (hasAnyCategory || (hasAnyProduct && !productInSaleAndExcludedProductsAreEqual))
+        var productInSaleAndExcludedProductsAreEqual = ProductsInSale
+            .SetEquals(ProductsExcludedFromSale);
+
+        if (
+            hasAnyCategory
+            || (hasAnyProduct && !productInSaleAndExcludedProductsAreEqual))
         {
             return;
         }
 
-        throw new InvalidSaleStateException("A sale must contain at least one category or one product.");
+        throw new InvalidSaleStateException(
+            "A sale must contain at least one category or one product"
+        );
     }
 }
