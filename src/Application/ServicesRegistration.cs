@@ -66,10 +66,9 @@ public static class ServicesRegistration
         services.AddScoped<IProductPricingService, ProductPricingService>();
         services.AddScoped<IInventoryManagementService, InventoryManagementService>();
         services.AddScoped<ISaleApplicationService, SaleApplicationService>();
-        services.AddScoped<
-            IProductFeedbackEligibilityService,
-            ProductFeedbackEligibilityService
-        >();
+        services.AddScoped
+            <IProductFeedbackEligibilityService, ProductFeedbackEligibilityService>();
+        services.AddScoped<ISaleEligibilityService, SaleEligibilityService>();
         services.AddScoped<ICouponApplicationService, CouponApplicationService>();
         services.AddScoped<ICouponUsageService, CouponUsageService>();
 

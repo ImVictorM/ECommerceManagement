@@ -4,11 +4,14 @@ using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.Errors;
+using Domain.SaleAggregate.Services;
+using Domain.SaleAggregate.Factories;
 
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
 
 using FluentAssertions;
+using Moq;
 
 namespace Domain.UnitTests.SaleAggregate;
 
@@ -38,28 +41,40 @@ public class SaleTests
             }
         ]
     ];
+
     /// <summary>
     /// Ensures that a sale is created successfully with valid inputs.
     /// </summary>
     [Theory]
     [MemberData(nameof(ValidSaleInputs))]
-    public void CreateSale_WithValidInputs_CreatesWithoutThrowing(
+    public async Task CreateSale_WithValidInputsAndEligibleSale_CreatesWithoutThrowing(
         Discount discount,
         HashSet<SaleCategory> categoriesOnSale,
         HashSet<SaleProduct> productsOnSale,
         HashSet<SaleProduct> productsExcludedFromSale
     )
     {
-        var act = FluentActions
-            .Invoking(() => SaleUtils.CreateSale(
+        var mockEligibilityService = new Mock<ISaleEligibilityService>();
+
+        mockEligibilityService
+            .Setup(s => s.IsSaleEligibleAsync(
+                It.IsAny<Sale>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(true);
+
+        var factory = new SaleFactory(mockEligibilityService.Object);
+
+        var act = await FluentActions
+            .Invoking(() => factory.CreateSaleAsync(
                 discount: discount,
                 categoriesOnSale: categoriesOnSale,
                 productsOnSale: productsOnSale,
-                productsExcludedFromSale:
-                productsExcludedFromSale
+                productsExcludedFromSale: productsExcludedFromSale,
+                default
             ))
             .Should()
-            .NotThrow();
+            .NotThrowAsync();
 
         var sale = act.Subject;
 
@@ -70,21 +85,56 @@ public class SaleTests
     }
 
     /// <summary>
+    /// Ensures creating a non-eligible sale throws an exception.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(ValidSaleInputs))]
+    public async Task CreateSale_WithValidInputsAndNonEligibleSale_ThrowsError(
+        Discount discount,
+        HashSet<SaleCategory> categoriesOnSale,
+        HashSet<SaleProduct> productsOnSale,
+        HashSet<SaleProduct> productsExcludedFromSale
+    )
+    {
+        var mockEligibilityService = new Mock<ISaleEligibilityService>();
+
+        mockEligibilityService
+            .Setup(s => s.IsSaleEligibleAsync(
+                It.IsAny<Sale>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(false);
+
+        var factory = new SaleFactory(mockEligibilityService.Object);
+
+        await FluentActions
+            .Invoking(() => factory.CreateSaleAsync(
+                discount: discount,
+                categoriesOnSale: categoriesOnSale,
+                productsOnSale: productsOnSale,
+                productsExcludedFromSale: productsExcludedFromSale,
+                default
+            ))
+            .Should()
+            .ThrowAsync<SaleNotEligibleException>();
+    }
+
+    /// <summary>
     /// Ensures that creating a sale with no categories or products throws an exception.
     /// </summary>
     [Fact]
-    public void CreateSale_WithoutCategoriesOrProducts_ThrowsError()
+    public async Task CreateSale_WithoutCategoriesOrProducts_ThrowsError()
     {
         var emptyCategories = new HashSet<SaleCategory>();
         var emptyProducts = new HashSet<SaleProduct>();
 
-        FluentActions
-            .Invoking(() => SaleUtils.CreateSale(
+        await FluentActions
+            .Invoking(() => SaleUtils.CreateSaleAsync(
                 categoriesOnSale: emptyCategories,
                 productsOnSale: emptyProducts
             ))
             .Should()
-            .Throw<InvalidSaleStateException>()
+            .ThrowAsync<InvalidSaleStateException>()
             .WithMessage(
                 "A sale must contain at least one category or one product"
             );
@@ -95,7 +145,7 @@ public class SaleTests
     /// to the products included throws an exception.
     /// </summary>
     [Fact]
-    public void CreateSale_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
+    public async Task CreateSale_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
     {
         var emptyCategories = new HashSet<SaleCategory>();
         var productsOnSale = new HashSet<SaleProduct>()
@@ -109,14 +159,14 @@ public class SaleTests
             SaleProduct.Create(ProductId.Create(2)),
         };
 
-        FluentActions
-            .Invoking(() => SaleUtils.CreateSale(
+        await FluentActions
+            .Invoking(() => SaleUtils.CreateSaleAsync(
                 categoriesOnSale: emptyCategories,
                 productsOnSale: productsOnSale,
                 productsExcludedFromSale: productsExcluded
             ))
             .Should()
-            .Throw<InvalidSaleStateException>()
+            .ThrowAsync<InvalidSaleStateException>()
             .WithMessage(
                 "A sale must contain at least one category or one product"
             );
@@ -172,12 +222,12 @@ public class SaleTests
     /// <param name="expectedResult">The expected result.</param>
     [Theory]
     [MemberData(nameof(IsProductOnSaleData))]
-    public void IsProductOnSale_WithDifferentEligibleProducts_ReturnExpectedResult(
+    public async Task IsProductOnSale_WithDifferentEligibleProducts_ReturnExpectedResult(
         SaleEligibleProduct product,
         bool expectedResult
     )
     {
-        var sale = SaleUtils.CreateSale(
+        var sale = await SaleUtils.CreateSaleAsync(
             productsOnSale:
             [
                 SaleProduct.Create(ProductId.Create(1)),
@@ -203,7 +253,7 @@ public class SaleTests
     /// to date.
     /// </summary>
     [Fact]
-    public void IsProductOnSale_WithDiscountNotValidToDate_ReturnFalse()
+    public async Task IsProductOnSale_WithDiscountNotValidToDate_ReturnFalse()
     {
         var product = SaleEligibleProduct.Create(
             ProductId.Create(1),
@@ -212,7 +262,7 @@ public class SaleTests
             ]
         );
 
-        var sale = SaleUtils.CreateSale(
+        var sale = await SaleUtils.CreateSaleAsync(
             productsOnSale:
             [
                 SaleProduct.Create(product.ProductId),

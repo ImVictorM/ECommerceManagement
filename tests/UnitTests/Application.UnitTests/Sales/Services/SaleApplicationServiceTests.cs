@@ -58,7 +58,7 @@ public class SaleApplicationServiceTests
         {
             [products[0].ProductId] =
             [
-                SaleUtils.CreateSale(
+                await SaleUtils.CreateSaleAsync(
                     productsOnSale:
                     [
                         SaleProduct.Create(products[0].ProductId)
@@ -69,7 +69,7 @@ public class SaleApplicationServiceTests
             ],
             [products[1].ProductId] =
             [
-                SaleUtils.CreateSale(
+                await SaleUtils.CreateSaleAsync(
                     categoriesOnSale:
                     [
                         SaleCategory.Create(products[1].CategoryIds.First())

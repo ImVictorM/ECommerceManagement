@@ -8,6 +8,6 @@ namespace IntegrationTests.Common.Seeds.Sales;
 /// <summary>
 /// Defines a contract to provide seed data for sales in the database.
 /// </summary>
-public interface ISaleSeed : IDataSeed<SaleSeedType, Sale, SaleId>
+public interface ISaleSeed : IAsyncDataSeed<SaleSeedType, Sale, SaleId>
 {
 }

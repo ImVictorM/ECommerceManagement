@@ -16,11 +16,13 @@ public class InvalidSaleStateException : BaseException
     {
     }
 
-    internal InvalidSaleStateException(string message) : base(message, DefaultTitle, _defaultErrorCode)
+    internal InvalidSaleStateException(string message)
+        : base(message, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal InvalidSaleStateException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    internal InvalidSaleStateException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }

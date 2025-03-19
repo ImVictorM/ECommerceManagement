@@ -1,11 +1,15 @@
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
+using Domain.SaleAggregate.Factories;
+using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
 
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.UnitTests.TestUtils.Extensions;
 using SharedKernel.ValueObjects;
+
+using Moq;
 
 namespace Domain.UnitTests.TestUtils;
 
@@ -23,7 +27,7 @@ public static class SaleUtils
     /// <param name="productsOnSale">The products on sale.</param>
     /// <param name="productsExcludedFromSale">The products excluded from sale.</param>
     /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
-    public static Sale CreateSale(
+    public static async Task<Sale> CreateSaleAsync(
         SaleId? id = null,
         Discount? discount = null,
         IEnumerable<SaleCategory>? categoriesOnSale = null,
@@ -31,7 +35,9 @@ public static class SaleUtils
         IEnumerable<SaleProduct>? productsExcludedFromSale = null
     )
     {
-        var sale = Sale.Create(
+        var factory = CreateFactoryMock();
+
+        var sale = await factory.CreateSaleAsync(
             discount ?? DiscountUtils.CreateDiscountValidToDate(),
             categoriesOnSale ??
             [
@@ -53,5 +59,19 @@ public static class SaleUtils
         }
 
         return sale;
+    }
+
+    private static SaleFactory CreateFactoryMock()
+    {
+        var mockEligibilityService = new Mock<ISaleEligibilityService>();
+
+        mockEligibilityService
+            .Setup(s => s.IsSaleEligibleAsync(
+                It.IsAny<Sale>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(true);
+
+        return new SaleFactory(mockEligibilityService.Object);
     }
 }

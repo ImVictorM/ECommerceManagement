@@ -10,7 +10,7 @@ namespace Application.Products.Services;
 
 internal sealed class ProductPricingService : IProductPricingService
 {
-    private readonly ISaleApplicationService _saleService;
+    private readonly ISaleApplicationService _saleApplicationService;
     private readonly IDiscountService _discountService;
 
     public ProductPricingService(
@@ -18,7 +18,7 @@ internal sealed class ProductPricingService : IProductPricingService
         IDiscountService discountService
     )
     {
-        _saleService = saleService;
+        _saleApplicationService = saleService;
         _discountService = discountService;
     }
 
@@ -42,7 +42,7 @@ internal sealed class ProductPricingService : IProductPricingService
             p.ProductCategories.Select(c => c.CategoryId))
         );
 
-        var productSales = await _saleService.GetApplicableSalesForProductsAsync(
+        var productSales = await _saleApplicationService.GetApplicableSalesForProductsAsync(
             eligibleProducts,
             cancellationToken
         );

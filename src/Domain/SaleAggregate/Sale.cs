@@ -49,15 +49,7 @@ public class Sale : AggregateRoot<SaleId>
         ValidateSale();
     }
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="Sale"/> class.
-    /// </summary>
-    /// <param name="discount">The sale discount.</param>
-    /// <param name="categoriesOnSale">The categories on sale.</param>
-    /// <param name="productsOnSale">The products on sale.</param>
-    /// <param name="productsExcludeFromSale">The products excluded from sale.</param>
-    /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
-    public static Sale Create(
+    internal static Sale Create(
         Discount discount,
         IEnumerable<SaleCategory> categoriesOnSale,
         IEnumerable<SaleProduct> productsOnSale,
