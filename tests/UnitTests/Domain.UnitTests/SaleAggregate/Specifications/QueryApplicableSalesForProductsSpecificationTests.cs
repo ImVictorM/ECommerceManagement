@@ -51,7 +51,7 @@ public class QueryApplicableSalesForProductsSpecificationTests
         var categoryId = CategoryId.Create(1);
 
         var sale = SaleUtils.CreateSale(
-            categoriesInSale: [SaleCategory.Create(categoryId)]
+            categoriesOnSale: [SaleCategory.Create(categoryId)]
         );
 
         var specification = new QueryApplicableSalesForProductsSpecification(

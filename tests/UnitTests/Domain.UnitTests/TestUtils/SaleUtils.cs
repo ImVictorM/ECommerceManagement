@@ -19,21 +19,21 @@ public static class SaleUtils
     /// </summary>
     /// <param name="id">The sale id.</param>
     /// <param name="discount">The sale discount percentage.</param>
-    /// <param name="categoriesInSale">The categories in sale.</param>
+    /// <param name="categoriesOnSale">The categories on sale.</param>
     /// <param name="productsOnSale">The products on sale.</param>
     /// <param name="productsExcludedFromSale">The products excluded from sale.</param>
     /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
     public static Sale CreateSale(
         SaleId? id = null,
         Discount? discount = null,
-        IEnumerable<SaleCategory>? categoriesInSale = null,
+        IEnumerable<SaleCategory>? categoriesOnSale = null,
         IEnumerable<SaleProduct>? productsOnSale = null,
         IEnumerable<SaleProduct>? productsExcludedFromSale = null
     )
     {
         var sale = Sale.Create(
             discount ?? DiscountUtils.CreateDiscountValidToDate(),
-            categoriesInSale ??
+            categoriesOnSale ??
             [
                 SaleCategory.Create(CategoryId.Create(1))
             ],

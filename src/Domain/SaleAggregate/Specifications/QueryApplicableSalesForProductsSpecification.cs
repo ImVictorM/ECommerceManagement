@@ -21,8 +21,8 @@ public class QueryApplicableSalesForProductsSpecification
     /// <inheritdoc/>
     public override Expression<Func<Sale, bool>> Criteria => sale =>
         (
-            sale.ProductsInSale.Any(p => _productIds.Contains(p.ProductId))
-            || sale.CategoriesInSale.Any(c => _categoryIds.Contains(c.CategoryId))
+            sale.ProductsOnSale.Any(p => _productIds.Contains(p.ProductId))
+            || sale.CategoriesOnSale.Any(c => _categoryIds.Contains(c.CategoryId))
         )
         && !sale.ProductsExcludedFromSale.Any(p => _productIds.Contains(p.ProductId))
         && (

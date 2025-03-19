@@ -45,16 +45,16 @@ public class SaleTests
     [MemberData(nameof(ValidSaleInputs))]
     public void CreateSale_WithValidInputs_CreatesWithoutThrowing(
         Discount discount,
-        HashSet<SaleCategory> categoriesInSale,
-        HashSet<SaleProduct> productsInSale,
+        HashSet<SaleCategory> categoriesOnSale,
+        HashSet<SaleProduct> productsOnSale,
         HashSet<SaleProduct> productsExcludedFromSale
     )
     {
         var act = FluentActions
             .Invoking(() => SaleUtils.CreateSale(
                 discount: discount,
-                categoriesInSale: categoriesInSale,
-                productsOnSale: productsInSale,
+                categoriesOnSale: categoriesOnSale,
+                productsOnSale: productsOnSale,
                 productsExcludedFromSale:
                 productsExcludedFromSale
             ))
@@ -64,8 +64,8 @@ public class SaleTests
         var sale = act.Subject;
 
         sale.Discount.Should().BeEquivalentTo(discount);
-        sale.CategoriesInSale.Should().BeEquivalentTo(categoriesInSale);
-        sale.ProductsInSale.Should().BeEquivalentTo(productsInSale);
+        sale.CategoriesOnSale.Should().BeEquivalentTo(categoriesOnSale);
+        sale.ProductsOnSale.Should().BeEquivalentTo(productsOnSale);
         sale.ProductsExcludedFromSale.Should().BeEquivalentTo(productsExcludedFromSale);
     }
 
@@ -80,7 +80,7 @@ public class SaleTests
 
         FluentActions
             .Invoking(() => SaleUtils.CreateSale(
-                categoriesInSale: emptyCategories,
+                categoriesOnSale: emptyCategories,
                 productsOnSale: emptyProducts
             ))
             .Should()
@@ -111,7 +111,7 @@ public class SaleTests
 
         FluentActions
             .Invoking(() => SaleUtils.CreateSale(
-                categoriesInSale: emptyCategories,
+                categoriesOnSale: emptyCategories,
                 productsOnSale: productsOnSale,
                 productsExcludedFromSale: productsExcluded
             ))
@@ -125,45 +125,41 @@ public class SaleTests
     /// <summary>
     /// Provides test data for validating if a product is in a sale.
     /// </summary>
-    public static IEnumerable<object[]> IsProductInSaleData =>
+    public static IEnumerable<object[]> IsProductOnSaleData =>
     [
         [
             SaleEligibleProduct.Create(
                 ProductId.Create(1),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(1)
-                }
+                ]
             ),
             true
         ],
         [
             SaleEligibleProduct.Create(
                 ProductId.Create(3),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(1)
-                }
+                ]
             ),
             true
         ],
         [
             SaleEligibleProduct.Create(
                 ProductId.Create(2),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(1)
-                }
+                ]
             ),
             false
         ],
         [
             SaleEligibleProduct.Create(
                 ProductId.Create(3),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(3)
-                }
+                ]
             ),
             false
         ],
@@ -175,26 +171,26 @@ public class SaleTests
     /// <param name="product">The product to check.</param>
     /// <param name="expectedResult">The expected result.</param>
     [Theory]
-    [MemberData(nameof(IsProductInSaleData))]
+    [MemberData(nameof(IsProductOnSaleData))]
     public void IsProductOnSale_WithDifferentEligibleProducts_ReturnExpectedResult(
         SaleEligibleProduct product,
         bool expectedResult
     )
     {
         var sale = SaleUtils.CreateSale(
-            productsOnSale: new HashSet<SaleProduct>()
-            {
+            productsOnSale:
+            [
                 SaleProduct.Create(ProductId.Create(1)),
                 SaleProduct.Create(ProductId.Create(2))
-            },
-            categoriesInSale: new HashSet<SaleCategory>()
-            {
+            ],
+            categoriesOnSale:
+            [
                 SaleCategory.Create(CategoryId.Create(1)),
-            },
-            productsExcludedFromSale: new HashSet<SaleProduct>()
-            {
+            ],
+            productsExcludedFromSale:
+            [
                 SaleProduct.Create(ProductId.Create(2))
-            }
+            ]
         );
 
         var result = sale.IsProductOnSale(product);
@@ -217,10 +213,10 @@ public class SaleTests
         );
 
         var sale = SaleUtils.CreateSale(
-            productsOnSale: new HashSet<SaleProduct>()
-            {
+            productsOnSale:
+            [
                 SaleProduct.Create(product.ProductId),
-            },
+            ],
             discount: DiscountUtils.CreateDiscount(
                 startingDate: DateTimeOffset.UtcNow.AddDays(4),
                 endingDate: DateTimeOffset.UtcNow.AddDays(15)

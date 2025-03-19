@@ -41,7 +41,7 @@ internal sealed class SaleConfigurations : EntityTypeConfigurationDependency<Sal
 
     private static void ConfigureOwnedSaleCategoriesTable(EntityTypeBuilder<Sale> builder)
     {
-        builder.OwnsMany(s => s.CategoriesInSale, saleCategoriesBuilder =>
+        builder.OwnsMany(s => s.CategoriesOnSale, saleCategoriesBuilder =>
         {
             saleCategoriesBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
@@ -113,7 +113,7 @@ internal sealed class SaleConfigurations : EntityTypeConfigurationDependency<Sal
 
     private static void ConfigureOwnedSaleProductsTable(EntityTypeBuilder<Sale> builder)
     {
-        builder.OwnsMany(s => s.ProductsInSale, saleProductsBuilder =>
+        builder.OwnsMany(s => s.ProductsOnSale, saleProductsBuilder =>
         {
             saleProductsBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 

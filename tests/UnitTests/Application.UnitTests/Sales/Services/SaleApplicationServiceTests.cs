@@ -63,14 +63,14 @@ public class SaleApplicationServiceTests
                     [
                         SaleProduct.Create(products[0].ProductId)
                     ],
-                    categoriesInSale: [],
+                    categoriesOnSale: [],
                     productsExcludedFromSale: []
                 ),
             ],
             [products[1].ProductId] =
             [
                 SaleUtils.CreateSale(
-                    categoriesInSale:
+                    categoriesOnSale:
                     [
                         SaleCategory.Create(products[1].CategoryIds.First())
                     ],

@@ -62,12 +62,12 @@ public class ProductPricingServiceTests
                 p => new List<Sale>()
                 {
                     SaleUtils.CreateSale(
-                        productsOnSale: new HashSet<SaleProduct>()
-                        {
+                        productsOnSale:
+                        [
                             SaleProduct.Create(p.Id)
-                        },
-                        categoriesInSale: new HashSet<SaleCategory>(),
-                        productsExcludedFromSale: new HashSet<SaleProduct>()
+                        ],
+                        categoriesOnSale: [],
+                        productsExcludedFromSale: []
                     )
                 }
                 .AsEnumerable()

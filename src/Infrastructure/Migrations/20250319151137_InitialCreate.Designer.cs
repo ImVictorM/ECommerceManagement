@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20250314150916_InitialCreate")]
+    [Migration("20250319151137_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -84,12 +84,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6564), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 19, 15, 11, 34, 778, DateTimeKind.Unspecified).AddTicks(4935), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "carrier@email.com",
                             Name = "ECommerceManagementCarrier",
-                            PasswordHash = "0BF7B0638748AA86326E9885E77E44F584D03207237BC8D16AFED4D82BD7F16A-4A782FA88CA45F81509EF1F7EF8BC43D",
+                            PasswordHash = "8EBB3AE43F247817E4FAF30032E99281B56039F36F2A490DF8880047CB82535A-175ECC10A3588E490E4E15A436390F43",
                             Phone = "",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6571), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 19, 15, 11, 34, 778, DateTimeKind.Unspecified).AddTicks(4944), new TimeSpan(0, 0, 0, 0, 0)),
                             _roleId = 3L
                         });
                 });
@@ -691,12 +691,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4465), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 19, 15, 11, 34, 743, DateTimeKind.Unspecified).AddTicks(8678), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@email.com",
                             IsActive = true,
                             Name = "admin",
-                            PasswordHash = "FA55DE04791D423A6A3F23B60FF2B59660F96A397C77A87A98A26A3316B9A24C-495A517EF37FC1DF7D8301655D2FDA15",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4469), new TimeSpan(0, 0, 0, 0, 0))
+                            PasswordHash = "FB733C5C501CA66AE3B346EC83338E5C993359B8D4F490F936B579BA17162815-52EA0B1F153B59534A702A1F896F6DC2",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 19, 15, 11, 34, 743, DateTimeKind.Unspecified).AddTicks(8685), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -1151,7 +1151,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("SaleId");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.ProductReference", "ProductsExcludedFromSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleProduct", "ProductsExcludedFromSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1186,7 +1186,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.ProductReference", "ProductsInSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleProduct", "ProductsOnSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1221,7 +1221,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.CategoryReference", "CategoriesInSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleCategory", "CategoriesOnSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1256,14 +1256,14 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.Navigation("CategoriesInSale");
+                    b.Navigation("CategoriesOnSale");
 
                     b.Navigation("Discount")
                         .IsRequired();
 
                     b.Navigation("ProductsExcludedFromSale");
 
-                    b.Navigation("ProductsInSale");
+                    b.Navigation("ProductsOnSale");
                 });
 
             modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>

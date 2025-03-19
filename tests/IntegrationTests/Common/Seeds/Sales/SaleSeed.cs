@@ -44,7 +44,7 @@ public sealed class SaleSeed : DataSeed<SaleSeedType, Sale, SaleId>, ISaleSeed
                     startingDate: DateTimeOffset.UtcNow.AddHours(-5),
                     endingDate: DateTimeOffset.UtcNow.AddDays(5)
                 ),
-                categoriesInSale: [],
+                categoriesOnSale: [],
                 productsOnSale:
                 [
                     SaleProduct.Create(productSeed.GetEntityId(
