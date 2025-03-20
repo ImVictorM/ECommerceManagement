@@ -26,7 +26,7 @@ public static class CreateSaleCommandUtils
     /// </returns>
     /// <remarks>
     /// If the <paramref name="productOnSaleIds"/> and
-    /// <paramref name="categoryOnSaleIds"/> parameters are empty, a sale containing
+    /// <paramref name="categoryOnSaleIds"/> parameters are not defined, a sale containing
     /// a random product id on sale will be created to guarantee a valid sale
     /// is created.
     /// </remarks>
@@ -38,9 +38,9 @@ public static class CreateSaleCommandUtils
     )
     {
         var productsOnSaleIdsOrDefault =
-            IsSaleCreationParametersEmpty(categoryOnSaleIds, productOnSaleIds)
+            categoryOnSaleIds == null && productOnSaleIds == null
                 ? [NumberUtils.CreateRandomLongAsString()]
-                : productOnSaleIds!;
+                : productOnSaleIds ?? [];
 
         return new CreateSaleCommand(
             discount ?? DiscountUtils.CreateDiscountValidToDate(),
@@ -48,14 +48,5 @@ public static class CreateSaleCommandUtils
             productsOnSaleIdsOrDefault,
             productExcludedFromSaleIds ?? []
         );
-    }
-
-    private static bool IsSaleCreationParametersEmpty(
-        IEnumerable<string>? categoryOnSaleIds = null,
-        IEnumerable<string>? productOnSaleIds = null
-    )
-    {
-        return (categoryOnSaleIds == null || !categoryOnSaleIds.Any())
-            && (productOnSaleIds == null || !productOnSaleIds.Any());
     }
 }
