@@ -10,7 +10,7 @@ public class InvalidSaleStateException : BaseException
     private const string DefaultTitle = "Invalid Sale State";
     private const string DefaultMessage = "The sale state is not valid";
 
-    private static readonly ErrorCode _defaultErrorCode = ErrorCode.InvalidOperation;
+    private static readonly ErrorCode _defaultErrorCode = ErrorCode.ValidationError;
 
     internal InvalidSaleStateException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
     {
