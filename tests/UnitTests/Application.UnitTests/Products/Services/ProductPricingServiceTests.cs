@@ -56,25 +56,17 @@ public class ProductPricingServiceTests
             )
         };
 
-        var salesTasks = products.Select(async p =>
-        new
-        {
-            ProductId = p.Id,
-            Sales = new List<Sale>
+
+        var productSales = products.ToDictionary(
+            p => p.Id,
+            p => new List<Sale>
             {
-                await SaleUtils.CreateSaleAsync(
+                SaleUtils.CreateSale(
                     productsOnSale: [SaleProduct.Create(p.Id)],
                     categoriesOnSale: [],
                     productsExcludedFromSale: []
                 )
-            }
-        });
-
-        var salesResults = await Task.WhenAll(salesTasks);
-
-        var productSales = salesResults.ToDictionary(
-            result => result.ProductId,
-            result => result.Sales.AsEnumerable()
+            }.AsEnumerable()
         );
 
         var expectedPrices = products.ToDictionary(
@@ -177,7 +169,7 @@ public class ProductPricingServiceTests
             basePrice: 100
         );
 
-        var sale = await SaleUtils.CreateSaleAsync();
+        var sale = SaleUtils.CreateSale();
 
         var productSales = new Dictionary<ProductId, IEnumerable<Sale>>
         {

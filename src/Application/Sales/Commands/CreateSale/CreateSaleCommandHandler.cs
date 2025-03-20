@@ -4,12 +4,12 @@ using Application.Common.Persistence.Repositories;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
-using Domain.SaleAggregate.Factories;
 using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Domain.SaleAggregate;
 
 namespace Application.Sales.Commands.CreateSale;
 
@@ -17,7 +17,7 @@ internal sealed partial class CreateSaleCommandHandler
     : IRequestHandler<CreateSaleCommand, CreatedResult>
 {
     private readonly ISaleRepository _saleRepository;
-    private readonly SaleFactory _saleFactory;
+    private readonly ISaleEligibilityService _saleEligibilityService;
     private readonly IUnitOfWork _unitOfWork;
 
     public CreateSaleCommandHandler(
@@ -28,7 +28,7 @@ internal sealed partial class CreateSaleCommandHandler
     )
     {
         _saleRepository = saleRepository;
-        _saleFactory = new SaleFactory(saleEligibilityService);
+        _saleEligibilityService = saleEligibilityService;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -52,15 +52,19 @@ internal sealed partial class CreateSaleCommandHandler
             .Select(ProductId.Create)
             .Select(SaleProduct.Create);
 
-        var sale = await _saleFactory.CreateSaleAsync(
+        var sale = Sale.Create(
             request.Discount,
             categoriesOnSale,
             productsOnSale,
-            productsExcludedFromSale,
-            cancellationToken
+            productsExcludedFromSale
         );
 
         LogSaleCreated();
+
+        await _saleEligibilityService.EnsureSaleProductsEligibilityAsync(
+            sale,
+            cancellationToken
+        );
 
         await _saleRepository.AddAsync(sale);
 

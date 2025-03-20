@@ -1,4 +1,5 @@
 using Application.Common.Persistence.Repositories;
+using Application.Sales.Errors;
 using Application.Sales.Services;
 
 using Domain.CategoryAggregate.ValueObjects;
@@ -57,7 +58,7 @@ public class SaleEligibilityServiceTests
             categories: [ProductCategory.Create(CategoryId.Create(2))]
         );
 
-        var sale = await SaleUtils.CreateSaleAsync(
+        var sale = SaleUtils.CreateSale(
             discount: DiscountUtils.CreateDiscount(
                 percentage: PercentageUtils.Create(10)
             ),
@@ -95,9 +96,10 @@ public class SaleEligibilityServiceTests
             ))
             .Returns(productOnSalePrice);
 
-        var result = await _service.IsSaleEligibleAsync(sale, default);
-
-        result.Should().BeTrue();
+        await FluentActions
+            .Invoking(() => _service.EnsureSaleProductsEligibilityAsync(sale, default))
+            .Should()
+            .NotThrowAsync();
     }
 
     /// <summary>
@@ -113,7 +115,7 @@ public class SaleEligibilityServiceTests
             categories: [ProductCategory.Create(CategoryId.Create(2))]
         );
 
-        var sale = await SaleUtils.CreateSaleAsync(
+        var sale = SaleUtils.CreateSale(
             discount: DiscountUtils.CreateDiscount(
                 percentage: PercentageUtils.Create(91)
             ),
@@ -151,8 +153,9 @@ public class SaleEligibilityServiceTests
             ))
             .Returns(productOnSalePrice);
 
-        var result = await _service.IsSaleEligibleAsync(sale, default);
-
-        result.Should().BeFalse();
+        await FluentActions
+            .Invoking(() => _service.EnsureSaleProductsEligibilityAsync(sale, default))
+            .Should()
+            .ThrowAsync<SaleProductNotEligibleException>();
     }
 }

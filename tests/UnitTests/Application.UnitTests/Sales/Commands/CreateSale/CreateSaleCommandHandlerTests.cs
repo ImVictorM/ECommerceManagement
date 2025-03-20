@@ -2,12 +2,14 @@ using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Common.DTOs;
 using Application.Sales.Commands.CreateSale;
+using Application.Sales.Errors;
 using Application.UnitTests.Sales.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Extensions;
 
 using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
 using Domain.SaleAggregate;
+using Domain.ProductAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using FluentAssertions;
@@ -57,15 +59,49 @@ public class CreateSaleCommandHandlerTests
                 idCreatedSale
             );
 
+        var request = CreateSaleCommandUtils.CreateCommand(
+            productOnSaleIds: ["1", "2"]
+        );
+
+        var result = await _handler.Handle(request, default);
+
+        _mockSaleRepository.Verify(
+            r => r.AddAsync(It.IsAny<Sale>()),
+            Times.Once()
+        );
+
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
+
+        result.Should().NotBeNull();
+        result.Should().BeOfType<CreatedResult>();
+        result.Id.Should().Be(idCreatedSale.ToString());
+    }
+
+    /// <summary>
+    /// Verifies an exception is thrown when some of the products cannot are not
+    /// eligible for the sale.
+    /// </summary>
+    [Fact]
+    public async Task HandleCreateSale_WithSaleNotEligible_ThrowsError()
+    {
+        var idCreatedSale = SaleId.Create(1);
+        var idProductNotEligible = ProductId.Create(1);
+
+        _mockUnitOfWork
+            .MockSetEntityIdBehavior<ISaleRepository, Sale, SaleId>(
+                _mockSaleRepository,
+                idCreatedSale
+            );
+
         _mockSaleEligibilityService
-            .Setup(s => s.IsSaleEligibleAsync(
+            .Setup(s => s.EnsureSaleProductsEligibilityAsync(
                 It.IsAny<Sale>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(true);
+            .ThrowsAsync(new SaleProductNotEligibleException(idProductNotEligible));
 
         var request = CreateSaleCommandUtils.CreateCommand(
-            productOnSaleIds: ["1", "2"]
+            productOnSaleIds: [idProductNotEligible.ToString(), "2"]
         );
 
         var result = await _handler.Handle(request, default);

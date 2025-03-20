@@ -1,4 +1,5 @@
 using Application.Common.Persistence.Repositories;
+using Application.Sales.Errors;
 
 using Domain.ProductAggregate.Specifications;
 using Domain.SaleAggregate;
@@ -27,7 +28,7 @@ internal class SaleEligibilityService : ISaleEligibilityService
         _discountService = discountService;
     }
 
-    public async Task<bool> IsSaleEligibleAsync(
+    public async Task EnsureSaleProductsEligibilityAsync(
         Sale sale,
         CancellationToken cancellationToken
     )
@@ -70,10 +71,8 @@ internal class SaleEligibilityService : ISaleEligibilityService
 
             if (!thresholdSpecification.IsSatisfiedBy(product))
             {
-                return false;
+                throw new SaleProductNotEligibleException(product.Id);
             }
         }
-
-        return true;
     }
 }

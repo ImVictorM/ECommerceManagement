@@ -38,29 +38,37 @@ public class Sale : AggregateRoot<SaleId>
         Discount discount,
         IEnumerable<SaleCategory> categoriesOnSale,
         IEnumerable<SaleProduct> productsOnSale,
-        IEnumerable<SaleProduct> productsExcludeFromSale
+        IEnumerable<SaleProduct> productsExcludedFromSale
     )
     {
         Discount = discount;
         _categoriesOnSale.UnionWith(categoriesOnSale);
         _productsOnSale.UnionWith(productsOnSale);
-        _productsExcludeFromSale.UnionWith(productsExcludeFromSale);
+        _productsExcludeFromSale.UnionWith(productsExcludedFromSale);
 
         ValidateSale();
     }
 
-    internal static Sale Create(
+    /// <summary>
+    /// Creates a new instance of the <see cref="Sale"/> class.
+    /// </summary>
+    /// <param name="discount">The sale discount.</param>
+    /// <param name="categoriesOnSale">The categories on sale.</param>
+    /// <param name="productsOnSale">The products on sale.</param>
+    /// <param name="productsExcludedFromSale">The products excluded from sale.</param>
+    /// <returns>A new instance of the <see cref="Sale"/> class.</returns>
+    public static Sale Create(
         Discount discount,
         IEnumerable<SaleCategory> categoriesOnSale,
         IEnumerable<SaleProduct> productsOnSale,
-        IEnumerable<SaleProduct> productsExcludeFromSale
+        IEnumerable<SaleProduct> productsExcludedFromSale
     )
     {
         return new Sale(
             discount,
             categoriesOnSale,
             productsOnSale,
-            productsExcludeFromSale
+            productsExcludedFromSale
         );
     }
 

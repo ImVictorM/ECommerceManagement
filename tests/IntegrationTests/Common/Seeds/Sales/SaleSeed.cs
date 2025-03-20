@@ -14,10 +14,8 @@ namespace IntegrationTests.Common.Seeds.Sales;
 /// <summary>
 /// Provides seed data for sales in the database.
 /// </summary>
-public sealed class SaleSeed : AsyncDataSeed<SaleSeedType, Sale, SaleId>, ISaleSeed
+public sealed class SaleSeed : DataSeed<SaleSeedType, Sale, SaleId>, ISaleSeed
 {
-    private readonly IProductSeed _productSeed;
-
     /// <inheritdoc/>
     public override int Order { get; }
 
@@ -26,18 +24,18 @@ public sealed class SaleSeed : AsyncDataSeed<SaleSeedType, Sale, SaleId>, ISaleS
     /// </summary>
     /// <param name="productSeed">The product seed.</param>
     public SaleSeed(IProductSeed productSeed)
+        : base(CreateSeedData(productSeed))
     {
-        _productSeed = productSeed;
-
         Order = productSeed.Order + 20;
     }
 
-    /// <inheritdoc/>
-    public override async Task InitializeAsync()
+    private static Dictionary<SaleSeedType, Sale> CreateSeedData(
+        IProductSeed productSeed
+    )
     {
-        var sales = new Dictionary<SaleSeedType, Sale>()
+        return new()
         {
-            [SaleSeedType.COMPUTER_SALE] = await SaleUtils.CreateSaleAsync
+            [SaleSeedType.COMPUTER_SALE] = SaleUtils.CreateSale
             (
                 id: SaleId.Create(-1),
                 discount: DiscountUtils.CreateDiscount(
@@ -49,25 +47,18 @@ public sealed class SaleSeed : AsyncDataSeed<SaleSeedType, Sale, SaleId>, ISaleS
                 categoriesOnSale: [],
                 productsOnSale:
                 [
-                    SaleProduct.Create(_productSeed.GetEntityId(
+                    SaleProduct.Create(productSeed.GetEntityId(
                         ProductSeedType.COMPUTER_ON_SALE
                     ))
                 ],
                 productsExcludedFromSale: []
             )
         };
-
-        foreach (var (key, value) in sales)
-        {
-            Data[key] = value;
-        }
     }
 
     /// <inheritdoc/>
     public override async Task SeedAsync(IECommerceDbContext context)
     {
-        await InitializeAsync();
-
         await context.Sales.AddRangeAsync(ListAll());
     }
 }

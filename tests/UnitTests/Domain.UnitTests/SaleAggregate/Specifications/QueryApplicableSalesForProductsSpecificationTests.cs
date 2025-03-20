@@ -20,11 +20,11 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// matches the query.
     /// </summary>
     [Fact]
-    public async Task QueryApplicableSalesForProductsSpecification_WhenProductMatches_ReturnsTrue()
+    public void QueryApplicableSalesForProductsSpecification_WhenProductMatches_ReturnsTrue()
     {
         var productId = ProductId.Create(1);
 
-        var sale = await SaleUtils.CreateSaleAsync(
+        var sale = SaleUtils.CreateSale(
             productsOnSale:
             [
                 SaleProduct.Create(productId)
@@ -46,11 +46,11 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// sale matches the query.
     /// </summary>
     [Fact]
-    public async Task QueryApplicableSalesForProductsSpecification_WhenCategoryMatches_ReturnsTrue()
+    public void QueryApplicableSalesForProductsSpecification_WhenCategoryMatches_ReturnsTrue()
     {
         var categoryId = CategoryId.Create(1);
 
-        var sale = await SaleUtils.CreateSaleAsync(
+        var sale = SaleUtils.CreateSale(
             categoriesOnSale: [SaleCategory.Create(categoryId)]
         );
 
@@ -68,10 +68,10 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// Verifies that the specification returns false when the product is excluded from the sale.
     /// </summary>
     [Fact]
-    public async Task QueryApplicableSalesForProductsSpecification_WhenProductIsExcluded_ReturnsFalse()
+    public void QueryApplicableSalesForProductsSpecification_WhenProductIsExcluded_ReturnsFalse()
     {
         var productId = ProductId.Create(1);
-        var sale = await SaleUtils.CreateSaleAsync(
+        var sale = SaleUtils.CreateSale(
             productsExcludedFromSale: [SaleProduct.Create(productId)]
         );
 
@@ -90,7 +90,7 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// to date.
     /// </summary>
     [Fact]
-    public async Task QueryApplicableSalesForProductsSpecification_WhenSaleIsNotValidToDate_ReturnsFalse()
+    public void QueryApplicableSalesForProductsSpecification_WhenSaleIsNotValidToDate_ReturnsFalse()
     {
         var productId = ProductId.Create(1);
         var expiredDiscount = DiscountUtils.CreateDiscount(
@@ -98,7 +98,7 @@ public class QueryApplicableSalesForProductsSpecificationTests
             endingDate: DateTimeOffset.UtcNow.AddDays(15)
         );
 
-        var sale = await SaleUtils.CreateSaleAsync(
+        var sale = SaleUtils.CreateSale(
             productsOnSale: [SaleProduct.Create(productId)],
             discount: expiredDiscount
         );
@@ -118,11 +118,11 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// to date.
     /// </summary>
     [Fact]
-    public async Task QueryApplicableSalesForProductsSpecification_WhenSaleIsValidToDate_ReturnsTrue()
+    public void QueryApplicableSalesForProductsSpecification_WhenSaleIsValidToDate_ReturnsTrue()
     {
         var productId = ProductId.Create(1);
 
-        var sale = await SaleUtils.CreateSaleAsync(
+        var sale = SaleUtils.CreateSale(
             productsOnSale: [SaleProduct.Create(productId)],
             discount: DiscountUtils.CreateDiscountValidToDate()
         );
