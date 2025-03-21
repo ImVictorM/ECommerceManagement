@@ -66,6 +66,8 @@ internal sealed partial class CreateSaleCommandHandler
             cancellationToken
         );
 
+        LogSaleProductsIsEligible();
+
         await _saleRepository.AddAsync(sale);
 
         await _unitOfWork.SaveChangesAsync();

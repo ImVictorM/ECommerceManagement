@@ -23,6 +23,13 @@ internal sealed partial class CreateSaleCommandHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
+        Message = "The sale products are eligible for the new sale."
+    )]
+    private partial void LogSaleProductsIsEligible();
+
+    [LoggerMessage(
+        EventId = 4,
+        Level = LogLevel.Debug,
         Message =
         "The sale was created and saved. " +
         "Operation complete successfully. " +
