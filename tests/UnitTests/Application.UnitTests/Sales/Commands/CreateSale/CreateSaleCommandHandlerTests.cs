@@ -78,11 +78,11 @@ public class CreateSaleCommandHandlerTests
     }
 
     /// <summary>
-    /// Verifies an exception is thrown when some of the products cannot are not
+    /// Verifies an exception is thrown when some of the sale products are not
     /// eligible for the sale.
     /// </summary>
     [Fact]
-    public async Task HandleCreateSale_WithSaleNotEligible_ThrowsError()
+    public async Task HandleCreateSale_WithSaleProductNotEligible_ThrowsError()
     {
         var idCreatedSale = SaleId.Create(1);
         var idProductNotEligible = ProductId.Create(1);
