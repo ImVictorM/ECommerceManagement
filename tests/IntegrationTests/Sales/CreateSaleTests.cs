@@ -1,3 +1,4 @@
+using Contracts.Sales;
 using Contracts.Common;
 
 using WebApi.Sales;
@@ -7,6 +8,8 @@ using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Categories;
 using IntegrationTests.Common;
 using IntegrationTests.Sales.TestUtils;
+using IntegrationTests.TestUtils.Extensions.Assertions;
+using IntegrationTests.TestUtils.Extensions.Http;
 
 using System.Net.Http.Json;
 using System.Net;
@@ -21,9 +24,9 @@ namespace IntegrationTests.Sales;
 /// </summary>
 public class CreateSaleTests : BaseIntegrationTest
 {
-    private readonly string? _endpoint;
-    private readonly IProductSeed _productSeed;
-    private readonly ICategorySeed _categorySeed;
+    private readonly string? _endpointCreate;
+    private readonly IProductSeed _seedProduct;
+    private readonly ICategorySeed _seedCategory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CreateSaleTests"/> class.
@@ -35,9 +38,11 @@ public class CreateSaleTests : BaseIntegrationTest
         ITestOutputHelper output
     ) : base(factory, output)
     {
-        _endpoint = LinkGenerator.GetPathByName(nameof(SaleEndpoints.CreateSale));
-        _productSeed = SeedManager.GetSeed<IProductSeed>();
-        _categorySeed = SeedManager.GetSeed<ICategorySeed>();
+        _endpointCreate = LinkGenerator.GetPathByName(
+            nameof(SaleEndpoints.CreateSale)
+        );
+        _seedProduct = SeedManager.GetSeed<IProductSeed>();
+        _seedCategory = SeedManager.GetSeed<ICategorySeed>();
     }
 
     /// <summary>
@@ -50,7 +55,7 @@ public class CreateSaleTests : BaseIntegrationTest
         var request = CreateSaleRequestUtils.CreateRequest();
 
         var response = await RequestService.CreateClient().PostAsJsonAsync(
-            _endpoint,
+            _endpointCreate,
             request
         );
 
@@ -75,7 +80,7 @@ public class CreateSaleTests : BaseIntegrationTest
         var client = await RequestService.LoginAsAsync(customerType);
 
         var response = await client.PostAsJsonAsync(
-            _endpoint,
+            _endpointCreate,
             request
         );
 
@@ -98,26 +103,52 @@ public class CreateSaleTests : BaseIntegrationTest
             ),
             categoryOnSaleIds:
             [
-                _categorySeed.GetEntityId(CategorySeedType.SPORTS).ToString()
+                _seedCategory.GetEntityId(CategorySeedType.SPORTS).ToString()
             ],
             productOnSaleIds:
             [
-                _productSeed.GetEntityId(ProductSeedType.PENCIL).ToString(),
-                _productSeed.GetEntityId(ProductSeedType.COMPUTER_ON_SALE).ToString()
+                _seedProduct.GetEntityId(ProductSeedType.PENCIL).ToString(),
+                _seedProduct.GetEntityId(ProductSeedType.COMPUTER_ON_SALE).ToString()
             ],
             productExcludedFromSaleIds:
             [
-                _productSeed.GetEntityId(ProductSeedType.TSHIRT).ToString(),
+                _seedProduct.GetEntityId(ProductSeedType.TSHIRT).ToString(),
             ]
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
-        var response = await client.PostAsJsonAsync(
-            _endpoint,
+
+        var responseCreate = await client.PostAsJsonAsync(
+            _endpointCreate,
             request
         );
 
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var responseGetCreated = await client.GetAsync(responseCreate.Headers.Location);
+        var responseGetCreatedContent = await responseGetCreated.Content
+            .ReadRequiredFromJsonAsync<SaleResponse>();
+
+        responseCreate.StatusCode.Should().Be(HttpStatusCode.Created);
+        responseGetCreated.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        responseGetCreatedContent.Id.Should().NotBeNullOrWhiteSpace();
+        responseGetCreatedContent.Discount
+            .Should()
+            .BeEquivalentTo(
+                request.Discount,
+                options => options.ComparingWithDateTimeOffset()
+            );
+
+        responseGetCreatedContent.CategoryOnSaleIds
+            .Should()
+            .BeEquivalentTo(request.CategoryOnSaleIds);
+
+        responseGetCreatedContent.ProductOnSaleIds
+            .Should()
+            .BeEquivalentTo(request.ProductOnSaleIds);
+
+        responseGetCreatedContent.ProductExcludedFromSaleIds
+            .Should()
+            .BeEquivalentTo(request.ProductExcludedFromSaleIds);
     }
 
     /// <summary>
@@ -133,7 +164,7 @@ public class CreateSaleTests : BaseIntegrationTest
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
 
-        var response = await client.PostAsJsonAsync(_endpoint, request);
+        var response = await client.PostAsJsonAsync(_endpointCreate, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
