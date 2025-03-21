@@ -11,9 +11,9 @@ namespace Domain.SaleAggregate;
 /// </summary>
 public class Sale : AggregateRoot<SaleId>
 {
-    private readonly HashSet<SaleCategory> _categoriesOnSale = [];
-    private readonly HashSet<SaleProduct> _productsOnSale = [];
-    private readonly HashSet<SaleProduct> _productsExcludeFromSale = [];
+    private HashSet<SaleCategory> _categoriesOnSale = [];
+    private HashSet<SaleProduct> _productsOnSale = [];
+    private HashSet<SaleProduct> _productsExcludeFromSale = [];
 
     /// <summary>
     /// Gets the sale discount;
@@ -42,9 +42,10 @@ public class Sale : AggregateRoot<SaleId>
     )
     {
         Discount = discount;
-        _categoriesOnSale.UnionWith(categoriesOnSale);
-        _productsOnSale.UnionWith(productsOnSale);
-        _productsExcludeFromSale.UnionWith(productsExcludedFromSale);
+
+        _categoriesOnSale = categoriesOnSale.ToHashSet();
+        _productsOnSale = productsOnSale.ToHashSet();
+        _productsExcludeFromSale = productsExcludedFromSale.ToHashSet();
 
         ValidateSale();
     }
@@ -108,6 +109,31 @@ public class Sale : AggregateRoot<SaleId>
             && !isProductExcludedFromSale;
     }
 
+    /// <summary>
+    /// Updates the current sale.
+    /// </summary>
+    /// <param name="discount">The new sale discount.</param>
+    /// <param name="categoriesOnSale">The new categories on sale.</param>
+    /// <param name="productsOnSale">The new products on sale.</param>
+    /// <param name="productsExcludedFromSale">
+    /// The new products excluded from sale.
+    /// </param>
+    public void Update(
+        Discount discount,
+        IEnumerable<SaleCategory> categoriesOnSale,
+        IEnumerable<SaleProduct> productsOnSale,
+        IEnumerable<SaleProduct> productsExcludedFromSale
+    )
+    {
+        Discount = discount;
+
+        _categoriesOnSale = categoriesOnSale.ToHashSet();
+        _productsOnSale = productsOnSale.ToHashSet();
+        _productsExcludeFromSale = productsExcludedFromSale.ToHashSet();
+
+        ValidateSale();
+    }
+
     private void ValidateSale()
     {
         var hasAnyCategory = CategoriesOnSale.Any();
@@ -123,8 +149,6 @@ public class Sale : AggregateRoot<SaleId>
             return;
         }
 
-        throw new InvalidSaleStateException(
-            "A sale must contain at least one category or one product"
-        );
+        throw new InvalidSaleStateException();
     }
 }

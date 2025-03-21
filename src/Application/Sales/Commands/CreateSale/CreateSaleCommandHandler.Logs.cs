@@ -32,7 +32,7 @@ internal sealed partial class CreateSaleCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The sale was created and saved. " +
-        "Operation complete successfully. " +
+        "The operation was completed successfully. " +
         "Generated id: {CreatedId}."
     )]
     private partial void LogSaleCreatedAndSavedSuccessfully(string createdId);

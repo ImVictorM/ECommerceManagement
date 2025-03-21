@@ -102,7 +102,7 @@ public sealed class CategoryEndpoints : ICarterModule
             .WithName(nameof(GetCategoryById))
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Get Category By Identifier",
+                Summary = "Get Category By Id",
                 Description = "Retrieves a category by its identifier.",
                 Parameters =
                 [

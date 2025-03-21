@@ -34,7 +34,7 @@ public class SaleProductNotEligibleException : BaseException
     internal SaleProductNotEligibleException(ProductId productId)
         : base(
             $"The product with id '{productId}' does not meet the eligibility " +
-            $"requirements for the sale.",
+            $"requirements for the sale",
             DefaultTitle,
             _defaultErrorCode
         )
