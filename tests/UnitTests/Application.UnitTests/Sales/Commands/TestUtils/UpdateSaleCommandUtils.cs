@@ -1,4 +1,4 @@
-using Application.Sales.Commands.CreateSale;
+using Application.Sales.Commands.UpdateSale;
 
 using Domain.UnitTests.TestUtils;
 
@@ -8,13 +8,14 @@ using SharedKernel.ValueObjects;
 namespace Application.UnitTests.Sales.Commands.TestUtils;
 
 /// <summary>
-/// Utilities for the <see cref="CreateSaleCommand"/> class.
+/// Utilities for the <see cref="UpdateSaleCommand"/> class.
 /// </summary>
-public static class CreateSaleCommandUtils
+public static class UpdateSaleCommandUtils
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="CreateSaleCommand"/> class.
+    /// Creates a new instance of the <see cref="UpdateSaleCommand"/> class.
     /// </summary>
+    /// <param name="saleId">The sale identifier.</param>
     /// <param name="discount">The new sale discount.</param>
     /// <param name="categoryOnSaleIds">
     /// The new category on sale identifiers.
@@ -26,7 +27,7 @@ public static class CreateSaleCommandUtils
     /// The product excluded from sale identifiers.
     /// </param>
     /// <returns>
-    /// A new instance of the <see cref="CreateSaleCommand"/> class.
+    /// A new instance of the <see cref="UpdateSaleCommand"/> class.
     /// </returns>
     /// <remarks>
     /// If the <paramref name="productOnSaleIds"/> and
@@ -34,7 +35,8 @@ public static class CreateSaleCommandUtils
     /// a random product id on sale will be created to guarantee a valid sale
     /// is created.
     /// </remarks>
-    public static CreateSaleCommand CreateCommand(
+    public static UpdateSaleCommand CreateCommand(
+        string? saleId = null,
         Discount? discount = null,
         IEnumerable<string>? categoryOnSaleIds = null,
         IEnumerable<string>? productOnSaleIds = null,
@@ -46,7 +48,8 @@ public static class CreateSaleCommandUtils
                 ? [NumberUtils.CreateRandomLongAsString()]
                 : productOnSaleIds ?? [];
 
-        return new CreateSaleCommand(
+        return new UpdateSaleCommand(
+            saleId ?? NumberUtils.CreateRandomLongAsString(),
             discount ?? DiscountUtils.CreateDiscountValidToDate(),
             categoryOnSaleIds ?? [],
             productsOnSaleIdsOrDefault,

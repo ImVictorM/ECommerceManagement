@@ -54,4 +54,17 @@ public static class SaleUtils
 
         return sale;
     }
+
+    /// <summary>
+    /// Creates a list of <see cref="Sale"/> items.
+    /// </summary>
+    /// <param name="count">The quantity of items to be generated.</param>
+    /// <returns>A list containing <see cref="Sale"/> items.</returns>
+    public static IReadOnlyList<Sale> CreateSales(int count = 1)
+    {
+        return Enumerable
+            .Range(0, count)
+            .Select(index => CreateSale(id: SaleId.Create(index + 1)))
+            .ToList();
+    }
 }

@@ -104,17 +104,9 @@ public class CreateSaleCommandHandlerTests
             productOnSaleIds: [idProductNotEligible.ToString(), "2"]
         );
 
-        var result = await _handler.Handle(request, default);
-
-        _mockSaleRepository.Verify(
-            r => r.AddAsync(It.IsAny<Sale>()),
-            Times.Once()
-        );
-
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
-
-        result.Should().NotBeNull();
-        result.Should().BeOfType<CreatedResult>();
-        result.Id.Should().Be(idCreatedSale.ToString());
+        await FluentActions
+            .Invoking(() => _handler.Handle(request, default))
+            .Should()
+            .ThrowAsync<SaleProductNotEligibleException>();
     }
 }

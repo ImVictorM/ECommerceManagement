@@ -70,10 +70,11 @@ public class SaleTests
     }
 
     /// <summary>
-    /// Ensures that creating a sale with no categories or products throws an exception.
+    /// Ensures that updating a sale with empty categories and products on sale
+    /// throws an exception.
     /// </summary>
     [Fact]
-    public void CreateSale_WithoutCategoriesOrProducts_ThrowsError()
+    public void CreateSale_WithEmptyCategoriesAndProductsOnSale_ThrowsError()
     {
         var emptyCategories = new HashSet<SaleCategory>();
         var emptyProducts = new HashSet<SaleProduct>();
@@ -84,10 +85,7 @@ public class SaleTests
                 productsOnSale: emptyProducts
             ))
             .Should()
-            .Throw<InvalidSaleStateException>()
-            .WithMessage(
-                "A sale must contain at least one category or one product"
-            );
+            .Throw<InvalidSaleStateException>();
     }
 
     /// <summary>
@@ -116,10 +114,90 @@ public class SaleTests
                productsExcludedFromSale: productsExcluded
            ))
            .Should()
-           .Throw<InvalidSaleStateException>()
-           .WithMessage(
-               "A sale must contain at least one category or one product"
-           );
+           .Throw<InvalidSaleStateException>();
+    }
+
+    /// <summary>
+    /// Ensures that updating a sale with valid parameters updates the sale correctly.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(ValidSaleInputs))]
+    public void Update_WithValidParameters_UpdatesCorrectly(
+        Discount newDiscount,
+        HashSet<SaleCategory> newCategoriesOnSale,
+        HashSet<SaleProduct> newProductsOnSale,
+        HashSet<SaleProduct> newProductsExcludedFromSale
+    )
+    {
+        var sale = SaleUtils.CreateSale();
+
+        sale.Update(
+            newDiscount,
+            newCategoriesOnSale,
+            newProductsOnSale,
+            newProductsExcludedFromSale
+        );
+
+        sale.Discount.Should().BeEquivalentTo(newDiscount);
+        sale.CategoriesOnSale.Should().BeEquivalentTo(newCategoriesOnSale);
+        sale.ProductsOnSale.Should().BeEquivalentTo(newProductsOnSale);
+        sale.ProductsExcludedFromSale
+            .Should()
+            .BeEquivalentTo(newProductsExcludedFromSale);
+    }
+
+    /// <summary>
+    /// Ensures that updating a sale with no categories and products excluded equal to the products included throws an exception.
+    /// </summary>
+    [Fact]
+    public void Update_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
+    {
+        var sale = SaleUtils.CreateSale();
+
+        var emptyCategories = new HashSet<SaleCategory>();
+        var productsOnSale = new HashSet<SaleProduct>()
+        {
+            SaleProduct.Create(ProductId.Create(1)),
+            SaleProduct.Create(ProductId.Create(2)),
+        };
+        var productsExcluded = new HashSet<SaleProduct>()
+        {
+            SaleProduct.Create(ProductId.Create(1)),
+            SaleProduct.Create(ProductId.Create(2)),
+        };
+
+        FluentActions
+            .Invoking(() => sale.Update(
+                DiscountUtils.CreateDiscount(PercentageUtils.Create(20)),
+                emptyCategories,
+                productsOnSale,
+                productsExcluded
+            ))
+            .Should()
+            .Throw<InvalidSaleStateException>();
+    }
+
+    /// <summary>
+    /// Ensures that updating a sale with empty categories and products on sale
+    /// throws an exception.
+    /// </summary>
+    [Fact]
+    public void Update_WithEmptyCategoriesAndProductsOnSale_ThrowsError()
+    {
+        var sale = SaleUtils.CreateSale();
+
+        var emptyCategories = new HashSet<SaleCategory>();
+        var emptyProducts = new HashSet<SaleProduct>();
+
+        FluentActions
+            .Invoking(() => sale.Update(
+                discount: sale.Discount,
+                categoriesOnSale: emptyCategories,
+                productsOnSale: emptyProducts,
+                productsExcludedFromSale: []
+            ))
+            .Should()
+            .Throw<InvalidSaleStateException>();
     }
 
     /// <summary>

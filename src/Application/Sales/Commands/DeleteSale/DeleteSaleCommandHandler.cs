@@ -40,7 +40,7 @@ internal sealed partial class DeleteSaleCommandHandler
         if (sale == null)
         {
             LogSaleNotFound();
-            throw new SaleNotFoundException();
+            throw new SaleNotFoundException(saleId);
         }
 
         _saleRepository.RemoveOrDeactivate(sale);
