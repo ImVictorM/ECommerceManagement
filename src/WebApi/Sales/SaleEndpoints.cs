@@ -69,7 +69,7 @@ public sealed class SaleEndpoints : ICarterModule
             .WithName(nameof(UpdateSale))
             .WithOpenApi(op => new(op)
             {
-                Summary = "Update Sales",
+                Summary = "Update Sale",
                 Description =
                 "Updates an existing sale. " +
                 "Admin authentication is required.",
