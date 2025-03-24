@@ -56,9 +56,9 @@ Authorization: Bearer {{token}}
 ### - `page={number}` (default: 1): Specifies the page number.
 ### - `pageSize={number}` (default: 20): Defines the number of products per page.
 ### No authentication required.
-### Returns an 200 OK response in case of success.
+### Returns a 200 OK response in case of success.
 GET {{base_endpoint}}?category=1&page=1&pageSize=20
 
 ### Retrieves an active product by its identifier. No authentication is required.
-### Returns an OK response in case of success.
+### Returns a OK response in case of success.
 GET {{base_endpoint}}/{{id_product}}

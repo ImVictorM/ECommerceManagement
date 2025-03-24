@@ -43,12 +43,12 @@ X-Idempotency-Key: dc6f84e4-0afb-42d4-b72a-261974c3d010
 }
 
 ### Retrieves all the orders. Administrator authentication is required.
-### Returns an 200 OK response in case of success.
+### Returns a 200 OK response in case of success.
 GET {{base_orders_endpoint}}
 Authorization: Bearer {{token_admin}}
 
 ### Retrieves an order by its identifier. Admin authentication is required.
-### Returns an 200 OK response in case of success.
+### Returns a 200 OK response in case of success.
 GET {{base_orders_endpoint}}/{{id_order}}
 Authorization: Bearer {{token_admin}}
 

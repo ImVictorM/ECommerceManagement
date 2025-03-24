@@ -3,7 +3,7 @@
 @token = insert-token-here
 
 ### Creates a new coupon. Admin authentication is required.
-### Returns an 201 CREATED response in case of success.
+### Returns a 201 CREATED response in case of success.
 POST {{base_endpoint}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -29,7 +29,7 @@ Authorization: Bearer {{token}}
 ### - `expiringAfter={dateTime}`: Filter coupons that expire after the specified UTC date.
 ### - `expiringBefore={dateTime}`: Filter coupons that expire before the specified UTC date.
 ### - `validForDate={dateTime}`: Filter coupons that are valid on the specified UTC date.
-### Returns an 200 OK response in case of success.
+### Returns a 200 OK response in case of success.
 GET {{base_endpoint}}
 Authorization: Bearer {{token}}
 

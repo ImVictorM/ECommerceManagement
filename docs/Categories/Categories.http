@@ -3,7 +3,7 @@
 @id_category = 1
 
 ### Creates a new product category. Admin authentication is required.
-### Returns an 201 CREATED response in case of success.
+### Returns a 201 CREATED response in case of success.
 POST {{base_endpoint}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -13,7 +13,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Deletes an existing category. Admin authentication is required.
-### Returns an 204 NO_CONTENT in case of success.
+### Returns a 204 NO_CONTENT in case of success.
 DELETE {{base_endpoint}}/{{id_category}}
 Authorization: Bearer {{token}}
 
@@ -28,9 +28,9 @@ Authorization: Bearer {{token}}
 }
 
 ### Retrieves all available product categories. No authentication is required.
-### Returns an 200 OK response in case of success.
+### Returns a 200 OK response in case of success.
 GET {{base_endpoint}}
 
 ### Retrieves a category by its identifier. No authentication is required.
-### Returns an 200 OK response in case of success.
+### Returns a 200 OK response in case of success.
 GET {{base_endpoint}}/{{id_category}}
