@@ -1,0 +1,63 @@
+@base_endpoint = http://localhost:8000/sales
+@token = insert-token-here
+@id_sale = 1
+
+### Creates a new sale, defining the products and/or categories.
+### Admin authentication is required.
+### Returns a 201 CREATED response in case of success.
+POST {{base_endpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "discount": {
+    "percentage": 5,
+    "description": "weekend discount",
+    "startingDate": "2025-03-28T16:00:44.355Z",
+    "endingDate": "2025-03-30T16:00:44.355Z"
+  },
+  "categoryOnSaleIds": ["1"],
+  "productOnSaleIds": [],
+  "productExcludedFromSaleIds": []
+}
+
+### Updates an existing sale.
+### Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+PUT {{base_endpoint}}/{{id_sale}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "discount": {
+    "percentage": 10,
+    "description": "weekend discount",
+    "startingDate": "2025-03-28T16:00:44.355Z",
+    "endingDate": "2025-03-30T16:00:44.355Z"
+  },
+  "categoryOnSaleIds": ["1"],
+  "productOnSaleIds": [],
+  "productExcludedFromSaleIds": []
+}
+
+### Deletes an existing sale.
+### Admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+DELETE {{base_endpoint}}/{{id_sale}}
+Authorization: Bearer {{token}}
+
+### Retrieves a list of sales based on the specified filters.
+### Admin authentication is required.
+### Optional filters:
+### - `expiringAfter={dateTime}`: Filter sales that expire after the specified UTC date.
+### - `expiringBefore={dateTime}`: Filter sales that expire before the specified UTC date.
+### - `validForDate={dateTime}`: Filter sales that are valid on the specified UTC date.
+### Returns a 200 OK response in case of success.
+GET {{base_endpoint}}
+Authorization: Bearer {{token}}
+
+### Retrieves a sale by its identifier.
+### Admin authentication is required.
+### Returns a 200 OK response in case of success.
+GET {{base_endpoint}}/{{id_sale}}
+Authorization: Bearer {{token}}
