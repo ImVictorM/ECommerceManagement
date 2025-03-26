@@ -19,7 +19,7 @@ public interface IUserRepository : IBaseRepository<User, UserId>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A list of <see cref="User"/>.</returns>
     Task<IReadOnlyList<User>> GetUsersAsync(
-        UserFilters? filters = default,
+        UserFilters filters,
         CancellationToken cancellationToken = default
     );
 }

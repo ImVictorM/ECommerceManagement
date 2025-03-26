@@ -1,4 +1,3 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 
@@ -8,7 +7,8 @@ using MediatR;
 
 namespace Application.Orders.Events;
 
-internal sealed class PaymentApprovedMarkOrderAsPaidHandler : INotificationHandler<PaymentApproved>
+internal sealed class PaymentApprovedMarkOrderAsPaidHandler
+    : INotificationHandler<PaymentApproved>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -22,13 +22,19 @@ internal sealed class PaymentApprovedMarkOrderAsPaidHandler : INotificationHandl
         _unitOfWork = unitOfWork;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(PaymentApproved notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        PaymentApproved notification,
+        CancellationToken cancellationToken
+    )
     {
         var orderId = notification.Payment.OrderId;
 
-        var order = await _orderRepository.FindByIdAsync(orderId, cancellationToken) ??
-                    throw new OperationProcessFailedException($"The order with id {orderId} cannot be marked as paid because it does not exist");
+        var order = await _orderRepository.FindByIdAsync(orderId, cancellationToken);
+
+        if (order == null)
+        {
+            return;
+        }
 
         order.MarkAsPaid();
 

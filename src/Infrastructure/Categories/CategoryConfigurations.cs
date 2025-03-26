@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Categories;
 
-internal sealed class CategoryConfigurations : EntityTypeConfigurationDependency<Category>
+internal sealed class CategoryConfigurations
+    : EntityTypeConfigurationDependency<Category>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.ToTable("categories");

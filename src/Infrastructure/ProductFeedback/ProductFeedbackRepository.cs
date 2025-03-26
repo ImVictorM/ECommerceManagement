@@ -1,5 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.ProductFeedback.DTOs;
+using Application.ProductFeedback.DTOs.Results;
 
 using Domain.ProductFeedbackAggregate.ValueObjects;
 using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
@@ -21,9 +21,8 @@ internal sealed class ProductFeedbackRepository :
     {
     }
 
-    /// <inheritdoc/>
     public async Task<
-        IEnumerable<ProductFeedbackDetailedResult>
+        IReadOnlyList<ProductFeedbackDetailedResult>
     > GetProductFeedbackDetailedSatisfyingAsync(
         ISpecificationQuery<DomainProductFeedback> specification,
         CancellationToken cancellationToken = default
@@ -45,7 +44,7 @@ internal sealed class ProductFeedbackRepository :
     }
 
     public async Task<
-        IEnumerable<ProductFeedbackResult>
+        IReadOnlyList<ProductFeedbackResult>
     > GetProductFeedbackSatisfyingAsync(
         ISpecificationQuery<DomainProductFeedback> specification,
         CancellationToken cancellationToken = default

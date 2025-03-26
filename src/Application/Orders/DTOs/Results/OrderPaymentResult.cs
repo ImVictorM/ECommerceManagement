@@ -1,4 +1,4 @@
-using Application.Common.PaymentGateway;
+using Application.Common.PaymentGateway.Responses;
 
 namespace Application.Orders.DTOs.Results;
 

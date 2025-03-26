@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Orders;
 
-internal sealed class OrderStatusConfigurations : EntityTypeConfigurationDependency<OrderStatus>
+internal sealed class OrderStatusConfigurations
+    : EntityTypeConfigurationDependency<OrderStatus>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<OrderStatus> builder)
     {
         builder.ToTable("order_statuses");

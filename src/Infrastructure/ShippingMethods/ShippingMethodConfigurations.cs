@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.ShippingMethods;
 
-internal sealed class ShippingMethodConfigurations : EntityTypeConfigurationDependency<ShippingMethod>
+internal sealed class ShippingMethodConfigurations
+    : EntityTypeConfigurationDependency<ShippingMethod>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<ShippingMethod> builder)
     {
         builder.ToTable("shipping_methods");

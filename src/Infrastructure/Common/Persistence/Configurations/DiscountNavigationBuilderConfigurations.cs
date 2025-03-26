@@ -6,8 +6,8 @@ namespace Infrastructure.Common.Persistence.Configurations;
 
 internal static class DiscountNavigationBuilderConfigurations
 {
-    /// <inheritdoc/>
-    public static void Configure<T>(OwnedNavigationBuilder<T, Discount> builder) where T : class
+    public static void Configure<T>(OwnedNavigationBuilder<T, Discount> builder)
+        where T : class
     {
         builder
             .Property(discount => discount.Percentage)

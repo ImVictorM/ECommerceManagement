@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Common.Persistence.Configurations;
 
-internal sealed class RoleConfigurations : EntityTypeConfigurationDependency<Role>
+internal sealed class RoleConfigurations
+    : EntityTypeConfigurationDependency<Role>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Role> builder)
     {
         builder.ToTable("roles");

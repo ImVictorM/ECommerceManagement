@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Infrastructure.Common.Persistence.Configurations.Abstracts;
 
 /// <summary>
-/// Configures the entities with dependency injection support.
+/// Represents an entity type configuration with dependency injection support.
 /// </summary>
 public abstract class EntityTypeConfigurationDependency
 {
@@ -27,5 +27,6 @@ public abstract class EntityTypeConfigurationDependency<TEntity>
     public abstract void Configure(EntityTypeBuilder<TEntity> builder);
 
     /// <inheritdoc/>
-    public override void Configure(ModelBuilder modelBuilder) => Configure(modelBuilder.Entity<TEntity>());
+    public override void Configure(ModelBuilder modelBuilder)
+        => Configure(modelBuilder.Entity<TEntity>());
 }

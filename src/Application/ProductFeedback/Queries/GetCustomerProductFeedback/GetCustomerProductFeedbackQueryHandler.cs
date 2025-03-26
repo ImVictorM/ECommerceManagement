@@ -1,11 +1,11 @@
 using Application.Common.Persistence.Repositories;
+using Application.ProductFeedback.DTOs.Results;
 
 using Domain.ProductFeedbackAggregate.Specifications;
 using Domain.UserAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.ProductFeedback.DTOs.Results;
 
 namespace Application.ProductFeedback.Queries.GetCustomerProductFeedback;
 
@@ -23,7 +23,6 @@ internal sealed partial class GetCustomerProductFeedbackQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<IEnumerable<ProductFeedbackResult>> Handle(
         GetCustomerProductFeedbackQuery request,
         CancellationToken cancellationToken
@@ -45,7 +44,7 @@ internal sealed partial class GetCustomerProductFeedbackQueryHandler
             .GetProductFeedbackSatisfyingAsync(specifications, cancellationToken);
 
         LogCustomerProductFeedbackRetrievedSuccessfully(
-            customerProductFeedback.Count()
+            customerProductFeedback.Count
         );
 
         return customerProductFeedback;

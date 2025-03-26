@@ -11,7 +11,6 @@ namespace Infrastructure.Coupons;
 internal sealed class CouponRestrictionConfigurations
     : EntityTypeConfigurationDependency<CouponRestriction>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<CouponRestriction> builder)
     {
         builder.UseTpcMappingStrategy();

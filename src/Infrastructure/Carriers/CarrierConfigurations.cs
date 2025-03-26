@@ -13,7 +13,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Carriers;
 
-internal sealed class CarrierConfigurations : EntityTypeConfigurationDependency<Carrier>
+internal sealed class CarrierConfigurations
+    : EntityTypeConfigurationDependency<Carrier>
 {
     private sealed record CarrierData(
         CarrierId Id,
@@ -28,7 +29,10 @@ internal sealed class CarrierConfigurations : EntityTypeConfigurationDependency<
 
     private readonly CarrierData _defaultInternalCarrier;
 
-    public CarrierConfigurations(IOptions<CarrierInternalSettings> carrierOptions, IPasswordHasher passwordHasher)
+    public CarrierConfigurations(
+        IOptions<CarrierInternalSettings> carrierOptions,
+        IPasswordHasher passwordHasher
+    )
     {
         var carrierSettings = carrierOptions.Value;
 
@@ -44,7 +48,6 @@ internal sealed class CarrierConfigurations : EntityTypeConfigurationDependency<
         );
     }
 
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Carrier> builder)
     {
         builder.ToTable("carriers");

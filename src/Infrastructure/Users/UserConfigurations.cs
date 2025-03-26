@@ -16,7 +16,7 @@ namespace Infrastructure.Users;
 
 internal sealed class UserConfigurations : EntityTypeConfigurationDependency<User>
 {
-    private sealed record UserData(
+    private sealed record UserSeedData(
         UserId Id,
         string Name,
         Email Email,
@@ -26,13 +26,16 @@ internal sealed class UserConfigurations : EntityTypeConfigurationDependency<Use
         DateTimeOffset UpdatedAt
     );
 
-    private readonly UserData _adminAccount;
+    private readonly UserSeedData _adminAccount;
 
-    public UserConfigurations(IOptions<AdminAccountSettings> adminOptions, IPasswordHasher passwordHasher)
+    public UserConfigurations(
+        IOptions<AdminAccountSettings> adminOptions,
+        IPasswordHasher passwordHasher
+    )
     {
         var adminAccountSettings = adminOptions.Value;
 
-        _adminAccount = new UserData(
+        _adminAccount = new UserSeedData(
             UserId.Create(1),
             adminAccountSettings.Name,
             Email.Create(adminAccountSettings.Email),
@@ -43,7 +46,6 @@ internal sealed class UserConfigurations : EntityTypeConfigurationDependency<Use
         );
     }
 
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<User> builder)
     {
         ConfigureUsersTable(builder);
@@ -102,7 +104,9 @@ internal sealed class UserConfigurations : EntityTypeConfigurationDependency<Use
         builder.HasIndex(user => user.Email).IsUnique();
     }
 
-    private static void ConfigureOwnedUserAddressesTable(EntityTypeBuilder<User> builder)
+    private static void ConfigureOwnedUserAddressesTable(
+        EntityTypeBuilder<User> builder
+    )
     {
         builder.OwnsMany(user => user.UserAddresses, userAddressBuilder =>
         {
@@ -110,7 +114,10 @@ internal sealed class UserConfigurations : EntityTypeConfigurationDependency<Use
 
             userAddressBuilder.ToTable("user_addresses");
 
-            userAddressBuilder.Property<long>("id").ValueGeneratedOnAdd().IsRequired();
+            userAddressBuilder
+                .Property<long>("id")
+                .ValueGeneratedOnAdd()
+                .IsRequired();
 
             userAddressBuilder.HasKey("id");
 

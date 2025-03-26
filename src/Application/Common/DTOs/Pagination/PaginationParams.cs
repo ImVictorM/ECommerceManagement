@@ -6,6 +6,6 @@ namespace Application.Common.DTOs.Pagination;
 /// <param name="Page">The current page number.</param>
 /// <param name="PageSize">The number of items per page.</param>
 public record PaginationParams(
-    int? Page = null,
-    int? PageSize = null
+    int Page,
+    int PageSize
 );

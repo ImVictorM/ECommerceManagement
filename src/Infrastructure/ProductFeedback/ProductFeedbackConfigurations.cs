@@ -12,15 +12,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.ProductFeedback;
 
-internal sealed class ProductFeedbackConfigurations : EntityTypeConfigurationDependency<DomainProductFeedback>
+internal sealed class ProductFeedbackConfigurations
+    : EntityTypeConfigurationDependency<DomainProductFeedback>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<DomainProductFeedback> builder)
     {
         ConfigureProductFeedbacksTable(builder);
     }
 
-    private static void ConfigureProductFeedbacksTable(EntityTypeBuilder<DomainProductFeedback> builder)
+    private static void ConfigureProductFeedbacksTable(
+        EntityTypeBuilder<DomainProductFeedback> builder
+    )
     {
         builder.ToTable("product_feedback");
 

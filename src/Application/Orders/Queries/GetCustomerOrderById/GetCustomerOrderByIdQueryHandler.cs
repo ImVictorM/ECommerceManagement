@@ -1,13 +1,13 @@
 using Application.Common.PaymentGateway;
 using Application.Common.Persistence.Repositories;
 using Application.Orders.Errors;
+using Application.Orders.DTOs.Results;
 
 using Domain.OrderAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Orders.DTOs.Results;
 
 namespace Application.Orders.Queries.GetCustomerOrderById;
 
@@ -33,9 +33,9 @@ internal sealed partial class GetCustomerOrderByIdQueryHandler
         CancellationToken cancellationToken
     )
     {
-        LogInitiatingCustomerOrderRetrieval(request.OrderId, request.OwnerId);
+        LogInitiatingCustomerOrderRetrieval(request.OrderId, request.UserId);
 
-        var ownerId = UserId.Create(request.OwnerId);
+        var ownerId = UserId.Create(request.UserId);
         var orderId = OrderId.Create(request.OrderId);
 
         var orderWithDetails = await _orderRepository.GetCustomerOrderDetailedAsync(
@@ -52,7 +52,7 @@ internal sealed partial class GetCustomerOrderByIdQueryHandler
                 "The customer order could not be found"
             )
             .WithContext("OrderId", request.OrderId)
-            .WithContext("OwnerId", request.OwnerId);
+            .WithContext("OwnerId", request.UserId);
         }
 
         LogOrderRetrieved();

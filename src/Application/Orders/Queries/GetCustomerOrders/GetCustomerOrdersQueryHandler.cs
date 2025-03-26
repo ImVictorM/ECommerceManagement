@@ -1,10 +1,10 @@
 using Application.Common.Persistence.Repositories;
+using Application.Orders.DTOs.Results;
 
 using Domain.UserAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Orders.DTOs.Results;
 
 namespace Application.Orders.Queries.GetCustomerOrders;
 
@@ -28,11 +28,11 @@ internal sealed partial class GetCustomerOrdersQueryHandler
     )
     {
         LogInitiatingCustomerOrdersRetrieval(
-            request.OwnerId,
+            request.UserId,
             request.Filters.Status
         );
 
-        var ownerId = UserId.Create(request.OwnerId);
+        var ownerId = UserId.Create(request.UserId);
 
         var orders = await _orderRepository.GetCustomerOrdersAsync(
             ownerId,

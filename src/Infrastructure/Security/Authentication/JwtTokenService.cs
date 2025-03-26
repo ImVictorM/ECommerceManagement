@@ -20,7 +20,6 @@ internal sealed class JwtTokenService : IJwtTokenService
         _jwtSettings = jwtOptions.Value;
     }
 
-    /// <inheritdoc/>
     public string GenerateToken(IdentityUser user)
     {
         var signingCredentials = new SigningCredentials(

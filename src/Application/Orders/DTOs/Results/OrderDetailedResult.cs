@@ -4,6 +4,7 @@ namespace Application.Orders.DTOs.Results;
 
 /// <summary>
 /// Represents a detailed order result.
+/// </summary>
 public class OrderDetailedResult
 {
     /// <summary>

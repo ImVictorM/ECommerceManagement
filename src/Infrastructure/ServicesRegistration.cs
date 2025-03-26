@@ -34,23 +34,28 @@ namespace Infrastructure;
 /// </summary>
 public static class ServicesRegistration
 {
-    private static readonly Assembly _assembly = typeof(ServicesRegistration).Assembly;
+    private static readonly Assembly _assembly =
+        typeof(ServicesRegistration).Assembly;
 
     /// <summary>
     /// Registers all services from the Infrastructure layer into the current
     /// <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">
-    /// The <see cref="IServiceCollection"/> to which the Infrastructure services will be added.
+    /// The <see cref="IServiceCollection"/> to which the Infrastructure services
+    /// will be added.
     /// </param>
     /// <param name="configuration">
-    /// The <see cref="IConfigurationManager"/> that provides access to the application's configuration settings.
+    /// The <see cref="IConfigurationManager"/> that provides access to the
+    /// application's configuration settings.
     /// </param>
     /// <param name="environment">
-    /// The <see cref="IHostEnvironment"/> that provides information about the hosting environment
+    /// The <see cref="IHostEnvironment"/> that provides information about the
+    /// hosting environment
     /// </param>
     /// <returns>
-    /// The same <see cref="IServiceCollection"/> instance with the Infrastructure services registered.
+    /// The same <see cref="IServiceCollection"/> instance with the Infrastructure
+    /// services registered.
     /// </returns>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
@@ -61,8 +66,12 @@ public static class ServicesRegistration
         services.AddPersistence(configuration, environment);
 
         services.AddScoped<IPaymentGateway, MockPaymentGateway>();
-        services.Configure<CarrierInternalSettings>(configuration.GetSection(CarrierInternalSettings.SectionName));
-        services.Configure<AdminAccountSettings>(configuration.GetSection(AdminAccountSettings.SectionName));
+        services.Configure<CarrierInternalSettings>(
+            configuration.GetSection(CarrierInternalSettings.SectionName)
+        );
+        services.Configure<AdminAccountSettings>(
+            configuration.GetSection(AdminAccountSettings.SectionName
+        ));
 
         services.AddSecurity(configuration);
 
@@ -153,7 +162,9 @@ public static class ServicesRegistration
         configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
         services.AddSingleton(Options.Create(jwtSettings));
-        services.Configure<HmacSignatureSettings>(configuration.GetSection(HmacSignatureSettings.SectionName));
+        services.Configure<HmacSignatureSettings>(
+            configuration.GetSection(HmacSignatureSettings.SectionName)
+        );
 
         services
             .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
@@ -169,7 +180,9 @@ public static class ServicesRegistration
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtSettings.Secret)
+                    ),
                 };
             });
 

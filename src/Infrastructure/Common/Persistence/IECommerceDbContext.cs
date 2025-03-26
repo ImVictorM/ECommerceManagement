@@ -81,25 +81,31 @@ public interface IECommerceDbContext : IDisposable
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    /// A task representing the asynchronous operation, returning the number of affected entries.
+    /// A task representing the asynchronous operation,
+    /// returning the number of affected entries.
     /// </returns>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets an <see cref="EntityEntry{TEntity}" /> for the given entity. The entry provides
-    /// access to change tracking information and operations for the entity.
+    /// Gets an <see cref="EntityEntry{TEntity}" /> for the given entity.
+    /// The entry provides access to change tracking information and operations
+    /// for the entity.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="entity">The entity to get the entry for.</param>
     /// <returns>The entry for the given entity.</returns>
-    public EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
+    public EntityEntry<TEntity> Entry<TEntity>(TEntity entity)
+        where TEntity : class;
 
 #pragma warning disable CA1716
     /// <summary>
-    /// Provides access to the <see cref="DbSet{TEntity}"/> for the specified entity type.
+    /// Provides access to the <see cref="DbSet{TEntity}"/> for the specified
+    /// entity type.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity.</typeparam>
-    /// <returns>A <see cref="DbSet{TEntity}"/> for the given entity type.</returns>
+    /// <returns>
+    /// A <see cref="DbSet{TEntity}"/> for the given entity type.
+    /// </returns>
     DbSet<TEntity> Set<TEntity>() where TEntity : class;
 #pragma warning restore CA1716
 }

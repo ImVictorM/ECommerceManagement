@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Payments;
 
-internal sealed class PaymentStatusConfigurations : EntityTypeConfigurationDependency<PaymentStatus>
+internal sealed class PaymentStatusConfigurations
+    : EntityTypeConfigurationDependency<PaymentStatus>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<PaymentStatus> builder)
     {
         builder.ToTable("payment_statuses");

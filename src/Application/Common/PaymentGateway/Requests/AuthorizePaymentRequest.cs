@@ -4,7 +4,7 @@ using Domain.UserAggregate;
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
-namespace Application.Common.PaymentGateway;
+namespace Application.Common.PaymentGateway.Requests;
 
 /// <summary>
 /// Represents a request to authorize a payment.

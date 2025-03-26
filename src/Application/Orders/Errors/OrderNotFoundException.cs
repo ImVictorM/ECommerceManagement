@@ -11,15 +11,18 @@ public class OrderNotFoundException : BaseException
     private const string DefaultMessage = "The order being queried was not found";
     private static readonly ErrorCode _defaultErrorCode = ErrorCode.NotFound;
 
-    internal OrderNotFoundException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
+    internal OrderNotFoundException()
+        : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal OrderNotFoundException(string message) : base(message, DefaultTitle, _defaultErrorCode)
+    internal OrderNotFoundException(string message)
+        : base(message, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal OrderNotFoundException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    internal OrderNotFoundException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }

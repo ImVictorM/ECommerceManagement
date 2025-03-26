@@ -11,14 +11,20 @@ internal sealed class AuthorizationService : IAuthorizationService
     private readonly IIdentityProvider _identityProvider;
     private readonly IServiceProvider _serviceProvider;
 
-    public AuthorizationService(IIdentityProvider identityProvider, IServiceProvider serviceProvider)
+    public AuthorizationService(
+        IIdentityProvider identityProvider,
+        IServiceProvider serviceProvider
+    )
     {
         _identityProvider = identityProvider;
         _serviceProvider = serviceProvider;
     }
 
-    /// <inheritdoc/>
-    public async Task<bool> IsCurrentUserAuthorizedAsync<TRequest>(TRequest request, AuthorizationMetadata metadata)
+    public async Task<bool> IsCurrentUserAuthorizedAsync<TRequest>(
+        TRequest request,
+        AuthorizationMetadata metadata,
+        CancellationToken cancellationToken = default
+    )
     {
         if (!metadata.Roles.Any() && !metadata.Policies.Any())
         {
@@ -36,9 +42,16 @@ internal sealed class AuthorizationService : IAuthorizationService
         // Check policies
         foreach (var policyType in metadata.Policies)
         {
-            var policy = (IPolicy<TRequest>)_serviceProvider.GetRequiredService(policyType);
+            var policy = (IPolicy<TRequest>)_serviceProvider
+                .GetRequiredService(policyType);
 
-            if (!await policy.IsAuthorizedAsync(request, currentUser))
+            var isAuthorized = await policy.IsAuthorizedAsync(
+                request,
+                currentUser,
+                cancellationToken
+            );
+
+            if (!isAuthorized)
             {
                 return false;
             }

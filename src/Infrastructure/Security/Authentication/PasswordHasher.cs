@@ -11,9 +11,9 @@ internal sealed class PasswordHasher : IPasswordHasher
     private const int SaltSize = 16;
     private const int HashSize = 32;
     private const int Iterations = 100000;
-    private static readonly HashAlgorithmName _hashAlgorithmName = HashAlgorithmName.SHA256;
+    private static readonly HashAlgorithmName _hashAlgorithmName =
+        HashAlgorithmName.SHA256;
 
-    /// <inheritdoc/>
     public PasswordHash Hash(string password)
     {
         var salt = RandomNumberGenerator.GetBytes(SaltSize);
@@ -25,10 +25,12 @@ internal sealed class PasswordHasher : IPasswordHasher
             HashSize
         );
 
-        return PasswordHash.Create(Convert.ToHexString(hash), Convert.ToHexString(salt));
+        return PasswordHash.Create(
+            Convert.ToHexString(hash),
+            Convert.ToHexString(salt)
+        );
     }
 
-    /// <inheritdoc/>
     public bool Verify(string inputPassword, PasswordHash passwordToCompare)
     {
         var hashToCompare = Convert.FromHexString(passwordToCompare.GetHashPart());
@@ -42,6 +44,9 @@ internal sealed class PasswordHasher : IPasswordHasher
             HashSize
         );
 
-        return CryptographicOperations.FixedTimeEquals(hashToCompare, inputPasswordHash);
+        return CryptographicOperations.FixedTimeEquals(
+            hashToCompare,
+            inputPasswordHash
+        );
     }
 }

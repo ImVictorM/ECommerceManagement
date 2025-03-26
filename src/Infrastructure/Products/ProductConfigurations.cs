@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Products;
 
-internal sealed class ProductConfigurations : EntityTypeConfigurationDependency<Product>
+internal sealed class ProductConfigurations
+    : EntityTypeConfigurationDependency<Product>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Product> builder)
     {
         ConfigureProductsTable(builder);
@@ -53,9 +53,11 @@ internal sealed class ProductConfigurations : EntityTypeConfigurationDependency<
            .IsRequired();
     }
 
-    private static void ConfigureOwnedProductsCategoriesTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureOwnedProductsCategoriesTable(
+        EntityTypeBuilder<Product> builder
+    )
     {
-        builder.OwnsMany(product => product.ProductCategories, productCategoryBuilder =>
+        builder.OwnsMany(p => p.ProductCategories, productCategoryBuilder =>
         {
             productCategoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
@@ -82,7 +84,9 @@ internal sealed class ProductConfigurations : EntityTypeConfigurationDependency<
         });
     }
 
-    private static void ConfigureOwnedInventoriesTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureOwnedInventoriesTable(
+        EntityTypeBuilder<Product> builder
+    )
     {
         builder.OwnsOne(
             product => product.Inventory,
@@ -113,7 +117,9 @@ internal sealed class ProductConfigurations : EntityTypeConfigurationDependency<
             });
     }
 
-    private static void ConfigureOwnedProductImagesTable(EntityTypeBuilder<Product> builder)
+    private static void ConfigureOwnedProductImagesTable(
+        EntityTypeBuilder<Product> builder
+    )
     {
         builder.OwnsMany(
             product => product.ProductImages,
@@ -137,7 +143,7 @@ internal sealed class ProductConfigurations : EntityTypeConfigurationDependency<
                     .IsRequired();
 
                 productImageBuilder
-                    .Property(productImage => productImage.Url)
+                    .Property(productImage => productImage.Uri)
                     .IsRequired();
             });
     }

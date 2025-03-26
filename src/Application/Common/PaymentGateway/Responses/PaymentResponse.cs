@@ -1,9 +1,9 @@
+using Application.Common.PaymentGateway.PaymentMethods;
+
 using Domain.PaymentAggregate.Enumerations;
 using Domain.PaymentAggregate.ValueObjects;
 
-using SharedKernel.Interfaces;
-
-namespace Application.Common.PaymentGateway;
+namespace Application.Common.PaymentGateway.Responses;
 
 /// <summary>
 /// Represents a payment response.
@@ -20,7 +20,7 @@ namespace Application.Common.PaymentGateway;
 public record PaymentResponse
 (
     PaymentId PaymentId,
-    IPaymentMethod PaymentMethod,
+    PaymentMethod PaymentMethod,
     decimal Amount,
     int Installments,
     PaymentStatus Status,

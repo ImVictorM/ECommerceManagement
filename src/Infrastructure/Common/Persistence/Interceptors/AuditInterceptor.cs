@@ -8,7 +8,6 @@ namespace Infrastructure.Common.Persistence.Interceptors;
 
 internal sealed class AuditInterceptor : SaveChangesInterceptor
 {
-    /// <inheritdoc/>
     public override InterceptionResult<int> SavingChanges(
         DbContextEventData eventData,
         InterceptionResult<int> result
@@ -19,7 +18,6 @@ internal sealed class AuditInterceptor : SaveChangesInterceptor
         return base.SavingChanges(eventData, result);
     }
 
-    /// <inheritdoc/>
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
@@ -53,15 +51,16 @@ internal sealed class AuditInterceptor : SaveChangesInterceptor
 
     private static void UpdateEntryTimestampsByState(EntityEntry entry)
     {
+        var now = DateTimeOffset.UtcNow;
+
         switch (entry.State)
         {
             case EntityState.Added:
-                var now = DateTimeOffset.UtcNow;
                 entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = now;
                 entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = now;
                 return;
             case EntityState.Modified:
-                entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = DateTimeOffset.UtcNow;
+                entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = now;
                 return;
             default:
                 return;

@@ -30,28 +30,28 @@ internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
     private readonly IEnumerable<IInterceptor> _interceptors;
     private readonly IEnumerable<EntityTypeConfigurationDependency> _configurations;
 
-    /// <inheritdoc/>
     public DbSet<Category> Categories { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<User> Users { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<Order> Orders { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<Product> Products { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<DomainProductFeedback> ProductFeedback { get; set; }
+
     public DbSet<Shipment> Shipments { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<Coupon> Coupons { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<CouponRestriction> CouponRestrictions { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<Sale> Sales { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<Payment> Payments { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<Carrier> Carriers { get; set; }
-    /// <inheritdoc/>
+
     public DbSet<ShippingMethod> ShippingMethods { get; set; }
 
     public ECommerceDbContext(
@@ -66,7 +66,6 @@ internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
         _configurations = configurations;
     }
 
-    /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Ignore<List<IDomainEvent>>();
@@ -81,7 +80,7 @@ internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    /// <inheritdoc/>
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.AddInterceptors(_interceptors);
@@ -92,7 +91,8 @@ internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
     private static void NormalizeColumnNames(ModelBuilder modelBuilder)
     {
 
-        modelBuilder.Model.GetEntityTypes()
+        modelBuilder.Model
+            .GetEntityTypes()
             .SelectMany(e => e.GetProperties())
             .ToList()
             .ForEach(NormalizePropertyColumnName);
@@ -109,10 +109,18 @@ internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
 
         var snakeCaseColumnName = property.Name.ToLowerSnakeCase().Trim('_');
 
-        if (snakeCaseColumnName.EndsWith($"_{KeyPrefix}", StringComparison.OrdinalIgnoreCase))
+        var endingWithPrefix = $"_{KeyPrefix}";
+
+        if (snakeCaseColumnName.EndsWith(
+            endingWithPrefix,
+            StringComparison.OrdinalIgnoreCase
+        ))
         {
             // Invert the order in case it ends with _id
-            snakeCaseColumnName = $"{KeyPrefix}_{snakeCaseColumnName[..(snakeCaseColumnName.Length - 3)]}";
+
+            var baseName = snakeCaseColumnName[..^endingWithPrefix.Length];
+
+            snakeCaseColumnName = $"{KeyPrefix}_{baseName}";
         }
 
         property.SetColumnName(snakeCaseColumnName);
@@ -120,6 +128,8 @@ internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
 
     private static bool IsShadowPrimaryKeyOfOwnedType(IMutableProperty p)
     {
-        return typeof(ValueObject).IsAssignableFrom(p.DeclaringType.ClrType) && p.IsKey();
+        return
+            typeof(ValueObject).IsAssignableFrom(p.DeclaringType.ClrType)
+            && p.IsKey();
     }
 }

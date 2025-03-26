@@ -34,7 +34,7 @@ internal sealed partial class GetSelfQueryHandler
     {
         LogInitiatingSelfRetrieval();
 
-        var currentUser = _identityProvider.GetCurrentUserIdentity(cancellationToken);
+        var currentUser = _identityProvider.GetCurrentUserIdentity();
         var currentUserId = UserId.Create(currentUser.Id);
 
         LogCurrentUserId(currentUser.Id);

@@ -1,6 +1,6 @@
 using Domain.PaymentAggregate.Enumerations;
 
-namespace Application.Common.PaymentGateway;
+namespace Application.Common.PaymentGateway.Responses;
 
 /// <summary>
 /// Represents a payment status response.

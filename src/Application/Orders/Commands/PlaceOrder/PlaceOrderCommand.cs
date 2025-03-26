@@ -1,7 +1,8 @@
 using Application.Common.DTOs.Results;
+using Application.Common.PaymentGateway.PaymentMethods;
 using Application.Common.Security.Authorization.Requests;
 using Application.Orders.DTOs.Inputs;
-using SharedKernel.Interfaces;
+
 using SharedKernel.ValueObjects;
 
 namespace Application.Orders.Commands.PlaceOrder;
@@ -24,7 +25,7 @@ public record PlaceOrderCommand(
     IEnumerable<OrderLineItemInput> Products,
     Address BillingAddress,
     Address DeliveryAddress,
-    IPaymentMethod PaymentMethod,
+    PaymentMethod PaymentMethod,
     IEnumerable<string>? CouponAppliedIds = null,
     int? Installments = null
 ) : IRequestWithAuthorization<CreatedResult>;

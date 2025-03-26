@@ -1,7 +1,7 @@
 using Domain.PaymentAggregate.Enumerations;
 using Domain.PaymentAggregate.ValueObjects;
 
-namespace Application.Common.PaymentGateway;
+namespace Application.Common.PaymentGateway.Responses;
 
 /// <summary>
 /// Represents a response for a refund payment request.

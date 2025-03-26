@@ -12,7 +12,6 @@ namespace Infrastructure.Coupons;
 internal sealed class CouponProductRestrictionConfigurations
     : EntityTypeConfigurationDependency<CouponProductRestriction>
 {
-    /// <inheritdoc/>
     public override void Configure(
         EntityTypeBuilder<CouponProductRestriction> builder
     )

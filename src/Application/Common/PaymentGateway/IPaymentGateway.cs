@@ -1,3 +1,6 @@
+using Application.Common.PaymentGateway.Requests;
+using Application.Common.PaymentGateway.Responses;
+
 using Domain.PaymentAggregate.ValueObjects;
 
 namespace Application.Common.PaymentGateway;
@@ -36,7 +39,10 @@ public interface IPaymentGateway
     /// <param name="paymentId">The payment identifier.</param>
     /// <param name="amount">The amount to be refunded.</param>
     /// <returns>A payment refund response.</returns>
-    Task<PaymentRefundResponse> RefundPaymentAsync(PaymentId paymentId, decimal amount);
+    Task<PaymentRefundResponse> RefundPaymentAsync(
+        PaymentId paymentId,
+        decimal amount
+    );
 
     /// <summary>
     /// Retrieves a payment by its identifier.

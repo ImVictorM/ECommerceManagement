@@ -23,18 +23,7 @@ public interface IProductRepository : IBaseRepository<Product, ProductId>
     /// </returns>
     Task<IReadOnlyList<Product>> GetProductsSatisfyingAsync(
         ISpecificationQuery<Product> specification,
-        PaginationParams? paginationParams = default,
-        CancellationToken cancellationToken = default
-    );
-
-    /// <summary>
-    /// Retrieves a product satisfying a specification.
-    /// </summary>
-    /// <param name="specification">The specification.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>An instance of <see cref="Product"/>.</returns>
-    Task<Product?> GetProductSatisfyingAsync(
-        ISpecificationQuery<Product> specification,
+        PaginationParams paginationParams,
         CancellationToken cancellationToken = default
     );
 }

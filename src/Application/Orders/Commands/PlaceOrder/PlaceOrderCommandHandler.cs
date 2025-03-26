@@ -1,6 +1,7 @@
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Common.Persistence.Repositories;
+using Application.Common.DTOs.Results;
 
 using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Factories;
@@ -12,7 +13,6 @@ using Domain.ProductAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Common.DTOs.Results;
 
 namespace Application.Orders.Commands.PlaceOrder;
 
@@ -50,7 +50,7 @@ internal sealed partial class PlaceOrderCommandHandler
     {
         LogInitiatingOrderPlacement();
 
-        var currentUser = _identityProvider.GetCurrentUserIdentity(cancellationToken);
+        var currentUser = _identityProvider.GetCurrentUserIdentity();
 
         var ownerId = UserId.Create(currentUser.Id);
 

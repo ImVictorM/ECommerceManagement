@@ -1,4 +1,5 @@
 using Application.Common.PaymentGateway;
+using Application.Common.PaymentGateway.Requests;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 
