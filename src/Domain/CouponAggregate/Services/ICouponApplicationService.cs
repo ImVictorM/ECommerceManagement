@@ -12,10 +12,10 @@ public interface ICouponApplicationService
     /// </summary>
     /// <param name="order">The coupon order.</param>
     /// <param name="couponToApplyIds">
-    /// The collection of coupons applied ids.
+    /// The collection of coupons applied identifiers.
     /// </param>
     /// <param name="cancellationToken">
-    /// A cancellation token.
+    /// The cancellation token.
     /// </param>
     /// <returns>
     /// The total after coupon discounts have been applied.
@@ -32,7 +32,9 @@ public interface ICouponApplicationService
     /// <param name="coupon">The coupon to be checked.</param>
     /// <param name="order">The coupon order.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns><c>true</c> if the coupon can be applied; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    /// <c>true</c> if the coupon can be applied; otherwise, <c>false</c>.
+    /// </returns>
     Task<bool> IsCouponApplicableAsync(
         Coupon coupon,
         CouponOrder order,

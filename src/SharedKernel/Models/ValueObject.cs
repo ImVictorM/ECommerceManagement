@@ -1,7 +1,7 @@
 namespace SharedKernel.Models;
 
 /// <summary>
-/// Base class for domain value objects.
+/// Represents a base class for domain value objects.
 /// Value objects are immutable types that are defined by their properties
 /// rather than their identity.
 /// </summary>
@@ -11,7 +11,9 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// Define the equality components for the value object.
     /// Indicate the properties used for equality comparison.
     /// </summary>
-    /// <returns>An enumerable of the properties used to define equality.</returns>
+    /// <returns>
+    /// An enumerable of the properties used to define equality.
+    /// </returns>
     protected abstract IEnumerable<object?> GetEqualityComponents();
 
     /// <inheritdoc/>
@@ -22,10 +24,11 @@ public abstract class ValueObject : IEquatable<ValueObject>
             return false;
         }
 
-        var valueObject = (ValueObject)obj;
+        var otherValueObject = (ValueObject)obj;
 
-        return GetEqualityComponents()
-            .SequenceEqual(valueObject.GetEqualityComponents());
+        return
+            GetEqualityComponents()
+            .SequenceEqual(otherValueObject.GetEqualityComponents());
     }
 
     /// <inheritdoc/>
@@ -39,7 +42,9 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// </summary>
     /// <param name="left">left value object to compare.</param>
     /// <param name="right">right value object to compare.</param>
-    /// <returns>A boolean indicating the equality of the value objects.</returns>
+    /// <returns>
+    /// A boolean indicating the equality of the value objects.
+    /// </returns>
     public static bool operator ==(ValueObject? left, ValueObject? right)
     {
         return Equals(left, right);
@@ -50,7 +55,9 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// </summary>
     /// <param name="left">left value object to compare.</param>
     /// <param name="right">right value object to compare.</param>
-    /// <returns>A boolean indicating the inequality of the value objects.</returns>
+    /// <returns>
+    /// A boolean indicating the inequality of the value objects.
+    /// </returns>
     public static bool operator !=(ValueObject? left, ValueObject? right)
     {
         return !Equals(left, right);
@@ -59,7 +66,8 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        return GetEqualityComponents()
+        return
+            GetEqualityComponents()
             .Select((property) => property?.GetHashCode() ?? 0)
             .Aggregate(0, (acc, curr) => acc ^ curr);
     }

@@ -11,10 +11,10 @@ namespace Application.Sales.Commands.UpdateSale;
 /// </summary>
 /// <param name="SaleId">The sale to be updated identifier.</param>
 /// <param name="Discount">The new sale discount.</param>
-/// <param name="CategoryOnSaleIds">The new category on sale ids.</param>
-/// <param name="ProductOnSaleIds">The new product on sale ids.</param>
+/// <param name="CategoryOnSaleIds">The new category on sale identifiers.</param>
+/// <param name="ProductOnSaleIds">The new product on sale identifiers.</param>
 /// <param name="ProductExcludedFromSaleIds">
-/// The new product excluded from sale ids.
+/// The new product excluded from sale identifiers.
 /// </param>
 [Authorize(roleName: nameof(Role.Admin))]
 public record UpdateSaleCommand(

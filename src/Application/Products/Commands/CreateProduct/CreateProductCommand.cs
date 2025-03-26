@@ -1,4 +1,4 @@
-using Application.Common.DTOs;
+using Application.Common.DTOs.Results;
 using Application.Common.Security.Authorization.Requests;
 
 using SharedKernel.ValueObjects;
@@ -10,9 +10,13 @@ namespace Application.Products.Commands.CreateProduct;
 /// </summary>
 /// <param name="Name">The new product name.</param>
 /// <param name="Description">The new product description.</param>
-/// <param name="InitialQuantity">The new product initial quantity to be placed in the product's inventory.</param>
+/// <param name="InitialQuantity">
+/// The new product initial quantity to be placed in the product's inventory.
+/// </param>
 /// <param name="BasePrice">The new product base price.</param>
-/// <param name="CategoryIds">Categories the new product belongs to.</param>
+/// <param name="CategoryIds">
+/// The category identifier the new product belongs to.
+/// </param>
 /// <param name="Images">The new product images.</param>
 [Authorize(roleName: nameof(Role.Admin))]
 public record CreateProductCommand(

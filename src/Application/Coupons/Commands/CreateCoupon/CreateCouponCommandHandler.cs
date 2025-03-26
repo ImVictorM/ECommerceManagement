@@ -1,4 +1,3 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 using Application.Coupons.Extensions;
@@ -7,6 +6,7 @@ using Domain.CouponAggregate;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Common.DTOs.Results;
 
 namespace Application.Coupons.Commands.CreateCoupon;
 
@@ -27,7 +27,6 @@ internal sealed partial class CreateCouponCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<CreatedResult> Handle(
         CreateCouponCommand request,
         CancellationToken cancellationToken

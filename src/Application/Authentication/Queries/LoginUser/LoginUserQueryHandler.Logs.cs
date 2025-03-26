@@ -11,7 +11,7 @@ internal sealed partial class LoginUserQueryHandler
         Level = LogLevel.Debug,
         Message = "Initiating user authentication. User email: {Email}."
     )]
-    private partial void LogInitiatingUserLogin(string email);
+    private partial void LogInitiatingUserAuthentication(string email);
 
     [LoggerMessage(
         EventId = 2,
@@ -30,7 +30,9 @@ internal sealed partial class LoginUserQueryHandler
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "User with email {Email} was successfully authenticated."
+        Message =
+        "User with email {Email} was successfully authenticated. " +
+        "The operation completed successfully."
     )]
     private partial void LogUserAuthenticatedSuccessfully(string email);
 }

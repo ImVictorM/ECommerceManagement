@@ -9,7 +9,8 @@ namespace Domain.ProductFeedbackAggregate.Specifications;
 /// <summary>
 /// Represents a query to retrieve user product feedback.
 /// </summary>
-public class QueryUserProductFeedback : CompositeQuerySpecification<ProductFeedback>
+public class QueryUserProductFeedback
+    : CompositeQuerySpecification<ProductFeedback>
 {
     private readonly UserId _userId;
 
@@ -18,9 +19,10 @@ public class QueryUserProductFeedback : CompositeQuerySpecification<ProductFeedb
         feedback => feedback.UserId == _userId;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="QueryUserProductFeedback"/> class.
+    /// Initiates a new instance of the <see cref="QueryUserProductFeedback"/>
+    /// class.
     /// </summary>
-    /// <param name="userId">The user id.</param>
+    /// <param name="userId">The user identifier.</param>
     public QueryUserProductFeedback(UserId userId)
     {
         _userId = userId;

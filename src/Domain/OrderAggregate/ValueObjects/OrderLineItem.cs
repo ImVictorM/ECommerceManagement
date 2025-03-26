@@ -28,7 +28,7 @@ public sealed class OrderLineItem : ValueObject
     public decimal BasePrice { get; }
 
     /// <summary>
-    /// Gets the final price paid for the product, after applying sales or discounts.
+    /// Gets the final price paid for the product, after applying sales.
     /// </summary>
     public decimal PurchasedPrice { get; }
 
@@ -61,8 +61,10 @@ public sealed class OrderLineItem : ValueObject
     /// <param name="quantity">The quantity of the product ordered.</param>
     /// <param name="basePrice">The base price of the product.</param>
     /// <param name="purchasedPrice">The final price paid for the product.</param>
-    /// <param name="productCategoryIds">The identifiers of the product categories.</param>
-    /// <returns>A new instance of <see cref="OrderLineItem"/>.</returns>
+    /// <param name="productCategoryIds">
+    /// The identifiers of the product categories.
+    /// </param>
+    /// <returns>A new instance of the<see cref="OrderLineItem"/> class.</returns>
     public static OrderLineItem Create(
         ProductId productId,
         int quantity,

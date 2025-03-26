@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
+using Application.Shipments.Errors;
 
 using Domain.OrderAggregate.Events;
 using Domain.ShipmentAggregate.Enumerations;
@@ -9,19 +9,25 @@ using MediatR;
 
 namespace Application.Shipments.Events;
 
-internal sealed class OrderPaidPrepareShipmentHandler : INotificationHandler<OrderPaid>
+internal sealed class OrderPaidPrepareShipmentHandler
+    : INotificationHandler<OrderPaid>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IShipmentRepository _shipmentRepository;
 
-    public OrderPaidPrepareShipmentHandler(IUnitOfWork unitOfWork, IShipmentRepository shipmentRepository)
+    public OrderPaidPrepareShipmentHandler(
+        IUnitOfWork unitOfWork,
+        IShipmentRepository shipmentRepository
+    )
     {
         _unitOfWork = unitOfWork;
         _shipmentRepository = shipmentRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(OrderPaid notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        OrderPaid notification,
+        CancellationToken cancellationToken
+    )
     {
         var shipment = await _shipmentRepository.GetShipmentByOrderId(
             notification.Order.Id,
@@ -35,10 +41,7 @@ internal sealed class OrderPaidPrepareShipmentHandler : INotificationHandler<Ord
 
         if (shipment.ShipmentStatus != ShipmentStatus.Pending)
         {
-            throw new OperationProcessFailedException(
-                $"Shipment status was expected to be 'Pending'" +
-                $" but was '{shipment.ShipmentStatus.Name}' instead"
-            );
+            throw new PrepareShipmentNotPendingException(shipment.ShipmentStatus);
         }
 
         shipment.AdvanceShipmentStatus();

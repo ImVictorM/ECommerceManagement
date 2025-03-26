@@ -30,36 +30,43 @@ internal sealed partial class UpdateUserCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        UpdateUserCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingUserUpdate(request.UserId);
 
-        var userToUpdateId = UserId.Create(request.UserId);
-        var inputEmail = Email.Create(request.Email);
+        var userId = UserId.Create(request.UserId);
+        var emailUpdated = Email.Create(request.Email);
 
-        var userToUpdate = await _userRepository.FindFirstSatisfyingAsync(
-            new QueryActiveUserByIdSpecification(userToUpdateId),
+        var user = await _userRepository.FindFirstSatisfyingAsync(
+            new QueryActiveUserByIdSpecification(userId),
             cancellationToken
         );
 
-        if (userToUpdate == null)
+        if (user == null)
         {
             LogUserToBeUpdatedNotFound();
 
-            throw new UserNotFoundException("The user to be updated could not be found");
+            throw new UserNotFoundException(
+                "The user could not be updated because they either do not " +
+                "exist or are inactive"
+            )
+            .WithContext("UserId", userId.ToString());
         }
 
-        if (userToUpdate.Email != inputEmail)
+        if (user.Email != emailUpdated)
         {
-            LogEmailBeingUpdated(userToUpdate.Email.ToString(), request.Email);
+            LogEmailBeingUpdated(user.Email.ToString(), request.Email);
 
-            var userWithConflictingEmail = await _userRepository.FindFirstSatisfyingAsync(
-                new QueryUserByEmailSpecification(inputEmail),
-                cancellationToken
-            );
+            var hasConflictingEmail = await _userRepository
+                .FindFirstSatisfyingAsync(
+                    new QueryUserByEmailSpecification(emailUpdated),
+                    cancellationToken
+                ) is not null;
 
-            if (userWithConflictingEmail != null)
+            if (hasConflictingEmail)
             {
                 LogEmailConflict(request.Email);
 
@@ -69,9 +76,9 @@ internal sealed partial class UpdateUserCommandHandler
             LogEmailAvailable(request.Email);
         }
 
-        userToUpdate.UpdateDetails(
+        user.UpdateDetails(
             name: request.Name,
-            email: inputEmail,
+            email: emailUpdated,
             phone: request.Phone
         );
 

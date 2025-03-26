@@ -1,14 +1,13 @@
 using Application.Common.Persistence.Repositories;
-using Application.Coupons.DTOs;
-using Application.Coupons.Extensions;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Coupons.DTOs.Results;
 
 namespace Application.Coupons.Queries.GetCoupons;
 
 internal sealed partial class GetCouponsQueryHandler
-    : IRequestHandler<GetCouponsQuery, IEnumerable<CouponResult>>
+    : IRequestHandler<GetCouponsQuery, IReadOnlyList<CouponResult>>
 {
     private readonly ICouponRepository _couponRepository;
 
@@ -21,7 +20,7 @@ internal sealed partial class GetCouponsQueryHandler
         _logger = logger;
     }
 
-    public async Task<IEnumerable<CouponResult>> Handle(
+    public async Task<IReadOnlyList<CouponResult>> Handle(
         GetCouponsQuery request,
         CancellationToken cancellationToken
     )
@@ -38,17 +37,11 @@ internal sealed partial class GetCouponsQueryHandler
             cancellationToken
         );
 
-        LogCouponsRetrievedSuccessfully(coupons.Count());
+        LogCouponsRetrievedSuccessfully(coupons.Count);
 
-        var result = coupons.Select(coupon => new CouponResult(
-            coupon.Id.ToString(),
-            coupon.Discount,
-            coupon.Code,
-            coupon.UsageLimit,
-            coupon.AutoApply,
-            coupon.MinPrice,
-            coupon.Restrictions.ParseRestrictions()
-        ));
+        var result = coupons
+            .Select(coupon => new CouponResult(coupon))
+            .ToList();
 
         return result;
     }

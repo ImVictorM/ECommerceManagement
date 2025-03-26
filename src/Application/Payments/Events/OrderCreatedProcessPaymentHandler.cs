@@ -4,14 +4,14 @@ using Application.Common.Persistence.Repositories;
 
 using Domain.OrderAggregate.Events;
 using Domain.PaymentAggregate;
-using Domain.PaymentAggregate.ValueObjects;
 using Domain.UserAggregate.Specification;
 
 using MediatR;
 
 namespace Application.Payments.Events;
 
-internal sealed class OrderCreatedProcessPaymentHandler : INotificationHandler<OrderCreated>
+internal sealed class OrderCreatedProcessPaymentHandler
+    : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentRepository _paymentRepository;
@@ -31,25 +31,29 @@ internal sealed class OrderCreatedProcessPaymentHandler : INotificationHandler<O
         _userRepository = userRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        OrderCreated notification,
+        CancellationToken cancellationToken
+    )
     {
         var payer = await _userRepository.FindFirstSatisfyingAsync(
             new QueryActiveUserByIdSpecification(notification.Order.OwnerId),
             cancellationToken
         );
 
-        var response = await _paymentGateway.AuthorizePaymentAsync(new AuthorizePaymentInput(
+        var authorizePaymentRequest = new AuthorizePaymentRequest(
             requestId: notification.RequestId,
             order: notification.Order,
             paymentMethod: notification.PaymentMethod,
             payer: payer,
             billingAddress: notification.BillingAddress,
             installments: notification.Installments
-        ));
+        );
+
+        var response = await _paymentGateway.AuthorizePaymentAsync(authorizePaymentRequest);
 
         var payment = Payment.Create(
-            PaymentId.Create(response.PaymentId),
+            response.PaymentId,
             notification.Order.Id,
             response.Status
         );

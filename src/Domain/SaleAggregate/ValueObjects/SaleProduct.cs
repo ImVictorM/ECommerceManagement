@@ -10,7 +10,7 @@ namespace Domain.SaleAggregate.ValueObjects;
 public class SaleProduct : ValueObject
 {
     /// <summary>
-    /// Gets the product id.
+    /// Gets the product identifier.
     /// </summary>
     public ProductId ProductId { get; } = null!;
 
@@ -24,7 +24,7 @@ public class SaleProduct : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="SaleProduct"/> class.
     /// </summary>
-    /// <param name="productId">The product id.</param>
+    /// <param name="productId">The product identifier.</param>
     /// <returns>
     /// A new instance of the <see cref="SaleProduct"/> class.
     /// </returns>

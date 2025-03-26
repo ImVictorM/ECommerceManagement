@@ -3,6 +3,7 @@ using Domain.UserAggregate.ValueObjects;
 
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
+using Application.Users.Errors;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
@@ -26,23 +27,28 @@ internal sealed partial class DeactivateUserCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        DeactivateUserCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingUserDeactivation(request.UserId);
 
-        var idUserToBeDeactivated = UserId.Create(request.UserId);
+        var userId = UserId.Create(request.UserId);
 
         var userToBeDeactivated = await _userRepository.FindFirstSatisfyingAsync(
-            new QueryActiveUserByIdSpecification(idUserToBeDeactivated),
+            new QueryActiveUserByIdSpecification(userId),
             cancellationToken
         );
 
         if (userToBeDeactivated == null)
         {
-            LogUserDoesNotExist();
-
-            return Unit.Value;
+            LogUserNotFound();
+            throw new UserNotFoundException(
+                    "The user could not be deactivated because they either do not" +
+                    " exist or are already inactive"
+                )
+                .WithContext("UserId", userId.ToString());
         }
 
         userToBeDeactivated.Deactivate();

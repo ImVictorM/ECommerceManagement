@@ -26,14 +26,19 @@ internal sealed partial class UpdateShippingMethodCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(UpdateShippingMethodCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        UpdateShippingMethodCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingShippingMethodUpdate(request.ShippingMethodId);
 
         var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 
-        var shippingMethod = await _shippingMethodRepository.FindByIdAsync(shippingMethodId, cancellationToken);
+        var shippingMethod = await _shippingMethodRepository.FindByIdAsync(
+            shippingMethodId,
+            cancellationToken
+        );
 
         if (shippingMethod == null)
         {

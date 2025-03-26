@@ -11,12 +11,14 @@ internal sealed partial class CreateCategoryCommandHandler
         Level = LogLevel.Debug,
         Message = "Initiating creation of category with name {CategoryName}."
     )]
-    private partial void LogCreatingCategory(string categoryName);
+    private partial void LogInitiatingCategoryCreation(string categoryName);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Category created and saved successfully."
+        Message =
+        "The category was created and saved. " +
+        "The operation completed successfully."
     )]
     private partial void LogCategoryCreatedAndSaved();
 }

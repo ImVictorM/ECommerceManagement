@@ -1,10 +1,9 @@
-using Application.Categories.DTOs;
-
+using Application.Categories.DTOs.Results;
 using MediatR;
 
 namespace Application.Categories.Queries.GetCategories;
 
 /// <summary>
-/// Query to list all categories.
+/// Represents a query to list all available categories.
 /// </summary>
-public class GetCategoriesQuery : IRequest<IEnumerable<CategoryResult>>;
+public class GetCategoriesQuery : IRequest<IReadOnlyList<CategoryResult>>;

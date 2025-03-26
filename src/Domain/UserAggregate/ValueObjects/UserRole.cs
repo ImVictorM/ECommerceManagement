@@ -29,7 +29,9 @@ public sealed class UserRole : ValueObject
     /// Creates a new instance of the <see cref="UserRole"/> class.
     /// </summary>
     /// <param name="role">The role.</param>
-    /// <returns>A new instance of the <see cref="UserRole"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="UserRole"/> class.
+    /// </returns>
     public static UserRole Create(Role role)
     {
         return new UserRole(role);

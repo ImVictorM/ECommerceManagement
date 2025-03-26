@@ -1,11 +1,10 @@
-using Application.Authentication.DTOs;
-
+using Application.Authentication.DTOs.Results;
 using MediatR;
 
 namespace Application.Authentication.Commands.RegisterCustomer;
 
 /// <summary>
-/// Command to register a new customer user.
+/// Represents a command to register a new customer user.
 /// </summary>
 /// <param name="Name">The customer name.</param>
 /// <param name="Email">The customer email.</param>

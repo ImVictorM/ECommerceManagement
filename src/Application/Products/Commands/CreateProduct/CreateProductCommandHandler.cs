@@ -1,4 +1,3 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 
@@ -8,6 +7,7 @@ using Domain.ProductAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Common.DTOs.Results;
 
 namespace Application.Products.Commands.CreateProduct;
 
@@ -28,8 +28,10 @@ internal sealed partial class CreateProductCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<CreatedResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResult> Handle(
+        CreateProductCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingProductCreation(request.Name);
 
@@ -50,8 +52,10 @@ internal sealed partial class CreateProductCommandHandler
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogProductPersistedSuccessfully(newProduct.Id.ToString());
+        var productId = newProduct.Id.ToString();
 
-        return new CreatedResult(newProduct.Id.ToString());
+        LogProductPersistedSuccessfully(productId);
+
+        return new CreatedResult(productId);
     }
 }

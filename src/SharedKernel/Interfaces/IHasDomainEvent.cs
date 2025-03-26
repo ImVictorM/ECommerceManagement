@@ -1,7 +1,7 @@
 namespace SharedKernel.Interfaces;
 
 /// <summary>
-/// Contract for handling domain events.
+/// Represents a contract for handling domain events.
 /// </summary>
 public interface IHasDomainEvent
 {

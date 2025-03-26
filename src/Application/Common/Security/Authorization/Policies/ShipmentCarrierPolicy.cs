@@ -13,20 +13,29 @@ internal sealed class ShipmentCarrierPolicy<TRequest> : IPolicy<TRequest>
     private readonly IIdentityProvider _identityProvider;
     private readonly IShipmentRepository _shipmentRepository;
 
-    public ShipmentCarrierPolicy(IIdentityProvider identityProvider, IShipmentRepository shipmentRepository)
+    public ShipmentCarrierPolicy(
+        IIdentityProvider identityProvider,
+        IShipmentRepository shipmentRepository
+    )
     {
         _identityProvider = identityProvider;
         _shipmentRepository = shipmentRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task<bool> IsAuthorizedAsync(TRequest request, IdentityUser currentUser)
+    public async Task<bool> IsAuthorizedAsync(
+        TRequest request,
+        IdentityUser currentUser,
+        CancellationToken cancellationToken = default
+    )
     {
         var identity = _identityProvider.GetCurrentUserIdentity();
 
         var carrierId = CarrierId.Create(identity.Id);
         var shipmentId = ShipmentId.Create(request.ShipmentId);
-        var shipment = await _shipmentRepository.FindByIdAsync(shipmentId);
+        var shipment = await _shipmentRepository.FindByIdAsync(
+            shipmentId,
+            cancellationToken
+        );
 
         if (shipment == null)
         {

@@ -3,11 +3,13 @@ using Domain.PaymentAggregate.Enumerations;
 namespace Application.Common.PaymentGateway;
 
 /// <summary>
-/// Represents a generic response for payment requests.
+/// Represents a payment status response.
 /// </summary>
-/// <param name="Status">The status of the request.</param>
-/// <param name="Details">The details about the request.</param>
-/// <param name="Captured">A value indicating if the payment was captured.</param>
+/// <param name="Status">The status of the payment.</param>
+/// <param name="Details">The details about the payment.</param>
+/// <param name="Captured">
+/// A boolean value indicating if the payment was captured.
+/// </param>
 public record PaymentStatusResponse
 (
     PaymentStatus Status,

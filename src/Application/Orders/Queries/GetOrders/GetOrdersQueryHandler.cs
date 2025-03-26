@@ -1,42 +1,41 @@
 using Application.Common.Persistence.Repositories;
-using Application.Orders.DTOs;
-
-using Domain.OrderAggregate.Enumerations;
-using Domain.OrderAggregate.Specifications;
-
-using SharedKernel.Models;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Orders.DTOs.Results;
 
 namespace Application.Orders.Queries.GetOrders;
 
-internal sealed partial class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, IEnumerable<OrderResult>>
+internal sealed partial class GetOrdersQueryHandler
+    : IRequestHandler<GetOrdersQuery, IReadOnlyList<OrderResult>>
 {
     private readonly IOrderRepository _orderRepository;
 
-    public GetOrdersQueryHandler(IOrderRepository orderRepository, ILogger<GetOrdersQueryHandler> logger)
+    public GetOrdersQueryHandler(
+        IOrderRepository orderRepository,
+        ILogger<GetOrdersQueryHandler> logger
+    )
     {
         _orderRepository = orderRepository;
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<IEnumerable<OrderResult>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<OrderResult>> Handle(
+        GetOrdersQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingOrdersRetrieval(request.Status);
+        LogInitiatingOrdersRetrieval(request.Filters.Status);
 
-        var statusFilter = request.Status != null ?
-            BaseEnumeration.FromDisplayName<OrderStatus>(request.Status)
-            : null;
-
-        var orders = await _orderRepository.FindSatisfyingAsync(
-            new QueryOrderByStatusSpecification(statusFilter),
+        var orders = await _orderRepository.GetOrdersAsync(
+            request.Filters,
             cancellationToken
         );
 
-        LogOrdersRetrievedSuccessfully(orders.Count());
+        LogOrdersRetrievedSuccessfully(orders.Count);
 
-        return orders.Select(order => new OrderResult(order));
+        return orders
+            .Select(OrderResult.FromProjection)
+            .ToList();
     }
 }

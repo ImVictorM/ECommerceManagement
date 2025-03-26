@@ -10,7 +10,7 @@ namespace Domain.CouponAggregate.ValueObjects;
 public class CouponCategory : ValueObject
 {
     /// <summary>
-    /// Gets the category id.
+    /// Gets the category identifier.
     /// </summary>
     public CategoryId CategoryId { get; } = null!;
 
@@ -25,7 +25,9 @@ public class CouponCategory : ValueObject
     /// Creates a new instance of the <see cref="CouponCategory"/> class.
     /// </summary>
     /// <param name="categoryId">The category id.</param>
-    /// <returns>A new instance of the <see cref="CouponCategory"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CouponCategory"/> class.
+    /// </returns>
     public static CouponCategory Create(CategoryId categoryId)
     {
         return new CouponCategory(categoryId);

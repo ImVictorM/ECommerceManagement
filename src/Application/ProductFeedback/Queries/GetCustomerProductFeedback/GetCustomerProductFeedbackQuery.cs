@@ -1,6 +1,6 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Requests;
-using Application.ProductFeedback.DTOs;
+using Application.ProductFeedback.DTOs.Results;
 
 namespace Application.ProductFeedback.Queries.GetCustomerProductFeedback;
 

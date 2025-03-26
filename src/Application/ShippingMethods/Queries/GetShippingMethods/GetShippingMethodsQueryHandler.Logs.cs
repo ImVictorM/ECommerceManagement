@@ -16,7 +16,9 @@ internal sealed partial class GetShippingMethodsQueryHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Shipping methods retrieved successfully. Quantity of shipping methods retrieved: {Count}."
+        Message =
+        "{Count} shipping methods has been retrieved. " +
+        "The operation was completed successfully."
     )]
     private partial void LogShippingMethodsQuantityRetrieved(int count);
 }

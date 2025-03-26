@@ -14,7 +14,7 @@ public class SaleEligibleProduct : ValueObject
     private readonly HashSet<CategoryId> _categoryIds = [];
 
     /// <summary>
-    /// Gets the product id.
+    /// Gets the product identifier.
     /// </summary>
     public ProductId ProductId { get; } = null!;
     /// <summary>
@@ -36,7 +36,7 @@ public class SaleEligibleProduct : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="SaleEligibleProduct"/> class.
     /// </summary>
-    /// <param name="productId">The product id.</param>
+    /// <param name="productId">The product identifier.</param>
     /// <param name="categoryIds">The product categories.</param>
     /// <returns>
     /// A new instance of the <see cref="SaleEligibleProduct"/> class.

@@ -11,19 +11,21 @@ internal sealed partial class DeleteCategoryCommandHandler
         Level = LogLevel.Debug,
         Message = "Starting removal of category with id {CategoryId}."
     )]
-    private partial void LogInitiatingDeleteCategory(string categoryId);
+    private partial void LogInitiatingCategoryDeletion(string categoryId);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The could not be deleted because it does not exist."
+        Message = "The category could not be deleted because it does not exist."
     )]
     private partial void LogCategoryNotFound();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The category was found an removed successfully."
+        Message =
+        "The category was deleted. " +
+        "The operation completed successfully."
     )]
-    private partial void LogCategoryDeleted();
+    private partial void LogCategoryDeletedSuccessfully();
 }

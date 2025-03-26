@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace Domain.ProductAggregate.Specifications;
 
 /// <summary>
-/// Defines a specification to query products by the specified ids.
+/// Defines a specification to query products by the specified identifiers.
 /// </summary>
 public class QueryProductsContainingIdsSpecification
     : CompositeQuerySpecification<Product>
@@ -22,7 +22,7 @@ public class QueryProductsContainingIdsSpecification
     /// Initiates a new instance of the
     /// <see cref="QueryProductsContainingIdsSpecification"/> class.
     /// </summary>
-    /// <param name="productIds">The product ids.</param>
+    /// <param name="productIds">The product identifiers.</param>
     public QueryProductsContainingIdsSpecification(
         IEnumerable<ProductId> productIds
     )

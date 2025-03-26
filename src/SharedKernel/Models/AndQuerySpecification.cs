@@ -1,5 +1,6 @@
-using System.Linq.Expressions;
 using SharedKernel.Interfaces;
+
+using System.Linq.Expressions;
 
 namespace SharedKernel.Models;
 
@@ -7,17 +8,22 @@ namespace SharedKernel.Models;
 /// A composite query specification that allows chaining multiple specifications.
 /// </summary>
 /// <typeparam name="T">The entity type.</typeparam>
-public class AndQuerySpecification<T> : CompositeQuerySpecification<T> where T : class
+public class AndQuerySpecification<T>
+    : CompositeQuerySpecification<T> where T : class
 {
     private readonly ISpecificationQuery<T> _left;
     private readonly ISpecificationQuery<T> _right;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="AndQuerySpecification{T}"/> class.
+    /// Initiates a new instance of the <see cref="AndQuerySpecification{T}"/>
+    /// class.
     /// </summary>
     /// <param name="left">The left specification.</param>
     /// <param name="right">The right specification.</param>
-    public AndQuerySpecification(ISpecificationQuery<T> left, ISpecificationQuery<T> right)
+    public AndQuerySpecification(
+        ISpecificationQuery<T> left,
+        ISpecificationQuery<T> right
+    )
     {
         _left = left;
         _right = right;

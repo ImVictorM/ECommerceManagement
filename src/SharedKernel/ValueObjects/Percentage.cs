@@ -1,5 +1,6 @@
-using System.Globalization;
 using SharedKernel.Models;
+
+using System.Globalization;
 
 namespace SharedKernel.ValueObjects;
 
@@ -31,21 +32,27 @@ public sealed class Percentage : ValueObject, IComparable<Percentage>
     }
 
     /// <summary>
-    /// Determines whether the percentage value falls within the specified range (inclusive).
+    /// Determines whether the percentage value falls within the specified
+    /// range (inclusive).
     /// </summary>
     /// <param name="start">The start of the range.</param>
     /// <param name="end">The end of the range.</param>
-    /// <returns>True if the percentage is within the range; otherwise, false.</returns>
+    /// <returns>
+    /// True if the percentage is within the range; otherwise, false.
+    /// </returns>
     public bool IsWithinRange(int start, int end)
     {
         return Value >= start && Value <= end;
     }
 
     /// <summary>
-    /// Determines whether the percentage value falls within the range of 0 to the specified end value (inclusive).
+    /// Determines whether the percentage value falls within the range of 0 to the
+    /// specified end value (inclusive).
     /// </summary>
     /// <param name="end">The end of the range.</param>
-    /// <returns>True if the percentage is between 0 and the end value; otherwise, false.</returns>
+    /// <returns>
+    /// True if the percentage is between 0 and the end value; otherwise, false.
+    /// </returns>
     public bool IsWithinRange(int end)
     {
         return IsWithinRange(0, end);
@@ -55,12 +62,6 @@ public sealed class Percentage : ValueObject, IComparable<Percentage>
     public override string ToString()
     {
         return Value.ToString(CultureInfo.InvariantCulture);
-    }
-
-    /// <inheritdoc/>
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Value;
     }
 
     /// <inheritdoc/>
@@ -118,7 +119,9 @@ public sealed class Percentage : ValueObject, IComparable<Percentage>
     /// </summary>
     /// <param name="left">The left percentage.</param>
     /// <param name="right">The right percentage.</param>
-    /// <returns>true if the left instance is less than the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is less than the right; otherwise, false.
+    /// </returns>
     public static bool operator <(Percentage left, Percentage right)
     {
         return left is null ? right is not null : left.CompareTo(right) < 0;
@@ -129,7 +132,10 @@ public sealed class Percentage : ValueObject, IComparable<Percentage>
     /// </summary>
     /// <param name="left">The left percentage.</param>
     /// <param name="right">The right percentage.</param>
-    /// <returns>true if the left instance is less than or equal to the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is less than or equal to the right;
+    /// otherwise, false.
+    /// </returns>
     public static bool operator <=(Percentage left, Percentage right)
     {
         return left is null || left.CompareTo(right) <= 0;
@@ -140,20 +146,32 @@ public sealed class Percentage : ValueObject, IComparable<Percentage>
     /// </summary>
     /// <param name="left">The left percentage.</param>
     /// <param name="right">The right percentage.</param>
-    /// <returns>true if the left instance is greater than the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is greater than the right; otherwise, false.
+    /// </returns>
     public static bool operator >(Percentage left, Percentage right)
     {
         return left is not null && left.CompareTo(right) > 0;
     }
 
     /// <summary>
-    /// Compares two <see cref="Percentage"/> instances for greater than or equal to.
+    /// Compares two <see cref="Percentage"/> instances for greater than
+    /// or equal to.
     /// </summary>
     /// <param name="left">The left percentage.</param>
     /// <param name="right">The right percentage.</param>
-    /// <returns>true if the left instance is greater than or equal to the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is greater than or equal to the right;
+    /// otherwise, false.
+    /// </returns>
     public static bool operator >=(Percentage left, Percentage right)
     {
         return left is null ? right is null : left.CompareTo(right) >= 0;
+    }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Value;
     }
 }

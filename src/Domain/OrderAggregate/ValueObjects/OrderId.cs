@@ -1,11 +1,12 @@
-using System.Globalization;
 using SharedKernel.Extensions;
 using SharedKernel.Models;
+
+using System.Globalization;
 
 namespace Domain.OrderAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Order"/> aggregate.
+/// Represents an identifier for the <see cref="Order"/> aggregate.
 /// </summary>
 public sealed class OrderId : ValueObject
 {
@@ -14,15 +15,8 @@ public sealed class OrderId : ValueObject
     /// </summary>
     public long Value { get; }
 
-    /// <summary>
-    /// Initiates a new instance of <see cref="OrderId"/> class.
-    /// </summary>
     private OrderId() { }
 
-    /// <summary>
-    /// Initiates a new instance of <see cref="OrderId"/> class.
-    /// </summary>
-    /// <param name="value">The identifier value.</param>
     private OrderId(long value)
     {
         Value = value;
@@ -32,7 +26,10 @@ public sealed class OrderId : ValueObject
     /// Creates a new instance of <see cref="OrderId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of <see cref="OrderId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of <see cref="OrderId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static OrderId Create(long value)
     {
         return new OrderId(value);
@@ -42,7 +39,10 @@ public sealed class OrderId : ValueObject
     /// Creates a new instance of <see cref="OrderId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of <see cref="OrderId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of <see cref="OrderId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static OrderId Create(string value)
     {
         return new OrderId(value.ToLongId());

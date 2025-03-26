@@ -1,6 +1,7 @@
-using System.Globalization;
 using SharedKernel.Extensions;
 using SharedKernel.Models;
+
+using System.Globalization;
 
 namespace Domain.ProductAggregate.ValueObjects;
 
@@ -25,7 +26,10 @@ public sealed class ProductId : ValueObject
     /// Creates a new instance of the <see cref="ProductId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="ProductId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="ProductId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static ProductId Create(long value)
     {
         return new ProductId(value);
@@ -35,7 +39,10 @@ public sealed class ProductId : ValueObject
     /// Creates a new instance of the <see cref="ProductId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="ProductId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="ProductId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static ProductId Create(string value)
     {
         return new ProductId(value.ToLongId());

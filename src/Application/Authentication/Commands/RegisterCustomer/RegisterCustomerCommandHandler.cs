@@ -6,7 +6,7 @@ using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Identity;
 using Application.Common.Errors;
-using Application.Authentication.DTOs;
+using Application.Authentication.DTOs.Results;
 
 using SharedKernel.ValueObjects;
 
@@ -38,13 +38,12 @@ internal sealed partial class RegisterCustomerCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<AuthenticationResult> Handle(
         RegisterCustomerCommand command,
         CancellationToken cancellationToken
     )
     {
-        LogInitiatingRegisterCustomer(command.Email);
+        LogInitiatingCustomerRegistration(command.Email);
 
         var inputEmail = Email.Create(command.Email);
 
@@ -68,13 +67,11 @@ internal sealed partial class RegisterCustomerCommandHandler
             passwordHash
         );
 
-        LogCustomerCreated();
-
         await _userRepository.AddAsync(user);
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogCustomerSavedSuccessfully();
+        LogCustomerCreatedSuccessfully();
 
         var userIdentity = new IdentityUser(
                 user.Id.ToString(),
@@ -85,15 +82,10 @@ internal sealed partial class RegisterCustomerCommandHandler
 
         LogAuthenticationTokenGenerated();
 
-        LogRegistrationCompleteSuccessfully();
+        LogRegistrationCompletedSuccessfully();
 
-        return new AuthenticationResult(
-            new AuthenticatedIdentity(
-                user.Id.ToString(),
-                user.Name,
-                user.Email.ToString(),
-                user.Phone
-            ),
+        return AuthenticationResult.FromUserWithToken(
+            user,
             token
         );
     }

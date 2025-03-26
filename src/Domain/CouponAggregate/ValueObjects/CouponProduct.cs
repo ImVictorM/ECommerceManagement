@@ -10,7 +10,7 @@ namespace Domain.CouponAggregate.ValueObjects;
 public class CouponProduct : ValueObject
 {
     /// <summary>
-    /// Gets the product id.
+    /// Gets the product identifier.
     /// </summary>
     public ProductId ProductId { get; } = null!;
 

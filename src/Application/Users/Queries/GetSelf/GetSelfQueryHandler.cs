@@ -1,7 +1,7 @@
 using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Identity;
-using Application.Users.DTOs;
 using Application.Users.Errors;
+using Application.Users.DTOs.Results;
 
 using Domain.UserAggregate.ValueObjects;
 
@@ -10,7 +10,8 @@ using MediatR;
 
 namespace Application.Users.Queries.GetSelf;
 
-internal sealed partial class GetSelfQueryHandler : IRequestHandler<GetSelfQuery, UserResult>
+internal sealed partial class GetSelfQueryHandler
+    : IRequestHandler<GetSelfQuery, UserResult>
 {
     private readonly IIdentityProvider _identityProvider;
     private readonly IUserRepository _userRepository;
@@ -26,26 +27,30 @@ internal sealed partial class GetSelfQueryHandler : IRequestHandler<GetSelfQuery
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<UserResult> Handle(GetSelfQuery request, CancellationToken cancellationToken)
+    public async Task<UserResult> Handle(
+        GetSelfQuery request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingSelfRetrieval();
 
-        var currentUser = _identityProvider.GetCurrentUserIdentity();
+        var currentUser = _identityProvider.GetCurrentUserIdentity(cancellationToken);
+        var currentUserId = UserId.Create(currentUser.Id);
 
         LogCurrentUserId(currentUser.Id);
 
-        var currentUserId = UserId.Create(currentUser.Id);
-
-        var user = await _userRepository.FindByIdAsync(currentUserId, cancellationToken);
+        var user = await _userRepository.FindByIdAsync(
+            currentUserId,
+            cancellationToken
+        );
 
         if (user == null)
         {
             LogCurrentUserNotFoundInternally();
-            throw new UserNotFoundException($"User with id {currentUserId} was not found");
+            throw new UserNotFoundException().WithContext("UserId", currentUser.Id);
         }
 
         LogCurrentUserInfoRetrieved();
-        return new UserResult(user);
+        return UserResult.FromUser(user);
     }
 }

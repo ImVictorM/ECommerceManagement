@@ -3,9 +3,12 @@ using MediatR;
 namespace Application.Payments.Commands.UpdatePaymentStatus;
 
 /// <summary>
-/// Command to update a payment status.
+/// Represents a command to update a payment status.
 /// </summary>
-/// <param name="PaymentId">The payment id.</param>
-/// <param name="Status">The payment status.</param>
-public record UpdatePaymentStatusCommand(string PaymentId, string Status) : IRequest<Unit>;
+/// <param name="PaymentId">The payment identifier.</param>
+/// <param name="Status">The updated payment status.</param>
+public record UpdatePaymentStatusCommand(
+    string PaymentId,
+    string Status
+) : IRequest<Unit>;
 

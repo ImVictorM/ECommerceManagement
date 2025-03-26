@@ -1,11 +1,11 @@
 using Application.Common.Persistence.Repositories;
-using Application.ShippingMethods.DTOs;
 using Application.ShippingMethods.Errors;
 
 using Domain.ShippingMethodAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.ShippingMethods.DTOs.Results;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethodById;
 
@@ -23,10 +23,12 @@ internal sealed partial class GetShippingMethodByIdQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<ShippingMethodResult> Handle(GetShippingMethodByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ShippingMethodResult> Handle(
+        GetShippingMethodByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingGetShippingMethodByIdQuery(request.ShippingMethodId);
+        LogInitiatingShippingMethodRetrieval(request.ShippingMethodId);
 
         var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 
@@ -43,6 +45,6 @@ internal sealed partial class GetShippingMethodByIdQueryHandler
 
         LogShippingMethodRetrievedSuccessfully();
 
-        return new ShippingMethodResult(shippingMethod);
+        return ShippingMethodResult.FromShippingMethod(shippingMethod);
     }
 }

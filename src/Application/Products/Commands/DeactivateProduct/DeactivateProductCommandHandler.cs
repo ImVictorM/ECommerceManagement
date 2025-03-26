@@ -27,8 +27,10 @@ internal sealed partial class DeactivateProductCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(DeactivateProductCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        DeactivateProductCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingProductDeactivation(request.Id);
 
@@ -43,7 +45,11 @@ internal sealed partial class DeactivateProductCommandHandler
         {
             LogProductToBeDeactivateDoesNotExist();
 
-            throw new ProductNotFoundException($"Product with id {productId} could not be deactivated because it does not exist or is already inactive");
+            throw new ProductNotFoundException(
+                "The product to be deactivated either does not exist" +
+                " or is already inactive"
+            )
+            .WithContext("ProductId", productId.ToString());
         }
 
         product.Deactivate();

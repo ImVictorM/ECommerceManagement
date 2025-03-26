@@ -26,14 +26,19 @@ internal sealed partial class DeleteShippingMethodCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(DeleteShippingMethodCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        DeleteShippingMethodCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingDeleteShippingMethod(request.ShippingMethodId);
+        LogInitiatingShippingMethodDeletion(request.ShippingMethodId);
 
-        var shippingMethodToDeleteId = ShippingMethodId.Create(request.ShippingMethodId);
+        var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 
-        var shippingMethodToDelete = await _shippingMethodRepository.FindByIdAsync(shippingMethodToDeleteId, cancellationToken);
+        var shippingMethodToDelete = await _shippingMethodRepository.FindByIdAsync(
+            shippingMethodId,
+            cancellationToken
+        );
 
         if (shippingMethodToDelete == null)
         {

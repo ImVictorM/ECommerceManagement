@@ -1,11 +1,11 @@
 using Application.Common.Persistence.Repositories;
-using Application.ProductFeedback.DTOs;
 
 using Domain.ProductAggregate.ValueObjects;
 using Domain.ProductFeedbackAggregate.Specifications;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.ProductFeedback.DTOs.Results;
 
 namespace Application.ProductFeedback.Queries.GetProductFeedback;
 

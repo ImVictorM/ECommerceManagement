@@ -40,8 +40,12 @@ public class ShippingMethod : AggregateRoot<ShippingMethodId>
     /// </summary>
     /// <param name="name">The shipping method name.</param>
     /// <param name="price">The amount charged for the shipping method.</param>
-    /// <param name="estimatedDeliveryDays">A static estimated delivery days.</param>
-    /// <returns>A new instance of the <see cref="ShippingMethod"/> class.</returns>
+    /// <param name="estimatedDeliveryDays">
+    /// A static estimated delivery days.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="ShippingMethod"/> class.
+    /// </returns>
     public static ShippingMethod Create(
         string name,
         decimal price,
@@ -56,7 +60,9 @@ public class ShippingMethod : AggregateRoot<ShippingMethodId>
     /// </summary>
     /// <param name="name">The new shipping method name.</param>
     /// <param name="price">The new shipping method price.</param>
-    /// <param name="estimatedDeliveryDays">The new shipping method estimated delivery days.</param>
+    /// <param name="estimatedDeliveryDays">
+    /// The new shipping method estimated delivery days.
+    /// </param>
     public void Update(
         string? name = null,
         decimal? price = null,

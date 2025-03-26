@@ -22,17 +22,17 @@ internal sealed class ProductPricingService : IProductPricingService
         _discountService = discountService;
     }
 
-    public async Task<decimal> CalculateProductPriceApplyingSaleAsync(
+    public async Task<decimal> CalculateDiscountedPriceAsync(
         Product product,
         CancellationToken cancellationToken = default
     )
     {
-        var result = await CalculateProductsPriceApplyingSaleAsync([product], cancellationToken);
+        var result = await CalculateDiscountedPricesAsync([product], cancellationToken);
 
         return result[product.Id];
     }
 
-    public async Task<Dictionary<ProductId, decimal>> CalculateProductsPriceApplyingSaleAsync(
+    public async Task<Dictionary<ProductId, decimal>> CalculateDiscountedPricesAsync(
         IEnumerable<Product> products,
         CancellationToken cancellationToken = default
     )

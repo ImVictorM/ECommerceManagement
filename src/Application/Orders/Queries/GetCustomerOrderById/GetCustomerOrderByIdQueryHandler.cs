@@ -1,6 +1,5 @@
 using Application.Common.PaymentGateway;
 using Application.Common.Persistence.Repositories;
-using Application.Orders.DTOs;
 using Application.Orders.Errors;
 
 using Domain.OrderAggregate.ValueObjects;
@@ -8,6 +7,7 @@ using Domain.UserAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Orders.DTOs.Results;
 
 namespace Application.Orders.Queries.GetCustomerOrderById;
 
@@ -28,42 +28,46 @@ internal sealed partial class GetCustomerOrderByIdQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<OrderDetailedResult> Handle(GetCustomerOrderByIdQuery request, CancellationToken cancellationToken)
+    public async Task<OrderDetailedResult> Handle(
+        GetCustomerOrderByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingCustomerOrderRetrieval(request.OrderId, request.UserId);
+        LogInitiatingCustomerOrderRetrieval(request.OrderId, request.OwnerId);
 
-        var orderOwnerId = UserId.Create(request.UserId);
+        var ownerId = UserId.Create(request.OwnerId);
         var orderId = OrderId.Create(request.OrderId);
 
-        var orderDetailed = await _orderRepository.GetOrderDetailedAsync(orderId, orderOwnerId, cancellationToken);
+        var orderWithDetails = await _orderRepository.GetCustomerOrderDetailedAsync(
+            orderId,
+            ownerId,
+            cancellationToken
+        );
 
-        if (orderDetailed == null)
+        if (orderWithDetails == null)
         {
             LogOrderNotFound();
 
-            throw new OrderNotFoundException($"Order with id {orderId} and owner id {orderOwnerId} does not exist");
+            throw new OrderNotFoundException(
+                "The customer order could not be found"
+            )
+            .WithContext("OrderId", request.OrderId)
+            .WithContext("OwnerId", request.OwnerId);
         }
 
         LogOrderRetrieved();
 
-        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(orderDetailed.PaymentId.ToString());
+        var orderPaymentDetails = await _paymentGateway.GetPaymentByIdAsync(
+            orderWithDetails.PaymentId,
+            cancellationToken
+        );
 
         LogOrderPaymentDetailsRetrieved();
-
         LogOrderDetailedRetrievedSuccessfully();
 
-        return new OrderDetailedResult(
-            orderDetailed.Order,
-            orderDetailed.OrderShipment,
-            new OrderPaymentResult(
-                orderDetailed.PaymentId,
-                orderPaymentDetails.Amount,
-                orderPaymentDetails.Installments,
-                orderPaymentDetails.Status.Name,
-                orderPaymentDetails.Details,
-                orderPaymentDetails.PaymentMethod
-            )
+        return OrderDetailedResult.FromProjectionWithPayment(
+            orderWithDetails,
+            OrderPaymentResult.FromResponse(orderPaymentDetails)
         );
     }
 }

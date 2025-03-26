@@ -1,10 +1,11 @@
-using Domain.UserAggregate.Specification;
-
-using Application.Authentication.DTOs;
+using Application.Authentication.DTOs.Results;
 using Application.Authentication.Errors;
 using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authentication;
 using Application.Common.Security.Identity;
+
+using Domain.UserAggregate;
+using Domain.UserAggregate.Specification;
 
 using SharedKernel.ValueObjects;
 
@@ -33,18 +34,29 @@ internal sealed partial class LoginUserQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<AuthenticationResult> Handle(LoginUserQuery query, CancellationToken cancellationToken)
+    public async Task<AuthenticationResult> Handle(
+        LoginUserQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingUserLogin(query.Email);
+        LogInitiatingUserAuthentication(request.Email);
 
-        var inputEmail = Email.Create(query.Email);
+        var inputEmail = Email.Create(request.Email);
 
-        var userQuerySpecification = new QueryUserByEmailSpecification(inputEmail).And(new QueryActiveUserSpecification());
+        var userQuerySpecification =
+            new QueryUserByEmailSpecification(inputEmail)
+            .And(new QueryActiveUserSpecification());
 
-        var user = await _userRepository.FindFirstSatisfyingAsync(userQuerySpecification, cancellationToken);
+        var userFound = await _userRepository.FindFirstSatisfyingAsync(
+            userQuerySpecification,
+            cancellationToken
+        );
 
-        if (user == null || !_passwordHasher.Verify(query.Password, user.PasswordHash))
+        if (!IsUserNotNullAndPasswordIsCorrect(
+            userFound,
+            request.Password,
+            out var user
+        ))
         {
             LogUserAuthenticationFailed();
 
@@ -53,23 +65,37 @@ internal sealed partial class LoginUserQueryHandler
 
         LogGeneratingUserAuthenticationToken();
 
+        var userId = user.Id.ToString();
+
         var userIdentity = new IdentityUser(
-            user.Id.ToString(),
+            userId,
             user.UserRoles.Select(ur => ur.Role).ToList()
         );
 
         var token = _jwtTokenService.GenerateToken(userIdentity);
 
-        LogUserAuthenticatedSuccessfully(query.Email);
+        LogUserAuthenticatedSuccessfully(request.Email);
 
-        return new AuthenticationResult(
-            new AuthenticatedIdentity(
-                user.Id.ToString(),
-                user.Name,
-                user.Email.ToString(),
-                user.Phone
-            ),
+        return AuthenticationResult.FromUserWithToken(
+            user,
             token
         );
+    }
+
+    private bool IsUserNotNullAndPasswordIsCorrect(
+        User? userNullable,
+        string password,
+        out User user
+    )
+    {
+        if (userNullable is null)
+        {
+            user = null!;
+            return false;
+        }
+
+        user = userNullable;
+
+        return _passwordHasher.Verify(password, user.PasswordHash);
     }
 }

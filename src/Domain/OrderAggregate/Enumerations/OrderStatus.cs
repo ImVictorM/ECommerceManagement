@@ -37,9 +37,9 @@ public sealed class OrderStatus : BaseEnumeration
     /// <summary>
     /// Retrieves all the order status.
     /// </summary>
-    /// <returns>A list containing all order statuses.</returns>
+    /// <returns>A list containing all the order statuses.</returns>
     public static IReadOnlyList<OrderStatus> List()
     {
-        return GetAll<OrderStatus>().ToList().AsReadOnly();
+        return GetAll<OrderStatus>().ToList();
     }
 }

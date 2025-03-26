@@ -23,7 +23,7 @@ internal sealed partial class UpdateCategoryCommandHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The category was updated successfully."
+        Message = "The category was updated. The operation completed successfully."
     )]
-    private partial void LogCategoryUpdated();
+    private partial void LogCategoryUpdatedSuccessfully();
 }

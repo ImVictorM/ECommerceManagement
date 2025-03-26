@@ -1,6 +1,6 @@
 using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
-using Application.Common.DTOs;
+using Application.Common.DTOs.Results;
 
 using Domain.ShippingMethodAggregate;
 
@@ -26,8 +26,10 @@ internal sealed partial class CreateShippingMethodCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<CreatedResult> Handle(CreateShippingMethodCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResult> Handle(
+        CreateShippingMethodCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogCreatingShippingMethod(request.Name);
 
@@ -43,8 +45,10 @@ internal sealed partial class CreateShippingMethodCommandHandler
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogShippingMethodSaved(shippingMethod.Id.ToString());
+        var createdId = shippingMethod.Id.ToString();
 
-        return new CreatedResult(shippingMethod.Id.ToString());
+        LogShippingMethodSaved(createdId);
+
+        return new CreatedResult(createdId);
     }
 }

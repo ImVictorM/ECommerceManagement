@@ -8,8 +8,11 @@ public interface IIdentityProvider
     /// <summary>
     /// Gets the details of the current authenticated user.
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    /// A <see cref="IdentityUser"/> instance representing the authenticated user.
+    /// An <see cref="IdentityUser"/> instance representing the authenticated user.
     /// </returns>
-    IdentityUser GetCurrentUserIdentity();
+    IdentityUser GetCurrentUserIdentity(
+        CancellationToken cancellationToken = default
+    );
 }

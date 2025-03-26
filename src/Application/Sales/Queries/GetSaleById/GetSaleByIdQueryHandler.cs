@@ -1,6 +1,6 @@
 using Application.Common.Persistence.Repositories;
-using Application.Sales.DTOs;
 using Application.Sales.Errors;
+using Application.Sales.DTOs.Results;
 
 using Domain.SaleAggregate.ValueObjects;
 
@@ -43,6 +43,6 @@ internal sealed partial class GetSaleByIdQueryHandler
 
         LogSaleRetrievedSuccessfully(request.SaleId);
 
-        return new SaleResult(sale);
+        return SaleResult.FromSale(sale);
     }
 }

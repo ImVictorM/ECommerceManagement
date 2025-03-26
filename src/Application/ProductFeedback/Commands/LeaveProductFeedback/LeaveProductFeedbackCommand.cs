@@ -1,7 +1,7 @@
 using Application.Common.Security.Authorization.Requests;
-using Application.Common.DTOs;
 
 using SharedKernel.ValueObjects;
+using Application.Common.DTOs.Results;
 
 namespace Application.ProductFeedback.Commands.LeaveProductFeedback;
 

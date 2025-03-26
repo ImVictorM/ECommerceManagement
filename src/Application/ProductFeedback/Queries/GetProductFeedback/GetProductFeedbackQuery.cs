@@ -1,5 +1,4 @@
-using Application.ProductFeedback.DTOs;
-
+using Application.ProductFeedback.DTOs.Results;
 using MediatR;
 
 namespace Application.ProductFeedback.Queries.GetProductFeedback;

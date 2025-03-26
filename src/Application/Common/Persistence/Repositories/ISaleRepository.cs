@@ -1,5 +1,4 @@
-using Application.Sales.DTOs;
-
+using Application.Sales.DTOs.Filters;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
 

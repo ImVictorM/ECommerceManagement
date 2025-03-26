@@ -16,14 +16,14 @@ internal sealed partial class DeleteCouponCommandHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The coupon could not be found. Operation failed."
+        Message = "The coupon could not be found. The operation failed."
     )]
     private partial void LogCouponNotFound();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The coupon was deleted. Operation complete successfully."
+        Message = "The coupon was deleted. The operation completed successfully."
     )]
     private partial void LogCouponDeletedSuccessfully();
 }

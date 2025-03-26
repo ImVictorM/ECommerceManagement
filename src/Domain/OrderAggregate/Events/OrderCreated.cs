@@ -1,14 +1,15 @@
 using Domain.ShippingMethodAggregate.ValueObjects;
+
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
 namespace Domain.OrderAggregate.Events;
 
 /// <summary>
-/// Event generated when an order is created.
+/// Represents an event that occurs when an order is created.
 /// </summary>
 /// <param name="RequestId">The current request identifier.</param>
-/// <param name="ShippingMethodId">The shipping method id.</param>
+/// <param name="ShippingMethodId">The shipping method identifier.</param>
 /// <param name="Order">The order.</param>
 /// <param name="PaymentMethod">The payment method.</param>
 /// <param name="DeliveryAddress">The delivery address.</param>

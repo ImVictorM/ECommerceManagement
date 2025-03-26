@@ -17,7 +17,6 @@ internal sealed class InventoryManagementService : IInventoryManagementService
         _productRepository = productRepository;
     }
 
-    /// <inheritdoc/>
     public async Task<IEnumerable<Product>> ReserveInventoryAsync(
         IEnumerable<ProductReserved> productsReserved,
         CancellationToken cancellationToken = default

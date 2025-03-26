@@ -16,7 +16,8 @@ internal sealed partial class UpdatePaymentStatusCommandHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The payment status could not be updated because the payment does not exist."
+        Message =
+        "The payment status could not be updated because the payment does not exist."
     )]
     private partial void LogPaymentNotFound();
 
@@ -30,7 +31,9 @@ internal sealed partial class UpdatePaymentStatusCommandHandler
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "Payment status updated to {CurrentStatus}. The operation complete successfully."
+        Message =
+        "Payment status updated to {CurrentStatus}. " +
+        "The operation completed successfully."
     )]
-    private partial void LogPaymentUpdatedSuccessfully(string currentStatus);
+    private partial void LogPaymentStatusUpdatedSuccessfully(string currentStatus);
 }

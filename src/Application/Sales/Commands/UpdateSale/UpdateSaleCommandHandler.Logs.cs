@@ -9,7 +9,7 @@ internal sealed partial class UpdateSaleCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating update for sale with id '{SaleId}'."
+        Message = "Initiating update of sale with identifier '{SaleId}'."
     )]
     private partial void LogInitiatingSaleUpdate(string saleId);
 

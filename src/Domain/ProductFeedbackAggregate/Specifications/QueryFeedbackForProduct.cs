@@ -8,7 +8,7 @@ namespace Domain.ProductFeedbackAggregate.Specifications;
 
 /// <summary>
 /// Represents a query specification to retrieve feedback for the product
-/// with the specified id.
+/// with the specified identifier.
 /// </summary>
 public class QueryFeedbackForProduct
     : CompositeQuerySpecification<ProductFeedback>
@@ -23,7 +23,7 @@ public class QueryFeedbackForProduct
     /// Initiates a new instance of the <see cref="QueryFeedbackForProduct"/>
     /// class.
     /// </summary>
-    /// <param name="productId">The product id.</param>
+    /// <param name="productId">The product identifier.</param>
     public QueryFeedbackForProduct(ProductId productId) : base()
     {
         _productId = productId;

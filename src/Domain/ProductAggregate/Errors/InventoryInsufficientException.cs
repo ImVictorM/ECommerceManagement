@@ -3,8 +3,8 @@ using SharedKernel.Errors;
 namespace Domain.ProductAggregate.Errors;
 
 /// <summary>
-/// Represents an exception thrown when the product does not have current available stock
-/// to complete an operation.
+/// Represents an exception thrown when the product does not have current
+/// available stock to complete an operation.
 /// </summary>
 public class InventoryInsufficientException : BaseException
 {

@@ -9,7 +9,7 @@ internal sealed partial class DeleteSaleCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating deletion for sale with id '{SaleId}'."
+        Message = "Initiating deletion of sale with identifier '{SaleId}'."
     )]
     private partial void LogInitiatingSaleDeletion(string saleId);
 
@@ -24,7 +24,7 @@ internal sealed partial class DeleteSaleCommandHandler
         EventId = 3,
         Level = LogLevel.Debug,
         Message =
-        "The sale with id '{SaleId}' was deleted. " +
+        "The sale with identifier '{SaleId}' was deleted. " +
         "The operation was completed successfully."
     )]
     private partial void LogSaleDeletedSuccessfully(string saleId);

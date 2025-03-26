@@ -27,12 +27,16 @@ public sealed class Email : ValueObject
     /// </summary>
     /// <param name="value">The email address.</param>
     /// <returns>A new instance of the <see cref="Email"/> class.</returns>
-    /// <exception cref="InvalidPatternException">An exception thrown when the email pattern is not valid.</exception>
+    /// <exception cref="InvalidPatternException">
+    /// An exception thrown when the email pattern is not valid.
+    /// </exception>
     public static Email Create(string value)
     {
         if (!IsValidEmail(value))
         {
-            throw new InvalidPatternException($"The {value} does not correspond to a valid email");
+            throw new InvalidPatternException(
+                $"The {value} does not correspond to a valid email"
+            );
         }
 
         return new Email(value);

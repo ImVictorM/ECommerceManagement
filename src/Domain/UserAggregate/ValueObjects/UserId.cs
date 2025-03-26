@@ -1,6 +1,7 @@
-using System.Globalization;
 using SharedKernel.Extensions;
 using SharedKernel.Models;
+
+using System.Globalization;
 
 namespace Domain.UserAggregate.ValueObjects;
 
@@ -25,7 +26,10 @@ public sealed class UserId : ValueObject
     /// Creates a new instance of the <see cref="UserId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="UserId"/> class with the specified value.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="UserId"/> class with the
+    /// specified value.
+    /// </returns>
     public static UserId Create(long value)
     {
         return new UserId(value);
@@ -35,7 +39,10 @@ public sealed class UserId : ValueObject
     /// Creates a new instance of the <see cref="UserId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="UserId"/> class with the specified value.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="UserId"/> class with the
+    /// specified value.
+    /// </returns>
     public static UserId Create(string value)
     {
         return new UserId(value.ToLongId());

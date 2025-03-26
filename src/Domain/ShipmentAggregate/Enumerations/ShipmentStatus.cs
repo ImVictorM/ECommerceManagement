@@ -54,8 +54,12 @@ public sealed class ShipmentStatus : BaseEnumeration
     /// Advances the current status to the next.
     /// </summary>
     /// <returns>The next shipment status.</returns>
-    /// <exception cref="OutOfRangeException">Thrown when the next status does not exist.</exception>
-    /// <exception cref="ShipmentAlreadyCanceledException">Thrown when trying to advance a canceled shipment status.</exception>
+    /// <exception cref="OutOfRangeException">
+    /// Thrown when the next status does not exist.
+    /// </exception>
+    /// <exception cref="ShipmentAlreadyCanceledException">
+    /// Thrown when trying to advance a canceled shipment status.
+    /// </exception>
     public ShipmentStatus Advance()
     {
         if (this == Canceled)
@@ -69,7 +73,10 @@ public sealed class ShipmentStatus : BaseEnumeration
 
         if (currentIndex < 0 || currentIndex + 1 >= statuses.Count)
         {
-            throw new OutOfRangeException($"Cannot advance shipment status from {Name}. No next status exists.");
+            throw new OutOfRangeException(
+                $"Cannot advance shipment status from {Name}. " +
+                $"No next status exists."
+            );
         }
 
         return statuses[currentIndex + 1];

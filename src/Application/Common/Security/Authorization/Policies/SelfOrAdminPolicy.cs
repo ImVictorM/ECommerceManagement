@@ -6,9 +6,14 @@ namespace Application.Common.Security.Authorization.Policies;
 internal sealed class SelfOrAdminPolicy<TRequest>
     : IPolicy<TRequest> where TRequest : IUserSpecificResource
 {
-    /// <inheritdoc/>
-    public Task<bool> IsAuthorizedAsync(TRequest request, IdentityUser currentUser)
+    public Task<bool> IsAuthorizedAsync(
+        TRequest request,
+        IdentityUser currentUser,
+        CancellationToken cancellationToken = default
+    )
     {
-        return Task.FromResult(request.UserId == currentUser.Id || currentUser.IsAdmin());
+        return Task.FromResult(
+            request.UserId == currentUser.Id || currentUser.IsAdmin()
+        );
     }
 }

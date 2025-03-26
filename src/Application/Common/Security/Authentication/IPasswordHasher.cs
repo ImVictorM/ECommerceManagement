@@ -3,16 +3,17 @@ using SharedKernel.ValueObjects;
 namespace Application.Common.Security.Authentication;
 
 /// <summary>
-/// A service to hash and verify passwords.
+/// Defines a service to hash and verify passwords.
 /// </summary>
 public interface IPasswordHasher
 {
     /// <summary>
-    /// Hash a given password.
+    /// Hashes a given password.
     /// </summary>
     /// <param name="password">The password to be hashed.</param>
     /// <returns>The hashed password.</returns>
     PasswordHash Hash(string password);
+
     /// <summary>
     /// Checks if a password equals to the given password hash.
     /// </summary>

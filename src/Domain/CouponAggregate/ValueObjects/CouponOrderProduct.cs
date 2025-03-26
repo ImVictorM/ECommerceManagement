@@ -13,7 +13,7 @@ public sealed class CouponOrderProduct : ValueObject
     private readonly IReadOnlySet<CategoryId> _productCategoryIds = null!;
 
     /// <summary>
-    /// Gets the product id.
+    /// Gets the product identifier.
     /// </summary>
     public ProductId ProductId { get; } = null!;
 

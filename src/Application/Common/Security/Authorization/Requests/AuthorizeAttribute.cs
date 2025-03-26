@@ -35,7 +35,9 @@ internal sealed class AuthorizeAttribute : Attribute
 
         if (roleName != null && !IsExistingRole(roleName))
         {
-            throw new ArgumentException($"The provided role name is incorrect: {roleName}", nameof(roleName));
+            throw new ArgumentException(
+                $"The provided role name is incorrect: {roleName}", nameof(roleName)
+            );
         }
     }
 
@@ -46,7 +48,9 @@ internal sealed class AuthorizeAttribute : Attribute
     /// <returns>The authorization metadata.</returns>
     public static AuthorizationMetadata GetAuthorizationMetadata(Type requestType)
     {
-        var attributes = requestType.GetCustomAttributes<AuthorizeAttribute>().ToList();
+        var attributes = requestType
+            .GetCustomAttributes<AuthorizeAttribute>()
+            .ToList();
 
         var requiredRoles = attributes
             .Where(attr => !string.IsNullOrWhiteSpace(attr.RoleName))
@@ -65,7 +69,10 @@ internal sealed class AuthorizeAttribute : Attribute
     {
         return type
             .GetInterfaces()
-            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPolicy<>));
+            .Any(i =>
+                i.IsGenericType
+                && i.GetGenericTypeDefinition() == typeof(IPolicy<>)
+            );
     }
 
     private static bool IsExistingRole(string roleName)

@@ -12,5 +12,8 @@ public interface ISaleEligibilityService
     /// </summary>
     /// <param name="sale">The sale to be validated.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    Task EnsureSaleProductsEligibilityAsync(Sale sale, CancellationToken cancellationToken);
+    Task EnsureSaleProductsEligibilityAsync(
+        Sale sale,
+        CancellationToken cancellationToken
+    );
 }

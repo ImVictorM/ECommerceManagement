@@ -16,10 +16,13 @@ namespace Application.Coupons.Extensions;
 public static class CouponRestrictionIOExtensions
 {
     /// <summary>
-    /// Converts a domain <see cref="CouponRestriction"/> into a <see cref="CouponRestrictionIO"/>.
+    /// Converts a domain <see cref="CouponRestriction"/> into a
+    /// <see cref="CouponRestrictionIO"/>.
     /// </summary>
     /// <param name="restriction">The domain coupon restriction.</param>
-    /// <returns>A <see cref="CouponRestrictionIO"/> representing the domain restriction.</returns>
+    /// <returns>
+    /// A <see cref="CouponRestrictionIO"/> representing the domain restriction.
+    /// </returns>
     /// <exception cref="NotSupportedRestrictionTypeException">
     /// Thrown when the restriction type is not supported.
     /// </exception>
@@ -45,7 +48,8 @@ public static class CouponRestrictionIOExtensions
     }
 
     /// <summary>
-    /// Converts a domain <see cref="CouponRestrictionIO"/> into a <see cref="CouponRestriction"/>.
+    /// Converts a domain <see cref="CouponRestrictionIO"/> into
+    /// a <see cref="CouponRestriction"/>.
     /// </summary>
     /// <param name="io">
     /// The coupon restriction input data transfer object.

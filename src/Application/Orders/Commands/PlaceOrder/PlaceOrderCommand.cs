@@ -1,7 +1,6 @@
-using Application.Common.DTOs;
+using Application.Common.DTOs.Results;
 using Application.Common.Security.Authorization.Requests;
-using Application.Orders.DTOs;
-
+using Application.Orders.DTOs.Inputs;
 using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 
@@ -17,7 +16,7 @@ namespace Application.Orders.Commands.PlaceOrder;
 /// <param name="DeliveryAddress">The order delivery address.</param>
 /// <param name="PaymentMethod">The order payment method.</param>
 /// <param name="Installments">The payment installments.</param>
-/// <param name="CouponAppliedIds">The coupon ids applied.</param>
+/// <param name="CouponAppliedIds">The coupon applied identifiers.</param>
 [Authorize(roleName: nameof(Role.Customer))]
 public record PlaceOrderCommand(
     Guid RequestId,

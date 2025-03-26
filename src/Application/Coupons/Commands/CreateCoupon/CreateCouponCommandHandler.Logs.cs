@@ -18,7 +18,7 @@ internal sealed partial class CreateCouponCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The coupon object was created. " +
-        "Initiating coupon restrictions parse."
+        "Initiating coupon restrictions parse operation."
     )]
     private partial void LogCouponCreated();
 

@@ -9,14 +9,22 @@ internal sealed partial class GetCustomerOrdersQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating customer orders retrieval. Order owner id: {OrderOwnerId}."
+        Message =
+        "Initiating customer orders retrieval for customer with identifier " +
+        "'{OwnerId}' containing filters: " +
+        "Status={Status}"
     )]
-    private partial void LogInitiatingOrdersRetrieval(string orderOwnerId);
+    private partial void LogInitiatingCustomerOrdersRetrieval(
+        string ownerId,
+        string? status
+    );
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Orders retrieved successfully. Quantity of orders found: {QuantityFound}."
+        Message =
+        "{QuantityFound} orders has been retrieved. " +
+        "The operation completed successfully."
     )]
     private partial void LogOrdersRetrievedSuccessfully(int quantityFound);
 }

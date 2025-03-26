@@ -16,8 +16,11 @@ internal sealed class RestrictedDeactivationPolicy<TRequest> :
         _userRepository = userRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task<bool> IsAuthorizedAsync(TRequest request, IdentityUser currentUser)
+    public async Task<bool> IsAuthorizedAsync(
+        TRequest request,
+        IdentityUser currentUser,
+        CancellationToken cancellationToken = default
+    )
     {
         var currentUserId = UserId.Create(currentUser.Id);
         var userToBeDeactivatedId = UserId.Create(request.UserId);
@@ -25,7 +28,10 @@ internal sealed class RestrictedDeactivationPolicy<TRequest> :
 
         if (currentUserId != userToBeDeactivatedId)
         {
-            var userToBeDeactivated = await _userRepository.FindByIdAsync(userToBeDeactivatedId);
+            var userToBeDeactivated = await _userRepository.FindByIdAsync(
+                userToBeDeactivatedId,
+                cancellationToken
+            );
 
             if (userToBeDeactivated == null)
             {

@@ -1,4 +1,3 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Common.Persistence.Repositories;
@@ -13,6 +12,7 @@ using Domain.ProductAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Common.DTOs.Results;
 
 namespace Application.Orders.Commands.PlaceOrder;
 
@@ -43,18 +43,18 @@ internal sealed partial class PlaceOrderCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<CreatedResult> Handle(
         PlaceOrderCommand request,
         CancellationToken cancellationToken
     )
     {
-        LogInitiatingPlaceOrder();
+        LogInitiatingOrderPlacement();
 
-        var currentUser = _identityProvider.GetCurrentUserIdentity();
+        var currentUser = _identityProvider.GetCurrentUserIdentity(cancellationToken);
+
         var ownerId = UserId.Create(currentUser.Id);
 
-        LogOrderCustomerId(currentUser.Id);
+        LogOrderOwnerIdentifier(currentUser.Id);
 
         var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 

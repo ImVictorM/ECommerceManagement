@@ -30,10 +30,12 @@ public sealed class OrderLineItemDraft : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="OrderLineItemDraft"/> class.
     /// </summary>
-    /// <param name="productId">The identifier of the product to be ordered.</param>
+    /// <param name="productId">
+    /// The identifier of the product to be ordered.
+    /// </param>
     /// <param name="quantity">The quantity ordered.</param>
     /// <returns>
-    /// A new instance of <see cref="OrderLineItemDraft"/>.
+    /// A new instance of the <see cref="OrderLineItemDraft"/> class.
     /// </returns>
     public static OrderLineItemDraft Create(ProductId productId, int quantity)
     {

@@ -9,20 +9,23 @@ internal sealed partial class UpdateProductCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating product update. Product id: {Id}.")]
+        Message = "Initiating product update. Product identifier: {Id}."
+    )]
     private partial void LogInitiatingProductUpdate(string id);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Product to be updated either does not exist or is inactive."
+        Message = "The product to be updated either does not exist or is inactive."
     )]
     private partial void LogProductDoesNotExist();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "Product updated and saved successfully."
+        Message =
+        "The product has been updated and saved. " +
+        "The operation completed successfully."
     )]
     private partial void LogProductUpdatedSuccessfully();
 }

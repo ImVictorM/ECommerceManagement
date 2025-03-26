@@ -1,5 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.Sales.DTOs;
+using Application.Sales.DTOs.Results;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
@@ -39,7 +39,7 @@ internal sealed partial class GetSalesQueryHandler
         LogSalesRetrievedSuccessfully(sales.Count);
 
         return sales
-            .Select(sale => new SaleResult(sale))
+            .Select(SaleResult.FromSale)
             .ToList();
     }
 }

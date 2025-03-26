@@ -12,15 +12,8 @@ public sealed class InventoryId : ValueObject
     /// </summary>
     public long Value { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="InventoryId"/> class.
-    /// </summary>
     private InventoryId() { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="InventoryId"/> class with the specified identifier value.
-    /// </summary>
-    /// <param name="value">The identifier value.</param>
     private InventoryId(long value)
     {
         Value = value;
@@ -30,7 +23,10 @@ public sealed class InventoryId : ValueObject
     /// Creates a new instance of the <see cref="InventoryId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="InventoryId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="InventoryId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static InventoryId Create(long value)
     {
         return new InventoryId(value);

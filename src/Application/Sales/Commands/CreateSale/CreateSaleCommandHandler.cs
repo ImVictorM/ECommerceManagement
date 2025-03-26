@@ -1,15 +1,15 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
+using Application.Common.DTOs.Results;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate.Services;
 using Domain.SaleAggregate.ValueObjects;
+using Domain.SaleAggregate;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Domain.SaleAggregate;
 
 namespace Application.Sales.Commands.CreateSale;
 

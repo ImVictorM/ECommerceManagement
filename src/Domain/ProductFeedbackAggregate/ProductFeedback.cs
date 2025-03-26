@@ -15,11 +15,11 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, IActivat
     /// <summary>
     /// Gets the product feedback title.
     /// </summary>
-    public string Title { get; private set; } = string.Empty;
+    public string Title { get; private set; } = null!;
     /// <summary>
     /// Gets the product feedback content.
     /// </summary>
-    public string Content { get; private set; } = string.Empty;
+    public string Content { get; private set; } = null!;
     /// <summary>
     /// Gets the product star rating.
     /// </summary>
@@ -64,7 +64,9 @@ public sealed class ProductFeedback : AggregateRoot<ProductFeedbackId>, IActivat
     /// <param name="title">The feedback title.</param>
     /// <param name="content">The feedback text content.</param>
     /// <param name="starRating">The feedback star rating (optional).</param>
-    /// <returns>A new instance of the <see cref="ProductFeedback"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="ProductFeedback"/> class.
+    /// </returns>
     public static ProductFeedback Create(
         UserId userId,
         ProductId productId,

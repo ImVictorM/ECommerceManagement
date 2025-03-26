@@ -1,4 +1,5 @@
 using Domain.PaymentAggregate.Enumerations;
+using Domain.PaymentAggregate.ValueObjects;
 
 namespace Application.Common.PaymentGateway;
 
@@ -14,7 +15,7 @@ namespace Application.Common.PaymentGateway;
 public record PaymentRefundResponse
 (
     string RefundId,
-    string PaymentId,
+    PaymentId PaymentId,
     decimal Amount,
     PaymentStatus Status,
     string Reason,

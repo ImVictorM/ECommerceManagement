@@ -26,13 +26,19 @@ internal sealed partial class DeleteCategoryCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        DeleteCategoryCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingDeleteCategory(request.Id);
+        LogInitiatingCategoryDeletion(request.Id);
+
         var categoryId = CategoryId.Create(request.Id);
 
-        var category = await _categoryRepository.FindByIdAsync(categoryId, cancellationToken);
+        var category = await _categoryRepository.FindByIdAsync(
+            categoryId,
+            cancellationToken
+        );
 
         if (category == null)
         {
@@ -43,7 +49,8 @@ internal sealed partial class DeleteCategoryCommandHandler
         _categoryRepository.RemoveOrDeactivate(category);
 
         await _unitOfWork.SaveChangesAsync();
-        LogCategoryDeleted();
+
+        LogCategoryDeletedSuccessfully();
 
         return Unit.Value;
     }

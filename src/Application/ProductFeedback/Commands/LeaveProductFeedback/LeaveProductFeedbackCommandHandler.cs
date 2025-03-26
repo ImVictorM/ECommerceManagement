@@ -1,4 +1,3 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Identity;
@@ -12,6 +11,7 @@ using Domain.ProductFeedbackAggregate.Services;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Common.DTOs.Results;
 
 namespace Application.ProductFeedback.Commands.LeaveProductFeedback;
 
@@ -38,7 +38,6 @@ internal sealed partial class LeaveProductFeedbackCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<CreatedResult> Handle(
         LeaveProductFeedbackCommand request,
         CancellationToken cancellationToken
@@ -46,7 +45,7 @@ internal sealed partial class LeaveProductFeedbackCommandHandler
     {
         LogInitiateLeavingProductFeedback(request.ProductId);
 
-        var currentUser = _identityProvider.GetCurrentUserIdentity();
+        var currentUser = _identityProvider.GetCurrentUserIdentity(cancellationToken);
         var currentUserId = UserId.Create(currentUser.Id);
         var productToLeaveFeedbackId = ProductId.Create(request.ProductId);
 

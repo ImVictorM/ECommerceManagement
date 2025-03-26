@@ -8,7 +8,8 @@ using MediatR;
 
 namespace Application.Payments.Events;
 
-internal sealed class PaymentRejectedCancelAuthorizationHandler : INotificationHandler<PaymentRejected>
+internal sealed class PaymentRejectedCancelAuthorizationHandler
+    : INotificationHandler<PaymentRejected>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentGateway _paymentGateway;
@@ -25,12 +26,14 @@ internal sealed class PaymentRejectedCancelAuthorizationHandler : INotificationH
         _paymentRepository = paymentRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(PaymentRejected notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        PaymentRejected notification,
+        CancellationToken cancellationToken
+    )
     {
         var payment = notification.Payment;
 
-        var response = await _paymentGateway.CancelAuthorizationAsync(payment.Id.ToString());
+        var response = await _paymentGateway.CancelAuthorizationAsync(payment.Id);
 
         payment.UpdatePaymentStatus(response.Status);
 

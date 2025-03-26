@@ -46,6 +46,6 @@ public class PaymentStatus : BaseEnumeration
     /// <returns>All the available payment statuses.</returns>
     public static IReadOnlyList<PaymentStatus> List()
     {
-        return GetAll<PaymentStatus>().ToList().AsReadOnly();
+        return GetAll<PaymentStatus>().ToList();
     }
 }

@@ -8,7 +8,8 @@ using MediatR;
 
 namespace Application.Shipments.Events;
 
-internal sealed class OrderCreatedCreateShipmentHandler : INotificationHandler<OrderCreated>
+internal sealed class OrderCreatedCreateShipmentHandler
+    : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICarrierRepository _carrierRepository;
@@ -25,8 +26,10 @@ internal sealed class OrderCreatedCreateShipmentHandler : INotificationHandler<O
         _shipmentRepository = shipmentRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        OrderCreated notification,
+        CancellationToken cancellationToken
+    )
     {
         var shipmentCarrier = await _carrierRepository.FirstAsync(cancellationToken);
 

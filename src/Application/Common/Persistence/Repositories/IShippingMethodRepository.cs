@@ -6,6 +6,7 @@ namespace Application.Common.Persistence.Repositories;
 /// <summary>
 /// Defines the contract for shipping method persistence operations.
 /// </summary>
-public interface IShippingMethodRepository : IBaseRepository<ShippingMethod, ShippingMethodId>
+public interface IShippingMethodRepository
+    : IBaseRepository<ShippingMethod, ShippingMethodId>
 {
 }

@@ -8,9 +8,11 @@ namespace Application.ProductFeedback.Commands.DeactivateCustomerProductFeedback
 /// <summary>
 /// Represents a command to deactivate customer product feedback.
 /// </summary>
-/// <param name="UserId">The user id.</param>
-/// <param name="FeedbackId">The feedback to be deactivate id.</param>
-[Authorize(policyType: typeof(SelfOrAdminPolicy<DeactivateCustomerProductFeedbackCommand>))]
+/// <param name="UserId">The feedback owner identifier.</param>
+/// <param name="FeedbackId">The feedback to be deactivate identifier.</param>
+[Authorize(
+    policyType: typeof(SelfOrAdminPolicy<DeactivateCustomerProductFeedbackCommand>)
+)]
 public record DeactivateCustomerProductFeedbackCommand(
     string UserId,
     string FeedbackId

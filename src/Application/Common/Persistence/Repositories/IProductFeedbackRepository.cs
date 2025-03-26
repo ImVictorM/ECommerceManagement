@@ -1,9 +1,8 @@
-using Application.ProductFeedback.DTOs;
-
 using Domain.ProductFeedbackAggregate.ValueObjects;
 using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
 
 using SharedKernel.Interfaces;
+using Application.ProductFeedback.DTOs.Results;
 
 namespace Application.Common.Persistence.Repositories;
 
@@ -20,7 +19,7 @@ public interface IProductFeedbackRepository
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Detailed product feedback results.</returns>
     Task<
-        IEnumerable<ProductFeedbackDetailedResult>
+        IReadOnlyList<ProductFeedbackDetailedResult>
     > GetProductFeedbackDetailedSatisfyingAsync(
         ISpecificationQuery<DomainProductFeedback> specification,
         CancellationToken cancellationToken = default
@@ -32,7 +31,7 @@ public interface IProductFeedbackRepository
     /// <param name="specification">The specification</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Product feedback results.</returns>
-    Task<IEnumerable<ProductFeedbackResult>> GetProductFeedbackSatisfyingAsync(
+    Task<IReadOnlyList<ProductFeedbackResult>> GetProductFeedbackSatisfyingAsync(
         ISpecificationQuery<DomainProductFeedback> specification,
         CancellationToken cancellationToken = default
     );

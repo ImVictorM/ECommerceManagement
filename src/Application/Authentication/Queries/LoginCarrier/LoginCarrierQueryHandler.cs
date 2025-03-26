@@ -1,4 +1,6 @@
-using Application.Authentication.DTOs;
+using Domain.CarrierAggregate;
+
+using Application.Authentication.DTOs.Results;
 using Application.Authentication.Errors;
 using Application.Common.Persistence.Repositories;
 using Application.Common.Security.Authentication;
@@ -11,7 +13,8 @@ using MediatR;
 
 namespace Application.Authentication.Queries.LoginCarrier;
 
-internal sealed partial class LoginCarrierQueryHandler : IRequestHandler<LoginCarrierQuery, AuthenticationResult>
+internal sealed partial class LoginCarrierQueryHandler
+    : IRequestHandler<LoginCarrierQuery, AuthenticationResult>
 {
     private readonly ICarrierRepository _carrierRepository;
     private readonly IPasswordHasher _passwordHasher;
@@ -30,37 +33,60 @@ internal sealed partial class LoginCarrierQueryHandler : IRequestHandler<LoginCa
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<AuthenticationResult> Handle(LoginCarrierQuery request, CancellationToken cancellationToken)
+    public async Task<AuthenticationResult> Handle(
+        LoginCarrierQuery request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingCarrierAuthentication();
 
         var carrierEmail = Email.Create(request.Email);
 
-        var carrier = await _carrierRepository.FindByEmail(carrierEmail, cancellationToken);
+        var carrierFound = await _carrierRepository.FindByEmail(
+            carrierEmail,
+            cancellationToken
+        );
 
-        if (carrier == null || !_passwordHasher.Verify(request.Password, carrier.PasswordHash))
+        if (!IsCarrierNotNullAndPasswordIsCorrect(
+            carrierFound,
+            request.Password,
+            out var carrier
+        ))
         {
             LogCarrierAuthenticationFailed();
             throw new AuthenticationFailedException();
         }
 
-        LogGeneratingCarrierAuthenticationToken(carrier.Id.ToString());
+        var carrierId = carrier.Id.ToString();
 
-        var userIdentity = new IdentityUser(carrier.Id.ToString(), [carrier.Role]);
+        LogGeneratingCarrierAuthenticationToken(carrierId);
+
+        var userIdentity = new IdentityUser(carrierId, [carrier.Role]);
 
         var token = _jwtTokenService.GenerateToken(userIdentity);
 
         LogCarrierAuthenticatedSuccessfully();
 
-        return new AuthenticationResult(
-            new AuthenticatedIdentity(
-                carrier.Id.ToString(),
-                carrier.Name,
-                carrier.Email.ToString(),
-                carrier.Phone
-            ),
+        return AuthenticationResult.FromUserWithToken(
+            carrier,
             token
         );
+    }
+
+    private bool IsCarrierNotNullAndPasswordIsCorrect(
+        Carrier? carrierNullable,
+        string password,
+        out Carrier carrier
+    )
+    {
+        if (carrierNullable is null)
+        {
+            carrier = null!;
+            return false;
+        }
+
+        carrier = carrierNullable;
+
+        return _passwordHasher.Verify(password, carrier.PasswordHash);
     }
 }

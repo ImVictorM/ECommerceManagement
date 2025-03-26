@@ -1,11 +1,10 @@
-using Application.Users.DTOs;
+using Application.Users.DTOs.Results;
 
 using MediatR;
 
 namespace Application.Users.Queries.GetSelf;
 
 /// <summary>
-/// Represents a query to get the current user details.
-/// Useful to get the user details when the user is authenticated.
+/// Represents a query to retrieve the current user details.
 /// </summary>
 public class GetSelfQuery : IRequest<UserResult>;

@@ -30,7 +30,7 @@ internal sealed partial class LoginCarrierQueryHandler
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "The carrier was successfully authenticated."
+        Message = "The carrier was authenticated. The operation completed successfully."
     )]
     private partial void LogCarrierAuthenticatedSuccessfully();
 }

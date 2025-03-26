@@ -13,7 +13,10 @@ internal sealed partial class GetCustomerOrderByIdQueryHandler
         " Order identifier: {OrderId}." +
         " Order owner identifier: {OwnerId}."
     )]
-    private partial void LogInitiatingCustomerOrderRetrieval(string orderId, string ownerId);
+    private partial void LogInitiatingCustomerOrderRetrieval(
+        string orderId,
+        string ownerId
+    );
 
     [LoggerMessage(
         EventId = 2,
@@ -25,7 +28,9 @@ internal sealed partial class GetCustomerOrderByIdQueryHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The order was retrieved. Initiating order payment details retrieval."
+        Message =
+        "The order was retrieved. " +
+        "Initiating order payment details retrieval."
     )]
     private partial void LogOrderRetrieved();
 
@@ -39,7 +44,9 @@ internal sealed partial class GetCustomerOrderByIdQueryHandler
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Debug,
-        Message = "The customer detailed order was retrieved. The operation complete successfully."
+        Message =
+        "The customer detailed order was retrieved. " +
+        "The operation completed successfully."
     )]
     private partial void LogOrderDetailedRetrievedSuccessfully();
 }

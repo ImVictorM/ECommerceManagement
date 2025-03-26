@@ -6,9 +6,9 @@ using MediatR;
 namespace Application.Users.Commands.DeactivateUser;
 
 /// <summary>
-/// Represents a command to deactivate and user.
+/// Represents a command to deactivate a user.
 /// </summary>
-/// <param name="UserId">The id of the user to be deactivated.</param>
+/// <param name="UserId">The user identifier.</param>
 [Authorize(policyType: typeof(RestrictedDeactivationPolicy<DeactivateUserCommand>))]
 public record DeactivateUserCommand(string UserId)
     : IRequestWithAuthorization<Unit>, IUserSpecificResource;

@@ -1,5 +1,6 @@
 using Application.Common.Security.Authorization.Requests;
-using Application.Sales.DTOs;
+using Application.Sales.DTOs.Filters;
+using Application.Sales.DTOs.Results;
 
 using SharedKernel.ValueObjects;
 

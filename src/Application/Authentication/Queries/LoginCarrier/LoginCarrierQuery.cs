@@ -1,4 +1,4 @@
-using Application.Authentication.DTOs;
+using Application.Authentication.DTOs.Results;
 
 using MediatR;
 
@@ -9,4 +9,7 @@ namespace Application.Authentication.Queries.LoginCarrier;
 /// </summary>
 /// <param name="Email">The carrier email.</param>
 /// <param name="Password">The carrier password.</param>
-public record LoginCarrierQuery(string Email, string Password) : IRequest<AuthenticationResult>;
+public record LoginCarrierQuery(
+    string Email,
+    string Password
+) : IRequest<AuthenticationResult>;

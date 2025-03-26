@@ -1,4 +1,3 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 
@@ -6,6 +5,7 @@ using Domain.CategoryAggregate;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Application.Common.DTOs.Results;
 
 namespace Application.Categories.Commands.CreateCategory;
 
@@ -26,10 +26,13 @@ internal sealed partial class CreateCategoryCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<CreatedResult> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResult> Handle(
+        CreateCategoryCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        LogCreatingCategory(request.Name);
+        LogInitiatingCategoryCreation(request.Name);
+
         var category = Category.Create(request.Name);
 
         await _categoryRepository.AddAsync(category);

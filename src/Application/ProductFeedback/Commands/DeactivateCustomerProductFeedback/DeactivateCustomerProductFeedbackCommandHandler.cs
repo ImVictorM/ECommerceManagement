@@ -26,7 +26,6 @@ internal sealed partial class DeactivateCustomerProductFeedbackCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<Unit> Handle(
         DeactivateCustomerProductFeedbackCommand request,
         CancellationToken cancellationToken

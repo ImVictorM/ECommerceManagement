@@ -1,10 +1,11 @@
-using System.Reflection;
 using SharedKernel.Errors;
+
+using System.Reflection;
 
 namespace SharedKernel.Models;
 
 /// <summary>
-/// Base abstraction for enumeration data types.
+/// Represents a base abstraction for enumeration data types.
 /// </summary>
 public abstract class BaseEnumeration : IComparable
 {
@@ -39,7 +40,10 @@ public abstract class BaseEnumeration : IComparable
     {
         if (obj is not BaseEnumeration enumeration)
         {
-            throw new ArgumentException($"Invalid comparison: The provided object is not a valid enumeration of type '{GetType()}'.");
+            throw new ArgumentException(
+                $"Invalid comparison: The provided object is not a valid " +
+                $"enumeration of type '{GetType()}'."
+            );
         }
 
         return Id.CompareTo(enumeration.Id);
@@ -74,7 +78,9 @@ public abstract class BaseEnumeration : IComparable
     /// <summary>
     /// Retrieves all enumeration values of the specified type.
     /// </summary>
-    /// <typeparam name="T">The enumeration type that derives from <see cref="BaseEnumeration"/>.</typeparam>
+    /// <typeparam name="T">
+    /// The enumeration type that derives from <see cref="BaseEnumeration"/>.
+    /// </typeparam>
     /// <returns>An enumerable collection of enumeration values.</returns>
     public static IEnumerable<T> GetAll<T>() where T : BaseEnumeration
     {
@@ -94,7 +100,10 @@ public abstract class BaseEnumeration : IComparable
     /// <param name="firstValue">The first enumeration value.</param>
     /// <param name="secondValue">The second enumeration value.</param>
     /// <returns>The absolute difference of their identifiers.</returns>
-    public static long AbsoluteDifference(BaseEnumeration firstValue, BaseEnumeration secondValue)
+    public static long AbsoluteDifference(
+        BaseEnumeration firstValue,
+        BaseEnumeration secondValue
+    )
     {
         var absoluteDifference = Math.Abs(firstValue.Id - secondValue.Id);
         return absoluteDifference;
@@ -103,7 +112,9 @@ public abstract class BaseEnumeration : IComparable
     /// <summary>
     /// Retrieves an enumeration value from its identifier.
     /// </summary>
-    /// <typeparam name="T">The enumeration type that derives from <see cref="BaseEnumeration"/>.</typeparam>
+    /// <typeparam name="T">
+    /// The enumeration type that derives from <see cref="BaseEnumeration"/>.
+    /// </typeparam>
     /// <param name="value">The identifier of the enumeration value.</param>
     /// <returns>The enumeration value corresponding to the identifier.</returns>
     public static T FromValue<T>(long value)
@@ -115,13 +126,21 @@ public abstract class BaseEnumeration : IComparable
     /// <summary>
     /// Retrieves an enumeration value from its display name.
     /// </summary>
-    /// <typeparam name="T">The enumeration type that derives from <see cref="BaseEnumeration"/>.</typeparam>
-    /// <param name="displayName">The display name of the enumeration value.</param>
+    /// <typeparam name="T">
+    /// The enumeration type that derives from <see cref="BaseEnumeration"/>.
+    /// </typeparam>
+    /// <param name="displayName">
+    /// The display name of the enumeration value.
+    /// </param>
     /// <returns>The enumeration value corresponding to the display name.</returns>
     public static T FromDisplayName<T>(string displayName)
         where T : BaseEnumeration
     {
-        return Parse<T, string>(displayName, "display name", item => item.Name == displayName);
+        return Parse<T, string>(
+            displayName,
+            "display name",
+            item => item.Name == displayName
+        );
     }
 
     /// <summary>
@@ -156,18 +175,24 @@ public abstract class BaseEnumeration : IComparable
     /// </summary>
     /// <param name="left">The left enumeration.</param>
     /// <param name="right">The right enumeration.</param>
-    /// <returns>true if the left instance is less than the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is less than the right; otherwise, false.
+    /// </returns>
     public static bool operator <(BaseEnumeration left, BaseEnumeration right)
     {
         return left is null ? right is not null : left.CompareTo(right) < 0;
     }
 
     /// <summary>
-    /// Compares two <see cref="BaseEnumeration"/> instances for less than or equal to.
+    /// Compares two <see cref="BaseEnumeration"/> instances for less than or
+    /// equal to.
     /// </summary>
     /// <param name="left">The left enumeration.</param>
     /// <param name="right">The right enumeration.</param>
-    /// <returns>true if the left instance is less than or equal to the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is less than or equal to the right;
+    /// otherwise, false.
+    /// </returns>
     public static bool operator <=(BaseEnumeration left, BaseEnumeration right)
     {
         return left is null || left.CompareTo(right) <= 0;
@@ -178,38 +203,41 @@ public abstract class BaseEnumeration : IComparable
     /// </summary>
     /// <param name="left">The left enumeration.</param>
     /// <param name="right">The right enumeration.</param>
-    /// <returns>true if the left instance is greater than the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is greater than the right; otherwise, false.
+    /// </returns>
     public static bool operator >(BaseEnumeration left, BaseEnumeration right)
     {
         return left is not null && left.CompareTo(right) > 0;
     }
 
     /// <summary>
-    /// Compares two <see cref="BaseEnumeration"/> instances for greater than or equal to.
+    /// Compares two <see cref="BaseEnumeration"/> instances for greater than
+    /// or equal to.
     /// </summary>
     /// <param name="left">The left enumeration.</param>
     /// <param name="right">The right enumeration.</param>
-    /// <returns>true if the left instance is greater than or equal to the right; otherwise, false.</returns>
+    /// <returns>
+    /// true if the left instance is greater than or equal to the right;
+    /// otherwise, false.
+    /// </returns>
     public static bool operator >=(BaseEnumeration left, BaseEnumeration right)
     {
         return left is null ? right is null : left.CompareTo(right) >= 0;
     }
 
-    /// <summary>
-    /// Parses the provided value to find a corresponding enumeration value.
-    /// </summary>
-    /// <typeparam name="T">The enumeration type that derives from <see cref="BaseEnumeration"/>.</typeparam>
-    /// <typeparam name="K">The type of the value to parse.</typeparam>
-    /// <param name="value">The value to be parsed.</param>
-    /// <param name="description">A description of the value for error messaging.</param>
-    /// <param name="predicate">A predicate to evaluate for matching the enumeration.</param>
-    /// <returns>The matching enumeration value.</returns>
-    /// <exception cref="InvalidParseException">Thrown when no matching enumeration value is found.</exception>
-    private static T Parse<T, K>(K value, string description, Func<T, bool> predicate)
+    private static T Parse<T, K>(
+        K value,
+        string description,
+        Func<T, bool> predicate
+    )
         where T : BaseEnumeration
     {
         return
-            GetAll<T>().FirstOrDefault(predicate) ??
-            throw new InvalidParseException($"'{value}' is not a valid {description} in {typeof(T)}");
+            GetAll<T>()
+            .FirstOrDefault(predicate)
+            ?? throw new InvalidParseException(
+                $"'{value}' is not a valid {description} in {typeof(T)}"
+            );
     }
 }

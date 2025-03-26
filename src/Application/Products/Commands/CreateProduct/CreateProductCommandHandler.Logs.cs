@@ -16,14 +16,18 @@ internal sealed partial class CreateProductCommandHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Product created successfully. Initiating persistence process."
+        Message =
+        "The product object has been created. " +
+        "Initiating persistence process."
     )]
     private partial void LogProductCreatedInitiatingPersistence();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "Product persisted successfully. Generated id: {productId}. Returning result."
+        Message =
+        "The product was created and saved with the identifier '{ProductId}'. " +
+        "The operation completed successfully."
     )]
     private partial void LogProductPersistedSuccessfully(string? productId);
 

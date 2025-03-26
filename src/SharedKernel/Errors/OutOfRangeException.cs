@@ -6,20 +6,25 @@ namespace SharedKernel.Errors;
 public class OutOfRangeException : BaseException
 {
     private const string DefaultTitle = "Argument Out Of Range";
-    private const string DefaultMessage = "The argument is out of the allowed range";
+    private const string DefaultMessage =
+        "The argument is out of the allowed range";
 
     private static readonly ErrorCode _defaultErrorCode = ErrorCode.ValidationError;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OutOfRangeException"/> class.
     /// </summary>
-    public OutOfRangeException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode) { }
+    public OutOfRangeException()
+        : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
+    {
+    }
 
     /// <summary>
     /// Initiates a new instance of the <see cref="OutOfRangeException"/> class.
     /// </summary>
     /// <param name="message">The exception message.</param>
-    public OutOfRangeException(string message) : base(message, DefaultTitle, _defaultErrorCode)
+    public OutOfRangeException(string message)
+        : base(message, DefaultTitle, _defaultErrorCode)
     {
     }
 
@@ -28,7 +33,8 @@ public class OutOfRangeException : BaseException
     /// </summary>
     /// <param name="message">The exception message.</param>
     /// <param name="innerException">The inner exception.</param>
-    public OutOfRangeException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    public OutOfRangeException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }
