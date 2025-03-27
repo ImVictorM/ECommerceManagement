@@ -9,7 +9,7 @@ using Domain.ShipmentAggregate;
 using Domain.UserAggregate;
 using Domain.CarrierAggregate;
 using Domain.ShippingMethodAggregate;
-using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
+using Domain.ProductReviewAggregate;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -39,9 +39,9 @@ public interface IECommerceDbContext : IDisposable
     /// </summary>
     public DbSet<Product> Products { get; set; }
     /// <summary>
-    /// Gets or sets the product feedback aggregate context.
+    /// Gets or sets the product reviews aggregate context.
     /// </summary>
-    public DbSet<DomainProductFeedback> ProductFeedback { get; set; }
+    public DbSet<ProductReview> ProductReviews { get; set; }
     /// <summary>
     /// Gets or sets the shipment aggregate context.
     /// </summary>

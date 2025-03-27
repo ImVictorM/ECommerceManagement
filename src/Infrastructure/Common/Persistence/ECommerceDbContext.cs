@@ -9,7 +9,7 @@ using Domain.ShipmentAggregate;
 using Domain.UserAggregate;
 using Domain.CarrierAggregate;
 using Domain.ShippingMethodAggregate;
-using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
+using Domain.ProductReviewAggregate;
 
 using Infrastructure.Common.Persistence.Interceptors;
 using Infrastructure.Common.Persistence.Configurations.Abstracts;
@@ -38,7 +38,7 @@ internal sealed class ECommerceDbContext : DbContext, IECommerceDbContext
 
     public DbSet<Product> Products { get; set; }
 
-    public DbSet<DomainProductFeedback> ProductFeedback { get; set; }
+    public DbSet<ProductReview> ProductReviews { get; set; }
 
     public DbSet<Shipment> Shipments { get; set; }
 

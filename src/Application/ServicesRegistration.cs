@@ -5,18 +5,18 @@ using Application.Orders.Services;
 using Application.Products.Services;
 using Application.Sales.Services;
 using Application.Coupons.Services;
-using Application.ProductFeedback.Services;
 
 using Domain.OrderAggregate.Services;
 using Domain.ProductAggregate.Services;
 using Domain.SaleAggregate.Services;
-using Domain.ProductFeedbackAggregate.Services;
 using Domain.CouponAggregate.Services;
 
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using MediatR;
 using System.Reflection;
+using Domain.ProductReviewAggregate.Services;
+using Application.ProductReviews.Services;
 
 namespace Application;
 
@@ -67,7 +67,7 @@ public static class ServicesRegistration
         services.AddScoped<IInventoryManagementService, InventoryManagementService>();
         services.AddScoped<ISaleApplicationService, SaleApplicationService>();
         services.AddScoped
-            <IProductFeedbackEligibilityService, ProductFeedbackEligibilityService>();
+            <IProductReviewEligibilityService, ProductReviewEligibilityService>();
         services.AddScoped<ISaleEligibilityService, SaleEligibilityService>();
         services.AddScoped<ICouponApplicationService, CouponApplicationService>();
         services.AddScoped<ICouponUsageService, CouponUsageService>();

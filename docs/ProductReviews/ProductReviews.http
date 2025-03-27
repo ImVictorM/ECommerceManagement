@@ -1,0 +1,35 @@
+@id_product = 2
+@id_user = 2
+@id_review = 1
+@token_customer = insert-token-here
+@base_product_review_endpoint = http://localhost:8000/products/{{id_product}}/reviews
+@base_customer_product_review_endpoint = http://localhost:8000/users/customers/{{id_user}}/reviews
+
+### Allows a customer to leave a review for a purchased product.
+### Customer authentication is required.
+### Returns a 201 CREATED response in case of success.
+POST {{base_product_review_endpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token_customer}}
+
+{
+  "title": "Very Good Product",
+  "content": "Yes it is",
+  "starRating": 5
+}
+
+### Retrieves a list of active reviews for a specific product.
+### Returns a 200 OK response in case of success.
+GET {{base_product_review_endpoint}}
+
+### Retrieves a list of active product reviews left by a specific customer.
+### Customer or admin authentication is required.
+### Returns a 200 OK response in case of success.
+GET {{base_customer_product_review_endpoint}}
+Authorization: Bearer {{token_customer}}
+
+### Deactivates a specific product review entry from a customer.
+### Customer or admin authentication is required.
+### Returns a 204 NO_CONTENT response in case of success.
+DELETE {{base_customer_product_review_endpoint}}/{{id_review}}
+Authorization: Bearer {{token_customer}}
