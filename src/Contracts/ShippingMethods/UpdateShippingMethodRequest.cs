@@ -5,7 +5,9 @@ namespace Contracts.ShippingMethods;
 /// </summary>
 /// <param name="Name">The new shipping method name.</param>
 /// <param name="Price">The new shipping method price.</param>
-/// <param name="EstimatedDeliveryDays">The new shipping method estimated delivery days.</param>
+/// <param name="EstimatedDeliveryDays">
+/// The new shipping method estimated delivery days.
+/// </param>
 public record UpdateShippingMethodRequest(
     string Name,
     decimal Price,

@@ -1,5 +1,6 @@
 using Application.Orders.Queries.GetCustomerOrderById;
 using Application.Orders.Queries.GetCustomerOrders;
+using Application.Orders.DTOs.Filters;
 
 using Contracts.Orders;
 
@@ -101,7 +102,7 @@ public sealed class CustomerOrderEndpoints : ICarterModule
     }
 
     internal async Task<Results<
-        Ok<IEnumerable<OrderResponse>>,
+        Ok<List<OrderResponse>>,
         ForbidHttpResult,
         UnauthorizedHttpResult
     >> GetCustomerOrders(
@@ -111,11 +112,15 @@ public sealed class CustomerOrderEndpoints : ICarterModule
         IMapper mapper
     )
     {
-        var query = new GetCustomerOrdersQuery(userId, status);
+        var query = new GetCustomerOrdersQuery(userId, new OrderFilters(status));
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<OrderResponse>));
+        var response = result
+            .Select(mapper.Map<OrderResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 
     internal async Task<Results<

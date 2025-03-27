@@ -3,7 +3,7 @@ using Application.Coupons.Commands.DeleteCoupon;
 using Application.Coupons.Commands.ToggleCouponActivation;
 using Application.Coupons.Commands.UpdateCoupon;
 using Application.Coupons.Queries.GetCoupons;
-using Application.Coupons.DTOs;
+using Application.Coupons.DTOs.Filters;
 
 using Contracts.Coupons;
 
@@ -233,7 +233,7 @@ public sealed class CouponEndpoints : ICarterModule
     }
 
     internal async Task<Results<
-        Ok<IEnumerable<CouponResponse>>,
+        Ok<List<CouponResponse>>,
         UnauthorizedHttpResult,
         ForbidHttpResult
     >> GetCoupons(
@@ -254,6 +254,10 @@ public sealed class CouponEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<CouponResponse>));
+        var response = result
+            .Select(mapper.Map<CouponResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 }

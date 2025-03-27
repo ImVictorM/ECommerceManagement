@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace WebApi.Common.Utilities;
+namespace WebApi.Common.Utils;
 
 internal static class JsonSerializerUtils
 {

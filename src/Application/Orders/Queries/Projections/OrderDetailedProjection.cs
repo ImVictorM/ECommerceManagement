@@ -14,6 +14,7 @@ namespace Application.Orders.Queries.Projections;
 /// <param name="OrderStatus">The order status.</param>
 /// <param name="Total">The order total.</param>
 /// <param name="Shipment">The order shipment.</param>
+/// <param name="Products">The order products.</param>
 /// <param name="PaymentId">The order payment identifier.</param>
 public record OrderDetailedProjection(
     OrderId Id,
@@ -21,6 +22,7 @@ public record OrderDetailedProjection(
     string Description,
     OrderStatus OrderStatus,
     decimal Total,
+    IEnumerable<OrderLineItem> Products,
     OrderShipmentProjection Shipment,
     PaymentId PaymentId
 );

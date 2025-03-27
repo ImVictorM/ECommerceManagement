@@ -1,6 +1,6 @@
 using Application.Sales.Commands.CreateSale;
 using Application.Sales.Commands.UpdateSale;
-using Application.Sales.DTOs;
+using Application.Sales.DTOs.Results;
 
 using Contracts.Sales;
 

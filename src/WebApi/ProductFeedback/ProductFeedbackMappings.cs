@@ -1,5 +1,5 @@
 using Application.ProductFeedback.Commands.LeaveProductFeedback;
-using Application.ProductFeedback.DTOs;
+using Application.ProductFeedback.DTOs.Results;
 
 using Contracts.ProductFeedback;
 
@@ -9,7 +9,6 @@ namespace WebApi.ProductFeedback;
 
 internal class ProductFeedbackMappings : IRegister
 {
-    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config

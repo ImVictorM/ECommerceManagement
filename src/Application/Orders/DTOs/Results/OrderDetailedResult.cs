@@ -1,3 +1,5 @@
+using Domain.OrderAggregate.ValueObjects;
+
 using Application.Orders.Queries.Projections;
 
 namespace Application.Orders.DTOs.Results;
@@ -35,6 +37,10 @@ public class OrderDetailedResult
     /// Gets the order payment.
     /// </summary>
     public OrderPaymentResult Payment { get; }
+    /// <summary>
+    /// Gets the order products.
+    /// </summary>
+    public IReadOnlyList<OrderLineItem> Products { get; }
 
     private OrderDetailedResult(
         OrderDetailedProjection projection,
@@ -48,6 +54,7 @@ public class OrderDetailedResult
         Total = projection.Total;
         Shipment = OrderShipmentResult
             .FromProjection(projection.Shipment);
+        Products = projection.Products.ToList();
         Payment = payment;
     }
 

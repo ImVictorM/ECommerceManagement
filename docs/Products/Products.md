@@ -174,7 +174,7 @@ Example Response:
     "basePrice": 200,
     "priceWithDiscount": 200,
     "quantityAvailable": 73,
-    "categories": ["sports_outdoor"],
+    "categoryIds": ["1"],
     "images": ["jacket.png"]
   }
 ]
@@ -203,7 +203,7 @@ Example Response:
   "basePrice": 200,
   "priceWithDiscount": 200,
   "quantityAvailable": 73,
-  "categories": ["sports_outdoor"],
+  "categoryIds": ["1"],
   "images": ["jacket.png"]
 }
 ```

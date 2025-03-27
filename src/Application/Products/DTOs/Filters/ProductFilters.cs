@@ -6,4 +6,4 @@ namespace Application.Products.DTOs.Filters;
 /// <param name="CategoryIds">
 /// Filters products that belongs to all the specified category identifiers.
 /// </param>
-public record ProductFilters(IEnumerable<string> CategoryIds);
+public record ProductFilters(IReadOnlyList<string>? CategoryIds = null);

@@ -3,7 +3,7 @@ using Application.Sales.Commands.DeleteSale;
 using Application.Sales.Commands.UpdateSale;
 using Application.Sales.Queries.GetSaleById;
 using Application.Sales.Queries.GetSales;
-using Application.Sales.DTOs;
+using Application.Sales.DTOs.Filters;
 
 using Contracts.Sales;
 

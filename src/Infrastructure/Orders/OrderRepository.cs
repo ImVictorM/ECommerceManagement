@@ -36,6 +36,7 @@ internal sealed class OrderRepository
                 order.Description,
                 order.OrderStatus,
                 order.Total,
+                order.Products,
                 Context.Shipments
                     .Where(shipment => shipment.OrderId == orderId)
                     .Select(shipment => new OrderShipmentProjection(
@@ -73,6 +74,7 @@ internal sealed class OrderRepository
                 order.Description,
                 order.OrderStatus,
                 order.Total,
+                order.Products,
                 Context.Shipments
                     .Where(shipment => shipment.OrderId == orderId)
                     .Select(shipment => new OrderShipmentProjection(

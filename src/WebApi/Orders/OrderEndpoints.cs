@@ -1,6 +1,7 @@
 using Application.Orders.Commands.PlaceOrder;
 using Application.Orders.Queries.GetOrderById;
 using Application.Orders.Queries.GetOrders;
+using Application.Orders.DTOs.Filters;
 
 using Contracts.Orders;
 
@@ -131,7 +132,7 @@ public sealed class OrderEndpoints : ICarterModule
     }
 
     internal async Task<Results<
-        Ok<IEnumerable<OrderResponse>>,
+        Ok<List<OrderResponse>>,
         UnauthorizedHttpResult,
         ForbidHttpResult
     >> GetOrders(
@@ -140,10 +141,14 @@ public sealed class OrderEndpoints : ICarterModule
         IMapper mapper
     )
     {
-        var query = new GetOrdersQuery(status);
+        var query = new GetOrdersQuery(new OrderFilters(status));
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<OrderResponse>));
+        var response = result
+            .Select(mapper.Map<OrderResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 }

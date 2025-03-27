@@ -37,7 +37,7 @@ internal sealed partial class GetProductByIdQueryHandler
 
         var productId = ProductId.Create(request.Id);
 
-        var product = await _productRepository.GetProductSatisfyingAsync(
+        var product = await _productRepository.FindFirstSatisfyingAsync(
             new QueryActiveProductByIdSpecification(productId),
             cancellationToken
         );

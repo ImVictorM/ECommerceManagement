@@ -25,13 +25,20 @@ internal sealed class ProductRepository
         CancellationToken cancellationToken = default
     )
     {
+        var query = DbSet
+            .AsQueryable()
+            .Where(specification.Criteria);
+
         var page = paginationParams.Page;
         var pageSize = paginationParams.PageSize;
 
-        return await Context.Products
-            .Where(specification.Criteria)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
+        if (page.HasValue && pageSize.HasValue)
+        {
+            query = query
+                .Skip((page.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
+        }
+
+        return await query.ToListAsync(cancellationToken);
     }
 }

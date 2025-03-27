@@ -1,8 +1,9 @@
 using Application.Users.Commands.DeactivateUser;
 using Application.Users.Commands.UpdateUser;
-using Application.Users.Queries.GetAllUsers;
 using Application.Users.Queries.GetUserById;
 using Application.Users.Queries.GetSelf;
+using Application.Users.Queries.GetUsers;
+using Application.Users.DTOs.Filters;
 
 using Contracts.Users;
 
@@ -64,8 +65,8 @@ public sealed class UserEndpoints : ICarterModule
             .RequireAuthorization();
 
         userGroup
-            .MapGet("/", GetAllUsers)
-            .WithName(nameof(GetAllUsers))
+            .MapGet("/", GetUsers)
+            .WithName(nameof(GetUsers))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get All Users",
@@ -169,20 +170,26 @@ public sealed class UserEndpoints : ICarterModule
     }
 
     internal async Task<Results<
-        Ok<IEnumerable<UserResponse>>,
+        Ok<List<UserResponse>>,
         ForbidHttpResult,
         UnauthorizedHttpResult
-    >> GetAllUsers(
+    >> GetUsers(
         [FromQuery(Name = "active")] bool? IsActive,
         ISender sender,
         IMapper mapper
     )
     {
-        var query = new GetAllUsersQuery(IsActive);
+        var filters = new UserFilters(IsActive);
+
+        var query = new GetUsersQuery(filters);
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<UserResponse>));
+        var response = result
+            .Select(mapper.Map<UserResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 
     internal async Task<Results<
@@ -208,6 +215,7 @@ public sealed class UserEndpoints : ICarterModule
     internal async Task<Results<
         NoContent,
         ForbidHttpResult,
+        NotFound,
         UnauthorizedHttpResult
     >> DeactivateUser(
         [FromRoute] string id,

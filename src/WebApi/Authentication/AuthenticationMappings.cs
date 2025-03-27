@@ -1,6 +1,6 @@
 using Application.Authentication.Commands.RegisterCustomer;
 using Application.Authentication.Queries.LoginUser;
-using Application.Authentication.DTOs;
+using Application.Authentication.DTOs.Results;
 
 using Contracts.Authentication;
 
@@ -10,14 +10,12 @@ namespace WebApi.Authentication;
 
 internal sealed class AuthenticationMappings : IRegister
 {
-    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<RegisterCustomerRequest, RegisterCustomerCommand>();
         config.NewConfig<LoginUserRequest, LoginUserQuery>();
         config.NewConfig<AuthenticationResult, AuthenticationResponse>()
-            .Map(dest => dest.Id, src => src.AuthenticatedIdentity.Id.ToString())
-            .Map(dest => dest, src => src.AuthenticatedIdentity)
-            .Map(dest => dest.Email, src => src.AuthenticatedIdentity.Email.ToString());
+            .Map(dest => dest, src => src.User)
+            .Map(dest => dest.Token, src => src.Token);
     }
 }

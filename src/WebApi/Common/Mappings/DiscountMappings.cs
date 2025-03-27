@@ -8,7 +8,6 @@ namespace WebApi.Common.Mappings;
 
 internal sealed class DiscountMappings : IRegister
 {
-    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config

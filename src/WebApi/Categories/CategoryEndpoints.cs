@@ -173,7 +173,7 @@ public sealed class CategoryEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    internal async Task<Ok<IEnumerable<CategoryResponse>>> GetCategories(
+    internal async Task<Ok<List<CategoryResponse>>> GetCategories(
         ISender sender,
         IMapper mapper
     )
@@ -182,7 +182,11 @@ public sealed class CategoryEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<CategoryResponse>));
+        var response = result
+            .Select(mapper.Map<CategoryResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 
     internal async Task<Results<Ok<CategoryResponse>, NotFound>> GetCategoryById(
