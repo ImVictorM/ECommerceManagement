@@ -1,7 +1,7 @@
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.DeactivateProduct;
 using Application.Products.Commands.UpdateProduct;
-using Application.Products.Commands.UpdateProductInventory;
+using Application.Products.Commands.AddStock;
 using Application.Products.Queries.GetProductById;
 using Application.Products.Queries.GetProducts;
 using Application.Products.DTOs.Filters;
@@ -162,13 +162,13 @@ public sealed class ProductEndpoints : ICarterModule
             .RequireAuthorization();
 
         productGroup
-            .MapPut("/{id:long}/inventory", UpdateProductInventory)
-            .WithName(nameof(UpdateProductInventory))
+            .MapPut("/{id:long}/inventory", AddStock)
+            .WithName(nameof(AddStock))
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Update Product Inventory",
+                Summary = "Add Stock",
                 Description =
-                "Increments the inventory quantity available for an active product." +
+                "Increases the quantity available in inventory for an active product." +
                 " Admin authentication is required.",
                 Parameters =
                 [
@@ -282,15 +282,15 @@ public sealed class ProductEndpoints : ICarterModule
         NotFound,
         UnauthorizedHttpResult,
         ForbidHttpResult
-    >> UpdateProductInventory
+    >> AddStock
     (
         [FromRoute] string id,
-        [FromBody] UpdateProductInventoryRequest request,
+        [FromBody] AddStockRequest request,
         IMapper mapper,
         ISender sender
     )
     {
-        var command = mapper.Map<UpdateProductInventoryCommand>((id, request));
+        var command = mapper.Map<AddStockCommand>((id, request));
 
         await sender.Send(command);
 

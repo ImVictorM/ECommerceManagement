@@ -1,6 +1,6 @@
+using Application.Products.Commands.AddStock;
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.UpdateProduct;
-using Application.Products.Commands.UpdateProductInventory;
 using Application.Products.DTOs.Results;
 
 using Contracts.Products;
@@ -21,11 +21,11 @@ internal sealed class ProductMappings : IRegister
             .Map(dest => dest, src => src.Request);
 
         config.NewConfig<
-                (string Id, UpdateProductInventoryRequest Request),
-                UpdateProductInventoryCommand
+                (string Id, AddStockRequest Request),
+                AddStockCommand
             >()
             .Map(dest => dest.ProductId, src => src.Id)
-            .Map(dest => dest.QuantityToIncrement, src => src.Request.QuantityToIncrement);
+            .Map(dest => dest.QuantityToAdd, src => src.Request.QuantityToAdd);
 
         config.NewConfig<ProductResult, ProductResponse>();
     }

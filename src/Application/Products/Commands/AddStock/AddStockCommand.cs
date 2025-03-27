@@ -4,15 +4,15 @@ using SharedKernel.ValueObjects;
 
 using MediatR;
 
-namespace Application.Products.Commands.UpdateProductInventory;
+namespace Application.Products.Commands.AddStock;
 
 /// <summary>
-/// Represents a command to update a product's inventory.
+/// Represents a command to increase the stock quantity of a specified product.
 /// </summary>
 /// <param name="ProductId">The product identifier.</param>
-/// <param name="QuantityToIncrement">The quantity to add to the inventory.</param>
+/// <param name="QuantityToAdd">The quantity to add.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record UpdateProductInventoryCommand(
+public record AddStockCommand(
     string ProductId,
-    int QuantityToIncrement
+    int QuantityToAdd
 ) : IRequestWithAuthorization<Unit>;

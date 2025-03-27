@@ -8,18 +8,18 @@ using Domain.ProductAggregate.ValueObjects;
 using Microsoft.Extensions.Logging;
 using MediatR;
 
-namespace Application.Products.Commands.UpdateProductInventory;
+namespace Application.Products.Commands.AddStock;
 
-internal sealed partial class UpdateProductInventoryCommandHandler
-    : IRequestHandler<UpdateProductInventoryCommand, Unit>
+internal sealed partial class AddStockCommandHandler
+    : IRequestHandler<AddStockCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
 
-    public UpdateProductInventoryCommandHandler(
+    public AddStockCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,
-        ILogger<UpdateProductInventoryCommandHandler> logger
+        ILogger<AddStockCommandHandler> logger
     )
     {
         _unitOfWork = unitOfWork;
@@ -27,10 +27,12 @@ internal sealed partial class UpdateProductInventoryCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(UpdateProductInventoryCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        AddStockCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingInventoryUpdate(request.ProductId);
+        LogInitiatingAddingStock(request.ProductId);
 
         var productId = ProductId.Create(request.ProductId);
 
@@ -43,19 +45,19 @@ internal sealed partial class UpdateProductInventoryCommandHandler
         {
             LogProductDoesNotExist();
             throw new ProductNotFoundException(
-                $"It was not possible to increment the " +
-                $"inventory of the product with id {productId} because " +
-                $"the product does not exist"
-            );
+                $"It was impossible to add stock for the product with identifier" +
+                $" '{productId}' because either the product does not exist or is" +
+                $" inactive"
+            ) ;
         }
 
-        LogIncrementingQuantityInInventory(product.Inventory.QuantityAvailable);
+        LogAddingStock(product.Inventory.QuantityAvailable);
 
-        product.Inventory.AddStock(request.QuantityToIncrement);
+        product.Inventory.AddStock(request.QuantityToAdd);
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogInventoryUpdatedSuccessfully(product.Inventory.QuantityAvailable);
+        LogStockAddedSuccessfully(product.Inventory.QuantityAvailable);
 
         return Unit.Value;
     }
