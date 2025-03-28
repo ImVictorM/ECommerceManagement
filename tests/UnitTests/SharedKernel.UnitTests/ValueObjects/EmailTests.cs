@@ -1,6 +1,7 @@
-using FluentAssertions;
 using SharedKernel.Errors;
 using SharedKernel.UnitTests.TestUtils;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.ValueObjects;
 
@@ -10,7 +11,7 @@ namespace SharedKernel.UnitTests.ValueObjects;
 public class EmailTests
 {
     /// <summary>
-    /// List of considered valid emails.
+    /// Provides a list of valid email addresses.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidEmails =
     [
@@ -22,7 +23,7 @@ public class EmailTests
     ];
 
     /// <summary>
-    /// List of considered invalid emails.
+    /// Provides a list of invalid email addresses.
     /// </summary>
     public static readonly IEnumerable<object[]> InvalidEmails =
     [
@@ -33,12 +34,15 @@ public class EmailTests
     ];
 
     /// <summary>
-    /// Tests if it is possible to create email value objects with valid email addresses.
+    /// Verifies it is possible to create email value objects with valid
+    /// email addresses.
     /// </summary>
     /// <param name="emailAddress">The email address.</param>
     [Theory]
     [MemberData(nameof(ValidEmails))]
-    public void CreateEmail_WithValidEmailAddress_CreatesNewInstance(string emailAddress)
+    public void CreateEmail_WithValidEmailAddress_CreatesNewInstance(
+        string emailAddress
+    )
     {
         var actionResult = FluentActions
             .Invoking(() => EmailUtils.CreateEmail(emailAddress))
@@ -52,12 +56,15 @@ public class EmailTests
     }
 
     /// <summary>
-    /// Test if it throws an error when trying to create an email instance with an invalid email address.
+    /// Verifies an exception is thrown when trying to create an email with an
+    /// invalid email address.
     /// </summary>
     /// <param name="emailAddress">The email address.</param>
     [Theory]
     [MemberData(nameof(InvalidEmails))]
-    public void CreateEmail_WithInvalidEmailAddress_ThrowsError(string emailAddress)
+    public void CreateEmail_WithInvalidEmailAddress_ThrowsError(
+        string emailAddress
+    )
     {
         FluentActions
             .Invoking(() => EmailUtils.CreateEmail(emailAddress))

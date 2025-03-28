@@ -11,7 +11,7 @@ namespace SharedKernel.UnitTests.ValueObjects;
 public class RoleTests
 {
     /// <summary>
-    /// Tests the <see cref="Role.List"/> method returns all defined roles.
+    /// Verifies the <see cref="Role.List"/> method returns all defined roles.
     /// </summary>
     [Fact]
     public void ListRoles_WhenCalled_ReturnsAllDefinedRoles()

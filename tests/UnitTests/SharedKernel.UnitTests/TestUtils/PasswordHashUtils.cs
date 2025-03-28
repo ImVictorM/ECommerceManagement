@@ -29,7 +29,8 @@ public static class PasswordHashUtils
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="PasswordHash"/> class using a direct value.
+    /// Creates a new instance of the <see cref="PasswordHash"/> class using
+    /// a direct value.
     /// </summary>
     /// <param name="value">The password hash value.</param>
     /// <returns>A new instance of the <see cref="PasswordHash"/> class.</returns>

@@ -6,12 +6,12 @@ using FluentAssertions;
 namespace SharedKernel.UnitTests.ValueObjects;
 
 /// <summary>
-/// Tests for the <see cref="Address"/> aggregate root.
+/// Tests for the <see cref="Address"/> value object.
 /// </summary>
 public class AddressTests
 {
     /// <summary>
-    /// List of actions that create addresses with valid parameters.
+    /// List of actions that creates addresses with valid parameters.
     /// </summary>
     public static readonly IEnumerable<object[]> ActionsWithValidAddressParameters =
     [
@@ -37,7 +37,9 @@ public class AddressTests
     /// </summary>
     [Theory]
     [MemberData(nameof(ActionsWithValidAddressParameters))]
-    public void CreateAddress_WithValidParameters_CreatesWithoutThrowing(Func<Address> action)
+    public void CreateAddress_WithValidParameters_CreatesWithoutThrowing(
+        Func<Address> action
+    )
     {
         var actionResult = FluentActions
             .Invoking(action)

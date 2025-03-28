@@ -29,9 +29,11 @@ public sealed class Role : BaseEnumeration
     }
 
     /// <summary>
-    /// Gets all the roles in a list format.
+    /// Lists all of the defined roles.
     /// </summary>
-    /// <returns>All the roles.</returns>
+    /// <returns>
+    /// A list of containing all the defined <see cref="Role"/>.
+    /// </returns>
     public static IReadOnlyList<Role> List()
     {
         return GetAll<Role>().ToList();

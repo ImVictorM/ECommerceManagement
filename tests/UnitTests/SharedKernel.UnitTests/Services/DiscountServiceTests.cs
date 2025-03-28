@@ -22,7 +22,8 @@ public class DiscountServiceTests
     }
 
     /// <summary>
-    /// List containing base price, discounts, and the expected total after discounts were applied.
+    /// Defines a list containing base price, discounts, and the expected total 
+    /// after discounts were applied.
     /// </summary>
     public static IEnumerable<object[]> DiscountsWithExpectedTotalAfterDiscounts()
     {
@@ -60,11 +61,13 @@ public class DiscountServiceTests
     }
 
     /// <summary>
-    /// Tests the service calculates the total applying discounts correctly.
+    /// Verifies the service calculates the total applying discounts correctly.
     /// </summary>
     /// <param name="basePrice">The base price.</param>
     /// <param name="discounts">The discounts.</param>
-    /// <param name="expectedTotalWithDiscountsApplied">The expected total.</param>
+    /// <param name="expectedTotalWithDiscountsApplied">
+    /// The expected total.
+    /// </param>
     [Theory]
     [MemberData(nameof(DiscountsWithExpectedTotalAfterDiscounts))]
     public void CalculateDiscountedPrice_WithValidDiscounts_ReturnsCalculatedTotal(
