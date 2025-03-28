@@ -1,5 +1,6 @@
 using Domain.ProductAggregate.Specifications;
 using Domain.UnitTests.TestUtils;
+
 using FluentAssertions;
 
 namespace Domain.UnitTests.ProductAggregate.Specifications;
@@ -13,7 +14,7 @@ public class QueryActiveProductSpecificationsTests
     /// Verifies that the specification returns true when the product is active.
     /// </summary>
     [Fact]
-    public void QueryActiveProductSpecification_WhenProductIsActive_ReturnsTrue()
+    public void QueryActiveProduct_WhenProductIsActive_ReturnsTrue()
     {
         var product = ProductUtils.CreateProduct(active: true);
 
@@ -28,7 +29,7 @@ public class QueryActiveProductSpecificationsTests
     /// Verifies that the specification returns false when the product is not active.
     /// </summary>
     [Fact]
-    public void QueryActiveProductSpecification_WhenProductIsNotActive_ReturnsFalse()
+    public void QueryActiveProduct_WhenProductIsNotActive_ReturnsFalse()
     {
         var product = ProductUtils.CreateProduct(active: false);
 

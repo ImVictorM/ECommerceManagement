@@ -1,4 +1,3 @@
-
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
@@ -19,11 +18,13 @@ public static class ProductUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Product"/> class.
     /// </summary>
-    /// <param name="id">The product id.</param>
+    /// <param name="id">The product identifier.</param>
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="basePrice">The product base price.</param>
-    /// <param name="initialQuantityInInventory">The product initial quantity in inventory.</param>
+    /// <param name="initialQuantityInInventory">
+    /// The product initial quantity in inventory.
+    /// </param>
     /// <param name="categories">The product categories.</param>
     /// <param name="images">The product images.</param>
     /// <param name="active">A boolean value indicating the product status.</param>

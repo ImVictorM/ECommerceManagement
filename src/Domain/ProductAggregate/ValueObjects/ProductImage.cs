@@ -14,21 +14,21 @@ public sealed class ProductImage : ValueObject
 
     private ProductImage() { }
 
-    private ProductImage(Uri url)
+    private ProductImage(Uri uri)
     {
-        Uri = url;
+        Uri = uri;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProductImage"/> class.
     /// </summary>
-    /// <param name="url">The image url.</param>
+    /// <param name="uri">The image uri.</param>
     /// <returns>
     /// A new instance of the <see cref="ProductImage"/> class.
     /// </returns>
-    public static ProductImage Create(Uri url)
+    public static ProductImage Create(Uri uri)
     {
-        return new ProductImage(url);
+        return new ProductImage(uri);
     }
 
     /// <inheritdoc/>

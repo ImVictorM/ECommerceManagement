@@ -26,7 +26,9 @@ public class OrderTests
     /// </summary>
     public static IEnumerable<object[]> OrderStatusesDifferentThanPending()
     {
-        var orderStatuses = OrderStatus.List().Where(os => os != OrderStatus.Pending);
+        var orderStatuses = OrderStatus
+            .List()
+            .Where(os => os != OrderStatus.Pending);
 
         foreach (var status in orderStatuses)
         {
@@ -51,7 +53,7 @@ public class OrderTests
     /// Verifies the order is created correctly with valid parameters.
     /// </summary>
     [Fact]
-    public async Task CreateOrder_WithValidParameters_CreatesWithoutThrowing()
+    public async Task Create_WithValidParameters_CreatesWithoutThrowing()
     {
         var ownerId = UserId.Create(1);
         var orderLineItemDrafts = OrderUtils.CreateOrderLineItemDrafts(4);
@@ -123,7 +125,7 @@ public class OrderTests
     /// reason, and creates a new order tracking entry.
     /// </summary>
     [Fact]
-    public async Task CancelOrder_WithPendingOrder_CompletesSuccessfully()
+    public async Task Cancel_WithPendingOrder_CompletesSuccessfully()
     {
         var reasonToCancel = "Important reason";
         var order = await OrderUtils.CreateOrderAsync();
@@ -146,7 +148,7 @@ public class OrderTests
     /// </param>
     [Theory]
     [MemberData(nameof(OrderStatusesDifferentThanPending))]
-    public async Task CancelOrder_WithoutPendingOrder_ThrowsError(
+    public async Task Cancel_WithoutPendingOrder_ThrowsError(
         OrderStatus initialStatusDifferentThanPending
     )
     {

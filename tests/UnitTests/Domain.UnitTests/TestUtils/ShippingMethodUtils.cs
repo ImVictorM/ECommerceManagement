@@ -17,11 +17,15 @@ public static class ShippingMethodUtils
     /// <summary>
     /// Creates a new instance of the <see cref="ShippingMethod"/> class.
     /// </summary>
-    /// <param name="id">The shipping method id.</param>
+    /// <param name="id">The shipping method identifier.</param>
     /// <param name="name">The shipping method name.</param>
     /// <param name="price">The shipping method price.</param>
-    /// <param name="estimatedDeliveryDays">The shipping method estimated delivery days.</param>
-    /// <returns>A new instance of the <see cref="ShippingMethod"/> class.</returns>
+    /// <param name="estimatedDeliveryDays">
+    /// The shipping method estimated delivery days.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="ShippingMethod"/> class.
+    /// </returns>
     public static ShippingMethod CreateShippingMethod(
         ShippingMethodId? id = null,
         string? name = null,

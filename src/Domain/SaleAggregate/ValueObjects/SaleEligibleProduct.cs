@@ -18,7 +18,7 @@ public class SaleEligibleProduct : ValueObject
     /// </summary>
     public ProductId ProductId { get; } = null!;
     /// <summary>
-    /// Gets the collection of category ids associated with the product.
+    /// Gets the collection of category identifiers associated with the product.
     /// </summary>
     public IReadOnlySet<CategoryId> CategoryIds => _categoryIds;
 

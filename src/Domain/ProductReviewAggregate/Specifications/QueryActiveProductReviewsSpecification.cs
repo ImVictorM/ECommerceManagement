@@ -5,6 +5,7 @@ namespace Domain.ProductReviewAggregate.Specifications;
 /// <summary>
 /// Query specification to retrieve active product reviews.
 /// </summary>
-public class QueryActiveProductReviews : QueryActiveSpecification<ProductReview>
+public class QueryActiveProductReviewsSpecification
+    : QueryActiveSpecification<ProductReview>
 {
 }

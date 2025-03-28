@@ -18,7 +18,7 @@ namespace Domain.UnitTests.SaleAggregate;
 public class SaleTests
 {
     /// <summary>
-    /// List containing valid sale inputs to create a sale.
+    /// Provides a list containing valid sale inputs to create a sale.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidSaleInputs =
     [
@@ -40,11 +40,11 @@ public class SaleTests
     ];
 
     /// <summary>
-    /// Ensures that a sale is created successfully with valid inputs.
+    /// Verifies that a sale is created successfully with valid inputs.
     /// </summary>
     [Theory]
     [MemberData(nameof(ValidSaleInputs))]
-    public void CreateSale_WithValidInputs_CreatesWithoutThrowing(
+    public void Create_WithValidInputs_CreatesWithoutThrowing(
         Discount discount,
         HashSet<SaleCategory> categoriesOnSale,
         HashSet<SaleProduct> productsOnSale,
@@ -66,15 +66,16 @@ public class SaleTests
         sale.Discount.Should().BeEquivalentTo(discount);
         sale.CategoriesOnSale.Should().BeEquivalentTo(categoriesOnSale);
         sale.ProductsOnSale.Should().BeEquivalentTo(productsOnSale);
-        sale.ProductsExcludedFromSale.Should().BeEquivalentTo(productsExcludedFromSale);
+        sale.ProductsExcludedFromSale
+            .Should().BeEquivalentTo(productsExcludedFromSale);
     }
 
     /// <summary>
-    /// Ensures that updating a sale with empty categories and products on sale
+    /// Verifies that creating a sale with empty categories and products on sale
     /// throws an exception.
     /// </summary>
     [Fact]
-    public void CreateSale_WithEmptyCategoriesAndProductsOnSale_ThrowsError()
+    public void Create_WithEmptyCategoriesAndProductsOnSale_ThrowsError()
     {
         var emptyCategories = new HashSet<SaleCategory>();
         var emptyProducts = new HashSet<SaleProduct>();
@@ -89,11 +90,11 @@ public class SaleTests
     }
 
     /// <summary>
-    /// Ensures that creating a sale with no categories and products excluded equal
+    /// Verifies that creating a sale with no categories and products excluded equal
     /// to the products included throws an exception.
     /// </summary>
     [Fact]
-    public void CreateSale_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
+    public void Create_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
     {
         var emptyCategories = new HashSet<SaleCategory>();
         var productsOnSale = new HashSet<SaleProduct>()
@@ -118,7 +119,7 @@ public class SaleTests
     }
 
     /// <summary>
-    /// Ensures that updating a sale with valid parameters updates the sale correctly.
+    /// Verifies that updating a sale with valid parameters updates the sale correctly.
     /// </summary>
     [Theory]
     [MemberData(nameof(ValidSaleInputs))]
@@ -147,7 +148,8 @@ public class SaleTests
     }
 
     /// <summary>
-    /// Ensures that updating a sale with no categories and products excluded equal to the products included throws an exception.
+    /// Verifies that updating a sale with no categories and products excluded equal
+    /// to the products included throws an exception.
     /// </summary>
     [Fact]
     public void Update_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
@@ -178,7 +180,7 @@ public class SaleTests
     }
 
     /// <summary>
-    /// Ensures that updating a sale with empty categories and products on sale
+    /// Verifies that updating a sale with empty categories and products on sale
     /// throws an exception.
     /// </summary>
     [Fact]
@@ -201,7 +203,7 @@ public class SaleTests
     }
 
     /// <summary>
-    /// Provides test data for validating if a product is in a sale.
+    /// Provides test data for validating if a product is on sale.
     /// </summary>
     public static IEnumerable<object[]> IsProductOnSaleData =>
     [

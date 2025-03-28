@@ -11,7 +11,8 @@ using FluentAssertions;
 namespace Domain.UnitTests.SaleAggregate.Specifications;
 
 /// <summary>
-/// Unit tests for the <see cref="QueryApplicableSalesForProductsSpecification"/> class.
+/// Unit tests for the <see cref="QueryApplicableSalesForProductsSpecification"/>
+/// class.
 /// </summary>
 public class QueryApplicableSalesForProductsSpecificationTests
 {
@@ -20,7 +21,7 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// matches the query.
     /// </summary>
     [Fact]
-    public void QueryApplicableSalesForProductsSpecification_WhenProductMatches_ReturnsTrue()
+    public void QueryApplicableSalesForProducts_WithMatchingProduct_ReturnsTrue()
     {
         var productId = ProductId.Create(1);
 
@@ -46,7 +47,7 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// sale matches the query.
     /// </summary>
     [Fact]
-    public void QueryApplicableSalesForProductsSpecification_WhenCategoryMatches_ReturnsTrue()
+    public void QueryApplicableSalesForProducts_WithMatchingCategory_ReturnsTrue()
     {
         var categoryId = CategoryId.Create(1);
 
@@ -65,10 +66,11 @@ public class QueryApplicableSalesForProductsSpecificationTests
     }
 
     /// <summary>
-    /// Verifies that the specification returns false when the product is excluded from the sale.
+    /// Verifies that the specification returns false when the product is
+    /// excluded from the sale.
     /// </summary>
     [Fact]
-    public void QueryApplicableSalesForProductsSpecification_WhenProductIsExcluded_ReturnsFalse()
+    public void QueryApplicableSalesForProducts_WhenProductIsExcluded_ReturnsFalse()
     {
         var productId = ProductId.Create(1);
         var sale = SaleUtils.CreateSale(
@@ -90,7 +92,7 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// to date.
     /// </summary>
     [Fact]
-    public void QueryApplicableSalesForProductsSpecification_WhenSaleIsNotValidToDate_ReturnsFalse()
+    public void QueryApplicableSalesForProducts_WhenSaleIsNotValidToDate_ReturnsFalse()
     {
         var productId = ProductId.Create(1);
         var expiredDiscount = DiscountUtils.CreateDiscount(
@@ -118,7 +120,7 @@ public class QueryApplicableSalesForProductsSpecificationTests
     /// to date.
     /// </summary>
     [Fact]
-    public void QueryApplicableSalesForProductsSpecification_WhenSaleIsValidToDate_ReturnsTrue()
+    public void QueryApplicableSalesForProducts_WhenSaleIsValidToDate_ReturnsTrue()
     {
         var productId = ProductId.Create(1);
 

@@ -32,7 +32,7 @@ public sealed class Role : BaseEnumeration
     /// Lists all of the defined roles.
     /// </summary>
     /// <returns>
-    /// A list of containing all the defined <see cref="Role"/>.
+    /// A list containing all the defined <see cref="Role"/>.
     /// </returns>
     public static IReadOnlyList<Role> List()
     {

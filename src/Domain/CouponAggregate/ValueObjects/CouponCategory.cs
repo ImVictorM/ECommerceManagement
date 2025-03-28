@@ -24,7 +24,7 @@ public class CouponCategory : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="CouponCategory"/> class.
     /// </summary>
-    /// <param name="categoryId">The category id.</param>
+    /// <param name="categoryId">The category identifier.</param>
     /// <returns>
     /// A new instance of the <see cref="CouponCategory"/> class.
     /// </returns>

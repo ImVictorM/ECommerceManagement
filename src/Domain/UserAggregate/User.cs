@@ -128,7 +128,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <param name="name">The new user name.</param>
     /// <param name="phone">The new user phone.</param>
     /// <param name="email">The new user email.</param>
-    public void UpdateDetails(
+    public void Update(
         string? name = null,
         string? phone = null,
         Email? email = null)

@@ -1,7 +1,7 @@
 using Domain.ProductAggregate.ValueObjects;
-using Domain.ProductFeedbackAggregate;
-using Domain.ProductFeedbackAggregate.ValueObjects;
 using Domain.UserAggregate.ValueObjects;
+using Domain.ProductReviewAggregate.ValueObjects;
+using Domain.ProductReviewAggregate;
 
 using SharedKernel.UnitTests.TestUtils.Extensions;
 
@@ -10,29 +10,29 @@ using Bogus;
 namespace Domain.UnitTests.TestUtils;
 
 /// <summary>
-/// Utilities for the <see cref="ProductFeedback"/> class.
+/// Utilities for the <see cref="ProductReview"/> class.
 /// </summary>
-public static class ProductFeedbackUtils
+public static class ProductReviewUtils
 {
     private static readonly Faker _faker = new();
 
     /// <summary>
-    /// Creates a new instance of the <see cref="ProductFeedback"/> class.
+    /// Creates a new instance of the <see cref="ProductReview"/> class.
     /// </summary>
-    /// <param name="id">The feedback id.</param>
-    /// <param name="userId">The user id.</param>
-    /// <param name="productId">The product id.</param>
-    /// <param name="title">The feedback title.</param>
-    /// <param name="content">The feedback content.</param>
-    /// <param name="starRating">The feedback star rating.</param>
+    /// <param name="id">The review identifier.</param>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="productId">The product identifier.</param>
+    /// <param name="title">The review title.</param>
+    /// <param name="content">The review content.</param>
+    /// <param name="starRating">The review star rating.</param>
     /// <param name="active">
-    /// A boolean value indicating if the product feedback should be active or not.
+    /// A boolean value indicating if the product review should be active or not.
     /// </param>
     /// <returns>
-    /// A new instance of the <see cref="ProductFeedback"/> class.
+    /// A new instance of the <see cref="ProductReview"/> class.
     /// </returns>
-    public static ProductFeedback CreateProductFeedback(
-        ProductFeedbackId? id = null,
+    public static ProductReview CreateProductReview(
+        ProductReviewId? id = null,
         UserId? userId = null,
         ProductId? productId = null,
         string? title = null,
@@ -41,7 +41,7 @@ public static class ProductFeedbackUtils
         bool active = true
     )
     {
-        var feedback = ProductFeedback.Create(
+        var review = ProductReview.Create(
             userId ?? UserId.Create(_faker.Random.Long()),
             productId ?? ProductId.Create(_faker.Random.Long()),
             title ?? _faker.Commerce.Product(),
@@ -51,14 +51,14 @@ public static class ProductFeedbackUtils
 
         if (!active)
         {
-            feedback.Deactivate();
+            review.Deactivate();
         }
 
         if (id != null)
         {
-            feedback.SetIdUsingReflection(id);
+            review.SetIdUsingReflection(id);
         }
 
-        return feedback;
+        return review;
     }
 }

@@ -20,15 +20,15 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     private long _shipmentStatusId;
 
     /// <summary>
-    /// Gets the shipment order id.
+    /// Gets the shipment order identifier.
     /// </summary>
     public OrderId OrderId { get; private set; } = null!;
     /// <summary>
-    /// Gets the shipment carrier id.
+    /// Gets the shipment carrier identifier.
     /// </summary>
     public CarrierId CarrierId { get; private set; } = null!;
     /// <summary>
-    /// Gets the shipping method id.
+    /// Gets the shipping method identifier.
     /// </summary>
     public ShippingMethodId ShippingMethodId { get; private set; } = null!;
     /// <summary>

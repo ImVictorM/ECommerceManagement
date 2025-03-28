@@ -19,12 +19,15 @@ public static class ShipmentUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Shipment"/> class.
     /// </summary>
-    /// <param name="id">The shipment id.</param>
-    /// <param name="orderId">The order id.</param>
-    /// <param name="carrierId">The carrier id.</param>
-    /// <param name="shippingMethodId">The shipping method id.</param>
+    /// <param name="id">The shipment identifier.</param>
+    /// <param name="orderId">The order identifier.</param>
+    /// <param name="carrierId">The carrier identifier.</param>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
     /// <param name="deliveryAddress">The delivery address.</param>
-    /// <param name="initialShipmentStatus">The initial shipment status. The default is <see cref="ShipmentStatus.Pending"/>.</param>
+    /// <param name="initialShipmentStatus">
+    /// The initial shipment status.
+    /// The default is <see cref="ShipmentStatus.Pending"/>.
+    /// </param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>
     public static Shipment CreateShipment(
         ShipmentId? id = null,
@@ -51,7 +54,8 @@ public static class ShipmentUtils
         {
             var statusProperty = typeof(Shipment).GetProperty(
                 nameof(Shipment.ShipmentStatus),
-                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
+                System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.Instance
             );
 
             if (statusProperty != null && statusProperty.CanWrite)

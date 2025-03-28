@@ -18,7 +18,7 @@ public sealed class CouponOrderProduct : ValueObject
     public ProductId ProductId { get; } = null!;
 
     /// <summary>
-    /// Gets the product category ids.
+    /// Gets the product category identifiers.
     /// </summary>
     public IReadOnlySet<CategoryId> ProductCategoryIds => _productCategoryIds;
 
@@ -36,8 +36,8 @@ public sealed class CouponOrderProduct : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="CouponOrderProduct"/> class.
     /// </summary>
-    /// <param name="productId">The product id.</param>
-    /// <param name="productCategoryIds">The product category ids.</param>
+    /// <param name="productId">The product identifier.</param>
+    /// <param name="productCategoryIds">The product category identifiers.</param>
     /// <returns>
     /// A new instance of the <see cref="CouponOrderProduct"/> class.
     /// </returns>

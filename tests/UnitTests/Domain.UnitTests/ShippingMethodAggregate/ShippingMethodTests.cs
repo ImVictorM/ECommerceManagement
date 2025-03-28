@@ -5,12 +5,13 @@ using FluentAssertions;
 namespace Domain.UnitTests.ShippingMethodAggregate;
 
 /// <summary>
-/// Unit tests for the <see cref="Domain.ShippingMethodAggregate.ShippingMethod"/> class.
+/// Unit tests for the <see cref="Domain.ShippingMethodAggregate.ShippingMethod"/>
+/// class.
 /// </summary>
 public class ShippingMethodTests
 {
     /// <summary>
-    /// List containing valid shipping method creation parameters.
+    /// Provides a list containing valid shipping method creation parameters.
     /// </summary>
     public static readonly IEnumerable<object[]> ShippingMethodValidCreationParameters =
     [
@@ -27,11 +28,11 @@ public class ShippingMethodTests
     ];
 
     /// <summary>
-    /// Tests that a shipping method can be created successfully.
+    /// Verifies that a shipping method can be created successfully.
     /// </summary>
     [Theory]
     [MemberData(nameof(ShippingMethodValidCreationParameters))]
-    public void CreateShippingMethod_WithValidParameters_CreatesWithoutThrowing(
+    public void Create_WithValidParameters_CreatesWithoutThrowing(
         string name,
         decimal price,
         int estimatedDeliveryDays
@@ -57,7 +58,7 @@ public class ShippingMethodTests
     /// Verifies it is possible to completely update a shipping method.
     /// </summary>
     [Fact]
-    public void UpdateShippingMethod_WithCompleteUpdate_UpdatesTheShippingMethodCompletely()
+    public void Update_WithCompleteUpdate_UpdatesTheShippingMethodCompletely()
     {
         var newName = "SuperFastShipping";
         var newPrice = 50m;
@@ -80,7 +81,7 @@ public class ShippingMethodTests
     /// Verifies it is possible to partially update a shipping method.
     /// </summary>
     [Fact]
-    public void UpdateShippingMethod_WithPartialUpdate_UpdatesTheShippingMethodPartially()
+    public void Update_WithPartialUpdate_UpdatesTheShippingMethodPartially()
     {
         var shippingMethod = ShippingMethodUtils.CreateShippingMethod();
 
@@ -92,6 +93,7 @@ public class ShippingMethodTests
 
         shippingMethod.Name.Should().Be(newName);
         shippingMethod.Price.Should().Be(initialPrice);
-        shippingMethod.EstimatedDeliveryDays.Should().Be(initialEstimatedDeliveryDays);
+        shippingMethod.EstimatedDeliveryDays
+            .Should().Be(initialEstimatedDeliveryDays);
     }
 }

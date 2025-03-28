@@ -1,9 +1,9 @@
-using Domain.ProductFeedbackAggregate.Errors;
-using Domain.ProductFeedbackAggregate.ValueObjects;
+using Domain.ProductReviewAggregate.Errors;
+using Domain.ProductReviewAggregate.ValueObjects;
 
 using FluentAssertions;
 
-namespace Domain.UnitTests.ProductFeedbackAggregate.ValueObjects;
+namespace Domain.UnitTests.ProductReviewAggregate.ValueObjects;
 
 /// <summary>
 /// Unit tests for the <see cref="StarRating"/> value object.
@@ -22,7 +22,7 @@ public class StarRatingTests
     [InlineData(3)]
     [InlineData(4)]
     [InlineData(5)]
-    public void CreateStarRating_WithValidValue_ReturnsInstance(int value)
+    public void Create_WithValidValue_CreatesWithoutThrowing(int value)
     {
         var action = FluentActions
             .Invoking(() => StarRating.Create(value))
@@ -43,7 +43,7 @@ public class StarRatingTests
     [InlineData(-1)]
     [InlineData(6)]
     [InlineData(10)]
-    public void CreateStarRating_WithValueOutOfValidRange_ThrowsError(int value)
+    public void Create_WithValueOutOfValidRange_ThrowsError(int value)
     {
         FluentActions
             .Invoking(() => StarRating.Create(value))

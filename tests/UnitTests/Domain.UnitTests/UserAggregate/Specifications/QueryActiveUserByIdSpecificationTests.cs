@@ -12,10 +12,11 @@ namespace Domain.UnitTests.UserAggregate.Specifications;
 public class QueryActiveUserByIdSpecificationTests
 {
     /// <summary>
-    /// Verifies that the specification returns true when the user is active and the ID matches.
+    /// Verifies that the specification returns true when the user is active
+    /// and the identifier matches.
     /// </summary>
     [Fact]
-    public void QueryActiveUserByIdSpecification_WhenUserIsActiveAndIdMatches_ReturnsTrue()
+    public void QueryActiveUserById_WithActiveMatchingId_ReturnsTrue()
     {
         var userId = UserId.Create(1);
         var user = UserUtils.CreateCustomer(userId, active: true);
@@ -31,7 +32,7 @@ public class QueryActiveUserByIdSpecificationTests
     /// Verifies that the specification returns false when the user is not active.
     /// </summary>
     [Fact]
-    public void QueryActiveUserByIdSpecification_WhenUserIsNotActive_ReturnsFalse()
+    public void QueryActiveUserById_WithInactiveUser_ReturnsFalse()
     {
         var userId = UserId.Create(1);
         var user = UserUtils.CreateCustomer(userId, active: false);
@@ -44,10 +45,11 @@ public class QueryActiveUserByIdSpecificationTests
     }
 
     /// <summary>
-    /// Verifies that the specification returns false when the ID does not match the user's ID.
+    /// Verifies that the specification returns false when the identifier does
+    /// not match the user's identifier.
     /// </summary>
     [Fact]
-    public void QueryActiveUserByIdSpecification_WhenIdDoesNotMatch_ReturnsFalse()
+    public void QueryActiveUserById_WithoutMatchingId_ReturnsFalse()
     {
         var userId = UserId.Create(1);
         var user = UserUtils.CreateCustomer(UserId.Create(2), active: true);

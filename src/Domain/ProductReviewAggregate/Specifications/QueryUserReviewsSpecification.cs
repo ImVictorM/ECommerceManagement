@@ -9,7 +9,8 @@ namespace Domain.ProductReviewAggregate.Specifications;
 /// <summary>
 /// Represents a query to retrieve the reviews of an specific user.
 /// </summary>
-public class QueryUserReviews : CompositeQuerySpecification<ProductReview>
+public class QueryUserReviewsSpecification
+    : CompositeQuerySpecification<ProductReview>
 {
     private readonly UserId _userId;
 
@@ -18,11 +19,11 @@ public class QueryUserReviews : CompositeQuerySpecification<ProductReview>
         feedback => feedback.UserId == _userId;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="QueryUserReviews"/>
+    /// Initiates a new instance of the <see cref="QueryUserReviewsSpecification"/>
     /// class.
     /// </summary>
     /// <param name="userId">The user identifier.</param>
-    public QueryUserReviews(UserId userId)
+    public QueryUserReviewsSpecification(UserId userId)
     {
         _userId = userId;
     }
