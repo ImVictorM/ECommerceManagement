@@ -18,7 +18,7 @@ internal sealed partial class CreateCategoryCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The category was created and saved. " +
-        "The operation completed successfully."
+        "The operation was completed successfully."
     )]
     private partial void LogCategoryCreatedAndSaved();
 }

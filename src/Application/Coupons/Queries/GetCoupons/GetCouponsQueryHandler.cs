@@ -1,8 +1,8 @@
 using Application.Common.Persistence.Repositories;
+using Application.Coupons.DTOs.Results;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Coupons.DTOs.Results;
 
 namespace Application.Coupons.Queries.GetCoupons;
 

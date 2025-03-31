@@ -9,7 +9,7 @@ internal sealed partial class DeleteShippingMethodCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Starting removal of shipping method with identifier {Id}."
+        Message = "Starting removal of shipping method with identifier '{Id}'."
     )]
     private partial void LogInitiatingShippingMethodDeletion(string id);
 

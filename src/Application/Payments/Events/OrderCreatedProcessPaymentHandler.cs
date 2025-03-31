@@ -51,7 +51,8 @@ internal sealed class OrderCreatedProcessPaymentHandler
             installments: notification.Installments
         );
 
-        var response = await _paymentGateway.AuthorizePaymentAsync(authorizePaymentRequest);
+        var response = await _paymentGateway
+            .AuthorizePaymentAsync(authorizePaymentRequest);
 
         var payment = Payment.Create(
             response.PaymentId,

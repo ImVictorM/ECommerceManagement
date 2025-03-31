@@ -53,7 +53,7 @@ internal sealed partial class UpdateCouponCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The coupon information and restrictions were updated." +
-        " The operation completed successfully."
+        " The operation was completed successfully."
     )]
     private partial void LogCouponUpdatedSuccessfully();
 }

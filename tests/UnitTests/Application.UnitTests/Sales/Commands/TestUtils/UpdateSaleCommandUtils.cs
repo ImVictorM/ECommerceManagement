@@ -31,9 +31,9 @@ public static class UpdateSaleCommandUtils
     /// </returns>
     /// <remarks>
     /// If the <paramref name="productOnSaleIds"/> and
-    /// <paramref name="categoryOnSaleIds"/> parameters are not defined, a sale containing
-    /// a random product id on sale will be created to guarantee a valid sale
-    /// is created.
+    /// <paramref name="categoryOnSaleIds"/> parameters are not defined,
+    /// a sale containing a random product identifier on sale will be created to
+    /// guarantee a valid sale is created.
     /// </remarks>
     public static UpdateSaleCommand CreateCommand(
         string? saleId = null,

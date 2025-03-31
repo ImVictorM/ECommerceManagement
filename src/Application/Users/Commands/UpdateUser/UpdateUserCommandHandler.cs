@@ -76,7 +76,7 @@ internal sealed partial class UpdateUserCommandHandler
             LogEmailAvailable(request.Email);
         }
 
-        user.UpdateDetails(
+        user.Update(
             name: request.Name,
             email: emailUpdated,
             phone: request.Phone

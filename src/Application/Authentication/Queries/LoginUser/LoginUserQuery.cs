@@ -1,4 +1,5 @@
 using Application.Authentication.DTOs.Results;
+
 using MediatR;
 
 namespace Application.Authentication.Queries.LoginUser;

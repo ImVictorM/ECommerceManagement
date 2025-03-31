@@ -39,7 +39,7 @@ public class OrderAssemblyServiceTests
     /// Verifies the order line items assemble occurs correctly.
     /// </summary>
     [Fact]
-    public async Task AssembleOrderLineItems_WithValidParameters_ReturnsOrderLineItems()
+    public async Task AssembleOrderLineItemsAsync_WithValidDrafts_ReturnsOrderLineItems()
     {
         var lineItemDrafts = new[]
         {
@@ -100,7 +100,7 @@ public class OrderAssemblyServiceTests
             .ReturnsAsync(products);
 
         _mockProductPricingService
-            .Setup(s => s.CalculateProductsPriceApplyingSaleAsync(
+            .Setup(s => s.CalculateDiscountedPricesAsync(
                 products,
                 It.IsAny<CancellationToken>()
             ))

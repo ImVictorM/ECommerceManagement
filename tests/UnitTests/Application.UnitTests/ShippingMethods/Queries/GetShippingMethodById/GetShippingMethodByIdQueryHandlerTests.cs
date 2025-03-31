@@ -14,7 +14,8 @@ using Moq;
 namespace Application.UnitTests.ShippingMethods.Queries.GetShippingMethodById;
 
 /// <summary>
-/// Unit tests for the <see cref="GetShippingMethodByIdQueryHandler"/> query handler.
+/// Unit tests for the <see cref="GetShippingMethodByIdQueryHandler"/>
+/// query handler.
 /// </summary>
 public class GetShippingMethodByIdQueryHandlerTests
 {
@@ -22,7 +23,8 @@ public class GetShippingMethodByIdQueryHandlerTests
     private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetShippingMethodByIdQueryHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetShippingMethodByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetShippingMethodByIdQueryHandlerTests()
     {
@@ -30,7 +32,7 @@ public class GetShippingMethodByIdQueryHandlerTests
 
         _handler = new GetShippingMethodByIdQueryHandler(
             _mockShippingMethodRepository.Object,
-            new Mock<ILogger<GetShippingMethodByIdQueryHandler>>().Object
+            Mock.Of<ILogger<GetShippingMethodByIdQueryHandler>>()
         );
     }
 
@@ -38,10 +40,12 @@ public class GetShippingMethodByIdQueryHandlerTests
     /// Verifies the shipping method is returned when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetShippingMethodById_WithExistingShippingMethod_ReturnsIt()
+    public async Task HandleGetShippingMethodByIdQuery_WithExistentShippingMethod_ReturnsIt()
     {
         var request = GetShippingMethodByIdQueryUtils.CreateQuery();
-        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(request.ShippingMethodId));
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(
+            id: ShippingMethodId.Create(request.ShippingMethodId)
+        );
 
         _mockShippingMethodRepository
             .Setup(r => r.FindByIdAsync(
@@ -52,14 +56,18 @@ public class GetShippingMethodByIdQueryHandlerTests
 
         var result = await _handler.Handle(request, default);
 
-        result.ShippingMethod.Should().BeEquivalentTo(shippingMethod);
+        result.Id.Should().Be(shippingMethod.Id.ToString());
+        result.Name.Should().Be(shippingMethod.Name);
+        result.Price.Should().Be(shippingMethod.Price);
+        result.EstimatedDeliveryDays
+            .Should().Be(shippingMethod.EstimatedDeliveryDays);
     }
 
     /// <summary>
     /// Verifies an error is thrown when the shipping method does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleGetShippingMethodById_WithNonexistingShippingMethod_ThrowsError()
+    public async Task HandleGetShippingMethodByIdQuery_WithNonExistentShippingMethod_ThrowsError()
     {
         var request = GetShippingMethodByIdQueryUtils.CreateQuery();
 

@@ -9,7 +9,7 @@ internal sealed partial class CreateCouponCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating coupon creation with code {Code}."
+        Message = "Initiating coupon creation with code '{Code}'."
     )]
     private partial void LogInitiatingCouponCreation(string code);
 
@@ -41,7 +41,9 @@ internal sealed partial class CreateCouponCommandHandler
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Information,
-        Message = "Coupon created and saved successfully with id {CouponId}."
+        Message =
+        "The coupon has been created and saved with identifier '{CouponId}'. " +
+        "The operation was completed successfully."
     )]
     private partial void LogCouponCreatedAndSavedSuccessfully(string couponId);
 }

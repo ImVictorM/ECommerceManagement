@@ -9,7 +9,7 @@ internal sealed partial class UpdateUserCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating user update. User identifier: {Id}."
+        Message = "Initiating user update. User identifier: '{Id}'."
     )]
     private partial void LogInitiatingUserUpdate(string? id);
 

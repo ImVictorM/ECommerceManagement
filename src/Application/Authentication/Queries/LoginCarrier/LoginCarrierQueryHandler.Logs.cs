@@ -23,14 +23,18 @@ internal sealed partial class LoginCarrierQueryHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "Generating carrier authentication token. Carrier id: {CarrierId}."
+        Message =
+        "Generating carrier authentication token." +
+        " Carrier identifier: {CarrierId}."
     )]
     private partial void LogGeneratingCarrierAuthenticationToken(string carrierId);
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "The carrier was authenticated. The operation completed successfully."
+        Message =
+        "The carrier was authenticated. " +
+        "The operation was completed successfully."
     )]
     private partial void LogCarrierAuthenticatedSuccessfully();
 }

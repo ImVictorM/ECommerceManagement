@@ -14,11 +14,13 @@ public static class UpdateUserCommandUtils
     /// <summary>
     /// Creates a new instance of the <see cref="UpdateUserCommand"/> class.
     /// </summary>
-    /// <param name="userId">The user to be updated id.</param>
+    /// <param name="userId">The user to be updated identifier.</param>
     /// <param name="name">The user name.</param>
     /// <param name="email">The user email.</param>
     /// <param name="phone">The user phone.</param>
-    /// <returns>A new instance of the <see cref="UpdateUserCommand"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="UpdateUserCommand"/> class.
+    /// </returns>
     public static UpdateUserCommand CreateCommand(
         string? userId = null,
         string? name = null,

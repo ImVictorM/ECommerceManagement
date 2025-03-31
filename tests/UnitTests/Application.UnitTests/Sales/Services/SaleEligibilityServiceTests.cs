@@ -50,7 +50,7 @@ public class SaleEligibilityServiceTests
     /// threshold.
     /// </summary>
     [Fact]
-    public async Task IsSaleEligibleAsync_WhenAllProductsSatisfyThreshold_ReturnsTrue()
+    public async Task EnsureSaleProductsEligibilityAsync_WhenAllProductsSatisfyThreshold_ShouldNotThrowError()
     {
         var product = ProductUtils.CreateProduct(
             id: ProductId.Create(1),
@@ -107,7 +107,7 @@ public class SaleEligibilityServiceTests
     /// satisfy the discount threshold.
     /// </summary>
     [Fact]
-    public async Task IsSaleEligibleAsync_WhenAnyProductFailsThreshold_ReturnsFalse()
+    public async Task EnsureSaleProductsEligibilityAsync_WhenAnyProductFailsThreshold_ThrowsError()
     {
         var product = ProductUtils.CreateProduct(
             id: ProductId.Create(1),

@@ -1,8 +1,8 @@
+using Application.Orders.DTOs.Results;
 using Application.Common.Persistence.Repositories;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Orders.DTOs.Results;
 
 namespace Application.Orders.Queries.GetOrders;
 

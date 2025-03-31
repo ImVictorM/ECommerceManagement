@@ -1,6 +1,6 @@
-using Application.Common.Errors;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
+using Application.Shipments.Errors;
 using Application.Shipments.Events;
 
 using Domain.OrderAggregate.Events;
@@ -15,7 +15,8 @@ using Moq;
 namespace Application.UnitTests.Shipments.Events;
 
 /// <summary>
-/// Unit tests for the <see cref="OrderPaidPrepareShipmentHandler"/> event handler.
+/// Unit tests for the <see cref="OrderPaidPrepareShipmentHandler"/>
+/// event handler.
 /// </summary>
 public class OrderPaidPrepareShipmentHandlerTests
 {
@@ -24,7 +25,8 @@ public class OrderPaidPrepareShipmentHandlerTests
     private readonly OrderPaidPrepareShipmentHandler _handler;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderPaidPrepareShipmentHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="OrderPaidPrepareShipmentHandlerTests"/> class.
     /// </summary>
     public OrderPaidPrepareShipmentHandlerTests()
     {
@@ -45,7 +47,10 @@ public class OrderPaidPrepareShipmentHandlerTests
     {
         var orderId = OrderId.Create(1);
         var order = await OrderUtils.CreateOrderAsync(id: orderId);
-        var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), orderId: orderId);
+        var shipment = ShipmentUtils.CreateShipment(
+            id: ShipmentId.Create(1),
+            orderId: orderId
+        );
 
         _mockShipmentRepository
             .Setup(repo => repo.GetShipmentByOrderId(
@@ -68,7 +73,10 @@ public class OrderPaidPrepareShipmentHandlerTests
     {
         var orderId = OrderId.Create(1);
         var order = await OrderUtils.CreateOrderAsync(id: orderId);
-        var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), orderId: orderId);
+        var shipment = ShipmentUtils.CreateShipment(
+            id: ShipmentId.Create(1),
+            orderId: orderId
+        );
 
         shipment.AdvanceShipmentStatus();
 
@@ -82,9 +90,8 @@ public class OrderPaidPrepareShipmentHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(new OrderPaid(order), default))
             .Should()
-            .ThrowAsync<OperationProcessFailedException>()
-            .WithMessage($"Shipment status was expected to be 'Pending' but was 'Preparing' instead");
+            .ThrowAsync<PrepareShipmentNotPendingException>();
 
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never());
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 }

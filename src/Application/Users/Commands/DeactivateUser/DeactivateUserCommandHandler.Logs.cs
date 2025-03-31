@@ -9,7 +9,7 @@ internal sealed partial class DeactivateUserCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating user deactivation. User identifier: {Id}."
+        Message = "Initiating user deactivation. User identifier: '{Id}'."
     )]
     private partial void LogInitiatingUserDeactivation(string id);
 

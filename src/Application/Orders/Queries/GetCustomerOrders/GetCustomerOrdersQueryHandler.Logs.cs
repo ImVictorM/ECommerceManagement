@@ -24,7 +24,7 @@ internal sealed partial class GetCustomerOrdersQueryHandler
         Level = LogLevel.Debug,
         Message =
         "{QuantityFound} orders has been retrieved. " +
-        "The operation completed successfully."
+        "The operation was completed successfully."
     )]
     private partial void LogOrdersRetrievedSuccessfully(int quantityFound);
 }

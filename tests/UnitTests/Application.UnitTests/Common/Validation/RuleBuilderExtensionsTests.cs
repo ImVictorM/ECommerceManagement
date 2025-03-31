@@ -14,9 +14,14 @@ public class RuleBuilderExtensionsTests
     /// Verifies validating with invalid emails should contain validation errors.
     /// </summary>
     /// <param name="email">The invalid email.</param>
-    /// <param name="expectedErrors">The expected errors for the current email.</param>
+    /// <param name="expectedErrors">
+    /// The expected errors for the current email.
+    /// </param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.Email.InvalidEmails), MemberType = typeof(ValidationTestData.Email))]
+    [MemberData(
+        nameof(ValidationTestData.Email.InvalidEmails),
+        MemberType = typeof(ValidationTestData.Email)
+    )]
     public void ValidateEmail_WithInvalidEmail_ReturnsExpectedErrors(
         string email,
         IReadOnlyList<string> expectedErrors
@@ -29,7 +34,9 @@ public class RuleBuilderExtensionsTests
 
         foreach (var error in expectedErrors)
         {
-            result.ShouldHaveValidationErrorFor(x => x.Email).WithErrorMessage(error);
+            result
+                .ShouldHaveValidationErrorFor(x => x.Email)
+                .WithErrorMessage(error);
         }
     }
 
@@ -37,9 +44,14 @@ public class RuleBuilderExtensionsTests
     /// Verifies validating with invalid user names should contain validation errors.
     /// </summary>
     /// <param name="name">The invalid name.</param>
-    /// <param name="expectedErrors">The expected errors for the current name.</param>
+    /// <param name="expectedErrors">
+    /// The expected errors for the current name.
+    /// </param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.Name.InvalidNames), MemberType = typeof(ValidationTestData.Name))]
+    [MemberData(
+        nameof(ValidationTestData.Name.InvalidNames),
+        MemberType = typeof(ValidationTestData.Name)
+    )]
     public void ValidateUserName_WithInvalidName_ReturnsExpectedErrors(
         string name,
         IReadOnlyList<string> expectedErrors
@@ -52,7 +64,9 @@ public class RuleBuilderExtensionsTests
 
         foreach (var error in expectedErrors)
         {
-            result.ShouldHaveValidationErrorFor(x => x.Name).WithErrorMessage(error);
+            result
+                .ShouldHaveValidationErrorFor(x => x.Name)
+                .WithErrorMessage(error);
         }
     }
 }

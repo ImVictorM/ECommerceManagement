@@ -1,10 +1,10 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Coupons.Commands.CreateCoupon;
 using Application.UnitTests.Coupons.Commands.TestUtils;
 using Application.UnitTests.TestUtils.Extensions;
 using Application.Coupons.DTOs.Restrictions;
+using Application.Common.DTOs.Results;
 
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
@@ -67,7 +67,7 @@ public class CreateCouponCommandHandlerTests
     /// </summary>
     [Theory]
     [MemberData(nameof(ValidCreateCouponCommands))]
-    public async Task HandleCreateCoupon_WithValidRequest_CreatesAndSavesCoupon(
+    public async Task HandleCreateCouponCommand_WithValidRequest_ReturnsCreatedResult(
         CreateCouponCommand request
     )
     {

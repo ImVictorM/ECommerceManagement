@@ -80,6 +80,6 @@ internal sealed partial class LeaveProductReviewCommandHandler
 
         LogReviewSavedSuccessfully();
 
-        return new CreatedResult(review.Id.ToString());
+        return CreatedResult.FromId(review.Id.ToString());
     }
 }

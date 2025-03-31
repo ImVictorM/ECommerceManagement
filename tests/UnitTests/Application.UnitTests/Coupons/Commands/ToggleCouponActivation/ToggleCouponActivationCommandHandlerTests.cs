@@ -45,7 +45,7 @@ public class ToggleCouponActivationCommandHandlerTests
     /// false when the coupon is active.
     /// </summary>
     [Fact]
-    public async Task HandleToggleCouponActivation_WithActiveCoupon_TogglesToFalse()
+    public async Task HandleToggleCouponActivationCommand_WithActiveCoupon_TogglesToFalse()
     {
         var couponId = CouponId.Create(1);
         var coupon = CouponUtils.CreateCoupon(id: couponId);
@@ -73,7 +73,7 @@ public class ToggleCouponActivationCommandHandlerTests
     /// true when the coupon is inactive.
     /// </summary>
     [Fact]
-    public async Task HandleToggleCouponActivation_WithInactiveCoupon_TogglesToTrue()
+    public async Task HandleToggleCouponActivationCommand_WithInactiveCoupon_TogglesToTrue()
     {
         var couponId = CouponId.Create(1);
         var coupon = CouponUtils.CreateCoupon(
@@ -103,7 +103,7 @@ public class ToggleCouponActivationCommandHandlerTests
     /// Verifies when the coupon does not exist an exception is thrown.
     /// </summary>
     [Fact]
-    public async Task HandleToggleCouponActivation_WithNonexistingCoupon_ThrowsError()
+    public async Task HandleToggleCouponActivationCommand_WithNonexistingCoupon_ThrowsError()
     {
         var command = ToggleCouponActivationCommandUtils.CreateCommand();
 

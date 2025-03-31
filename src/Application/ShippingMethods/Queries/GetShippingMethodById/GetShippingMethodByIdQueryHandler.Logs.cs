@@ -9,7 +9,7 @@ internal sealed partial class GetShippingMethodByIdQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating retrieval of shipping method with identifier {Id}."
+        Message = "Initiating retrieval of shipping method with identifier '{Id}'."
     )]
     private partial void LogInitiatingShippingMethodRetrieval(string id);
 

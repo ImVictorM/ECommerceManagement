@@ -6,7 +6,7 @@ namespace Application.UnitTests.TestUtils.ValidationData;
 public static partial class ValidationTestData
 {
     /// <summary>
-    /// List of empty strings.
+    /// Provides a list of empty strings.
     /// </summary>
     public static IEnumerable<object[]> EmptyStrings =>
     [
@@ -15,7 +15,7 @@ public static partial class ValidationTestData
     ];
 
     /// <summary>
-    /// List of non-positive numbers, including zero.
+    /// Provides a list of non-positive numbers, including zero.
     /// </summary>
     public static IEnumerable<object[]> NonPositiveNumbers =>
     [
@@ -25,7 +25,7 @@ public static partial class ValidationTestData
     ];
 
     /// <summary>
-    /// List of negative numbers.
+    /// Provides a list of negative numbers.
     /// </summary>
     public static IEnumerable<object[]> NegativeNumbers =>
     [

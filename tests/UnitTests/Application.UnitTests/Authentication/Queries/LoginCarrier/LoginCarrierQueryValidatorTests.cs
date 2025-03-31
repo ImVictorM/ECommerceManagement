@@ -15,7 +15,8 @@ public class LoginCarrierQueryValidatorTests
     private readonly LoginCarrierQueryValidator _validator;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="LoginCarrierQueryValidatorTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="LoginCarrierQueryValidatorTests"/> class.
     /// </summary>
     public LoginCarrierQueryValidatorTests()
     {
@@ -27,15 +28,22 @@ public class LoginCarrierQueryValidatorTests
     /// </summary>
     /// <param name="empty">An empty input string.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.EmptyStrings), MemberType = typeof(ValidationTestData))]
-    public void ValidateLoginCarrierQuery_WhenEmailIsEmpty_ShouldHaveValidationError(string empty)
+    [MemberData(
+        nameof(ValidationTestData.EmptyStrings),
+        MemberType = typeof(ValidationTestData)
+    )]
+    public void ValidateLoginCarrierQuery_WithEmptyEmail_ShouldHaveValidationError(
+        string empty
+    )
     {
         var command = LoginCarrierQueryUtils.CreateQuery(email: empty);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Email).WithErrorMessage("'Email' must not be empty.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.Email)
+            .WithErrorMessage("'Email' must not be empty.");
     }
 
     /// <summary>
@@ -43,14 +51,21 @@ public class LoginCarrierQueryValidatorTests
     /// </summary>
     /// <param name="empty">An empty input string.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.EmptyStrings), MemberType = typeof(ValidationTestData))]
-    public void ValidateLoginCarrierQuery_WhenPasswordIsEmpty_ShouldHaveValidationError(string empty)
+    [MemberData(
+        nameof(ValidationTestData.EmptyStrings),
+        MemberType = typeof(ValidationTestData)
+    )]
+    public void ValidateLoginCarrierQuery_WithEmptyPassword_ShouldHaveValidationError(
+        string empty
+    )
     {
         var command = LoginCarrierQueryUtils.CreateQuery(password: empty);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Password).WithErrorMessage("'Password' must not be empty.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.Password)
+            .WithErrorMessage("'Password' must not be empty.");
     }
 }

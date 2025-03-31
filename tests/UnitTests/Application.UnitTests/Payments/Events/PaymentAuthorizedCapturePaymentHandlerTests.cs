@@ -25,7 +25,8 @@ public class PaymentAuthorizedCapturePaymentHandlerTests
     private readonly PaymentAuthorizedCapturePaymentHandler _handler;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="PaymentAuthorizedCapturePaymentHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="PaymentAuthorizedCapturePaymentHandlerTests"/> class.
     /// </summary>
     public PaymentAuthorizedCapturePaymentHandlerTests()
     {
@@ -44,17 +45,19 @@ public class PaymentAuthorizedCapturePaymentHandlerTests
     /// Verifies the payment is captured and updated with the response status.
     /// </summary>
     [Fact]
-    public async Task HandlePaymentAuthorized_WhenEventIsFired_CapturesThePaymentAndUpdatesTheStatus()
+    public async Task HandlePaymentAuthorized_WithAuthorizedPayment_ShouldCaptureAndUpdateStatus()
     {
         var payment = PaymentUtils.CreatePayment(
             paymentId: PaymentId.Create(Guid.NewGuid().ToString()),
             paymentStatus: PaymentStatus.Authorized
         );
 
-        var paymentStatusResponse = PaymentStatusResponseUtils.CreateResponse(paymentStatus: PaymentStatus.Approved);
+        var paymentStatusResponse = PaymentStatusResponseUtils.CreateResponse(
+            paymentStatus: PaymentStatus.Approved
+        );
 
         _mockPaymentGateway
-            .Setup(g => g.CapturePaymentAsync(payment.Id.ToString()))
+            .Setup(g => g.CapturePaymentAsync(payment.Id))
             .ReturnsAsync(paymentStatusResponse);
 
         var notification = PaymentAuthorizedUtils.CreateEvent(payment: payment);
@@ -63,8 +66,11 @@ public class PaymentAuthorizedCapturePaymentHandlerTests
 
         payment.PaymentStatus.Should().Be(paymentStatusResponse.Status);
 
-        _mockPaymentGateway.Verify(g => g.CapturePaymentAsync(payment.Id.ToString()), Times.Once());
-        _mockPaymentRepository.Verify(r => r.Update(payment), Times.Once());
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockPaymentGateway.Verify(g =>
+            g.CapturePaymentAsync(payment.Id),
+            Times.Once
+        );
+        _mockPaymentRepository.Verify(r => r.Update(payment), Times.Once);
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

@@ -1,11 +1,11 @@
 using Application.Common.Persistence;
+using Application.Common.DTOs.Results;
 using Application.Common.Persistence.Repositories;
 
 using Domain.CategoryAggregate;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Common.DTOs.Results;
 
 namespace Application.Categories.Commands.CreateCategory;
 
@@ -41,6 +41,6 @@ internal sealed partial class CreateCategoryCommandHandler
 
         LogCategoryCreatedAndSaved();
 
-        return new CreatedResult(category.Id.ToString());
+        return CreatedResult.FromId(category.Id.ToString());
     }
 }

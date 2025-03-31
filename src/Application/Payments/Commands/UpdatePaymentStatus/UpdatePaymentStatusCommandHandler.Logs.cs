@@ -9,7 +9,7 @@ internal sealed partial class UpdatePaymentStatusCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating payment status update. Payment identifier: {PaymentId}."
+        Message = "Initiating payment status update. Payment identifier: '{PaymentId}'."
     )]
     private partial void LogInitiatingPaymentStatusUpdate(string paymentId);
 
@@ -33,7 +33,7 @@ internal sealed partial class UpdatePaymentStatusCommandHandler
         Level = LogLevel.Debug,
         Message =
         "Payment status updated to {CurrentStatus}. " +
-        "The operation completed successfully."
+        "The operation was completed successfully."
     )]
     private partial void LogPaymentStatusUpdatedSuccessfully(string currentStatus);
 }

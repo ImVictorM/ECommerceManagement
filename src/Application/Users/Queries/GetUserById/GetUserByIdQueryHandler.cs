@@ -1,11 +1,11 @@
 using Application.Common.Persistence.Repositories;
 using Application.Users.Errors;
+using Application.Users.DTOs.Results;
 
 using Domain.UserAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Users.DTOs.Results;
 
 namespace Application.Users.Queries.GetUserById;
 

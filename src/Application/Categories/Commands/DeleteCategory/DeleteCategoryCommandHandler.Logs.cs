@@ -9,7 +9,7 @@ internal sealed partial class DeleteCategoryCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Starting removal of category with id {CategoryId}."
+        Message = "Starting removal of category with identifier '{CategoryId}'."
     )]
     private partial void LogInitiatingCategoryDeletion(string categoryId);
 
@@ -25,7 +25,7 @@ internal sealed partial class DeleteCategoryCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The category was deleted. " +
-        "The operation completed successfully."
+        "The operation was completed successfully."
     )]
     private partial void LogCategoryDeletedSuccessfully();
 }

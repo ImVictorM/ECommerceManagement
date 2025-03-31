@@ -17,8 +17,8 @@ internal sealed partial class GetCategoriesQueryHandler
         EventId = 2,
         Level = LogLevel.Debug,
         Message =
-        "{Quantity} categories were retrieved. " +
-        "The operation completed successfully."
+        "{Quantity} categories has been retrieved. " +
+        "The operation was completed successfully."
     )]
     private partial void LogCategoriesRetrievedSuccessfully(int quantity);
 }

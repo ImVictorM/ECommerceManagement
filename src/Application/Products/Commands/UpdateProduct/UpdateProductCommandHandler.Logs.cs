@@ -9,7 +9,7 @@ internal sealed partial class UpdateProductCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating product update. Product identifier: {Id}."
+        Message = "Initiating product update. Product identifier: '{Id}'."
     )]
     private partial void LogInitiatingProductUpdate(string id);
 
@@ -25,7 +25,7 @@ internal sealed partial class UpdateProductCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The product has been updated and saved. " +
-        "The operation completed successfully."
+        "The operation was completed successfully."
     )]
     private partial void LogProductUpdatedSuccessfully();
 }

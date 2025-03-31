@@ -11,7 +11,7 @@ internal sealed partial class AdvanceShipmentStatusCommandHandler
         Level = LogLevel.Debug,
         Message =
         "Initiating to advance the shipment status. " +
-        "Shipment identifier: {ShipmentId}"
+        "Shipment identifier: '{ShipmentId}'"
     )]
     private partial void LogInitiatingAdvanceShipmentStatus(string shipmentId);
 

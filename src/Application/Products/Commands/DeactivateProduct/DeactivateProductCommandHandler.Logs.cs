@@ -9,7 +9,7 @@ internal sealed partial class DeactivateProductCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating product deactivation. Product identifier: {Id}."
+        Message = "Initiating product deactivation. Product identifier: '{Id}'."
     )]
     private partial void LogInitiatingProductDeactivation(string id);
 
@@ -26,7 +26,7 @@ internal sealed partial class DeactivateProductCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The product has been deactivated and saved. " +
-        "The operation completed successfully."
+        "The operation was completed successfully."
     )]
     private partial void LogDeactivationCompleted();
 }

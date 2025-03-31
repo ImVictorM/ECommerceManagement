@@ -1,8 +1,8 @@
 using Application.Common.Persistence.Repositories;
+using Application.ShippingMethods.DTOs.Results;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.ShippingMethods.DTOs.Results;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethods;
 

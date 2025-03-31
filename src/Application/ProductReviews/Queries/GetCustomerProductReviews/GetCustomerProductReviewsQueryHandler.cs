@@ -36,12 +36,12 @@ internal sealed partial class GetCustomerProductReviewsQueryHandler
         var customerId = UserId.Create(request.UserId);
 
         var specifications =
-            new QueryActiveProductReviews()
-            .And(new QueryUserReviews(customerId));
+            new QueryActiveProductReviewsSpecification()
+            .And(new QueryUserReviewsSpecification(customerId));
 
         LogSpecifications(
-            nameof(QueryActiveProductReviews),
-            nameof(QueryUserReviews)
+            nameof(QueryActiveProductReviewsSpecification),
+            nameof(QueryUserReviewsSpecification)
         );
 
         var reviews = await _productReviewRepository.FindSatisfyingAsync(

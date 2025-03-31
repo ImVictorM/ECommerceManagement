@@ -43,7 +43,7 @@ internal sealed partial class RegisterCustomerCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The customer was registered and the authentication token was generated. " +
-        "The operation completed successfully."
+        "The operation was completed successfully."
     )]
     private partial void LogRegistrationCompletedSuccessfully();
 }

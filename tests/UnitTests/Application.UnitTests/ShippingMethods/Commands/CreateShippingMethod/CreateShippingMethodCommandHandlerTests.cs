@@ -23,7 +23,8 @@ public class CreateShippingMethodCommandHandlerTests
     private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="CreateShippingMethodCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="CreateShippingMethodCommandHandlerTests"/> class.
     /// </summary>
     public CreateShippingMethodCommandHandlerTests()
     {
@@ -33,12 +34,13 @@ public class CreateShippingMethodCommandHandlerTests
         _handler = new CreateShippingMethodCommandHandler(
             _mockUnitOfWork.Object,
             _mockShippingMethodRepository.Object,
-            new Mock<ILogger<CreateShippingMethodCommandHandler>>().Object
+            Mock.Of<ILogger<CreateShippingMethodCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Verifies a shipping method is created correctly and the created identifier is returned.
+    /// Verifies a shipping method is created correctly and the created
+    /// identifier is returned.
     /// </summary>
     [Fact]
     public async Task HandleCreateShippingMethod_WithValidCommand_ReturnsCreatedResult()
@@ -47,10 +49,11 @@ public class CreateShippingMethodCommandHandlerTests
 
         var request = CreateShippingMethodCommandUtils.CreateCommand();
 
-        _mockUnitOfWork.MockSetEntityIdBehavior<IShippingMethodRepository, ShippingMethod, ShippingMethodId>(
-            _mockShippingMethodRepository,
-            shippingMethodCreatedId
-        );
+        _mockUnitOfWork.MockSetEntityIdBehavior
+            <IShippingMethodRepository, ShippingMethod, ShippingMethodId>(
+                _mockShippingMethodRepository,
+                shippingMethodCreatedId
+            );
 
         var result = await _handler.Handle(request, default);
 
@@ -65,6 +68,6 @@ public class CreateShippingMethodCommandHandlerTests
             Times.Once()
         );
 
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

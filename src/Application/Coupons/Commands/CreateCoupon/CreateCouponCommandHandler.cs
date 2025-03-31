@@ -1,12 +1,12 @@
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 using Application.Coupons.Extensions;
+using Application.Common.DTOs.Results;
 
 using Domain.CouponAggregate;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Common.DTOs.Results;
 
 namespace Application.Coupons.Commands.CreateCoupon;
 
@@ -65,6 +65,6 @@ internal sealed partial class CreateCouponCommandHandler
 
         LogCouponCreatedAndSavedSuccessfully(couponGeneratedId);
 
-        return new CreatedResult(couponGeneratedId);
+        return CreatedResult.FromId(couponGeneratedId);
     }
 }

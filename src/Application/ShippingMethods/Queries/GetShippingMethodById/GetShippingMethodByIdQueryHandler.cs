@@ -1,11 +1,11 @@
 using Application.Common.Persistence.Repositories;
 using Application.ShippingMethods.Errors;
+using Application.ShippingMethods.DTOs.Results;
 
 using Domain.ShippingMethodAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.ShippingMethods.DTOs.Results;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethodById;
 

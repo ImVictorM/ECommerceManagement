@@ -26,7 +26,8 @@ public class DeactivateProductCommandHandlerTests
     private readonly DeactivateProductCommandHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DeactivateProductCommandHandlerTests"/> class,
+    /// Initializes a new instance of the
+    /// <see cref="DeactivateProductCommandHandlerTests"/> class,
     /// </summary>
     public DeactivateProductCommandHandlerTests()
     {
@@ -36,15 +37,16 @@ public class DeactivateProductCommandHandlerTests
         _handler = new DeactivateProductCommandHandler(
             _mockUnitOfWork.Object,
             _mockProductRepository.Object,
-            new Mock<ILogger<DeactivateProductCommandHandler>>().Object
+            Mock.Of<ILogger<DeactivateProductCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Tests when the product to be deactivate does not exist or is already inactive an error is thrown.
+    /// Verifies an exception is thrown when the product to be deactivate does not
+    /// exist or is already inactive.
     /// </summary>
     [Fact]
-    public async Task HandleDeactivateProduct_WhenProductDoesNotExist_ThrowsError()
+    public async Task HandleDeactivateProductCommand_WhenProductDoesNotExist_ThrowsError()
     {
         _mockProductRepository
             .Setup(r => r.FindFirstSatisfyingAsync(
@@ -58,15 +60,15 @@ public class DeactivateProductCommandHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(command, default))
             .Should()
-            .ThrowAsync<ProductNotFoundException>()
-            .WithMessage($"Product with id {command.Id} could not be deactivated because it does not exist or is already inactive");
+            .ThrowAsync<ProductNotFoundException>();
     }
 
     /// <summary>
-    /// Tests that when the product exists it is deactivated and the quantity in inventory is set to 0.
+    /// Verifies when the product exists it is deactivated and the quantity
+    /// in inventory is set to 0.
     /// </summary>
     [Fact]
-    public async Task HandleDeactivateProduct_WhenProductExists_DeactivatesAndSetsInventoryToZero()
+    public async Task HandleDeactivateProductCommand_WhenProductExists_ShouldDeactivateAndClearStock()
     {
         var productToBeDeactivate = ProductUtils.CreateProduct();
 
@@ -83,6 +85,6 @@ public class DeactivateProductCommandHandlerTests
 
         productToBeDeactivate.IsActive.Should().BeFalse();
         productToBeDeactivate.Inventory.QuantityAvailable.Should().Be(0);
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

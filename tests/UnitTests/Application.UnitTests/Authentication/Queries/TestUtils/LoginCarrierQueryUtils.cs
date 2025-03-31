@@ -18,7 +18,9 @@ public static class LoginCarrierQueryUtils
     /// </summary>
     /// <param name="email">The carrier email.</param>
     /// <param name="password">The carrier password.</param>
-    /// <returns>A new instance of the <see cref="LoginCarrierQuery"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="LoginCarrierQuery"/> class.
+    /// </returns>
     public static LoginCarrierQuery CreateQuery(
         string? email = null,
         string? password = null

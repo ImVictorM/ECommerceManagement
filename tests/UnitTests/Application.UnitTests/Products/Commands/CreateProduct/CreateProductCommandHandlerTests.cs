@@ -15,7 +15,7 @@ using Moq;
 namespace Application.UnitTests.Products.Commands.CreateProduct;
 
 /// <summary>
-/// Unit tests for <see cref="CreateProductCommandHandler"/>, verifying the correct behavior when handling the creation of a product.
+/// Unit tests for <see cref="CreateProductCommandHandler"/> command handler.
 /// </summary>
 public class CreateProductCommandHandlerTests
 {
@@ -24,7 +24,8 @@ public class CreateProductCommandHandlerTests
     private readonly CreateProductCommandHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CreateProductCommandHandlerTests"/> class,
+    /// Initializes a new instance of the
+    /// <see cref="CreateProductCommandHandlerTests"/> class.
     /// </summary>
     public CreateProductCommandHandlerTests()
     {
@@ -34,47 +35,69 @@ public class CreateProductCommandHandlerTests
         _handler = new CreateProductCommandHandler(
             _mockUnitOfWork.Object,
             _mockProductRepository.Object,
-            new Mock<ILogger<CreateProductCommandHandler>>().Object
+            Mock.Of<ILogger<CreateProductCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Provides valid <see cref="CreateProductCommand"/> requests with various parameter configurations.
-    /// Used for testing the command handler's ability to handle different valid inputs.
+    /// Provides valid <see cref="CreateProductCommand"/> requests.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidRequests =
     [
-        [CreateProductCommandUtils.CreateCommand()],
-        [CreateProductCommandUtils.CreateCommand(name: "pencil")],
-        [CreateProductCommandUtils.CreateCommand(basePrice: 15m)],
-        [CreateProductCommandUtils.CreateCommand(description: "some description")],
-        [CreateProductCommandUtils.CreateCommand(initialQuantity: 2)],
-        [CreateProductCommandUtils.CreateCommand(categoryIds: NumberUtils.CreateNumberSequenceAsString(2))],
-        [CreateProductCommandUtils.CreateCommand(images: ProductUtils.CreateImageURIs(2))],
+        [
+            CreateProductCommandUtils.CreateCommand()
+        ],
+        [
+            CreateProductCommandUtils.CreateCommand(name: "pencil")
+        ],
+        [
+                CreateProductCommandUtils.CreateCommand(basePrice: 15m)
+        ],
+        [
+            CreateProductCommandUtils.CreateCommand(description: "some description")
+        ],
+        [
+            CreateProductCommandUtils.CreateCommand(initialQuantity: 2)
+        ],
+        [
+            CreateProductCommandUtils.CreateCommand(
+                categoryIds: NumberUtils.CreateNumberSequenceAsString(2)
+            )
+        ],
+        [
+            CreateProductCommandUtils.CreateCommand(
+                images: ProductUtils.CreateImageURIs(2)
+            )
+        ],
     ];
 
     /// <summary>
-    /// Verifies that when a valid <see cref="CreateProductCommand"/> is handled by the <see cref="CreateProductCommandHandler"/>,
-    /// the product is added to the repository, changes are saved, and a valid product identifier is returned.
+    /// Verifies a product is created correct with a valid requests.
     /// </summary>
-    /// <param name="request">The valid <see cref="CreateProductCommand"/> request.</param>
+    /// <param name="request">The valid request.</param>
     [Theory]
     [MemberData(nameof(ValidRequests))]
-    public async Task HandleCreateProduct_WhenCommandIsValid_CreatesAndReturnsTheId(CreateProductCommand request)
+    public async Task HandleCreateProductCommand_WithValidRequest_ReturnsCreatedResult(
+        CreateProductCommand request
+    )
     {
         var mockEntityId = ProductId.Create(5);
 
-        _mockUnitOfWork.MockSetEntityIdBehavior<IProductRepository, Product, ProductId>(
-            _mockProductRepository,
-            mockEntityId
-        );
+        _mockUnitOfWork.MockSetEntityIdBehavior
+            <IProductRepository, Product, ProductId>(
+                _mockProductRepository,
+                mockEntityId
+            );
 
         var actResult = await FluentActions
             .Invoking(() => _handler.Handle(request, default))
             .Should()
             .NotThrowAsync();
 
-        _mockProductRepository.Verify(r => r.AddAsync(It.IsAny<Product>()), Times.Once);
+        _mockProductRepository.Verify(
+            r => r.AddAsync(It.IsAny<Product>()),
+            Times.Once
+        );
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
 
         actResult.Which.Id.Should().NotBeNullOrWhiteSpace();

@@ -1,6 +1,6 @@
 using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
-using Application.Common.DTOs;
+using Application.Common.DTOs.Results;
 using Application.Sales.Commands.CreateSale;
 using Application.Sales.Errors;
 using Application.UnitTests.Sales.Commands.TestUtils;
@@ -49,7 +49,7 @@ public class CreateSaleCommandHandlerTests
     /// Verifies a sale is successfully created and saved.
     /// </summary>
     [Fact]
-    public async Task HandleCreateSale_WithValidRequest_ShouldCreateAndSaveSale()
+    public async Task HandleCreateSaleCommand_WithValidRequest_ShouldCreateAndSaveSale()
     {
         var idCreatedSale = SaleId.Create(1);
 
@@ -70,7 +70,7 @@ public class CreateSaleCommandHandlerTests
             Times.Once()
         );
 
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
 
         result.Should().NotBeNull();
         result.Should().BeOfType<CreatedResult>();
@@ -82,7 +82,7 @@ public class CreateSaleCommandHandlerTests
     /// eligible for the sale.
     /// </summary>
     [Fact]
-    public async Task HandleCreateSale_WithSaleProductNotEligible_ThrowsError()
+    public async Task HandleCreateSaleCommand_WithSaleProductNotEligible_ThrowsError()
     {
         var idCreatedSale = SaleId.Create(1);
         var idProductNotEligible = ProductId.Create(1);

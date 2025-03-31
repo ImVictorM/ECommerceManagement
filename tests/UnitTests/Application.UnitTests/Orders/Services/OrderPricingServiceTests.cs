@@ -41,7 +41,7 @@ public class OrderPricingServiceTests
     /// Verifies the calculation of the total price when no coupon is applied.
     /// </summary>
     [Fact]
-    public async Task CalculateTotal_WithoutCouponsApplied_ReturnsCalculatedTotalCorrectly()
+    public async Task CalculateTotalAsync_WithoutCouponsApplied_ReturnsCalculatedTotalCorrectly()
     {
         var shippingMethodId = ShippingMethodId.Create(1);
         var shippingMethod = ShippingMethodUtils.CreateShippingMethod(
@@ -70,7 +70,7 @@ public class OrderPricingServiceTests
     /// Verifies the calculation of the total price when coupons are applied.
     /// </summary>
     [Fact]
-    public async Task CalculateTotal_WithCouponsApplied_ReturnsCalculatedTotalCorrectly()
+    public async Task CalculateTotalAsync_WithCouponsApplied_ReturnsCalculatedTotalCorrectly()
     {
         var shippingMethodId = ShippingMethodId.Create(1);
         var shippingMethod = ShippingMethodUtils.CreateShippingMethod(
@@ -110,7 +110,7 @@ public class OrderPricingServiceTests
     /// Verifies an exception is thrown when an invalid shipping method is provided.
     /// </summary>
     [Fact]
-    public async Task CalculateTotal_WithInvalidShippingMethod_ThrowsError()
+    public async Task CalculateTotalAsync_WithInvalidShippingMethod_ThrowsError()
     {
         var shippingMethodId = ShippingMethodId.Create(999);
         var lineItems = OrderUtils.CreateOrderLineItems(count: 3);

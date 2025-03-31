@@ -1,4 +1,4 @@
-using Application.Common.PaymentGateway;
+using Application.Common.PaymentGateway.Responses;
 
 using Domain.PaymentAggregate.Enumerations;
 
@@ -14,8 +14,12 @@ public static class PaymentStatusResponseUtils
     /// </summary>
     /// <param name="paymentStatus">The current payment status.</param>
     /// <param name="details">The payment status details.</param>
-    /// <param name="captured">A bool value indicating if the payment was captured.</param>
-    /// <returns>A new instance of the <see cref="PaymentStatusResponse"/> class.</returns>
+    /// <param name="captured">
+    /// A bool value indicating if the payment was captured.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="PaymentStatusResponse"/> class.
+    /// </returns>
     public static PaymentStatusResponse CreateResponse(
         PaymentStatus? paymentStatus = null,
         string? details = null,

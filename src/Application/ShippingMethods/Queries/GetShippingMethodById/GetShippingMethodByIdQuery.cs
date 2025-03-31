@@ -1,4 +1,5 @@
 using Application.ShippingMethods.DTOs.Results;
+
 using MediatR;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethodById;

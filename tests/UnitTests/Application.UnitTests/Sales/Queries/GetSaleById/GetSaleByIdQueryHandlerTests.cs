@@ -22,7 +22,8 @@ public class GetSaleByIdQueryHandlerTests
     private readonly GetSaleByIdQueryHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GetSaleByIdQueryHandlerTests"/> class.
+    /// Initializes a new instance of the
+    /// <see cref="GetSaleByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetSaleByIdQueryHandlerTests()
     {
@@ -34,10 +35,10 @@ public class GetSaleByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Ensures a sale is successfully retrieved when it exists.
+    /// Verifies a sale is successfully retrieved when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetSaleByIdQuery_WithExistingSale_ReturnsSaleResult()
+    public async Task HandleGetSaleByIdQuery_WithExistentSale_ReturnsSaleResult()
     {
         var saleId = "1";
         var sale = SaleUtils.CreateSale(id: SaleId.Create(saleId));
@@ -67,7 +68,7 @@ public class GetSaleByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Ensures an exception is thrown when trying to retrieve a non-existent sale.
+    /// Verifies an exception is thrown when trying to retrieve a non-existent sale.
     /// </summary>
     [Fact]
     public async Task HandleGetSaleByIdQuery_WithNonExistentSale_ThrowsError()

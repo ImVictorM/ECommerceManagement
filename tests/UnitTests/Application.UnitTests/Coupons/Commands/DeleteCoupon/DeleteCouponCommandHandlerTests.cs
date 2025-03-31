@@ -24,7 +24,8 @@ public class DeleteCouponCommandHandlerTests
     private readonly Mock<ICouponRepository> _mockCouponRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="DeleteCouponCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="DeleteCouponCommandHandlerTests"/> class.
     /// </summary>
     public DeleteCouponCommandHandlerTests()
     {
@@ -39,10 +40,10 @@ public class DeleteCouponCommandHandlerTests
     }
 
     /// <summary>
-    /// Verifies when the coupon exists it is deleted.
+    /// Verifies the coupon is deleted when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteCoupon_WithExistingCoupon_DeletesIt()
+    public async Task HandleDeleteCouponCommand_WithExistentCoupon_DeletesIt()
     {
         var couponId = CouponId.Create(1);
         var coupon = CouponUtils.CreateCoupon(id: couponId);
@@ -69,10 +70,10 @@ public class DeleteCouponCommandHandlerTests
     }
 
     /// <summary>
-    /// Verifies when the coupon does not exist an exception is thrown.
+    /// Verifies an exception is thrown when the coupon does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteCoupon_WithNonexistingCoupon_ThrowsError()
+    public async Task HandleDeleteCouponCommand_WithNonExistentCoupon_ThrowsError()
     {
         var command = DeleteCouponCommandUtils.CreateCommand();
 

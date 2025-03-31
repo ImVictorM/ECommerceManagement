@@ -1,12 +1,12 @@
 using Application.Common.PaymentGateway;
 using Application.Common.Persistence.Repositories;
 using Application.Orders.Errors;
+using Application.Orders.DTOs.Results;
 
 using Domain.OrderAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Orders.DTOs.Results;
 
 namespace Application.Orders.Queries.GetOrderById;
 

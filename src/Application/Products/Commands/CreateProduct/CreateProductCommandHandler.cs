@@ -1,5 +1,6 @@
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
+using Application.Common.DTOs.Results;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
@@ -7,7 +8,6 @@ using Domain.ProductAggregate.ValueObjects;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
-using Application.Common.DTOs.Results;
 
 namespace Application.Products.Commands.CreateProduct;
 
@@ -56,6 +56,6 @@ internal sealed partial class CreateProductCommandHandler
 
         LogProductPersistedSuccessfully(productId);
 
-        return new CreatedResult(productId);
+        return CreatedResult.FromId(productId);
     }
 }

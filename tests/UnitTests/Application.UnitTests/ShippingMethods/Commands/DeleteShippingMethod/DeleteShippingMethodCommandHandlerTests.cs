@@ -15,7 +15,8 @@ using FluentAssertions;
 namespace Application.UnitTests.ShippingMethods.Commands.DeleteShippingMethod;
 
 /// <summary>
-/// Unit tests for the <see cref="DeleteShippingMethodCommandHandler"/> command handler.
+/// Unit tests for the <see cref="DeleteShippingMethodCommandHandler"/>
+/// command handler.
 /// </summary>
 public class DeleteShippingMethodCommandHandlerTests
 {
@@ -24,7 +25,8 @@ public class DeleteShippingMethodCommandHandlerTests
     private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="DeleteShippingMethodCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="DeleteShippingMethodCommandHandlerTests"/> class.
     /// </summary>
     public DeleteShippingMethodCommandHandlerTests()
     {
@@ -34,7 +36,7 @@ public class DeleteShippingMethodCommandHandlerTests
         _handler = new DeleteShippingMethodCommandHandler(
             _mockUnitOfWork.Object,
             _mockShippingMethodRepository.Object,
-            new Mock<ILogger<DeleteShippingMethodCommandHandler>>().Object
+            Mock.Of<ILogger<DeleteShippingMethodCommandHandler>>()
         );
     }
 
@@ -42,10 +44,12 @@ public class DeleteShippingMethodCommandHandlerTests
     /// Verifies the shipping method is deleted when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteShippingMethod_WithExistingShippingMethod_DeletesIt()
+    public async Task HandleDeleteShippingMethodCommand_WithExistingShippingMethod_DeletesIt()
     {
         var request = DeleteShippingMethodCommandUtils.CreateCommand();
-        var shippingMethodToBeDeleted = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(request.ShippingMethodId));
+        var shippingMethodToBeDeleted = ShippingMethodUtils.CreateShippingMethod(
+            id: ShippingMethodId.Create(request.ShippingMethodId)
+        );
 
         _mockShippingMethodRepository
             .Setup(r => r.FindByIdAsync(
@@ -56,15 +60,18 @@ public class DeleteShippingMethodCommandHandlerTests
 
         await _handler.Handle(request, default);
 
-        _mockShippingMethodRepository.Verify(r => r.RemoveOrDeactivate(shippingMethodToBeDeleted), Times.Once());
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockShippingMethodRepository.Verify(
+            r => r.RemoveOrDeactivate(shippingMethodToBeDeleted),
+            Times.Once
+        );
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 
     /// <summary>
     /// Verifies an error is thrown when the shipping method to be deleted does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteShippingMethod_WithNonexistingShippingMethod_ThrowsError()
+    public async Task HandleDeleteShippingMethodCommand_WithNonExistentShippingMethod_ThrowsError()
     {
         var request = DeleteShippingMethodCommandUtils.CreateCommand();
 

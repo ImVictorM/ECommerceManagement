@@ -110,7 +110,9 @@ public static class CouponRestrictionIOExtensions
     /// into a collection of <see cref="CouponRestrictionIO"/> objects.
     /// </summary>
     /// <param name="restrictions">The domain coupon restrictions.</param>
-    /// <returns>A collection of <see cref="CouponRestrictionIO"/> objects.</returns>
+    /// <returns>
+    /// A collection of <see cref="CouponRestrictionIO"/> objects.
+    /// </returns>
     public static IEnumerable<CouponRestrictionIO> ParseRestrictions(
         this IEnumerable<CouponRestriction> restrictions
     )

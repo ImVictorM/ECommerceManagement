@@ -9,7 +9,8 @@ internal sealed partial class UpdateShippingMethodCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating shipping method update. Shipping method identifier: {Id}."
+        Message =
+        "Initiating shipping method update. Shipping method identifier: '{Id}'."
     )]
     private partial void LogInitiatingShippingMethodUpdate(string id);
 

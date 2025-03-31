@@ -9,7 +9,7 @@ internal sealed partial class GetProductByIdQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating retrieval of product with identifier {Id}."
+        Message = "Initiating retrieval of product with identifier '{Id}'."
     )]
     private partial void LogInitiatingProductRetrieval(string id);
 

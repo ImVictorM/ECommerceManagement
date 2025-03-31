@@ -7,8 +7,7 @@ using Bogus;
 namespace Application.UnitTests.Products.Commands.TestUtils;
 
 /// <summary>
-/// Utility class for creating instances of <see cref="CreateProductCommand"/> with customizable parameters for testing purposes.
-/// Provides default values based on predefined domain constants.
+/// Utilities for the <see cref="CreateProductCommand"/> class.
 /// </summary>
 public static class CreateProductCommandUtils
 {
@@ -22,7 +21,9 @@ public static class CreateProductCommandUtils
     /// <param name="basePrice">The product base price.</param>
     /// <param name="categoryIds">The product categories.</param>
     /// <param name="images">The product images.</param>
-    /// <returns>A new instance of the <see cref="CreateProductCommand"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CreateProductCommand"/> class.
+    /// </returns>
     public static CreateProductCommand CreateCommand(
         string? name = null,
         string? description = null,

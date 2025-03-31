@@ -24,7 +24,8 @@ public class UpdateCategoryCommandHandlerTests
     private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateCategoryCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="UpdateCategoryCommandHandlerTests"/> class.
     /// </summary>
     public UpdateCategoryCommandHandlerTests()
     {
@@ -39,10 +40,10 @@ public class UpdateCategoryCommandHandlerTests
     }
 
     /// <summary>
-    /// Tests when the category does not exist an error is thrown.
+    /// Verifies an exception is thrown when the category does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateCategory_WhenCategoryDoesNotExist_ThrowsError()
+    public async Task HandleUpdateCategoryCommand_WhenCategoryDoesNotExist_ThrowsError()
     {
         _mockCategoryRepository
             .Setup(r => r.FindByIdAsync(
@@ -51,24 +52,26 @@ public class UpdateCategoryCommandHandlerTests
             ))
             .ReturnsAsync((Category?)null);
 
+        var request = UpdateCategoryCommandUtils.CreateCommand();
+
         await FluentActions
-            .Invoking(() => _handler.Handle(UpdateCategoryCommandUtils.CreateCommand(), default))
+            .Invoking(() => _handler.Handle(request, default))
             .Should()
             .ThrowAsync<CategoryNotFoundException>();
     }
 
     /// <summary>
-    /// Tests when the category exists it is updated correctly.
+    /// Verifies the category is updated when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateCategory_WhenCategoryExists_UpdatesIt()
+    public async Task HandleUpdateCategoryCommand_WhenCategoryExists_UpdatesIt()
     {
         var categoryId = CategoryId.Create(1);
         var category = CategoryUtils.CreateCategory(id: categoryId);
 
         var command = UpdateCategoryCommandUtils.CreateCommand(
             id: categoryId.ToString(),
-            name: "instruments"
+            name: "music"
         );
 
         _mockCategoryRepository

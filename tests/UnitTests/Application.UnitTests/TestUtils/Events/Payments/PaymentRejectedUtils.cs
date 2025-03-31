@@ -13,7 +13,9 @@ public static class PaymentRejectedUtils
     /// Creates a new instance of the <see cref="PaymentRejected"/> class.
     /// </summary>
     /// <param name="payment">The payment.</param>
-    /// <returns>A new instance of the <see cref="PaymentRejected"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="PaymentRejected"/> class.
+    /// </returns>
     public static PaymentRejected CreateEvent(
         Payment? payment = null
     )

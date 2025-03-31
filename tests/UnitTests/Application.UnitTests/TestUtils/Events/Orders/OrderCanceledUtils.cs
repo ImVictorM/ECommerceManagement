@@ -13,7 +13,9 @@ public static class OrderCanceledUtils
     /// Creates a new instance of the <see cref="OrderCanceled"/> class.
     /// </summary>
     /// <param name="order">The canceled order.</param>
-    /// <returns>A new instance of the <see cref="OrderCanceled"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="OrderCanceled"/> class.
+    /// </returns>
     public static async Task<OrderCanceled> CreateEventAsync(
         Order? order = null
     )

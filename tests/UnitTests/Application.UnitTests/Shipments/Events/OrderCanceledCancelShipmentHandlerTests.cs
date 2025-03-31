@@ -14,7 +14,8 @@ using Moq;
 namespace Application.UnitTests.Shipments.Events;
 
 /// <summary>
-/// Unit tests for the <see cref="OrderCanceledCancelShipmentHandler"/> event handler.
+/// Unit tests for the <see cref="OrderCanceledCancelShipmentHandler"/>
+/// event handler.
 /// </summary>
 public class OrderCanceledCancelShipmentHandlerTests
 {
@@ -23,7 +24,8 @@ public class OrderCanceledCancelShipmentHandlerTests
     private readonly OrderCanceledCancelShipmentHandler _handler;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCanceledCancelShipmentHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="OrderCanceledCancelShipmentHandlerTests"/> class.
     /// </summary>
     public OrderCanceledCancelShipmentHandlerTests()
     {
@@ -60,7 +62,7 @@ public class OrderCanceledCancelShipmentHandlerTests
         await _handler.Handle(new OrderCanceled(order), default);
 
         shipment.ShipmentStatus.Should().Be(ShipmentStatus.Canceled);
-        _mockShipmentRepository.Verify(r => r.Update(shipment), Times.Once());
+        _mockShipmentRepository.Verify(r => r.Update(shipment), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 }

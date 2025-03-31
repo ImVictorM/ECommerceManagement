@@ -10,23 +10,23 @@ namespace Application.Sales.DTOs.Results;
 public class SaleResult
 {
     /// <summary>
-    /// The sale identifier.
+    /// Gets the sale identifier.
     /// </summary>
     public string Id { get; }
     /// <summary>
-    /// The sale discount.
+    /// Gets the sale discount.
     /// </summary>
     public Discount Discount { get; }
     /// <summary>
-    /// The category on sale identifiers.
+    /// Gets the category on sale identifiers.
     /// </summary>
     public IReadOnlyList<string> CategoryOnSaleIds { get; }
     /// <summary>
-    /// The product on sale identifiers.
+    /// Gets the product on sale identifiers.
     /// </summary>
     public IReadOnlyList<string> ProductOnSaleIds { get; }
     /// <summary>
-    /// The product excluded from sale identifiers.
+    /// Gets the product excluded from sale identifiers.
     /// </summary>
     public IReadOnlyList<string> ProductExcludedFromSaleIds { get; }
 

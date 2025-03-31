@@ -1,3 +1,4 @@
+using Application.Orders.DTOs.Filters;
 using Application.Orders.Queries.GetOrders;
 
 namespace Application.UnitTests.Orders.Queries.TestUtils;
@@ -10,10 +11,12 @@ public static class GetOrdersQueryUtils
     /// <summary>
     /// Creates a new instance of the <see cref="GetOrdersQuery"/> class.
     /// </summary>
-    /// <param name="status">The order status filter.</param>
-    /// <returns>A new instance of the <see cref="GetOrdersQuery"/> class.</returns>
-    public static GetOrdersQuery CreateQuery(string? status = null)
+    /// <param name="filters">The order filters.</param>
+    /// <returns>
+    /// A new instance of the <see cref="GetOrdersQuery"/> class.
+    /// </returns>
+    public static GetOrdersQuery CreateQuery(OrderFilters? filters = null)
     {
-        return new GetOrdersQuery(status);
+        return new GetOrdersQuery(filters ?? new OrderFilters());
     }
 }

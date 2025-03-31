@@ -9,7 +9,7 @@ internal sealed partial class DeleteCouponCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating deletion of coupon with identifier {CouponId}."
+        Message = "Initiating deletion of coupon with identifier '{CouponId}'."
     )]
     private partial void LogInitiatingCouponDeletion(string couponId);
 
@@ -23,7 +23,9 @@ internal sealed partial class DeleteCouponCommandHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The coupon was deleted. The operation completed successfully."
+        Message =
+        "The coupon has been deleted. " +
+        "The operation was completed successfully."
     )]
     private partial void LogCouponDeletedSuccessfully();
 }

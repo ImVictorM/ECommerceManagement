@@ -26,7 +26,8 @@ public class UpdateSaleCommandHandlerTests
     private readonly UpdateSaleCommandHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UpdateSaleCommandHandlerTests"/> class.
+    /// Initializes a new instance of the
+    /// <see cref="UpdateSaleCommandHandlerTests"/> class.
     /// </summary>
     public UpdateSaleCommandHandlerTests()
     {
@@ -43,10 +44,10 @@ public class UpdateSaleCommandHandlerTests
     }
 
     /// <summary>
-    /// Ensures a sale is successfully updated when it exists.
+    /// Verifies a sale is successfully updated when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateSaleCommand_WithExistingSale_UpdatesSale()
+    public async Task HandleUpdateSaleCommand_WithExistentSale_UpdatesSale()
     {
         var saleId = "1";
         var sale = SaleUtils.CreateSale(id: SaleId.Create(saleId));
@@ -69,7 +70,7 @@ public class UpdateSaleCommandHandlerTests
                 sale.Id,
                 It.IsAny<CancellationToken>()
             ),
-            Times.Once()
+            Times.Once
         );
 
         _mockSaleEligibilityService.Verify(
@@ -77,14 +78,14 @@ public class UpdateSaleCommandHandlerTests
                 sale,
                 It.IsAny<CancellationToken>()
             ),
-            Times.Once()
+            Times.Once
         );
 
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
     /// <summary>
-    /// Ensures an exception is thrown when trying to update a non-existent sale.
+    /// Verifies an exception is thrown when trying to update a non-existent sale.
     /// </summary>
     [Fact]
     public async Task HandleUpdateSaleCommand_WithNonExistentSale_ThrowsError()

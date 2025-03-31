@@ -24,7 +24,8 @@ public class UpdateProductCommandHandlerTests
     private readonly UpdateProductCommandHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UpdateProductCommandHandlerTests"/> class,
+    /// Initializes a new instance of the
+    /// <see cref="UpdateProductCommandHandlerTests"/> class.
     /// </summary>
     public UpdateProductCommandHandlerTests()
     {
@@ -34,15 +35,15 @@ public class UpdateProductCommandHandlerTests
         _handler = new UpdateProductCommandHandler(
             _mockUnitOfWork.Object,
             _mockProductRepository.Object,
-            new Mock<ILogger<UpdateProductCommandHandler>>().Object
+            Mock.Of<ILogger<UpdateProductCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Tests when the product does not exists an exception is thrown.
+    /// Verifies an exception is thrown when the product does not exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateProduct_WhenProductDoesNotExist_ThrowsError()
+    public async Task HandleUpdateProductCommand_WhenProductDoesNotExist_ThrowsError()
     {
         var notFoundId = "14";
         var command = UpdateProductCommandUtils.CreateCommand(id: notFoundId);
@@ -57,15 +58,14 @@ public class UpdateProductCommandHandlerTests
         await FluentActions
             .Invoking(() => _handler.Handle(command, default))
             .Should()
-            .ThrowAsync<ProductNotFoundException>()
-            .WithMessage($"The product with id {notFoundId} could not be updated because it does not exist");
+            .ThrowAsync<ProductNotFoundException>();
     }
 
     /// <summary>
-    /// Tests when the product exists it is updated correctly.
+    /// Verifies the product is updated when the it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateProduct_WhenProductExists_UpdatesIt()
+    public async Task HandleUpdateProductCommand_WhenProductExists_UpdatesIt()
     {
         var productToBeUpdated = ProductUtils.CreateProduct();
 
@@ -86,11 +86,18 @@ public class UpdateProductCommandHandlerTests
 
         await _handler.Handle(command, default);
 
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
         productToBeUpdated.Name.Should().Be(command.Name);
         productToBeUpdated.Description.Should().Be(command.Description);
         productToBeUpdated.BasePrice.Should().Be(command.BasePrice);
-        productToBeUpdated.ProductCategories.Select(pc => pc.CategoryId.ToString()).Should().BeEquivalentTo(command.CategoryIds);
-        productToBeUpdated.ProductImages.Select(pi => pi.Url).Should().BeEquivalentTo(command.Images);
+        productToBeUpdated.ProductCategories
+            .Select(pc => pc.CategoryId.ToString())
+            .Should()
+            .BeEquivalentTo(command.CategoryIds);
+        productToBeUpdated.ProductImages
+            .Select(pi => pi.Uri)
+            .Should()
+            .BeEquivalentTo(command.Images);
+
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

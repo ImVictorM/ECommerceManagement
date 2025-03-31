@@ -9,7 +9,7 @@ internal sealed partial class GetUserByIdQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating user retrieval. User identifier: {Id}."
+        Message = "Initiating user retrieval. User identifier: '{Id}'."
     )]
     private partial void LogInitiatingUserRetrieval(string id);
 

@@ -16,7 +16,7 @@ internal sealed partial class GetSelfQueryHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Current user identifier: {UserId}."
+        Message = "Current user identifier: '{UserId}'."
     )]
     private partial void LogCurrentUserId(string userId);
 

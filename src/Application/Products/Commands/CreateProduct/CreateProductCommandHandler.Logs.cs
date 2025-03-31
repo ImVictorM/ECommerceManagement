@@ -26,8 +26,8 @@ internal sealed partial class CreateProductCommandHandler
         EventId = 3,
         Level = LogLevel.Debug,
         Message =
-        "The product was created and saved with the identifier '{ProductId}'. " +
-        "The operation completed successfully."
+        "The product has been created and saved with the identifier '{ProductId}'. " +
+        "The operation was completed successfully."
     )]
     private partial void LogProductPersistedSuccessfully(string? productId);
 

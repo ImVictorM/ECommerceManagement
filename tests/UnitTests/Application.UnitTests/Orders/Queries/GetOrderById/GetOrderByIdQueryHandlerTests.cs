@@ -1,11 +1,10 @@
 using Application.Orders.Queries.GetOrderById;
 using Application.Orders.Errors;
-using Application.Orders.DTOs;
+using Application.Orders.Queries.Projections;
 using Application.Common.Persistence.Repositories;
 using Application.Common.PaymentGateway;
 using Application.UnitTests.Orders.Queries.TestUtils;
 using Application.UnitTests.TestUtils.PaymentGateway;
-using Application.UnitTests.Orders.TestUtils;
 using Application.UnitTests.Orders.TestUtils.Extensions;
 
 using Domain.OrderAggregate.ValueObjects;
@@ -16,6 +15,7 @@ using Domain.UnitTests.TestUtils;
 using Microsoft.Extensions.Logging;
 using FluentAssertions;
 using Moq;
+using Application.UnitTests.Orders.TestUtils.Projections;
 
 namespace Application.UnitTests.Orders.Queries.GetOrderById;
 
@@ -28,7 +28,8 @@ public class GetOrderByIdQueryHandlerTests
     private readonly Mock<IOrderRepository> _mockOrderRepository;
     private readonly Mock<IPaymentGateway> _mockPaymentGateway;
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetOrderByIdQueryHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetOrderByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetOrderByIdQueryHandlerTests()
     {
@@ -38,31 +39,38 @@ public class GetOrderByIdQueryHandlerTests
         _handler = new GetOrderByIdQueryHandler(
             _mockOrderRepository.Object,
             _mockPaymentGateway.Object,
-            new Mock<ILogger<GetOrderByIdQueryHandler>>().Object
+            Mock.Of<ILogger<GetOrderByIdQueryHandler>>()
         );
     }
 
     /// <summary>
-    /// Verifies that the handler returns the order details when the order and payment exists.
+    /// Verifies the handler returns the order with details when the order exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetOrderByIdQuery_WithExistingOrder_ReturnsOrderDetails()
+    public async Task HandleGetOrderByIdQuery_WithExistentOrder_ReturnsOrderDetails()
     {
         var query = GetOrderByIdQueryUtils.CreateQuery();
 
         var orderId = OrderId.Create(query.OrderId);
         var order = await OrderUtils.CreateOrderAsync(id: orderId);
 
-        var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), orderId: orderId);
-        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(id: shipment.ShippingMethodId);
+        var shipment = ShipmentUtils.CreateShipment(
+            id: ShipmentId.Create(1),
+            orderId: orderId
+        );
+
+        var shippingMethod = ShippingMethodUtils.CreateShippingMethod(
+            id: shipment.ShippingMethodId
+        );
 
         var payment = PaymentUtils.CreatePayment(
             paymentId: PaymentId.Create(Guid.NewGuid().ToString()),
             orderId: orderId
         );
-        var paymentDetailedResponse = PaymentResponseUtils.CreateResponse();
+        var paymentDetailedResponse = PaymentResponseUtils
+            .CreateResponse(paymentId: payment.Id);
 
-        var queryResult = OrderDetailedQueryResultUtils.CreateResult(
+        var orderDetailedProjection = OrderDetailedProjectionUtils.CreateProjection(
             order,
             shipment,
             shippingMethod,
@@ -74,15 +82,18 @@ public class GetOrderByIdQueryHandlerTests
                 orderId,
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(queryResult);
+            .ReturnsAsync(orderDetailedProjection);
 
         _mockPaymentGateway
-            .Setup(p => p.GetPaymentByIdAsync(payment.Id.ToString()))
+            .Setup(p => p.GetPaymentByIdAsync(
+                payment.Id,
+                It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync(paymentDetailedResponse);
 
         var result = await _handler.Handle(query, default);
 
-        result.EnsureCorrespondsTo(queryResult, paymentDetailedResponse);
+        result.EnsureCorrespondsTo(orderDetailedProjection, paymentDetailedResponse);
     }
 
     /// <summary>
@@ -99,7 +110,7 @@ public class GetOrderByIdQueryHandlerTests
                 orderId,
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync((OrderDetailedQueryResult?)null!);
+            .ReturnsAsync((OrderDetailedProjection?)null!);
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))

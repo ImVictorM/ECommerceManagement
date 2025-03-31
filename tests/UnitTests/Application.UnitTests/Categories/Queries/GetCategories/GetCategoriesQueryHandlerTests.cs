@@ -21,7 +21,8 @@ public class GetCategoriesQueryHandlerTests
     private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetCategoriesQueryHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetCategoriesQueryHandlerTests"/> class.
     /// </summary>
     public GetCategoriesQueryHandlerTests()
     {
@@ -34,10 +35,10 @@ public class GetCategoriesQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests all the categories are retrieved when the handler is called.
+    /// Verifies all the categories are retrieved.
     /// </summary>
     [Fact]
-    public async Task HandleGetCategories_WhenCalled_ReturnsAllTheCategories()
+    public async Task HandleGetCategories_WithValidRequest_ReturnsAllTheCategories()
     {
         var categories = CategoryUtils.CreateCategories(4).ToList();
 

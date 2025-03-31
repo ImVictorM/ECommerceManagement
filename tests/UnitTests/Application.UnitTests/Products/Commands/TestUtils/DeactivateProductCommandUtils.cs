@@ -12,8 +12,10 @@ public static class DeactivateProductCommandUtils
     /// <summary>
     /// Creates a new instance of the <see cref="DeactivateProductCommand"/> class.
     /// </summary>
-    /// <param name="id">The product id.</param>
-    /// <returns>A new instance of the <see cref="DeactivateProductCommand"/> class.</returns>
+    /// <param name="id">The product identifier.</param>
+    /// <returns>
+    /// A new instance of the <see cref="DeactivateProductCommand"/> class.
+    /// </returns>
     public static DeactivateProductCommand CreateCommand(
         string? id = null
     )

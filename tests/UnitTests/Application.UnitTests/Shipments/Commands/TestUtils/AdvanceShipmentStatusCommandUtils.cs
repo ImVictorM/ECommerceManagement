@@ -10,10 +10,13 @@ namespace Application.UnitTests.Shipments.Commands.TestUtils;
 public static class AdvanceShipmentStatusCommandUtils
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="AdvanceShipmentStatusCommand"/> class.
+    /// Creates a new instance of the <see cref="AdvanceShipmentStatusCommand"/>
+    /// class.
     /// </summary>
-    /// <param name="shipmentId">The shipment id.</param>
-    /// <returns>A new instance of the <see cref="AdvanceShipmentStatusCommand"/> class.</returns>
+    /// <param name="shipmentId">The shipment identifier.</param>
+    /// <returns>
+    /// A new instance of the <see cref="AdvanceShipmentStatusCommand"/> class.
+    /// </returns>
     public static AdvanceShipmentStatusCommand CreateCommand(
         string? shipmentId = null
     )

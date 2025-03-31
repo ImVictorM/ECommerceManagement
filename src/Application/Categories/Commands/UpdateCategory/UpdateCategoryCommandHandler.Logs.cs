@@ -9,7 +9,8 @@ internal sealed partial class UpdateCategoryCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Starting category update for category with id {CategoryId}."
+        Message =
+        "Starting category update for category with identifier '{CategoryId}'."
     )]
     private partial void LogInitiatingCategoryUpdate(string categoryId);
 
@@ -23,7 +24,9 @@ internal sealed partial class UpdateCategoryCommandHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The category was updated. The operation completed successfully."
+        Message =
+        "The category has been updated. " +
+        "The operation was completed successfully."
     )]
     private partial void LogCategoryUpdatedSuccessfully();
 }

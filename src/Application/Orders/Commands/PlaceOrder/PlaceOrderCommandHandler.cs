@@ -89,6 +89,6 @@ internal sealed partial class PlaceOrderCommandHandler
 
         LogOrderPlacedSuccessfully();
 
-        return new CreatedResult(order.Id.ToString());
+        return CreatedResult.FromId(order.Id.ToString());
     }
 }

@@ -13,9 +13,15 @@ public static class GetCategoryByIdQueryUtils
     /// Creates a new instance of the <see cref="GetCategoryByIdQuery"/> class.
     /// </summary>
     /// <param name="id">The category id.</param>
-    /// <returns>A new instance of the <see cref="GetCategoryByIdQuery"/> class.</returns>
-    public static GetCategoryByIdQuery CreateQuery(string? id = null)
+    /// <returns>
+    /// A new instance of the <see cref="GetCategoryByIdQuery"/> class.
+    /// </returns>
+    public static GetCategoryByIdQuery CreateQuery(
+        string? id = null
+    )
     {
-        return new GetCategoryByIdQuery(id ?? NumberUtils.CreateRandomLongAsString());
+        return new GetCategoryByIdQuery(
+            id ?? NumberUtils.CreateRandomLongAsString()
+        );
     }
 }

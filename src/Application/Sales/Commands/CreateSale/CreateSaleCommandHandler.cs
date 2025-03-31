@@ -76,6 +76,6 @@ internal sealed partial class CreateSaleCommandHandler
 
         LogSaleCreatedAndSavedSuccessfully(idCreatedSale);
 
-        return new CreatedResult(idCreatedSale);
+        return CreatedResult.FromId(idCreatedSale);
     }
 }

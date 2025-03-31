@@ -33,7 +33,7 @@ internal sealed partial class CreateSaleCommandHandler
         Message =
         "The sale was created and saved. " +
         "The operation was completed successfully. " +
-        "Generated identifier: {CreatedId}."
+        "Generated identifier: '{CreatedId}'."
     )]
     private partial void LogSaleCreatedAndSavedSuccessfully(string createdId);
 }

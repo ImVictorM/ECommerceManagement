@@ -21,7 +21,9 @@ public static class RegisterCustomerCommandUtils
     /// <param name="name">The command user name.</param>
     /// <param name="email">The command user email.</param>
     /// <param name="password">The command user password.</param>
-    /// <returns>A new instance of the <see cref="RegisterCustomerCommand"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="RegisterCustomerCommand"/> class.
+    /// </returns>
     public static RegisterCustomerCommand CreateCommand(
         string? name = null,
         string? email = null,

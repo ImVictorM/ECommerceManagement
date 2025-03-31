@@ -14,13 +14,18 @@ public static class UpdateShippingMethodCommandUtils
     private static readonly Faker _faker = new();
 
     /// <summary>
-    /// Creates a new instance of the <see cref="UpdateShippingMethodCommand"/> class.
+    /// Creates a new instance of the <see cref="UpdateShippingMethodCommand"/>
+    /// class.
     /// </summary>
-    /// <param name="shippingMethodId">The shipping method id.</param>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
     /// <param name="name">The shipping method name.</param>
     /// <param name="price">The shipping method price.</param>
-    /// <param name="estimatedDeliveryDays">The shipping method estimated delivery days.</param>
-    /// <returns>A new instance of the <see cref="UpdateShippingMethodCommand"/> class.</returns>
+    /// <param name="estimatedDeliveryDays">
+    /// The shipping method estimated delivery days.
+    /// </param>
+    /// <returns>
+    /// A new instance of the <see cref="UpdateShippingMethodCommand"/> class.
+    /// </returns>
     public static UpdateShippingMethodCommand CreateCommand(
         string? shippingMethodId = null,
         string? name = null,

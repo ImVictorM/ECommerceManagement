@@ -15,7 +15,8 @@ using Moq;
 namespace Application.UnitTests.ShippingMethods.Commands.UpdateShippingMethod;
 
 /// <summary>
-/// Unit tests for the <see cref="UpdateShippingMethodCommandHandler"/> command handler.
+/// Unit tests for the <see cref="UpdateShippingMethodCommandHandler"/>
+/// command handler.
 /// </summary>
 public class UpdateShippingMethodCommandHandlerTests
 {
@@ -24,7 +25,8 @@ public class UpdateShippingMethodCommandHandlerTests
     private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateShippingMethodCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="UpdateShippingMethodCommandHandlerTests"/> class.
     /// </summary>
     public UpdateShippingMethodCommandHandlerTests()
     {
@@ -34,7 +36,7 @@ public class UpdateShippingMethodCommandHandlerTests
         _handler = new UpdateShippingMethodCommandHandler(
             _mockUnitOfWork.Object,
             _mockShippingMethodRepository.Object,
-            new Mock<ILogger<UpdateShippingMethodCommandHandler>>().Object
+            Mock.Of<ILogger<UpdateShippingMethodCommandHandler>>()
         );
     }
 
@@ -42,7 +44,7 @@ public class UpdateShippingMethodCommandHandlerTests
     /// Verifies the shipping method is updated when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateShippingMethod_WithExistingShippingMethod_UpdatesIt()
+    public async Task HandleUpdateShippingMethodCommand_WithExistingShippingMethod_UpdatesIt()
     {
         var newName = "SuperFastUltraDeliveryMethod";
         var newPrice = 20m;
@@ -54,7 +56,9 @@ public class UpdateShippingMethodCommandHandlerTests
             estimatedDeliveryDays: newEstimatedDeliveryDays
         );
 
-        var shippingMethodToBeUpdated = ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(request.ShippingMethodId));
+        var shippingMethodToBeUpdated = ShippingMethodUtils.CreateShippingMethod(
+            id: ShippingMethodId.Create(request.ShippingMethodId)
+        );
 
         _mockShippingMethodRepository
             .Setup(r => r.FindByIdAsync(
@@ -67,16 +71,17 @@ public class UpdateShippingMethodCommandHandlerTests
 
         shippingMethodToBeUpdated.Name.Should().Be(newName);
         shippingMethodToBeUpdated.Price.Should().Be(newPrice);
-        shippingMethodToBeUpdated.EstimatedDeliveryDays.Should().Be(newEstimatedDeliveryDays);
+        shippingMethodToBeUpdated.EstimatedDeliveryDays
+            .Should().Be(newEstimatedDeliveryDays);
 
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 
     /// <summary>
     /// Verifies an error is thrown when the shipping method to be updated does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateShippingMethod_WithNonexistingShippingMethod_ThrowsError()
+    public async Task HandleUpdateShippingMethodCommand_WithNonExistentShippingMethod_ThrowsError()
     {
         var request = UpdateShippingMethodCommandUtils.CreateCommand();
 

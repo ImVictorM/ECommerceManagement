@@ -1,4 +1,5 @@
 using Application.Categories.DTOs.Results;
+
 using MediatR;
 
 namespace Application.Categories.Queries.GetCategoryById;

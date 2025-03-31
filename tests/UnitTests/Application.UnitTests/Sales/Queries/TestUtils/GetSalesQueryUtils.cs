@@ -1,4 +1,4 @@
-using Application.Sales.DTOs;
+using Application.Sales.DTOs.Filters;
 using Application.Sales.Queries.GetSales;
 
 namespace Application.UnitTests.Sales.Queries.TestUtils;

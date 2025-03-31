@@ -42,7 +42,7 @@ public class ProductPricingServiceTests
     /// Verifies the price is calculated for each product when sales is applicable.
     /// </summary>
     [Fact]
-    public async Task CalculateProductsPriceApplyingSale_WithApplicableSales_ReturnsCorrectPrice()
+    public async Task CalculateDiscountedPricesAsync_WithApplicableSales_ReturnsCorrectPrice()
     {
         var products = new[]
         {
@@ -55,7 +55,6 @@ public class ProductPricingServiceTests
                 basePrice: 200
             )
         };
-
 
         var productSales = products.ToDictionary(
             p => p.Id,
@@ -98,7 +97,7 @@ public class ProductPricingServiceTests
             .Returns(expectedPrices[products[0].Id])
             .Returns(expectedPrices[products[1].Id]);
 
-        var results = await _service.CalculateProductsPriceApplyingSaleAsync(
+        var results = await _service.CalculateDiscountedPricesAsync(
             products,
             default
         );
@@ -114,7 +113,7 @@ public class ProductPricingServiceTests
     /// Verifies the base price is returned when no sales apply to the products.
     /// </summary>
     [Fact]
-    public async Task CalculateProductsPriceApplyingSale_WithNoApplicableSales_ReturnsBasePrice()
+    public async Task CalculateDiscountedPricesAsync_WithoutApplicableSales_ReturnsBasePrice()
     {
         var products = new[]
         {
@@ -147,7 +146,7 @@ public class ProductPricingServiceTests
             ))
             .Returns((decimal basePrice, IEnumerable<Discount> _) => basePrice);
 
-        var results = await _service.CalculateProductsPriceApplyingSaleAsync(
+        var results = await _service.CalculateDiscountedPricesAsync(
             products,
             default
         );
@@ -162,7 +161,7 @@ public class ProductPricingServiceTests
     /// Verifies the price is correctly calculated for a single product.
     /// </summary>
     [Fact]
-    public async Task CalculateProductPriceApplyingSale_WithApplicableSales_ReturnsCorrectPrice()
+    public async Task CalculateDiscountedPriceAsync_WithApplicableSales_ReturnsCorrectPrice()
     {
         var product = ProductUtils.CreateProduct(
             id: ProductId.Create(1),
@@ -195,7 +194,7 @@ public class ProductPricingServiceTests
             ))
             .Returns(expectedPrice);
 
-        var result = await _service.CalculateProductPriceApplyingSaleAsync(
+        var result = await _service.CalculateDiscountedPriceAsync(
             product,
             default
         );
@@ -203,7 +202,10 @@ public class ProductPricingServiceTests
         result.Should().Be(expectedPrice);
     }
 
-    private static decimal CalculateExpectedPrice(decimal price, int discountPercentage)
+    private static decimal CalculateExpectedPrice(
+        decimal price,
+        int discountPercentage
+    )
     {
         return price - (price * (discountPercentage / 100m));
     }

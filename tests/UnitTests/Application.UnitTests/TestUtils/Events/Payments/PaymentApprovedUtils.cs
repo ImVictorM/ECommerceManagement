@@ -13,7 +13,9 @@ public static class PaymentApprovedUtils
     /// Creates a new instance of the <see cref="PaymentApproved"/> class.
     /// </summary>
     /// <param name="payment">The payment.</param>
-    /// <returns>A new instance of the <see cref="PaymentApproved"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="PaymentApproved"/> class.
+    /// </returns>
     public static PaymentApproved CreateEvent(
         Payment? payment = null
     )

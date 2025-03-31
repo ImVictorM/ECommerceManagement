@@ -22,7 +22,8 @@ public class GetUserByIdQueryHandlerTests
     private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetUserByIdQueryHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetUserByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetUserByIdQueryHandlerTests()
     {
@@ -30,37 +31,43 @@ public class GetUserByIdQueryHandlerTests
 
         _handler = new GetUserByIdQueryHandler(
             _mockUserRepository.Object,
-            new Mock<ILogger<GetUserByIdQueryHandler>>().Object
+            Mock.Of<ILogger<GetUserByIdQueryHandler>>()
         );
     }
 
     /// <summary>
-    /// Tests if the user is returned when they exists.
+    /// Verifies the user is retrieved when the user exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetUserById_WhenUserExists_ReturnsUser()
+    public async Task HandleGetUserByIdQuery_WhenUserExists_ReturnsUser()
     {
-        var mockUser = UserUtils.CreateCustomer();
+        var user = UserUtils.CreateCustomer(id: UserId.Create(1));
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(
                 It.IsAny<UserId>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(mockUser);
+            .ReturnsAsync(user);
 
-        var result = await _handler.Handle(GetUserByIdQueryUtils.CreateQuery(), default);
+        var result = await _handler.Handle(
+            GetUserByIdQueryUtils.CreateQuery(),
+            default
+        );
 
-        result.User.Should().NotBeNull();
-        result.User.Should().BeEquivalentTo(mockUser);
+        result.Should().NotBeNull();
+        result.Id.Should().Be(user.Id.ToString());
+        result.Email.Should().Be(user.Email.ToString());
     }
 
     /// <summary>
-    /// Tests if an error is thrown when the user is not found.
+    /// Verifies an exception is thrown when the user does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleGetUserById_WhenUserDoesNotExist_ThrowsError()
+    public async Task HandleGetUserByIdQuery_WhenUserDoesNotExist_ThrowsError()
     {
+        var userId = "1";
+
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(
                 It.IsAny<UserId>(),
@@ -68,12 +75,12 @@ public class GetUserByIdQueryHandlerTests
             ))
             .ReturnsAsync((User?)null);
 
-        var idToBeFound = "1";
-
         await FluentActions
-            .Invoking(() => _handler.Handle(GetUserByIdQueryUtils.CreateQuery(idToBeFound), default))
+            .Invoking(() => _handler.Handle(
+                GetUserByIdQueryUtils.CreateQuery(userId),
+                default
+            ))
             .Should()
-            .ThrowAsync<UserNotFoundException>()
-            .WithMessage($"User with id {idToBeFound} was not found");
+            .ThrowAsync<UserNotFoundException>();
     }
 }

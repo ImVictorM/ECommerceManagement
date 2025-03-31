@@ -15,7 +15,8 @@ using Moq;
 namespace Application.UnitTests.Sales.Commands.DeleteSale;
 
 /// <summary>
-/// Unit tests for the <see cref="DeleteSaleCommandHandler"/> command handler.
+/// Unit tests for the <see cref="DeleteSaleCommandHandler"/>
+/// command handler.
 /// </summary>
 public class DeleteSaleCommandHandlerTests
 {
@@ -40,10 +41,10 @@ public class DeleteSaleCommandHandlerTests
     }
 
     /// <summary>
-    /// Ensures a sale is successfully deleted when it exists.
+    /// Verifies a sale is successfully deleted when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteSaleCommand_WithExistingSale_DeletesSale()
+    public async Task HandleDeleteSaleCommand_WithExistentSale_DeletesSale()
     {
         var saleId = "1";
         var sale = SaleUtils.CreateSale(id: SaleId.Create(saleId));
@@ -61,14 +62,14 @@ public class DeleteSaleCommandHandlerTests
 
         _mockSaleRepository.Verify(
             r => r.RemoveOrDeactivate(sale),
-            Times.Once()
+            Times.Once
         );
 
-        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
     /// <summary>
-    /// Ensures an exception is thrown when trying to delete a non-existent sale.
+    /// Verifies an exception is thrown when trying to delete a non-existent sale.
     /// </summary>
     [Fact]
     public async Task HandleDeleteSaleCommand_WithNonExistentSale_ThrowsError()

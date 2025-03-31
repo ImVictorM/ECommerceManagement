@@ -49,6 +49,6 @@ internal sealed partial class CreateShippingMethodCommandHandler
 
         LogShippingMethodSaved(createdId);
 
-        return new CreatedResult(createdId);
+        return CreatedResult.FromId(createdId);
     }
 }

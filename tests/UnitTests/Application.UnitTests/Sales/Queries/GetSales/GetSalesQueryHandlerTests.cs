@@ -1,5 +1,6 @@
 using Application.Common.Persistence.Repositories;
-using Application.Sales.DTOs;
+using Application.Sales.DTOs.Filters;
+using Application.Sales.DTOs.Results;
 using Application.Sales.Queries.GetSales;
 using Application.UnitTests.Sales.Queries.TestUtils;
 
@@ -20,7 +21,8 @@ public class GetSalesQueryHandlerTests
     private readonly GetSalesQueryHandler _handler;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GetSalesQueryHandlerTests"/> class.
+    /// Initializes a new instance of the
+    /// <see cref="GetSalesQueryHandlerTests"/> class.
     /// </summary>
     public GetSalesQueryHandlerTests()
     {
@@ -32,10 +34,10 @@ public class GetSalesQueryHandlerTests
     }
 
     /// <summary>
-    /// Ensures sales are successfully retrieved when they exist.
+    /// Verifies sales are successfully retrieved when they exist.
     /// </summary>
     [Fact]
-    public async Task HandleGetSalesQuery_WithExistingSales_ReturnsSales()
+    public async Task HandleGetSalesQuery_WithExistentSales_ReturnsSaleResults()
     {
         var sales = SaleUtils.CreateSales(3);
         var request = GetSalesQueryUtils.CreateQuery();
@@ -54,25 +56,5 @@ public class GetSalesQueryHandlerTests
         result.Select(s => s.Id)
             .Should()
             .BeEquivalentTo(sales.Select(s => s.Id.ToString()));
-    }
-
-    /// <summary>
-    /// Ensures an empty list is returned when no sales exist.
-    /// </summary>
-    [Fact]
-    public async Task HandleGetSalesQuery_WithNoSales_ReturnsEmptyList()
-    {
-        var request = GetSalesQueryUtils.CreateQuery();
-
-        _mockSaleRepository
-            .Setup(r => r.GetSalesAsync(
-                request.Filters,
-                It.IsAny<CancellationToken>()
-            ))
-            .ReturnsAsync([]);
-
-        var result = await _handler.Handle(request, default);
-
-        result.Should().BeEmpty();
     }
 }

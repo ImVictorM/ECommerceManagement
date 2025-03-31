@@ -1,7 +1,8 @@
 using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
-using Application.UnitTests.Users.Commands.TestUtils;
 using Application.Users.Commands.DeactivateUser;
+using Application.Users.Errors;
+using Application.UnitTests.Users.Commands.TestUtils;
 
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate;
@@ -23,7 +24,8 @@ public class DeactivateUserCommandHandlerTests
     private readonly DeactivateUserCommandHandler _handler;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="DeactivateUserCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="DeactivateUserCommandHandlerTests"/> class.
     /// </summary>
     public DeactivateUserCommandHandlerTests()
     {
@@ -33,15 +35,15 @@ public class DeactivateUserCommandHandlerTests
         _handler = new DeactivateUserCommandHandler(
             _mockUnitOfWork.Object,
             _mockUserRepository.Object,
-            new Mock<ILogger<DeactivateUserCommandHandler>>().Object
+            Mock.Of<ILogger<DeactivateUserCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Tests that when the user to be deactivated exists it is deactivated.
+    /// Verifies that when the user to be deactivated exists it is deactivated.
     /// </summary>
     [Fact]
-    public async Task HandleDeactivateUser_WhenUserExists_DeactivateItAndSave()
+    public async Task HandleDeactivateUserCommand_WithExistentUser_DeactivatesTheUser()
     {
         var userToBeDeactivated = UserUtils.CreateCustomer(active: true);
 
@@ -55,14 +57,14 @@ public class DeactivateUserCommandHandlerTests
         await _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default);
 
         userToBeDeactivated.IsActive.Should().BeFalse();
-        _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Once);
     }
 
     /// <summary>
-    /// Tests when a user to be deactivated does not exist the command handler completes without throwing any exceptions.
+    /// Verifies an exception is thrown when the user does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleDeactivateUser_WhenUserDoesNotExist_ReturnsWithoutThrowing()
+    public async Task HandleDeactivateUserCommand_WhenUserDoesNotExist_ThrowsError()
     {
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(
@@ -72,10 +74,13 @@ public class DeactivateUserCommandHandlerTests
             .ReturnsAsync((User?)null);
 
         await FluentActions
-            .Invoking(() => _handler.Handle(DeactivateUserCommandUtils.CreateCommand(), default))
+            .Invoking(() => _handler.Handle(
+                DeactivateUserCommandUtils.CreateCommand(),
+                default
+            ))
             .Should()
-            .NotThrowAsync();
+            .ThrowAsync<UserNotFoundException>();
 
-        _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Never());
+        _mockUnitOfWork.Verify(uof => uof.SaveChangesAsync(), Times.Never);
     }
 }
