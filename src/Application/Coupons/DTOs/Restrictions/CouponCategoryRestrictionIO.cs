@@ -4,7 +4,7 @@ namespace Application.Coupons.DTOs.Restrictions;
 /// Represents a category restriction input.
 /// </summary>
 /// <param name="CategoryAllowedIds">
-/// The category allowed ids.
+/// The category allowed identifiers.
 /// </param>
 /// <param name="ProductFromCategoryNotAllowedIds">
 /// The product from the category ids that are not allowed.
@@ -12,4 +12,4 @@ namespace Application.Coupons.DTOs.Restrictions;
 public record CouponCategoryRestrictionIO(
     IEnumerable<string> CategoryAllowedIds,
     IEnumerable<string>? ProductFromCategoryNotAllowedIds = null
-) : CouponRestrictionIO;
+) : CouponRestrictionIO();

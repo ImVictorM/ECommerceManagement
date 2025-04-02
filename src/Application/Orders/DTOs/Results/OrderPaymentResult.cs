@@ -39,7 +39,7 @@ public class OrderPaymentResult
         Installments = response.Installments;
         Status = response.Status.Name;
         Details = response.Details;
-        PaymentMethod = response.PaymentMethod.Type;
+        PaymentMethod = response.PaymentMethod.Name;
     }
 
     internal static OrderPaymentResult FromResponse(PaymentResponse response)

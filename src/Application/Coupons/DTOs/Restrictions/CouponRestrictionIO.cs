@@ -8,4 +8,4 @@ namespace Application.Coupons.DTOs.Restrictions;
 [JsonPolymorphic]
 [JsonDerivedType(typeof(CouponProductRestrictionIO), nameof(CouponProductRestrictionIO))]
 [JsonDerivedType(typeof(CouponCategoryRestrictionIO), nameof(CouponCategoryRestrictionIO))]
-public abstract record CouponRestrictionIO;
+public abstract record CouponRestrictionIO();

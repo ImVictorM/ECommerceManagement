@@ -93,6 +93,8 @@ public static class ServicesRegistration
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(typeof(ServicesRegistration).Assembly);
 
+        config.AllowImplicitDestinationInheritance = true;
+
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
 
