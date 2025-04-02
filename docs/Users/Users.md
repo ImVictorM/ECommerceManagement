@@ -177,3 +177,4 @@ DELETE "/users/{{id_user}}"
 - 204 NO_CONTENT: The request was successfully processed and the user was deactivated (or the user was already inactive).
 - 401 UNAUTHORIZED: The current user is not authenticated.
 - 403 FORBIDDEN: The current user does not have the necessary deactivation privileges.
+- 404 NOT_FOUND: The user could not be found.
