@@ -3,7 +3,7 @@ using Contracts.Common;
 namespace Contracts.Sales;
 
 /// <summary>
-/// Represents a request to update an existing sale.
+/// Represents a request to update an existent sale.
 /// </summary>
 /// <param name="Discount">The new sale discount.</param>
 /// <param name="CategoryOnSaleIds">

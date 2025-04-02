@@ -48,7 +48,7 @@ public sealed class CouponEndpoints : ICarterModule
             {
                 Summary = "Delete Coupon",
                 Description =
-                "Deletes an existing coupon. Admin authentication is required.",
+                "Deletes an existent coupon. Admin authentication is required.",
                 Parameters =
                 [
                     new()
@@ -70,7 +70,7 @@ public sealed class CouponEndpoints : ICarterModule
             {
                 Summary = "Toggle Coupon Activation",
                 Description =
-                "Toggles the active status of an existing coupon. " +
+                "Toggles the active status of an existent coupon. " +
                 "Admin authentication is required.",
                 Parameters =
                 [
@@ -93,7 +93,7 @@ public sealed class CouponEndpoints : ICarterModule
             {
                 Summary = "Update Coupon",
                 Description =
-                "Updates the details of an existing coupon. " +
+                "Updates the details of an existent coupon. " +
                 "Admin authentication is required.",
                 Parameters =
                 [

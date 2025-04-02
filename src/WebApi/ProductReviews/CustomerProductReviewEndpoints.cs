@@ -54,8 +54,8 @@ public class CustomerProductReviewEndpoints : ICarterModule
             .RequireAuthorization();
 
         group
-            .MapDelete("/{reviewId:long}", DeactivateCustomerProductReviews)
-            .WithName(nameof(DeactivateCustomerProductReviews))
+            .MapDelete("/{reviewId:long}", DeactivateCustomerProductReview)
+            .WithName(nameof(DeactivateCustomerProductReview))
             .WithOpenApi(op => new(op)
             {
                 Summary = "Deactivate Customer Product Review",
@@ -115,7 +115,7 @@ public class CustomerProductReviewEndpoints : ICarterModule
         NotFound,
         UnauthorizedHttpResult,
         ForbidHttpResult
-    >> DeactivateCustomerProductReviews(
+    >> DeactivateCustomerProductReview(
         [FromRoute] string userId,
         [FromRoute] string reviewId,
         ISender sender

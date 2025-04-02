@@ -7,7 +7,7 @@ using MediatR;
 namespace Application.Sales.Commands.DeleteSale;
 
 /// <summary>
-/// Represents a command to delete an existing sale.
+/// Represents a command to delete an existent sale.
 /// </summary>
 /// <param name="SaleId">The sale identifier.</param>
 [Authorize(roleName: nameof(Role.Admin))]

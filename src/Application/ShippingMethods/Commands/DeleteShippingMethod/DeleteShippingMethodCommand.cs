@@ -7,7 +7,7 @@ using MediatR;
 namespace Application.ShippingMethods.Commands.DeleteShippingMethod;
 
 /// <summary>
-/// Represents a command to delete an existing shipping method.
+/// Represents a command to delete an existent shipping method.
 /// </summary>
 /// <param name="ShippingMethodId">The shipping method identifier.</param>
 [Authorize(roleName: nameof(Role.Admin))]

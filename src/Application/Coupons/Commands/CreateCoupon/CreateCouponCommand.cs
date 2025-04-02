@@ -1,8 +1,8 @@
 using Application.Common.Security.Authorization.Requests;
 using Application.Coupons.DTOs.Restrictions;
+using Application.Common.DTOs.Results;
 
 using SharedKernel.ValueObjects;
-using Application.Common.DTOs.Results;
 
 namespace Application.Coupons.Commands.CreateCoupon;
 

@@ -16,7 +16,7 @@ public class QueryUserReviewsSpecification
 
     /// <inheritdoc/>
     public override Expression<Func<ProductReview, bool>> Criteria =>
-        feedback => feedback.UserId == _userId;
+        review => review.UserId == _userId;
 
     /// <summary>
     /// Initiates a new instance of the <see cref="QueryUserReviewsSpecification"/>

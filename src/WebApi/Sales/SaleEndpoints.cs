@@ -48,7 +48,7 @@ public sealed class SaleEndpoints : ICarterModule
             {
                 Summary = "Delete Sale",
                 Description =
-                "Deletes an existing sale. " +
+                "Deletes an existent sale. " +
                 "Admin authentication is required.",
                 Parameters =
                 [
@@ -71,7 +71,7 @@ public sealed class SaleEndpoints : ICarterModule
             {
                 Summary = "Update Sale",
                 Description =
-                "Updates an existing sale. " +
+                "Updates an existent sale. " +
                 "Admin authentication is required.",
                 Parameters =
                 [

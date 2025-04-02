@@ -33,7 +33,7 @@ internal sealed class AuthorizeAttribute : Attribute
             );
         }
 
-        if (roleName != null && !IsExistingRole(roleName))
+        if (roleName != null && !IsValidRole(roleName))
         {
             throw new ArgumentException(
                 $"The provided role name is incorrect: {roleName}", nameof(roleName)
@@ -75,7 +75,7 @@ internal sealed class AuthorizeAttribute : Attribute
             );
     }
 
-    private static bool IsExistingRole(string roleName)
+    private static bool IsValidRole(string roleName)
     {
         try
         {

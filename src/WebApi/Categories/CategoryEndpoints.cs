@@ -49,7 +49,7 @@ public sealed class CategoryEndpoints : ICarterModule
             {
                 Summary = "Delete Category",
                 Description =
-                "Deletes an existing category. " +
+                "Deletes an existent category. " +
                 "Admin authentication is required.",
                 Parameters =
                 [
@@ -72,7 +72,7 @@ public sealed class CategoryEndpoints : ICarterModule
             {
                 Summary = "Update Category",
                 Description =
-                "Updates an existing category. " +
+                "Updates an existent category. " +
                 "Admin authentication is required.",
                 Parameters =
                 [
