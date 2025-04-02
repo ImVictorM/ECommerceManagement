@@ -23,7 +23,8 @@ public class PaymentCanceledCancelOrderHandlerTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="PaymentCanceledCancelOrderHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="PaymentCanceledCancelOrderHandlerTests"/> class.
     /// </summary>
     public PaymentCanceledCancelOrderHandlerTests()
     {
@@ -37,17 +38,20 @@ public class PaymentCanceledCancelOrderHandlerTests
     }
 
     /// <summary>
-    /// Tests the handler cancels the order and saves it when the order exists.
+    /// Verifies the handler cancels the order and saves it when the order exists.
     /// </summary>
     [Fact]
-    public async Task HandlePaymentCanceled_WhenOrderIsFound_CancelsIt()
+    public async Task HandlePaymentCanceled_WithExistentOrder_CancelsIt()
     {
         var order = await OrderUtils.CreateOrderAsync(
             id: OrderId.Create(1),
             initialOrderStatus: OrderStatus.Pending
         );
 
-        var payment = PaymentUtils.CreatePayment(orderId: order.Id, paymentStatus: PaymentStatus.Canceled);
+        var payment = PaymentUtils.CreatePayment(
+            orderId: order.Id,
+            paymentStatus: PaymentStatus.Canceled
+        );
         var notification = PaymentCanceledUtils.CreateEvent(payment);
 
         _mockOrderRepository

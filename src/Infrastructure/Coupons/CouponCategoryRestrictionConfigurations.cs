@@ -14,8 +14,9 @@ namespace Infrastructure.Coupons;
 internal sealed class CouponCategoryRestrictionConfigurations
     : EntityTypeConfigurationDependency<CouponCategoryRestriction>
 {
-    /// <inheritdoc/>
-    public override void Configure(EntityTypeBuilder<CouponCategoryRestriction> builder)
+    public override void Configure(
+        EntityTypeBuilder<CouponCategoryRestriction> builder
+    )
     {
         builder.ToTable("restriction_categories");
 

@@ -1,6 +1,7 @@
-using FluentAssertions;
 using SharedKernel.UnitTests.TestUtils;
 using SharedKernel.ValueObjects;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.ValueObjects;
 
@@ -10,7 +11,8 @@ namespace SharedKernel.UnitTests.ValueObjects;
 public class PercentageTests
 {
     /// <summary>
-    /// Verifies that a <see cref="Percentage"/> is created successfully with a valid value.
+    /// Verifies that a <see cref="Percentage"/> is created successfully with
+    /// a valid value.
     /// </summary>
     [Fact]
     public void CreatePercentage_WithValidValue_CreatesInstanceCorrectly()
@@ -24,7 +26,8 @@ public class PercentageTests
     }
 
     /// <summary>
-    /// Verifies that the <see cref="Percentage.IsWithinRange(int, int)"/> method the expected result.
+    /// Verifies that the <see cref="Percentage.IsWithinRange(int, int)"/> method
+    /// the expected result.
     /// </summary>
     [Theory]
     [InlineData(50, true)]
@@ -32,7 +35,10 @@ public class PercentageTests
     [InlineData(100, true)]
     [InlineData(0, true)]
     [InlineData(-1, false)]
-    public void IsWithinRange_WhenCheckingWithValidValue_ReturnsExpected(int value, bool expected)
+    public void IsWithinRange_WhenCheckingWithValidValue_ReturnsExpected(
+        int value,
+        bool expected
+    )
     {
         var percentage = Percentage.Create(value);
 
@@ -42,7 +48,8 @@ public class PercentageTests
     }
 
     /// <summary>
-    /// Verifies that the percentage comparison is correct when sorting by descending percentages.
+    /// Verifies that the percentage comparison is correct when sorting by
+    /// descending percentages.
     /// </summary>
     [Fact]
     public void PercentageComparison_WhenSortingDescending_ReturnsExpected()
@@ -69,7 +76,8 @@ public class PercentageTests
     }
 
     /// <summary>
-    /// Verifies that the percentage comparison is correct when sorting by ascending percentages.
+    /// Verifies that the percentage comparison is correct when sorting by
+    /// ascending percentages.
     /// </summary>
     [Fact]
     public void PercentageComparison_WhenSortingAscending_ReturnsExpected()

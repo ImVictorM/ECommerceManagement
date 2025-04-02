@@ -12,10 +12,14 @@ public static class GetProductByIdQueryUtils
     /// <summary>
     /// Creates a new instance of the <see cref="GetProductByIdQuery"/> query.
     /// </summary>
-    /// <param name="id">The product id.</param>
-    /// <returns>A new instance of the <see cref="GetProductByIdQuery"/> query.</returns>
+    /// <param name="id">The product identifier.</param>
+    /// <returns>
+    /// A new instance of the <see cref="GetProductByIdQuery"/> query.
+    /// </returns>
     public static GetProductByIdQuery CreateQuery(string? id = null)
     {
-        return new GetProductByIdQuery(id ?? NumberUtils.CreateRandomLongAsString());
+        return new GetProductByIdQuery(
+            id ?? NumberUtils.CreateRandomLongAsString()
+        );
     }
 }

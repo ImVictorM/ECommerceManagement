@@ -23,7 +23,8 @@ public class CreateCategoryCommandHandlerTests
     private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="CreateCategoryCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="CreateCategoryCommandHandlerTests"/> class.
     /// </summary>
     public CreateCategoryCommandHandlerTests()
     {
@@ -38,19 +39,20 @@ public class CreateCategoryCommandHandlerTests
     }
 
     /// <summary>
-    /// Tests it is possible to create a category with a valid command.
+    /// Verifies it is possible to create a category with a valid command.
     /// </summary>
     [Fact]
-    public async Task HandleCreateCategoryCommand_WithValidCommand_CreatesAndReturnsTheCategoryId()
+    public async Task HandleCreateCategoryCommand_WithValidCommand_ReturnsCreatedResult()
     {
         var createdId = CategoryId.Create(1);
 
         var command = CreateCategoryCommandUtils.CreateCommand(name: "home");
 
-        _mockUnitOfWork.MockSetEntityIdBehavior<ICategoryRepository, Category, CategoryId>(
-            _mockCategoryRepository,
-            createdId
-        );
+        _mockUnitOfWork.MockSetEntityIdBehavior
+            <ICategoryRepository, Category, CategoryId>(
+                _mockCategoryRepository,
+                createdId
+            );
 
         var result = await _handler.Handle(command, default);
 

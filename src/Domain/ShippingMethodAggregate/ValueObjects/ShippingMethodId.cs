@@ -26,7 +26,10 @@ public sealed class ShippingMethodId : ValueObject
     /// Creates a new instance of the <see cref="ShippingMethodId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="ShippingMethodId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="ShippingMethodId"/> class with the
+    /// specified identifier.
+    /// </returns>
     public static ShippingMethodId Create(long value)
     {
         return new ShippingMethodId(value);
@@ -36,7 +39,10 @@ public sealed class ShippingMethodId : ValueObject
     /// Creates a new instance of the <see cref="ShippingMethodId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="ShippingMethodId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="ShippingMethodId"/> class with the
+    /// specified identifier.
+    /// </returns>
     public static ShippingMethodId Create(string value)
     {
         return new ShippingMethodId(value.ToLongId());

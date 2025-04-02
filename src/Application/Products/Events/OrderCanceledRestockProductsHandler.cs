@@ -2,6 +2,7 @@ using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 
 using Domain.OrderAggregate.Events;
+using Domain.ProductAggregate.Specifications;
 
 using MediatR;
 
@@ -22,7 +23,6 @@ internal sealed class OrderCanceledRestockProductsHandler
         _productRepository = productRepository;
     }
 
-    /// <inheritdoc/>
     public async Task Handle(
         OrderCanceled notification,
         CancellationToken cancellationToken
@@ -31,8 +31,8 @@ internal sealed class OrderCanceledRestockProductsHandler
         var order = notification.Order;
         var productIds = order.Products.Select(p => p.ProductId);
 
-        var products = await _productRepository.FindAllAsync(
-            p => productIds.Contains(p.Id),
+        var products = await _productRepository.FindSatisfyingAsync(
+            new QueryProductsContainingIdsSpecification(productIds),
             cancellationToken
         );
 

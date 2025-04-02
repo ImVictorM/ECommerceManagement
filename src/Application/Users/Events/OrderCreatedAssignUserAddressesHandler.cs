@@ -8,7 +8,8 @@ using MediatR;
 
 namespace Application.Users.Events;
 
-internal sealed class OrderCreatedAssignUserAddressesHandler : INotificationHandler<OrderCreated>
+internal sealed class OrderCreatedAssignUserAddressesHandler
+    : INotificationHandler<OrderCreated>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
@@ -22,19 +23,26 @@ internal sealed class OrderCreatedAssignUserAddressesHandler : INotificationHand
         _userRepository = userRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(OrderCreated notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        OrderCreated notification,
+        CancellationToken cancellationToken
+    )
     {
         var user = await _userRepository.FindFirstSatisfyingAsync(
             new QueryActiveUserByIdSpecification(notification.Order.OwnerId),
             cancellationToken
         );
 
-        if (user != null)
+        if (user == null)
         {
-            user.AssignAddress(notification.DeliveryAddress, notification.BillingAddress);
-
-            await _unitOfWork.SaveChangesAsync();
+            return;
         }
+
+        user.AssignAddress(
+            notification.DeliveryAddress,
+            notification.BillingAddress
+        );
+
+        await _unitOfWork.SaveChangesAsync();
     }
 }

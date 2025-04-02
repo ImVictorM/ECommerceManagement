@@ -16,7 +16,8 @@ using Moq;
 namespace Application.UnitTests.Users.Events;
 
 /// <summary>
-/// Unit tests for the <see cref="OrderCreatedAssignUserAddressesHandler"/> event handler.
+/// Unit tests for the <see cref="OrderCreatedAssignUserAddressesHandler"/>
+/// event handler.
 /// </summary>
 public class OrderCreatedAssignUserAddressesHandlerTests
 {
@@ -25,7 +26,8 @@ public class OrderCreatedAssignUserAddressesHandlerTests
     private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCreatedAssignUserAddressesHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="OrderCreatedAssignUserAddressesHandlerTests"/> class.
     /// </summary>
     public OrderCreatedAssignUserAddressesHandlerTests()
     {
@@ -39,10 +41,10 @@ public class OrderCreatedAssignUserAddressesHandlerTests
     }
 
     /// <summary>
-    /// Tests the handler assigns the billing and delivery addresses to the user.
+    /// Verifies the handler assigns the billing and delivery addresses to the user.
     /// </summary>
     [Fact]
-    public async Task HandleOrderCreated_WithExistingUser_AssignsTheBillingAndDeliveryAddressesToTheUser()
+    public async Task HandleOrderCreated_WithExistentUser_ShouldAssignAddresses()
     {
         var user = UserUtils.CreateCustomer(id: UserId.Create(1));
 
@@ -73,6 +75,6 @@ public class OrderCreatedAssignUserAddressesHandlerTests
         user.UserAddresses.Should().Contain(deliveryAddress);
         user.UserAddresses.Should().Contain(billingAddress);
 
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

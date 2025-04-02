@@ -3,7 +3,7 @@ using Contracts.Common;
 namespace Contracts.Users;
 
 /// <summary>
-/// Represents an user response.
+/// Represents a user response.
 /// </summary>
 /// <param name="Id">The user identifier.</param>
 /// <param name="Name">The user name.</param>

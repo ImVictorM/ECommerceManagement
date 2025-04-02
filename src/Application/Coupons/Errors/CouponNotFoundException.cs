@@ -1,4 +1,5 @@
 using Domain.CouponAggregate.ValueObjects;
+
 using SharedKernel.Errors;
 
 namespace Application.Coupons.Errors;

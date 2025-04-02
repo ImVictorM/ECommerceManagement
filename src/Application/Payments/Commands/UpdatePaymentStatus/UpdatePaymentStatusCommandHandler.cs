@@ -12,7 +12,8 @@ using MediatR;
 
 namespace Application.Payments.Commands.UpdatePaymentStatus;
 
-internal sealed partial class UpdatePaymentStatusCommandHandler : IRequestHandler<UpdatePaymentStatusCommand, Unit>
+internal sealed partial class UpdatePaymentStatusCommandHandler
+    : IRequestHandler<UpdatePaymentStatusCommand, Unit>
 {
     private readonly IPaymentRepository _paymentRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -28,15 +29,23 @@ internal sealed partial class UpdatePaymentStatusCommandHandler : IRequestHandle
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(UpdatePaymentStatusCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        UpdatePaymentStatusCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingPaymentStatusUpdate(request.PaymentId);
 
         var paymentId = PaymentId.Create(request.PaymentId);
-        var paymentStatus = BaseEnumeration.FromDisplayName<PaymentStatus>(request.Status);
 
-        var payment = await _paymentRepository.FindByIdAsync(paymentId, cancellationToken);
+        var updatedPaymentStatus = BaseEnumeration.FromDisplayName<PaymentStatus>(
+            request.Status
+        );
+
+        var payment = await _paymentRepository.FindByIdAsync(
+            paymentId,
+            cancellationToken
+        );
 
         if (payment == null)
         {
@@ -46,11 +55,11 @@ internal sealed partial class UpdatePaymentStatusCommandHandler : IRequestHandle
 
         LogUpdatingPaymentStatus(payment.PaymentStatus.Name);
 
-        payment.UpdatePaymentStatus(paymentStatus);
+        payment.UpdatePaymentStatus(updatedPaymentStatus);
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogPaymentUpdatedSuccessfully(payment.PaymentStatus.Name);
+        LogPaymentStatusUpdatedSuccessfully(payment.PaymentStatus.Name);
 
         return Unit.Value;
     }

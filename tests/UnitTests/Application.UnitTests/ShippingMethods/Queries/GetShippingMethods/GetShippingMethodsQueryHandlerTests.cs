@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using Domain.ShippingMethodAggregate.ValueObjects;
 
 namespace Application.UnitTests.ShippingMethods.Queries.GetShippingMethods;
 
@@ -21,7 +22,8 @@ public class GetShippingMethodsQueryHandlerTests
     private readonly Mock<IShippingMethodRepository> _mockShippingMethodRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetShippingMethodsQueryHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetShippingMethodsQueryHandlerTests"/> class.
     /// </summary>
     public GetShippingMethodsQueryHandlerTests()
     {
@@ -29,7 +31,7 @@ public class GetShippingMethodsQueryHandlerTests
 
         _handler = new GetShippingMethodsQueryHandler(
             _mockShippingMethodRepository.Object,
-            new Mock<ILogger<GetShippingMethodsQueryHandler>>().Object
+            Mock.Of<ILogger<GetShippingMethodsQueryHandler>>()
         );
     }
 
@@ -37,15 +39,15 @@ public class GetShippingMethodsQueryHandlerTests
     /// Verifies all the shipping methods are returned.
     /// </summary>
     [Fact]
-    public async Task HandleGetShippingMethods_WithValidCommand_ReturnsAllTheAvailableShippingMethods()
+    public async Task HandleGetShippingMethodsQuery_WithValidCommand_ReturnsAllTheAvailableShippingMethods()
     {
         var request = GetShippingMethodsQueryUtils.CreateQuery();
 
         var shippingMethods = new[]
         {
-            ShippingMethodUtils.CreateShippingMethod(),
-            ShippingMethodUtils.CreateShippingMethod(),
-            ShippingMethodUtils.CreateShippingMethod(),
+            ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(1)),
+            ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(2)),
+            ShippingMethodUtils.CreateShippingMethod(id: ShippingMethodId.Create(3)),
         };
 
         _mockShippingMethodRepository
@@ -57,14 +59,17 @@ public class GetShippingMethodsQueryHandlerTests
 
         var result = await _handler.Handle(request, default);
 
-        result.Select(r => r.ShippingMethod).Should().BeEquivalentTo(shippingMethods);
+        result
+            .Select(r => r.Id)
+            .Should()
+            .BeEquivalentTo(shippingMethods.Select(s => s.Id.ToString()));
 
         _mockShippingMethodRepository.Verify(r =>
             r.FindAllAsync(
                 It.IsAny<Expression<Func<ShippingMethod, bool>>>(),
                 It.IsAny<CancellationToken>()
             ),
-            Times.Once()
+            Times.Once
         );
     }
 }

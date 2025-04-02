@@ -7,7 +7,8 @@ using Infrastructure.Common.Persistence;
 
 namespace Infrastructure.Categories;
 
-internal sealed class CategoryRepository : BaseRepository<Category, CategoryId>, ICategoryRepository
+internal sealed class CategoryRepository
+    : BaseRepository<Category, CategoryId>, ICategoryRepository
 {
     public CategoryRepository(IECommerceDbContext dbContext) : base(dbContext)
     {

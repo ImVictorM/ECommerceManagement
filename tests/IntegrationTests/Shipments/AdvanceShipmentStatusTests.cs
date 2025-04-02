@@ -7,10 +7,10 @@ using Domain.ShipmentAggregate.Enumerations;
 using Domain.ShipmentAggregate.ValueObjects;
 using Domain.PaymentAggregate.Enumerations;
 
-using WebApi.Common.Utilities;
 using WebApi.Orders;
 using WebApi.Payments;
 using WebApi.Shipments;
+using WebApi.Common.Utils;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Orders;
@@ -37,7 +37,8 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     private readonly IHmacSignatureProvider _hmacSignatureProvider;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="AdvanceShipmentStatusTests"/> class.
+    /// Initiates a new instance of the <see cref="AdvanceShipmentStatusTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -70,7 +71,8 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies it is not possible to advance a shipment status without the carrier role.
+    /// Verifies it is not possible to advance a shipment status without the
+    /// carrier role.
     /// </summary>
     [Fact]
     public async Task AdvanceShipmentStatus_WithoutCarrierRole_ReturnsForbidden()
@@ -181,14 +183,14 @@ public class AdvanceShipmentStatusTests : BaseIntegrationTest
 
     private async Task PayOrder(OrderDetailedResponse order)
     {
-        var existingPayment = order.Payment;
+        var existentPayment = order.Payment;
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(PaymentWebhookEndpoints.HandlePaymentStatusChanged)
         );
 
         var request = PaymentStatusChangedRequestUtils.CreateRequest(
-           paymentId: existingPayment.PaymentId,
+           paymentId: existentPayment.PaymentId,
            paymentStatus: PaymentStatus.Authorized.Name
         );
 

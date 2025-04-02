@@ -8,7 +8,7 @@ namespace Domain.ProductAggregate.ValueObjects;
 public sealed class ProductReserved : ValueObject
 {
     /// <summary>
-    /// Gets the product reserved product id.
+    /// Gets the product reserved product identifier.
     /// </summary>
     public ProductId ProductId { get; } = null!;
     /// <summary>
@@ -27,12 +27,15 @@ public sealed class ProductReserved : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="ProductReserved"/> class.
     /// </summary>
-    /// <param name="productId">The product id.</param>
+    /// <param name="productId">The product identifier.</param>
     /// <param name="quantityReserved">The quantity reserved.</param>
     /// <returns>
     /// A new instance of the <see cref="ProductReserved"/> class.
     /// </returns>
-    public static ProductReserved Create(ProductId productId, int quantityReserved)
+    public static ProductReserved Create(
+        ProductId productId,
+        int quantityReserved
+    )
     {
         return new ProductReserved(productId, quantityReserved);
     }

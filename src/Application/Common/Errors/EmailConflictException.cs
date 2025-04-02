@@ -11,15 +11,18 @@ public class EmailConflictException : BaseException
     private const string DefaultMessage = "The email you entered is already in use";
     private static readonly ErrorCode _defaultErrorCode = ErrorCode.Conflict;
 
-    internal EmailConflictException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
+    internal EmailConflictException()
+        : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal EmailConflictException(string message) : base(message, DefaultTitle, _defaultErrorCode)
+    internal EmailConflictException(string message)
+        : base(message, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal EmailConflictException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    internal EmailConflictException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }

@@ -5,9 +5,9 @@ using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.SaleAggregate;
 using Domain.SaleAggregate.ValueObjects;
+using Domain.SaleAggregate.Specifications;
 using Domain.UnitTests.TestUtils;
 
-using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 
@@ -36,23 +36,21 @@ public class SaleApplicationServiceTests
     /// Verifies that the method returns the correct sales for multiple products.
     /// </summary>
     [Fact]
-    public async Task GetApplicableSalesForProductsAsync_WhenCalled_ReturnsCorrectSalesForEachProduct()
+    public async Task GetApplicableSalesForProductsAsync_WithValidProducts_ReturnsCorrectSalesForEachProduct()
     {
         var products = new[]
         {
-            SaleProduct.Create(
+            SaleEligibleProduct.Create(
                 ProductId.Create(1),
-                new HashSet<CategoryId>
-                {
+                [
                     CategoryId.Create(1)
-                }
+                ]
             ),
-            SaleProduct.Create(
+            SaleEligibleProduct.Create(
                 ProductId.Create(2),
-                new HashSet<CategoryId>
-                {
+                [
                     CategoryId.Create(2)
-                }
+                ]
             )
         };
 
@@ -61,30 +59,30 @@ public class SaleApplicationServiceTests
             [products[0].ProductId] =
             [
                 SaleUtils.CreateSale(
-                    productsInSale: new HashSet<ProductReference>
-                    {
-                        ProductReference.Create(products[0].ProductId)
-                    },
-                    categoriesInSale: new HashSet<CategoryReference>(),
-                    productsExcludeFromSale: new HashSet<ProductReference>()
+                    productsOnSale:
+                    [
+                        SaleProduct.Create(products[0].ProductId)
+                    ],
+                    categoriesOnSale: [],
+                    productsExcludedFromSale: []
                 ),
             ],
             [products[1].ProductId] =
             [
                 SaleUtils.CreateSale(
-                    categoriesInSale: new HashSet<CategoryReference>
-                    {
-                        CategoryReference.Create(products[1].Categories.First())
-                    },
-                    productsExcludeFromSale: new HashSet<ProductReference>(),
-                    productsInSale: new HashSet<ProductReference>()
+                    categoriesOnSale:
+                    [
+                        SaleCategory.Create(products[1].CategoryIds.First())
+                    ],
+                    productsExcludedFromSale: [],
+                    productsOnSale: []
                 ),
             ]
         };
 
         _mockSaleRepository
-            .Setup(r => r.FindAllAsync(
-                It.IsAny<Expression<Func<Sale, bool>>>(),
+            .Setup(r => r.FindSatisfyingAsync(
+                It.IsAny<QueryApplicableSalesForProductsSpecification>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(expectedSales.SelectMany(kvp => kvp.Value));

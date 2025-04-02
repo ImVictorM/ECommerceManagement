@@ -3,7 +3,7 @@ using SharedKernel.Models;
 namespace SharedKernel.UnitTests.Models.TestUtils;
 
 /// <summary>
-/// Value object utilities.
+/// Utilities for the <see cref="ValueObject"/> model.
 /// </summary>
 public static class ValueObjectUtils
 {
@@ -17,10 +17,6 @@ public static class ValueObjectUtils
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initiates a new instance of the <see cref="EmailValueObject"/> class.
-        /// </summary>
-        /// <param name="email">The email.</param>
         private EmailValueObject(string email)
         {
             Value = email;
@@ -29,8 +25,10 @@ public static class ValueObjectUtils
         /// <summary>
         /// Creates a new instance of the <see cref="EmailValueObject"/> class.
         /// </summary>
-        /// <param name="email">The email.</param>
-        /// <returns>A new instance of the <see cref="EmailValueObject"/> class.</returns>
+        /// <param name="email">The email address.</param>
+        /// <returns>
+        /// A new instance of the <see cref="EmailValueObject"/> class.
+        /// </returns>
         public static EmailValueObject Create(string email)
         {
             return new EmailValueObject(email);
@@ -53,10 +51,6 @@ public static class ValueObjectUtils
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initiates a new instance of the <see cref="PasswordValueObject"/> class.
-        /// </summary>
-        /// <param name="password">The password.</param>
         private PasswordValueObject(string password)
         {
             Value = password;
@@ -66,7 +60,9 @@ public static class ValueObjectUtils
         /// Creates a new instance of the <see cref="PasswordValueObject"/> class.
         /// </summary>
         /// <param name="password">The password.</param>
-        /// <returns>A new instance of the <see cref="PasswordValueObject"/> class.</returns>
+        /// <returns>
+        /// A new instance of the <see cref="PasswordValueObject"/> class.
+        /// </returns>
         public static PasswordValueObject Create(string password)
         {
             return new PasswordValueObject(password);
@@ -93,11 +89,6 @@ public static class ValueObjectUtils
         /// </summary>
         public string State { get; }
 
-        /// <summary>
-        /// Initiates a new instance of the <see cref="AddressValueObject"/> class.
-        /// </summary>
-        /// <param name="city">The address city.</param>
-        /// <param name="state">The address state.</param>
         private AddressValueObject(string city, string state)
         {
             City = city;
@@ -109,7 +100,9 @@ public static class ValueObjectUtils
         /// </summary>
         /// <param name="city">The address city.</param>
         /// <param name="state">The address state.</param>
-        /// <returns>A new instance of the <see cref="AddressValueObject"/> class.</returns>
+        /// <returns>
+        /// A new instance of the <see cref="AddressValueObject"/> class.
+        /// </returns>
         public static AddressValueObject Create(string city, string state)
         {
             return new AddressValueObject(city, state);

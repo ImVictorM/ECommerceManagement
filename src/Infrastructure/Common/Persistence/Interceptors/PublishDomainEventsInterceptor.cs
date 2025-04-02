@@ -15,15 +15,16 @@ internal sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
         _publisher = publisher;
     }
 
-    /// <inheritdoc/>
-    public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
+    public override int SavedChanges(
+        SaveChangesCompletedEventData eventData,
+        int result
+    )
     {
         PublishDomainEvents(eventData.Context).GetAwaiter().GetResult();
 
         return base.SavedChanges(eventData, result);
     }
 
-    /// <inheritdoc/>
     public override async ValueTask<int> SavedChangesAsync(
         SaveChangesCompletedEventData eventData,
         int result,
@@ -31,6 +32,7 @@ internal sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
     )
     {
         await PublishDomainEvents(eventData.Context);
+
         return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 
@@ -47,7 +49,9 @@ internal sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
             .Select(entry => entry.Entity)
             .ToList();
 
-        var domainEvents = entitiesWithDomainEvents.SelectMany(e => e.DomainEvents).ToList();
+        var domainEvents = entitiesWithDomainEvents
+            .SelectMany(e => e.DomainEvents)
+            .ToList();
 
         entitiesWithDomainEvents.ForEach(e => e.ClearDomainEvents());
 

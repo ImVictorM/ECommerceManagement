@@ -91,7 +91,7 @@ public class GetOrdersTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests that accessing the orders endpoint with the admin role and a valid
+    /// Verifies that accessing the orders endpoint with the admin role and a valid
     /// status filter returns an OK response containing the filtered orders.
     /// </summary>
     /// <param name="statusName">The order status to filter by.</param>

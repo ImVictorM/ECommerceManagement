@@ -1,4 +1,5 @@
 using Domain.CouponAggregate.ValueObjects;
+
 using SharedKernel.Models;
 
 namespace Domain.OrderAggregate.ValueObjects;
@@ -9,7 +10,7 @@ namespace Domain.OrderAggregate.ValueObjects;
 public class OrderCoupon : ValueObject
 {
     /// <summary>
-    /// Gets the coupon id.
+    /// Gets the coupon identifier.
     /// </summary>
     public CouponId CouponId { get; } = null!;
 
@@ -23,8 +24,10 @@ public class OrderCoupon : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="OrderCoupon"/> class.
     /// </summary>
-    /// <param name="couponId">The coupon id.</param>
-    /// <returns>A new instance of the <see cref="OrderCoupon"/> class.</returns>
+    /// <param name="couponId">The coupon identifier.</param>
+    /// <returns>
+    /// A new instance of the <see cref="OrderCoupon"/> class.
+    /// </returns>
     public static OrderCoupon Create(CouponId couponId)
     {
         return new OrderCoupon(couponId);

@@ -6,7 +6,7 @@ namespace SharedKernel.Interfaces;
 public interface IPaymentMethod
 {
     /// <summary>
-    /// Gets the payment method type.
+    /// Gets the payment method name.
     /// </summary>
-    public string Type { get; }
+    public string Name { get; }
 }

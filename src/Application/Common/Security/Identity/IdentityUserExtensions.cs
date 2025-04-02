@@ -11,7 +11,9 @@ public static class IdentityUserExtensions
     /// Verifies if the current user is an administrator.
     /// </summary>
     /// <param name="user">The current user.</param>
-    /// <returns>A bool value indicating if the current user is an administrator.</returns>
+    /// <returns>
+    /// A bool value indicating if the current user is an administrator.
+    /// </returns>
     public static bool IsAdmin(this IdentityUser user)
     {
         return user.Roles.Any(role => role == Role.Admin);

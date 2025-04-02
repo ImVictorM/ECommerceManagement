@@ -14,7 +14,8 @@ using Moq;
 namespace Application.UnitTests.Shipments.Events;
 
 /// <summary>
-/// Unit tests for the <see cref="OrderCreatedCreateShipmentHandler"/> event handler.
+/// Unit tests for the <see cref="OrderCreatedCreateShipmentHandler"/>
+/// event handler.
 /// </summary>
 public class OrderCreatedCreateShipmentHandlerTests
 {
@@ -24,7 +25,8 @@ public class OrderCreatedCreateShipmentHandlerTests
     private readonly Mock<ICarrierRepository> _mockCarrierRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCreatedCreateShipmentHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="OrderCreatedCreateShipmentHandlerTests"/> class.
     /// </summary>
     public OrderCreatedCreateShipmentHandlerTests()
     {
@@ -40,7 +42,7 @@ public class OrderCreatedCreateShipmentHandlerTests
     }
 
     /// <summary>
-    /// Tests the handler creates a new shipment when the order is created.
+    /// Verifies the handler creates a new shipment when the order is created.
     /// </summary>
     [Fact]
     public async Task HandleOrderPaid_WithPaidOrder_CreatesShipment()
@@ -62,10 +64,13 @@ public class OrderCreatedCreateShipmentHandlerTests
 
         _mockShipmentRepository.Verify(
             r => r.AddAsync(
-                It.Is<Shipment>(s => s.OrderId == order.Id && s.CarrierId == shipmentCarrier.Id)
+                It.Is<Shipment>(s =>
+                    s.OrderId == order.Id
+                    && s.CarrierId == shipmentCarrier.Id
+                )
             ),
-            Times.Once()
+            Times.Once
         );
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

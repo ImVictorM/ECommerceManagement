@@ -2,9 +2,9 @@ using Application.Common.Security.Authentication;
 
 using Infrastructure.Security.Authentication.Settings;
 
+using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Security.Authentication;
 
@@ -17,7 +17,6 @@ internal sealed class HmacSignatureProvider : IHmacSignatureProvider
         _secret = signatureOptions.Value.Secret;
     }
 
-    /// <inheritdoc/>
     public string ComputeHmac(string payload)
     {
         var secretBytes = Encoding.UTF8.GetBytes(_secret);
@@ -28,8 +27,6 @@ internal sealed class HmacSignatureProvider : IHmacSignatureProvider
 
         return Convert.ToBase64String(hashBytes);
     }
-
-    /// <inheritdoc/>
     public bool Verify(string computedSignature, string providedSignature)
     {
         return CryptographicOperations.FixedTimeEquals(

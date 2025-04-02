@@ -15,7 +15,8 @@ using Moq;
 namespace Application.UnitTests.Payments.Events;
 
 /// <summary>
-/// Unit tests for the <see cref="PaymentRejectedCancelAuthorizationHandler"/> event handler.
+/// Unit tests for the <see cref="PaymentRejectedCancelAuthorizationHandler"/>
+/// event handler.
 /// </summary>
 public class PaymentRejectedCancelAuthorizationHandlerTests
 {
@@ -25,7 +26,8 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
     private readonly PaymentRejectedCancelAuthorizationHandler _handler;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="PaymentRejectedCancelAuthorizationHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="PaymentRejectedCancelAuthorizationHandlerTests"/> class.
     /// </summary>
     public PaymentRejectedCancelAuthorizationHandlerTests()
     {
@@ -41,10 +43,11 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
     }
 
     /// <summary>
-    /// Verifies the handler cancels the authorization and updates the payment status.
+    /// Verifies the handler cancels the authorization and updates the payment
+    /// status.
     /// </summary>
     [Fact]
-    public async Task HandlePaymentReject_WithRejectedPayment_CancelsTheAuthorizationAndUpdatesThePaymentStatus()
+    public async Task HandlePaymentReject_WithRejectedPayment_ShouldCancelAuthorizationAndUpdate()
     {
         var payment = PaymentUtils.CreatePayment(
             paymentId: PaymentId.Create(Guid.NewGuid().ToString()),
@@ -53,18 +56,23 @@ public class PaymentRejectedCancelAuthorizationHandlerTests
 
         var notification = PaymentRejectedUtils.CreateEvent(payment);
 
-        var paymentStatusResponse = PaymentStatusResponseUtils.CreateResponse(paymentStatus: PaymentStatus.Canceled);
+        var paymentStatusResponse = PaymentStatusResponseUtils.CreateResponse(
+            paymentStatus: PaymentStatus.Canceled
+        );
 
         _mockPaymentGateway
-            .Setup(g => g.CancelAuthorizationAsync(payment.Id.ToString()))
+            .Setup(g => g.CancelAuthorizationAsync(payment.Id))
             .ReturnsAsync(paymentStatusResponse);
 
         await _handler.Handle(notification, default);
 
         payment.PaymentStatus.Should().Be(paymentStatusResponse.Status);
 
-        _mockPaymentGateway.Verify(g => g.CancelAuthorizationAsync(payment.Id.ToString()), Times.Once());
-        _mockPaymentRepository.Verify(r => r.Update(payment), Times.Once());
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockPaymentGateway.Verify(
+            g => g.CancelAuthorizationAsync(payment.Id),
+            Times.Once
+        );
+        _mockPaymentRepository.Verify(r => r.Update(payment), Times.Once);
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 }

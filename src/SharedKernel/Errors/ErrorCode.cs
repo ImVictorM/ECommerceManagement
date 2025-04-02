@@ -11,12 +11,14 @@ public sealed class ErrorCode
     public static readonly ErrorCode NotFound = new("NOT_FOUND");
 
     /// <summary>
-    /// Represents a "Conflict" error, typically used when a resource already exists or there's a clash in the data.
+    /// Represents a "Conflict" error, typically used when a resource already
+    /// exists or there's a clash in the data.
     /// </summary>
     public static readonly ErrorCode Conflict = new("CONFLICT");
 
     /// <summary>
-    /// Represents an "Internal Error," used when an unexpected exception occurs within the application.
+    /// Represents an "Internal Error," used when an unexpected exception occurs
+    /// within the application.
     /// </summary>
     public static readonly ErrorCode InternalError = new("INTERNAL_ERROR");
 
@@ -41,7 +43,8 @@ public sealed class ErrorCode
     public string Code { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ErrorCode"/> class with the specified error code.
+    /// Initializes a new instance of the <see cref="ErrorCode"/> class
+    /// with the specified error code.
     /// </summary>
     /// <param name="code">The unique string identifier for the error.</param>
     private ErrorCode(string code)

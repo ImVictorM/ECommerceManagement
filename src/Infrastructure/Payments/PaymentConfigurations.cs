@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Payments;
 
-internal sealed class PaymentConfigurations : EntityTypeConfigurationDependency<Payment>
+internal sealed class PaymentConfigurations
+    : EntityTypeConfigurationDependency<Payment>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Payment> builder)
     {
         builder.ToTable("payments");
@@ -53,6 +53,9 @@ internal sealed class PaymentConfigurations : EntityTypeConfigurationDependency<
 
         builder
             .Property(p => p.PaymentStatus)
-            .HasConversion(status => status.Id, id => BaseEnumeration.FromValue<PaymentStatus>(id));
+            .HasConversion(
+                status => status.Id,
+                id => BaseEnumeration.FromValue<PaymentStatus>(id)
+            );
     }
 }

@@ -26,25 +26,34 @@ internal sealed partial class UpdateCategoryCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        UpdateCategoryCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingCategoryUpdate(request.Id);
 
         var categoryId = CategoryId.Create(request.Id);
 
-        var category = await _categoryRepository.FindByIdAsync(categoryId, cancellationToken);
+        var category = await _categoryRepository.FindByIdAsync(
+            categoryId,
+            cancellationToken
+        );
 
         if (category == null)
         {
             LogCategoryNotFound();
-            throw new CategoryNotFoundException($"The category with id {categoryId} could not be updated because it does not exist");
+            throw new CategoryNotFoundException(
+                $"The category with id {categoryId} could not be updated" +
+                $" because it does not exist"
+            );
         }
 
         category.Update(request.Name);
 
         await _unitOfWork.SaveChangesAsync();
-        LogCategoryUpdated();
+
+        LogCategoryUpdatedSuccessfully();
 
         return Unit.Value;
     }

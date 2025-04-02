@@ -9,9 +9,9 @@ internal sealed partial class DeleteShippingMethodCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Starting removal of shipping method with id {Id}."
+        Message = "Starting removal of shipping method with identifier '{Id}'."
     )]
-    private partial void LogInitiatingDeleteShippingMethod(string id);
+    private partial void LogInitiatingShippingMethodDeletion(string id);
 
     [LoggerMessage(
         EventId = 2,
@@ -23,7 +23,9 @@ internal sealed partial class DeleteShippingMethodCommandHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The shipping method was deleted successfully."
+        Message =
+        "The shipping method has been deleted. " +
+        "The operation was completed successfully."
     )]
     private partial void LogShippingMethodDeletedSuccessfully();
 }

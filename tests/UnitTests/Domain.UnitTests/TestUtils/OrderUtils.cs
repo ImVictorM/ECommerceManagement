@@ -30,9 +30,9 @@ public static class OrderUtils
     /// Creates a new fake instance of the <see cref="Order"/> class.
     /// </summary>
     /// <param name="requestId">The request identifier.</param>
-    /// <param name="id">The order id.</param>
-    /// <param name="ownerId">The order owner id.</param>
-    /// <param name="shippingMethodId">The shipping method id.</param>
+    /// <param name="id">The order identifier.</param>
+    /// <param name="ownerId">The order owner identifier.</param>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
     /// <param name="orderLineItemDrafts">The order line item drafts.</param>
     /// <param name="paymentMethod">The order payment method.</param>
     /// <param name="billingAddress">The order billing address.</param>
@@ -80,7 +80,8 @@ public static class OrderUtils
         {
             var statusProperty = typeof(Order).GetProperty(
                 nameof(Order.OrderStatus),
-                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
+                System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.Instance
             );
 
             if (statusProperty != null && statusProperty.CanWrite)
@@ -95,7 +96,7 @@ public static class OrderUtils
     /// <summary>
     /// Creates a single instance of <see cref="OrderLineItemDraft"/>.
     /// </summary>
-    /// <param name="productId">The product id.</param>
+    /// <param name="productId">The product identifier.</param>
     /// <param name="quantity">The product quantity.</param>
     /// <returns>A new instance of <see cref="OrderLineItemDraft"/>.</returns>
     public static OrderLineItemDraft CreateOrderLineItemDraft(
@@ -131,7 +132,7 @@ public static class OrderUtils
     /// <summary>
     /// Creates a new instance of <see cref="OrderLineItem"/>.
     /// </summary>
-    /// <param name="productId">The line item product id.</param>
+    /// <param name="productId">The line item product identifier.</param>
     /// <param name="quantity">The quantity purchased.</param>
     /// <param name="basePrice">The line item base price.</param>
     /// <param name="purchasedPrice">The line item purchased price.</param>
@@ -202,7 +203,7 @@ public static class OrderUtils
     {
         var mock = new Mock<IPaymentMethod>();
 
-        mock.SetupGet(pm => pm.Type).Returns("mock_payment");
+        mock.SetupGet(pm => pm.Name).Returns("mock_payment");
 
         return mock.Object;
     }

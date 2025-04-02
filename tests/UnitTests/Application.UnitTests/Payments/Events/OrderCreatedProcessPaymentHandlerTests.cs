@@ -1,8 +1,9 @@
 using Application.Payments.Events;
-using Application.UnitTests.TestUtils.Events.Orders;
 using Application.Common.Persistence.Repositories;
 using Application.Common.Persistence;
 using Application.Common.PaymentGateway;
+using Application.Common.PaymentGateway.Requests;
+using Application.UnitTests.TestUtils.Events.Orders;
 using Application.UnitTests.TestUtils.PaymentGateway;
 
 using Domain.PaymentAggregate;
@@ -28,7 +29,8 @@ public class OrderCreatedProcessPaymentHandlerTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCreatedProcessPaymentHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="OrderCreatedProcessPaymentHandlerTests"/> class.
     /// </summary>
     public OrderCreatedProcessPaymentHandlerTests()
     {
@@ -46,10 +48,10 @@ public class OrderCreatedProcessPaymentHandlerTests
     }
 
     /// <summary>
-    /// Tests the handler authorizes and creates a new payment.
+    /// Verifies the handler authorizes and creates a new payment.
     /// </summary>
     [Fact]
-    public async Task HandleOrderCreated_WhenEventIsFired_AuthorizesAndCreatesPayment()
+    public async Task HandleOrderCreated_WithValidOrder_AuthorizesAndCreatesPayment()
     {
         var payerId = UserId.Create(1);
         var payer = UserUtils.CreateCustomer(id: payerId);
@@ -57,7 +59,9 @@ public class OrderCreatedProcessPaymentHandlerTests
 
         var paymentResponse = PaymentResponseUtils.CreateResponse();
 
-        var orderCreatedEvent = await OrderCreatedUtils.CreateEventAsync(order: order);
+        var notification = await OrderCreatedUtils.CreateEventAsync(
+            order: order
+        );
 
         _mockUserRepository
             .Setup(repo => repo.FindFirstSatisfyingAsync(
@@ -67,20 +71,20 @@ public class OrderCreatedProcessPaymentHandlerTests
             .ReturnsAsync(payer);
 
         _mockPaymentGateway
-            .Setup(g => g.AuthorizePaymentAsync(It.IsAny<AuthorizePaymentInput>()))
+            .Setup(g => g.AuthorizePaymentAsync(It.IsAny<AuthorizePaymentRequest>()))
             .ReturnsAsync(paymentResponse);
 
-        await _eventHandler.Handle(orderCreatedEvent, default);
+        await _eventHandler.Handle(notification, default);
 
         _mockPaymentGateway.Verify(
             g => g.AuthorizePaymentAsync(
-                It.Is<AuthorizePaymentInput>(
-                    input => input.requestId == orderCreatedEvent.RequestId
+                It.Is<AuthorizePaymentRequest>(
+                    input => input.requestId == notification.RequestId
                     && input.order == order
-                    && input.paymentMethod.Type == orderCreatedEvent.PaymentMethod.Type
+                    && input.paymentMethod.Name == notification.PaymentMethod.Name
                     && input.payer == payer
-                    && input.billingAddress == orderCreatedEvent.BillingAddress
-                    && input.installments == orderCreatedEvent.Installments
+                    && input.billingAddress == notification.BillingAddress
+                    && input.installments == notification.Installments
                 )
             ),
             Times.Once()
@@ -88,7 +92,7 @@ public class OrderCreatedProcessPaymentHandlerTests
 
         _mockPaymentRepository.Verify(
             r => r.AddAsync(It.Is<Payment>(p =>
-                p.Id.ToString() == paymentResponse.PaymentId
+                p.Id == paymentResponse.PaymentId
                 && p.PaymentStatus == paymentResponse.Status
             )),
             Times.Once()

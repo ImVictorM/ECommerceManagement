@@ -11,15 +11,18 @@ public class ShipmentNotFoundException : BaseException
     private const string DefaultMessage = "The shipment being queried was not found";
     private static readonly ErrorCode _defaultErrorCode = ErrorCode.NotFound;
 
-    internal ShipmentNotFoundException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
+    internal ShipmentNotFoundException()
+        : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal ShipmentNotFoundException(string message) : base(message, DefaultTitle, _defaultErrorCode)
+    internal ShipmentNotFoundException(string message)
+        : base(message, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal ShipmentNotFoundException(string message, Exception innerException) : base(message, DefaultTitle, _defaultErrorCode, innerException)
+    internal ShipmentNotFoundException(string message, Exception innerException)
+        : base(message, DefaultTitle, _defaultErrorCode, innerException)
     {
     }
 }

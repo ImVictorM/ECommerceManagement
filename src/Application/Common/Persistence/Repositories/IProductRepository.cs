@@ -1,4 +1,4 @@
-using Application.Products.DTOs;
+using Application.Common.DTOs.Pagination;
 
 using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
@@ -13,29 +13,17 @@ namespace Application.Common.Persistence.Repositories;
 public interface IProductRepository : IBaseRepository<Product, ProductId>
 {
     /// <summary>
-    /// Retrieves the products satisfying a specification including the product category names.
-    /// Supports pagination.
+    /// Retrieves the products satisfying a specification. Supports pagination.
     /// </summary>
     /// <param name="specification">The specification.</param>
-    /// <param name="page">The current page.</param>
-    /// <param name="pageSize">The page size.</param>
+    /// <param name="paginationParams">The pagination parameters.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A paginated list of filtered products with the category names.</returns>
-    Task<IEnumerable<ProductWithCategoriesQueryResult>> GetProductsWithCategoriesSatisfyingAsync(
+    /// <returns>
+    /// A list of <see cref="Product"/>.
+    /// </returns>
+    Task<IReadOnlyList<Product>> GetProductsSatisfyingAsync(
         ISpecificationQuery<Product> specification,
-        int page,
-        int pageSize,
-        CancellationToken cancellationToken = default
-    );
-
-    /// <summary>
-    /// Retrieves a product satisfying a specification including the product category names.
-    /// </summary>
-    /// <param name="specification">The specification.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The product with the category names.</returns>
-    Task<ProductWithCategoriesQueryResult?> GetProductWithCategoriesSatisfyingAsync(
-        ISpecificationQuery<Product> specification,
+        PaginationParams paginationParams,
         CancellationToken cancellationToken = default
     );
 }

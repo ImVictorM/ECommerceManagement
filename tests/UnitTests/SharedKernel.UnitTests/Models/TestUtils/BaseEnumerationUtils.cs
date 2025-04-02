@@ -3,28 +3,28 @@ using SharedKernel.Models;
 namespace SharedKernel.UnitTests.Models.TestUtils;
 
 /// <summary>
-/// Define utilities for the <see cref="BaseEnumeration"/> class.
+/// Utilities for the <see cref="BaseEnumeration"/> class.
 /// </summary>
 public static class BaseEnumerationUtils
 {
     /// <summary>
-    /// Enumeration to create tests.
+    /// Represents a sample enumeration.
     /// </summary>
     public class SampleEnumeration : BaseEnumeration
     {
         /// <summary>
-        /// Represents a first value.
+        /// Represents the first value.
         /// </summary>
-        public static readonly SampleEnumeration First = new (1, "First");
+        public static readonly SampleEnumeration First = new (1, nameof(First));
         /// <summary>
-        /// Represents a second value.
+        /// Represents the second value.
         /// </summary>
-        public static readonly SampleEnumeration Second = new(2, "Second");
+        public static readonly SampleEnumeration Second = new(2, nameof(Second));
 
         /// <summary>
         /// Initiates a new instance of the <see cref="SampleEnumeration"/> class.
         /// </summary>
-        /// <param name="id">The id.</param>
+        /// <param name="id">The identifier.</param>
         /// <param name="name">The name.</param>
         public SampleEnumeration(long id, string name) : base(id, name) { }
     }

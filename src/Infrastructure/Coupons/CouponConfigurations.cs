@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Coupons;
 
-internal sealed class CouponConfigurations : EntityTypeConfigurationDependency<Coupon>
+internal sealed class CouponConfigurations
+    : EntityTypeConfigurationDependency<Coupon>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Coupon> builder)
     {
         builder.ToTable("coupons");
@@ -36,8 +36,8 @@ internal sealed class CouponConfigurations : EntityTypeConfigurationDependency<C
 
         builder.HasIndex(c => c.Code).IsUnique();
 
-        builder.
-            Property(c => c.UsageLimit)
+        builder
+            .Property(c => c.UsageLimit)
             .IsRequired();
 
         builder

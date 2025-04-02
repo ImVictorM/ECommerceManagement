@@ -12,7 +12,7 @@ namespace IntegrationTests.TestUtils.Extensions.Products;
 public static class ProductResponseExtensions
 {
     /// <summary>
-    /// Ensures a response corresponds to a product.
+    /// Ensures the response corresponds to the given product.
     /// </summary>
     /// <param name="response">The response.</param>
     /// <param name="product">The product to be tested against.</param>
@@ -30,11 +30,11 @@ public static class ProductResponseExtensions
             .Be(product.Inventory.QuantityAvailable);
         response.Images
             .Should()
-            .BeEquivalentTo(product.ProductImages.Select(pi => pi.Url));
+            .BeEquivalentTo(product.ProductImages.Select(pi => pi.Uri));
     }
 
     /// <summary>
-    /// Ensures a list of product responses corresponds to a list of
+    /// Ensures a list of product responses corresponds to the given list of
     /// expected products.
     /// </summary>
     /// <param name="response">The current response.</param>
@@ -46,7 +46,8 @@ public static class ProductResponseExtensions
     {
         foreach (var expected in expectedProducts)
         {
-            var responseProduct = response.First(r => r.Id == expected.Id.ToString());
+            var responseProduct = response
+                .First(r => r.Id == expected.Id.ToString());
 
             responseProduct.EnsureCorrespondsTo(expected);
         }

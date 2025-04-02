@@ -23,7 +23,8 @@ builder.Services
     .AddInfrastructure(builder.Configuration, builder.Environment)
     .AddPresentation(builder.Configuration);
 
-builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 var app = builder.Build();
 

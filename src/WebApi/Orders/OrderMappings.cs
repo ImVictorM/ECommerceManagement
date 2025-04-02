@@ -1,6 +1,11 @@
+using Application.Common.PaymentGateway.PaymentMethods;
 using Application.Orders.Commands.PlaceOrder;
-using Application.Orders.DTOs;
+using Application.Orders.DTOs.Inputs;
+using Application.Orders.DTOs.Results;
+using AppPMs = Application.Common.PaymentGateway.PaymentMethods;
 
+using ContractPMs = Contracts.Common.PaymentMethods;
+using Contracts.Common.PaymentMethods;
 using Contracts.Orders;
 
 using Mapster;
@@ -9,35 +14,28 @@ namespace WebApi.Orders;
 
 internal sealed class OrderMappings : IRegister
 {
-    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
+        config.NewConfig<OrderLineItemRequest, OrderLineItemInput>();
+
+        config
+            .NewConfig<BasePaymentMethod, PaymentMethod>()
+            .TwoWays()
+            .MapToConstructor(true)
+            .Include<ContractPMs.CreditCard, AppPMs.CreditCard>()
+            .Include<ContractPMs.DebitCard, AppPMs.DebitCard>()
+            .Include<ContractPMs.PaymentSlip, AppPMs.PaymentSlip>()
+            .Include<ContractPMs.Pix, AppPMs.Pix>();
+
         config
             .NewConfig<(Guid RequestId, PlaceOrderRequest Request), PlaceOrderCommand>()
             .Map(dest => dest.RequestId, src => src.RequestId)
             .Map(dest => dest, src => src.Request);
 
         config.NewConfig<OrderShippingMethodResult, OrderShippingMethodResponse>();
-
-        config
-            .NewConfig<OrderShipmentResult, OrderShipmentResponse>()
-            .Map(dest => dest.ShipmentId, src => src.ShipmentId.ToString());
-
-        config.NewConfig<OrderPaymentResult, OrderPaymentResponse>()
-            .Map(dest => dest.PaymentId, src => src.PaymentId.ToString())
-            .Map(dest => dest.Description, src => src.Details)
-            .Map(dest => dest.PaymentType, src => src.PaymentMethod);
-
-        config.NewConfig<OrderDetailedResult, OrderDetailedResponse>()
-            .Map(dest => dest.Id, src => src.Order.Id.ToString())
-            .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
-            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name)
-            .Map(dest => dest, src => src.Order);
-
-        config.NewConfig<OrderResult, OrderResponse>()
-            .Map(dest => dest.Id, src => src.Order.Id.ToString())
-            .Map(dest => dest.OwnerId, src => src.Order.OwnerId.ToString())
-            .Map(dest => dest.Status, src => src.Order.OrderStatus.Name)
-            .Map(dest => dest, src => src.Order);
+        config.NewConfig<OrderShipmentResult, OrderShipmentResponse>();
+        config.NewConfig<OrderPaymentResult, OrderPaymentResponse>();
+        config.NewConfig<OrderDetailedResult, OrderDetailedResponse>();
+        config.NewConfig<OrderResult, OrderResponse>();
     }
 }

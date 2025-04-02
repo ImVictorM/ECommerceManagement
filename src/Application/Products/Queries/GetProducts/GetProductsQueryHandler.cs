@@ -1,5 +1,6 @@
 using Application.Common.Persistence.Repositories;
-using Application.Products.DTOs;
+using Application.Common.DTOs.Pagination;
+using Application.Products.DTOs.Results;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
@@ -14,7 +15,7 @@ using MediatR;
 namespace Application.Products.Queries.GetProducts;
 
 internal sealed partial class GetProductsQueryHandler
-    : IRequestHandler<GetProductsQuery, IEnumerable<ProductResult>>
+    : IRequestHandler<GetProductsQuery, IReadOnlyList<ProductResult>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IProductPricingService _productPricingService;
@@ -32,50 +33,58 @@ internal sealed partial class GetProductsQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<IEnumerable<ProductResult>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ProductResult>> Handle(
+        GetProductsQuery request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatedRetrievingProducts();
 
-        var page = request.Page ?? DefaultInitialPage;
-        var pageSize = request.PageSize ?? DefaultPageSize;
-        var categoriesToFilter = request.Categories == null || !request.Categories.Any()
-            ? "none" : string.Join(',', request.Categories);
+        var page = request.PaginationParams.Page ?? DefaultInitialPage;
+        var pageSize = request.PaginationParams.PageSize ?? DefaultPageSize;
+
+        var hasAnyCategoryFilter =
+            request.Filters.CategoryIds != null
+            && request.Filters.CategoryIds.Any();
+
+        var categoriesToFilter = hasAnyCategoryFilter
+            ? string.Join(',', request.Filters.CategoryIds!)
+            : "none";
 
         LogPaginationDetails(page, pageSize);
         LogCategoriesFilterDetails(categoriesToFilter);
 
         CompositeQuerySpecification<Product> spec = new QueryActiveProductSpecification();
 
-        if (request.Categories != null && request.Categories.Any())
+        if (hasAnyCategoryFilter)
         {
-            var categoryIds = request.Categories.Select(CategoryId.Create);
+            var categoryIds = request.Filters.CategoryIds!.Select(CategoryId.Create);
 
-            spec = spec.And(new QueryProductsContainingCategoriesSpecification(categoryIds));
+            spec = spec.And(
+                new QueryProductsContainingCategoriesSpecification(categoryIds)
+            );
         }
 
-        var productsWithCategories = await _productRepository.GetProductsWithCategoriesSatisfyingAsync(
+        var products = await _productRepository.GetProductsSatisfyingAsync(
             spec,
-            page,
-            pageSize,
+            new PaginationParams(page, pageSize),
             cancellationToken
         );
 
-        LogProductsRetrieved(productsWithCategories.Count());
+        LogProductsRetrieved(products.Count);
 
-        var productPricesOnSale = await _productPricingService.CalculateProductsPriceApplyingSaleAsync(
-            productsWithCategories.Select(p => p.Product),
-            cancellationToken
-        );
+        var productDiscountedPrices = await _productPricingService
+            .CalculateDiscountedPricesAsync(products, cancellationToken);
 
-        LogProductsPriceCalculated();
+        LogProductsDiscountedPriceCalculated();
 
         LogProductsRetrievedSuccessfully();
 
-        return productsWithCategories.Select(p => new ProductResult(
-            p.Product,
-            p.CategoryNames,
-            productPricesOnSale[p.Product.Id]
-        ));
+        return products
+            .Select(product => ProductResult.FromProductWithDiscountedPrice(
+                product,
+                productDiscountedPrices[product.Id]
+            ))
+            .ToList();
     }
 }

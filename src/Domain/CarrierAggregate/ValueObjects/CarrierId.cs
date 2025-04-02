@@ -26,7 +26,10 @@ public sealed class CarrierId : ValueObject
     /// Creates a new instance of the <see cref="CarrierId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="CarrierId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CarrierId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static CarrierId Create(long value)
     {
         return new CarrierId(value);
@@ -36,7 +39,10 @@ public sealed class CarrierId : ValueObject
     /// Creates a new instance of the <see cref="CarrierId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="CarrierId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CarrierId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static CarrierId Create(string value)
     {
         return new CarrierId(value.ToLongId());

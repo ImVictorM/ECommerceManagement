@@ -17,7 +17,8 @@ using Moq;
 namespace Application.UnitTests.Shipments.Commands.AdvanceShipmentStatus;
 
 /// <summary>
-/// Unit tests for the <see cref="AdvanceShipmentStatusCommandHandler"/> command handler.
+/// Unit tests for the <see cref="AdvanceShipmentStatusCommandHandler"/>
+/// command handler.
 /// </summary>
 public class AdvanceShipmentStatusCommandHandlerTests
 {
@@ -26,7 +27,8 @@ public class AdvanceShipmentStatusCommandHandlerTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="AdvanceShipmentStatusCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="AdvanceShipmentStatusCommandHandlerTests"/> class.
     /// </summary>
     public AdvanceShipmentStatusCommandHandlerTests()
     {
@@ -37,7 +39,7 @@ public class AdvanceShipmentStatusCommandHandlerTests
         _handler = new AdvanceShipmentStatusCommandHandler(
             _mockUnitOfWork.Object,
             _mockShipmentRepository.Object,
-            new Mock<ILogger<AdvanceShipmentStatusCommandHandler>>().Object
+            Mock.Of<ILogger<AdvanceShipmentStatusCommandHandler>>()
         );
     }
 
@@ -45,10 +47,13 @@ public class AdvanceShipmentStatusCommandHandlerTests
     /// Verifies the shipment status advances when the shipment exists and is not pending.
     /// </summary>
     [Fact]
-    public async Task HandleAdvanceShipmentStatus_WithExistingPreparingShipment_AdvancesStatusToTheNextState()
+    public async Task HandleAdvanceShipmentStatusCommand_WithExistentPreparingShipment_AdvancesStatusToTheNextState()
     {
         var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
-        var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1), initialShipmentStatus: ShipmentStatus.Preparing);
+        var shipment = ShipmentUtils.CreateShipment(
+            id: ShipmentId.Create(1),
+            initialShipmentStatus: ShipmentStatus.Preparing
+        );
 
         _mockShipmentRepository
             .Setup(r => r.FindByIdAsync(
@@ -61,14 +66,14 @@ public class AdvanceShipmentStatusCommandHandlerTests
 
         shipment.ShipmentStatus.Should().Be(ShipmentStatus.Shipped);
 
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 
     /// <summary>
     /// Verifies an error is thrown when trying to advance a pending shipment manually.
     /// </summary>
     [Fact]
-    public async Task HandleAdvanceShipmentStatus_WithExistingPendingShipment_ThrowsError()
+    public async Task HandleAdvanceShipmentStatusCommand_WithExistentPendingShipment_ThrowsError()
     {
         var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
         var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1));
@@ -90,7 +95,7 @@ public class AdvanceShipmentStatusCommandHandlerTests
     /// Verifies an error is thrown when the shipment does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleAdvanceShipmentStatus_WhenShipmentDoesNotExist_ThrowsError()
+    public async Task HandleAdvanceShipmentStatusCommand_WhenShipmentDoesNotExist_ThrowsError()
     {
         var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
 

@@ -21,14 +21,16 @@ public static class OrderCreatedUtils
     /// <summary>
     /// Creates a new instance of the <see cref="OrderCreated"/> class.
     /// </summary>
-    /// <param name="requestId">The current request id.</param>
-    /// <param name="shippingMethodId">The shipping method id.</param>
+    /// <param name="requestId">The current request identifier.</param>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
     /// <param name="order">The order created.</param>
     /// <param name="paymentMethod">The payment method.</param>
     /// <param name="billingAddress">The billing address.</param>
     /// <param name="deliveryAddress">The delivery address.</param>
     /// <param name="installments">The installments quantity.</param>
-    /// <returns>A new instance of the <see cref="OrderCreated"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="OrderCreated"/> class.
+    /// </returns>
     public static async Task<OrderCreated> CreateEventAsync(
         Guid? requestId = null,
         ShippingMethodId? shippingMethodId = null,

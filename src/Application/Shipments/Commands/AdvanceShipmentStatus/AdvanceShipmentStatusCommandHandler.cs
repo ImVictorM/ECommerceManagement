@@ -27,21 +27,27 @@ internal sealed partial class AdvanceShipmentStatusCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(AdvanceShipmentStatusCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        AdvanceShipmentStatusCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingAdvanceShipmentStatus(request.ShipmentId);
 
         var shipmentId = ShipmentId.Create(request.ShipmentId);
 
-        var shipment = await _shipmentRepository.FindByIdAsync(shipmentId, cancellationToken);
+        var shipment = await _shipmentRepository.FindByIdAsync(
+            shipmentId,
+            cancellationToken
+        );
 
         if (shipment == null)
         {
             LogShipmentNotFound();
 
             throw new ShipmentNotFoundException(
-                "It was not possible to advance the shipment status because the shipment was not found"
+                "It was not possible to advance the shipment status because" +
+                " the shipment was not found"
             );
         }
 

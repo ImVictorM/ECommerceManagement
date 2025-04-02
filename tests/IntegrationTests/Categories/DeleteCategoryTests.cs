@@ -37,11 +37,11 @@ public class DeleteCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteCategory_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var idExistingCategory = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
+        var idExistentCategory = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.DeleteCategory),
-            new { id = idExistingCategory.ToString() }
+            new { id = idExistentCategory.ToString() }
         );
 
         var response = await RequestService.CreateClient().DeleteAsync(
@@ -57,11 +57,11 @@ public class DeleteCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteCategory_WithoutAdminPermission_ReturnsForbidden()
     {
-        var idExistingCategory = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
+        var idExistentCategory = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.DeleteCategory),
-            new { id = idExistingCategory.ToString() }
+            new { id = idExistentCategory.ToString() }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -77,7 +77,8 @@ public class DeleteCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteCategory_WithAdminPermission_ReturnsNoContent()
     {
-        var idCategoryToBeDeleted = _seedCategory.GetEntityId(CategorySeedType.JEWELRY);
+        var idCategoryToBeDeleted = _seedCategory
+            .GetEntityId(CategorySeedType.JEWELRY);
 
         var endpointDelete = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.DeleteCategory),

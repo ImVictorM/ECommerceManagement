@@ -1,5 +1,6 @@
+using Application.Common.PaymentGateway.PaymentMethods;
 using Application.Orders.Commands.PlaceOrder;
-using Application.Orders.DTOs;
+using Application.Orders.DTOs.Inputs;
 
 using Domain.UnitTests.TestUtils;
 
@@ -21,13 +22,13 @@ public static class PlaceOrderCommandUtils
     /// <summary>
     /// Creates a new instance of the <see cref="PlaceOrderCommand"/> class.
     /// </summary>
-    /// <param name="requestId">The current request id.</param>
-    /// <param name="shippingMethodId">The shipping method id.</param>
+    /// <param name="requestId">The current request identifier.</param>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
     /// <param name="products">The order products.</param>
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="paymentMethod">The order payment method.</param>
-    /// <param name="couponsAppliedIds">The coupon applied ids.</param>
+    /// <param name="couponsAppliedIds">The coupon applied identifiers.</param>
     /// <param name="installments">The installments.</param>
     /// <returns>
     /// A new instance of the <see cref="PlaceOrderCommand"/> class.
@@ -49,7 +50,7 @@ public static class PlaceOrderCommandUtils
             products ?? CreateOrderLineItemInputs(count: 2),
             AddressUtils.CreateAddress(),
             AddressUtils.CreateAddress(),
-            OrderUtils.CreateMockPaymentMethod(),
+            new CreditCard("tokenized-card-data"),
             couponsAppliedIds,
             installments
         );
@@ -58,7 +59,7 @@ public static class PlaceOrderCommandUtils
     /// <summary>
     /// Creates a new instance of the <see cref="OrderLineItemInput"/> class.
     /// </summary>
-    /// <param name="productId">The product id.</param>
+    /// <param name="productId">The product identifier.</param>
     /// <param name="quantity">The product quantity.</param>
     /// <returns>
     /// A new instance of the <see cref="OrderLineItemInput"/> class.

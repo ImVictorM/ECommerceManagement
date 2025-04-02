@@ -17,8 +17,8 @@ public static class PaymentUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Payment"/> class.
     /// </summary>
-    /// <param name="paymentId">The payment id.</param>
-    /// <param name="orderId">The order id.</param>
+    /// <param name="paymentId">The payment identifier.</param>
+    /// <param name="orderId">The order identifier.</param>
     /// <param name="paymentStatus">The payment status.</param>
     /// <returns>A new instance of the <see cref="Payment"/> class.</returns>
     public static Payment CreatePayment(

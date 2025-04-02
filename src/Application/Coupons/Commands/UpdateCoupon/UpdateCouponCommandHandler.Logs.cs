@@ -9,14 +9,14 @@ internal sealed partial class UpdateCouponCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating update for coupon with id {CouponId}"
+        Message = "Initiating update for coupon with identifier '{CouponId}'."
     )]
     private partial void LogInitiatingCouponUpdate(string couponId);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The coupon was not found. Operation failed."
+        Message = "The coupon was not found. The operation failed."
     )]
     private partial void LogCouponNotFound();
 
@@ -53,7 +53,7 @@ internal sealed partial class UpdateCouponCommandHandler
         Level = LogLevel.Debug,
         Message =
         "The coupon information and restrictions were updated." +
-        " Operation complete successfully."
+        " The operation was completed successfully."
     )]
     private partial void LogCouponUpdatedSuccessfully();
 }

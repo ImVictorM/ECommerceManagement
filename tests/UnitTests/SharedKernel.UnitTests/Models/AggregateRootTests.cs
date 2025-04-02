@@ -1,6 +1,7 @@
-using FluentAssertions;
 using SharedKernel.Models;
 using SharedKernel.UnitTests.Models.TestUtils;
+
+using FluentAssertions;
 
 namespace SharedKernel.UnitTests.Models;
 
@@ -11,10 +12,11 @@ public class AggregateRootTests
 {
 
     /// <summary>
-    /// Tests if it is possible to instance an implementation of the <see cref="AggregateRoot{TId}"/> correctly.
+    /// Verifies it is possible to instance an implementation of the
+    /// <see cref="AggregateRoot{TId}"/> correctly.
     /// </summary>
     [Fact]
-    public void CreateAggregateRoot_WithValidParameters_ReturnsNewInstance()
+    public void CreateAggregateRoot_WithValidId_ReturnsNewInstance()
     {
         var id = Guid.NewGuid();
 

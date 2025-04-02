@@ -14,7 +14,7 @@ namespace Domain.UnitTests.PaymentAggregate;
 public class PaymentTests
 {
     /// <summary>
-    /// List of valid payment creation parameters.
+    /// Provides a list of valid payment creation parameters.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidPaymentCreationParameters =
     [
@@ -36,7 +36,7 @@ public class PaymentTests
     ];
 
     /// <summary>
-    /// List of payment status updates and expected domain event types.
+    /// Provides a list of payment status with expected generated domain event type.
     /// </summary>
     public static readonly IEnumerable<object[]> PaymentStatusTransitionData =
     [
@@ -59,14 +59,14 @@ public class PaymentTests
     ];
 
     /// <summary>
-    /// Tests it is possible to create a payment with valid parameters.
+    /// Verifies it is possible to create a payment with valid parameters.
     /// </summary>
-    /// <param name="paymentId">The payment id.</param>
-    /// <param name="orderId">The order id.</param>
+    /// <param name="paymentId">The payment identifier.</param>
+    /// <param name="orderId">The order identifier.</param>
     /// <param name="paymentStatus">The payment status.</param>
     [Theory]
     [MemberData(nameof(ValidPaymentCreationParameters))]
-    public void CreatePayment_WithValidParameters_CreatesWithoutThrowing(
+    public void Create_WithValidParameters_CreatesWithoutThrowing(
         PaymentId paymentId,
         OrderId orderId,
         PaymentStatus paymentStatus
@@ -90,13 +90,16 @@ public class PaymentTests
     }
 
     /// <summary>
-    /// Tests creating the payment with different status raises the correct domain event.
+    /// Verifies creating the payment with different status raises the correct
+    /// domain event.
     /// </summary>
     /// <param name="status">The initial payment status.</param>
-    /// <param name="expectedRaisedEventType">The expected event raised.</param>
+    /// <param name="expectedRaisedEventType">
+    /// The expected event raised.
+    /// </param>
     [Theory]
     [MemberData(nameof(PaymentStatusTransitionData))]
-    public void CreatePayment_WithDifferentInitialStatus_RaisesTheCorrectDomainEvent(
+    public void Create_WithDifferentInitialStatus_RaisesTheCorrectDomainEvent(
         PaymentStatus status,
         Type expectedRaisedEventType
     )
@@ -104,24 +107,28 @@ public class PaymentTests
         var payment = PaymentUtils.CreatePayment(paymentStatus: status);
 
         payment.PaymentStatus.Should().Be(status);
-        payment.DomainEvents.Should().Contain(e => e.GetType() == expectedRaisedEventType);
+        payment.DomainEvents
+            .Should().Contain(e => e.GetType() == expectedRaisedEventType);
     }
 
     /// <summary>
-    /// Tests updating the payment status also generates a domain event.
+    /// Verifies updating the payment status also generates a domain event.
     /// </summary>
     [Theory]
     [MemberData(nameof(PaymentStatusTransitionData))]
-    public void UpdatePaymentStatus_WhenCalled_ChangePaymentStatusAndRaisesCorrectEvent(
+    public void UpdatePaymentStatus_WithDifferentStatuses_ShouldUpdateAndRaisesCorrectEvent(
         PaymentStatus status,
         Type expectedRaisedEventType
     )
     {
-        var payment = PaymentUtils.CreatePayment(paymentStatus: PaymentStatus.Pending);
+        var payment = PaymentUtils.CreatePayment(
+            paymentStatus: PaymentStatus.Pending
+        );
 
         payment.UpdatePaymentStatus(status);
 
         payment.PaymentStatus.Should().Be(status);
-        payment.DomainEvents.Should().Contain(e => e.GetType() == expectedRaisedEventType);
+        payment.DomainEvents
+            .Should().Contain(e => e.GetType() == expectedRaisedEventType);
     }
 }

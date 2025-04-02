@@ -35,7 +35,7 @@ internal class OrderAssemblyService : IOrderAssemblyService
         );
 
         var productOnSalePrices = await _productPricingService
-            .CalculateProductsPriceApplyingSaleAsync(
+            .CalculateDiscountedPricesAsync(
                 products,
                 cancellationToken
             );

@@ -49,7 +49,8 @@ public class OrderFactory
     /// The identifier of the shipping method selected for the order.
     /// </param>
     /// <param name="orderLineItemDrafts">
-    /// The collection of draft line items representing the raw ordered product data.
+    /// The collection of draft line items representing the raw ordered product
+    /// data.
     /// </param>
     /// <param name="paymentMethod">
     /// The payment method to be used for the order.

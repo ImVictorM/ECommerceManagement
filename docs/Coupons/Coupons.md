@@ -167,7 +167,7 @@ Example Response:
 
 ## Delete Coupon
 
-Deletes an existing coupon. Admin authentication is required.
+Deletes an existent coupon. Admin authentication is required.
 
 ```js
 DELETE "/coupons/{{id_coupon}}"
@@ -186,7 +186,7 @@ DELETE "/coupons/{{id_coupon}}"
 
 ### Toggle Coupon Activation
 
-Toggles the active status of an existing coupon. Admin authentication is required.
+Toggles the active status of an existent coupon. Admin authentication is required.
 
 ```js
 PATCH "/coupons/{{id_coupon}}"
@@ -205,7 +205,7 @@ PATCH "/coupons/{{id_coupon}}"
 
 ## Update Coupon
 
-Updates the details of an existing coupon. Admin authentication is required.
+Updates the details of an existent coupon. Admin authentication is required.
 
 ```js
 PUT "/coupons/{{id_coupon}}"

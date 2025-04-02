@@ -1,6 +1,6 @@
 using Application.Common.Persistence.Repositories;
-using Application.Users.DTOs;
 using Application.Users.Errors;
+using Application.Users.DTOs.Results;
 
 using Domain.UserAggregate.ValueObjects;
 
@@ -23,24 +23,26 @@ internal sealed partial class GetUserByIdQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<UserResult> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<UserResult> Handle(
+        GetUserByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingUserRetrieval(request.UserId);
 
-        var id = UserId.Create(request.UserId);
+        var userId = UserId.Create(request.UserId);
 
-        var user = await _userRepository.FindByIdAsync(id, cancellationToken);
+        var user = await _userRepository.FindByIdAsync(userId, cancellationToken);
 
         if (user == null)
         {
             LogUserNotFound();
 
-            throw new UserNotFoundException($"User with id {id} was not found")
-                .WithContext("UserId", id.ToString());
+            throw new UserNotFoundException()
+                .WithContext("UserId", userId.ToString());
         }
 
         LogUserRetrievedSuccessfully();
-        return new UserResult(user);
+        return UserResult.FromUser(user);
     }
 }

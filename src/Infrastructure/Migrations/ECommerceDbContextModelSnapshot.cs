@@ -81,12 +81,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6564), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 27, 18, 14, 34, 19, DateTimeKind.Unspecified).AddTicks(4309), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "carrier@email.com",
                             Name = "ECommerceManagementCarrier",
-                            PasswordHash = "0BF7B0638748AA86326E9885E77E44F584D03207237BC8D16AFED4D82BD7F16A-4A782FA88CA45F81509EF1F7EF8BC43D",
+                            PasswordHash = "EBCC7435CAE3FF342B029799988A2A6E7C35BBB5E44BC00B0DB2F53FC21239B3-ABFB675C716EC9BEF2DF454B7E057594",
                             Phone = "",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 308, DateTimeKind.Unspecified).AddTicks(6571), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 27, 18, 14, 34, 19, DateTimeKind.Unspecified).AddTicks(4314), new TimeSpan(0, 0, 0, 0, 0)),
                             _roleId = 3L
                         });
                 });
@@ -422,7 +422,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("products", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ProductFeedbackAggregate.ProductFeedback", b =>
+            modelBuilder.Entity("Domain.ProductReviewAggregate.ProductReview", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -473,7 +473,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("product_feedback", (string)null);
+                    b.ToTable("product_reviews", (string)null);
                 });
 
             modelBuilder.Entity("Domain.SaleAggregate.Sale", b =>
@@ -688,12 +688,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4465), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 3, 27, 18, 14, 34, 4, DateTimeKind.Unspecified).AddTicks(8268), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@email.com",
                             IsActive = true,
                             Name = "admin",
-                            PasswordHash = "FA55DE04791D423A6A3F23B60FF2B59660F96A397C77A87A98A26A3316B9A24C-495A517EF37FC1DF7D8301655D2FDA15",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 14, 15, 9, 14, 294, DateTimeKind.Unspecified).AddTicks(4469), new TimeSpan(0, 0, 0, 0, 0))
+                            PasswordHash = "43447EFCDF831732BD02CAEA574191756A74708964884703BC912ADD7DE2D794-21D053A60406E6AF62050B4E3BEA2AC2",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 3, 27, 18, 14, 34, 4, DateTimeKind.Unspecified).AddTicks(8273), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -1072,10 +1072,10 @@ namespace Infrastructure.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("id"));
 
-                            b1.Property<string>("Url")
+                            b1.Property<string>("Uri")
                                 .IsRequired()
                                 .HasColumnType("text")
-                                .HasColumnName("url");
+                                .HasColumnName("uri");
 
                             b1.Property<long>("id_product")
                                 .HasColumnType("bigint")
@@ -1099,7 +1099,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("ProductImages");
                 });
 
-            modelBuilder.Entity("Domain.ProductFeedbackAggregate.ProductFeedback", b =>
+            modelBuilder.Entity("Domain.ProductReviewAggregate.ProductReview", b =>
                 {
                     b.HasOne("Domain.ProductAggregate.Product", null)
                         .WithMany()
@@ -1148,7 +1148,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("SaleId");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.ProductReference", "ProductsExcludedFromSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleProduct", "ProductsExcludedFromSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1183,7 +1183,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.ProductReference", "ProductsInSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleProduct", "ProductsOnSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1218,7 +1218,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.CategoryReference", "CategoriesInSale", b1 =>
+                    b.OwnsMany("Domain.SaleAggregate.ValueObjects.SaleCategory", "CategoriesOnSale", b1 =>
                         {
                             b1.Property<long>("id")
                                 .ValueGeneratedOnAdd()
@@ -1253,14 +1253,14 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("id_sale");
                         });
 
-                    b.Navigation("CategoriesInSale");
+                    b.Navigation("CategoriesOnSale");
 
                     b.Navigation("Discount")
                         .IsRequired();
 
                     b.Navigation("ProductsExcludedFromSale");
 
-                    b.Navigation("ProductsInSale");
+                    b.Navigation("ProductsOnSale");
                 });
 
             modelBuilder.Entity("Domain.ShipmentAggregate.Shipment", b =>

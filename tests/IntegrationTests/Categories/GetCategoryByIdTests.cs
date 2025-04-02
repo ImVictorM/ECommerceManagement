@@ -39,13 +39,13 @@ public class GetCategoryByIdTests : BaseIntegrationTest
     /// Verifies a not found response is returned when the category does not exist.
     /// </summary>
     [Fact]
-    public async Task GetCategoryById_WithNonexistingCategoryId_ReturnsNotFound()
+    public async Task GetCategoryById_WithNonExistentCategoryId_ReturnsNotFound()
     {
-        var nonexistingCategoryId = "111111";
+        var nonExistentCategoryId = "111111";
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.GetCategoryById),
-            new { id = nonexistingCategoryId }
+            new { id = nonExistentCategoryId }
         );
 
         var response = await _client.GetAsync(endpoint);
@@ -58,14 +58,14 @@ public class GetCategoryByIdTests : BaseIntegrationTest
     /// identifier exists.
     /// </summary>
     [Fact]
-    public async Task GetCategoryById_WithExistingCategoryId_ReturnsOk()
+    public async Task GetCategoryById_WithExistentCategoryId_ReturnsOk()
     {
-        var existingCategory = _seedCategory.GetEntity(CategorySeedType.TECHNOLOGY);
-        var existingCategoryId = existingCategory.Id.ToString();
+        var existentCategory = _seedCategory.GetEntity(CategorySeedType.TECHNOLOGY);
+        var existentCategoryId = existentCategory.Id.ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.GetCategoryById),
-            new { id = existingCategoryId }
+            new { id = existentCategoryId }
         );
 
         var response = await _client.GetAsync(endpoint);
@@ -73,7 +73,7 @@ public class GetCategoryByIdTests : BaseIntegrationTest
             .ReadRequiredFromJsonAsync<CategoryResponse>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        responseContent.Id.Should().Be(existingCategoryId);
-        responseContent.Name.Should().Be(existingCategory.Name);
+        responseContent.Id.Should().Be(existentCategoryId);
+        responseContent.Name.Should().Be(existentCategory.Name);
     }
 }

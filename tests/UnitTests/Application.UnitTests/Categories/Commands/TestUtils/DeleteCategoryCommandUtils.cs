@@ -12,10 +12,16 @@ public static class DeleteCategoryCommandUtils
     /// <summary>
     /// Creates a new instance of the <see cref="DeleteCategoryCommand"/> class.
     /// </summary>
-    /// <param name="id">The category id.</param>
-    /// <returns>A new instance of the <see cref="DeleteCategoryCommand"/> class.</returns>
-    public static DeleteCategoryCommand CreateCommand(string? id = null)
+    /// <param name="id">The category identifier.</param>
+    /// <returns>
+    /// A new instance of the <see cref="DeleteCategoryCommand"/> class.
+    /// </returns>
+    public static DeleteCategoryCommand CreateCommand(
+        string? id = null
+    )
     {
-        return new DeleteCategoryCommand(id ?? NumberUtils.CreateRandomLongAsString());
+        return new DeleteCategoryCommand(
+            id ?? NumberUtils.CreateRandomLongAsString()
+        );
     }
 }

@@ -16,5 +16,8 @@ public interface ICarrierRepository : IBaseRepository<Carrier, CarrierId>
     /// <param name="email">The email.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The carrier with the specified email.</returns>
-    Task<Carrier?> FindByEmail(Email email, CancellationToken cancellationToken = default);
+    Task<Carrier?> FindByEmail(
+        Email email,
+        CancellationToken cancellationToken = default
+    );
 }

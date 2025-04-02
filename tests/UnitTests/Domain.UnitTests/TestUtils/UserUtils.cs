@@ -20,13 +20,13 @@ public static class UserUtils
     /// Creates a new instance of the <see cref="User"/> class.
     /// Creates a new customer.
     /// </summary>
-    /// <param name="id">The user id.</param>
+    /// <param name="id">The user identifier.</param>
     /// <param name="name">The user name.</param>
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="phone">The user phone.</param>
     /// <param name="email">The user email.</param>
     /// <param name="addresses">The user addresses.</param>
-    /// <param name="active">Defines if the user should be inactive.</param>
+    /// <param name="active">A boolean value indicating the user state.</param>
     /// <returns>A new instance of the <see cref="User"/> class.</returns>
     public static User CreateCustomer(
         UserId? id = null,
@@ -67,13 +67,13 @@ public static class UserUtils
     /// Creates a new instance of the <see cref="User"/> class.
     /// Creates a new administrator.
     /// </summary>
-    /// <param name="id">The user id.</param>
+    /// <param name="id">The user identifier.</param>
     /// <param name="name">The user name.</param>
     /// <param name="passwordHash">The user password hash.</param>
     /// <param name="phone">The user phone.</param>
     /// <param name="email">The user email.</param>
     /// <param name="addresses">The user addresses.</param>
-    /// <param name="active">Defines if the user should be inactive.</param>
+    /// <param name="active">A boolean value indicating the user state.</param>
     /// <returns>A new instance of the <see cref="User"/> class.</returns>
     public static User CreateAdmin(
         UserId? id = null,
@@ -120,12 +120,17 @@ public static class UserUtils
     }
 
     /// <summary>
-    /// Creates a list of users with unique name and email.
+    /// Creates a list of customer users with unique name and email.
     /// </summary>
     /// <param name="count">The quantity of users to be created.</param>
-    /// <param name="active">Specify if the created users should be active or inactive.</param>
-    /// <returns>A list of unique users.</returns>
-    public static IEnumerable<User> CreateCustomers(int count = 1, bool active = true)
+    /// <param name="active">
+    /// Specify if the created users should be active or inactive.
+    /// </param>
+    /// <returns>A list of unique customer users.</returns>
+    public static IReadOnlyList<User> CreateCustomers(
+        int count = 1,
+        bool active = true
+    )
     {
         var users = Enumerable
             .Range(0, count)
@@ -134,7 +139,8 @@ public static class UserUtils
                     id: UserId.Create(index + 1),
                     active: active
                 )
-            );
+            )
+            .ToList();
 
         return users;
     }

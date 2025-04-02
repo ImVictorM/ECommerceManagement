@@ -17,12 +17,14 @@ public sealed class Product : AggregateRoot<ProductId>, IActivatable
     /// <summary>
     /// Gets the name of the product.
     /// </summary>
-    public string Name { get; private set; } = string.Empty;
+    public string Name { get; private set; } = null!;
     /// <summary>
     /// Gets the description of the product.
     /// </summary>
-    public string Description { get; private set; } = string.Empty;
-    /// <inheritdoc/>
+    public string Description { get; private set; } = null!;
+    /// <summary>
+    /// Gets the product base price.
+    /// </summary>
     public decimal BasePrice { get; private set; }
     /// <inheritdoc/>
     public bool IsActive { get; private set; }
@@ -67,8 +69,12 @@ public sealed class Product : AggregateRoot<ProductId>, IActivatable
     /// <param name="name">The product name.</param>
     /// <param name="description">The product description.</param>
     /// <param name="basePrice">The product base price.</param>
-    /// <param name="initialQuantityInInventory">The initial quantity of this product in the inventory.</param>
-    /// <param name="productCategories">The categories related to this product.</param>
+    /// <param name="initialQuantityInInventory">
+    /// The initial quantity of this product in inventory.
+    /// </param>
+    /// <param name="productCategories">
+    /// The categories related to this product.
+    /// </param>
     /// <param name="productImages">The product images.</param>
     /// <returns>A new instance of the <see cref="Product"/> class.</returns>
     public static Product Create(
@@ -100,7 +106,7 @@ public sealed class Product : AggregateRoot<ProductId>, IActivatable
     /// <param name="basePrice">The new product base price.</param>
     /// <param name="images">The new product images.</param>
     /// <param name="categories">The new product categories.</param>
-    public void UpdateProduct(
+    public void Update(
         string name,
         string description,
         decimal basePrice,

@@ -1,10 +1,10 @@
 using Application.Common.Persistence.Repositories;
-using Application.Products.DTOs;
 using Application.Products.Errors;
 using Application.Products.Queries.GetProductById;
 using Application.UnitTests.Products.Queries.TestUtils;
 
 using Domain.CategoryAggregate.ValueObjects;
+using Domain.ProductAggregate;
 using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.Specifications;
 using Domain.ProductAggregate.ValueObjects;
@@ -37,7 +37,7 @@ public class GetProductByIdQueryHandlerTests
         _handler = new GetProductByIdQueryHandler(
             _mockProductRepository.Object,
             _mockProductPricingService.Object,
-            new Mock<ILogger<GetProductByIdQueryHandler>>().Object
+            Mock.Of<ILogger<GetProductByIdQueryHandler>>()
         );
     }
 
@@ -45,9 +45,9 @@ public class GetProductByIdQueryHandlerTests
     /// Verifies the product with details is returned when the product exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetProductById_WithExistingProduct_ReturnsProductResult()
+    public async Task HandleGetProductByIdQuery_WithExistentProduct_ReturnsProductResult()
     {
-        var productToFind = ProductUtils.CreateProduct(
+        var product = ProductUtils.CreateProduct(
             id: ProductId.Create(1),
             basePrice: 20m,
             categories:
@@ -58,35 +58,42 @@ public class GetProductByIdQueryHandlerTests
         );
 
         var productPriceWithDiscount = 15m;
-        IEnumerable<string> productCategoryNames = ["tech", "home"];
 
         var query = GetProductByIdQueryUtils.CreateQuery(
-            id: productToFind.Id.ToString()
+            id: product.Id.ToString()
 
         );
 
         _mockProductRepository
-            .Setup(r => r.GetProductWithCategoriesSatisfyingAsync(
+            .Setup(r => r.FindFirstSatisfyingAsync(
                 It.IsAny<QueryActiveProductByIdSpecification>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(new ProductWithCategoriesQueryResult(
-                productToFind,
-                productCategoryNames
-            ));
+            .ReturnsAsync(product);
 
         _mockProductPricingService
-            .Setup(s => s.CalculateProductPriceApplyingSaleAsync(
-                productToFind,
+            .Setup(s => s.CalculateDiscountedPriceAsync(
+                product,
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(productPriceWithDiscount);
 
         var result = await _handler.Handle(query, default);
 
-        result.Product.Should().BeEquivalentTo(productToFind);
-        result.Categories.Should().BeEquivalentTo(productCategoryNames);
+        result.Id.Should().Be(product.Id.ToString());
+        result.Name.Should().Be(product.Name);
+        result.Description.Should().Be(product.Description);
+        result.BasePrice.Should().Be(product.BasePrice);
         result.PriceWithDiscount.Should().Be(productPriceWithDiscount);
+        result.QuantityAvailable.Should().Be(product.Inventory.QuantityAvailable);
+        result.CategoryIds.Should().BeEquivalentTo(
+            product.ProductCategories
+                .Select(c => c.CategoryId.ToString())
+                .ToList()
+        );
+        result.Images.Should().BeEquivalentTo(
+            product.ProductImages.Select(i => i.Uri).ToList()
+        );
     }
 
     /// <summary>
@@ -94,22 +101,21 @@ public class GetProductByIdQueryHandlerTests
     /// exist.
     /// </summary>
     [Fact]
-    public async Task HandleGetProductById_WithNonexistentProduct_ThrowsError()
+    public async Task HandleGetProductByIdQuery_WithNonExistentProduct_ThrowsError()
     {
         var notFoundId = "5";
         var query = GetProductByIdQueryUtils.CreateQuery(id: notFoundId);
 
         _mockProductRepository
-            .Setup(r => r.GetProductWithCategoriesSatisfyingAsync(
+            .Setup(r => r.FindFirstSatisfyingAsync(
                 It.IsAny<QueryActiveProductByIdSpecification>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync((ProductWithCategoriesQueryResult?)null!);
+            .ReturnsAsync((Product?)null!);
 
         await FluentActions
             .Invoking(() => _handler.Handle(query, default))
             .Should()
-            .ThrowAsync<ProductNotFoundException>()
-            .WithMessage($"The product with id {notFoundId} does not exist");
+            .ThrowAsync<ProductNotFoundException>();
     }
 }

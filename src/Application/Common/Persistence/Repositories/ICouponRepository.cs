@@ -1,5 +1,4 @@
-using Application.Coupons.DTOs;
-
+using Application.Coupons.DTOs.Filters;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
 
@@ -11,29 +10,29 @@ namespace Application.Common.Persistence.Repositories;
 public interface ICouponRepository : IBaseRepository<Coupon, CouponId>
 {
     /// <summary>
-    /// Retrieves a collection of coupons based on a list of coupon ids.
+    /// Retrieves a collection of coupons based on a list of coupon identifiers.
     /// </summary>
-    /// <param name="couponIds">The list of coupon ids.</param>
+    /// <param name="couponIds">The list of coupon identifiers.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    /// An <see cref="IEnumerable{Coupon}"/> of coupons that match the provided
-    /// ids.
+    /// An <see cref="IReadOnlyList{Coupon}"/> of coupons that match the provided
+    /// identifiers.
     /// </returns>
-    Task<IEnumerable<Coupon>> GetCouponsByIdsAsync(
+    Task<IReadOnlyList<Coupon>> GetCouponsByIdsAsync(
         IEnumerable<CouponId> couponIds,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
-    /// Retrieves a collection filtered coupons.
+    /// Retrieves a collection of filtered coupons.
     /// </summary>
     /// <param name="filters">The filter to be applied.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    /// An <see cref="IEnumerable{Coupon}"/> of coupons that match the provided
+    /// An <see cref="IReadOnlyList{Coupon}"/> of coupons that match the provided
     /// filters.
     /// </returns>
-    Task<IEnumerable<Coupon>> GetCouponsAsync(
+    Task<IReadOnlyList<Coupon>> GetCouponsAsync(
         CouponFilters filters,
         CancellationToken cancellationToken = default
     );

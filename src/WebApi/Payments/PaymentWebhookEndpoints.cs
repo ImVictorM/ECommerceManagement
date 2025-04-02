@@ -1,9 +1,9 @@
 using Application.Payments.Commands.UpdatePaymentStatus;
 using Application.Common.Security.Authentication;
 
-using WebApi.Common.Utilities;
-
 using Contracts.Payments;
+
+using WebApi.Common.Utils;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

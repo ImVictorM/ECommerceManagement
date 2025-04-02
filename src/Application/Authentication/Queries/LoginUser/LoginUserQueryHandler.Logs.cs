@@ -11,12 +11,14 @@ internal sealed partial class LoginUserQueryHandler
         Level = LogLevel.Debug,
         Message = "Initiating user authentication. User email: {Email}."
     )]
-    private partial void LogInitiatingUserLogin(string email);
+    private partial void LogInitiatingUserAuthentication(string email);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Authentication failed: Incorrect credentials supplied or user may be inactive."
+        Message =
+        "Authentication failed: " +
+        "Incorrect credentials supplied or user may be inactive."
     )]
     private partial void LogUserAuthenticationFailed();
 
@@ -30,7 +32,9 @@ internal sealed partial class LoginUserQueryHandler
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "User with email {Email} was successfully authenticated."
+        Message =
+        "User with email {Email} was successfully authenticated. " +
+        "The operation was completed successfully."
     )]
     private partial void LogUserAuthenticatedSuccessfully(string email);
 }

@@ -82,11 +82,11 @@ public class CouponCategoryRestriction : CouponRestriction
             && HasAnyAllowedCategory(product.ProductCategoryIds);
     }
 
-    private bool HasAnyAllowedCategory(IEnumerable<CategoryId> categories)
+    private bool HasAnyAllowedCategory(IEnumerable<CategoryId> categoryIds)
     {
         var categoryAllowedIds = CategoriesAllowed.Select(ca => ca.CategoryId);
 
-        return categories.Intersect(categoryAllowedIds).Any();
+        return categoryIds.Intersect(categoryAllowedIds).Any();
     }
 
     private bool IsProductNotExcluded(ProductId productId)

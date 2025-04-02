@@ -8,9 +8,10 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.Common.Persistence;
 
-internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEntity, TEntityId>
-    where TEntity : AggregateRoot<TEntityId>
-    where TEntityId : notnull
+internal abstract class BaseRepository<TEntity, TEntityId>
+    : IBaseRepository<TEntity, TEntityId>
+        where TEntity : AggregateRoot<TEntityId>
+        where TEntityId : notnull
 {
     private readonly IECommerceDbContext _context;
     private readonly DbSet<TEntity> _dbSet;
@@ -30,13 +31,11 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
         _dbSet = _context.Set<TEntity>();
     }
 
-    /// <inheritdoc/>
     public virtual async Task AddAsync(TEntity entity)
     {
         await _dbSet.AddAsync(entity);
     }
 
-    /// <inheritdoc/>
     public virtual async Task<IEnumerable<TEntity>> FindAllAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         CancellationToken cancellationToken = default
@@ -53,13 +52,13 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
         return await _dbSet.ToListAsync(cancellationToken);
     }
 
-    /// <inheritdoc/>
-    public virtual async Task<TEntity> FirstAsync(CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> FirstAsync(
+        CancellationToken cancellationToken = default
+    )
     {
         return await _dbSet.FirstAsync(cancellationToken);
     }
 
-    /// <inheritdoc/>
     public virtual async Task<TEntity?> FindByIdAsync(
         TEntityId id,
         CancellationToken cancellationToken = default
@@ -68,7 +67,6 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
         return await _dbSet.FindAsync([id], cancellationToken);
     }
 
-    /// <inheritdoc/>
     public virtual async Task<TEntity?> FirstOrDefaultAsync(
         Expression<Func<TEntity, bool>> filter,
         CancellationToken cancellationToken = default
@@ -77,7 +75,6 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
         return await _dbSet.FirstOrDefaultAsync(filter, cancellationToken);
     }
 
-    /// <inheritdoc/>
     public virtual async Task<IEnumerable<TEntity>> FindSatisfyingAsync(
         ISpecificationQuery<TEntity> specification,
         CancellationToken cancellationToken = default
@@ -88,7 +85,6 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
             .ToListAsync(cancellationToken);
     }
 
-    /// <inheritdoc/>
     public virtual async Task<TEntity?> FindFirstSatisfyingAsync(
         ISpecificationQuery<TEntity> specification,
         CancellationToken cancellationToken = default
@@ -99,7 +95,6 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    /// <inheritdoc/>
     public virtual void RemoveOrDeactivate(TEntity entity)
     {
         if (_context.Entry(entity).State == EntityState.Detached)
@@ -119,7 +114,6 @@ internal abstract class BaseRepository<TEntity, TEntityId> : IBaseRepository<TEn
         }
     }
 
-    /// <inheritdoc/>
     public virtual void Update(TEntity entity)
     {
         _dbSet.Update(entity);

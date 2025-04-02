@@ -42,14 +42,16 @@ public class UpdateCouponCommandHandlerTests
     }
 
     /// <summary>
-    /// Verifies when the coupon exists it is updated.
+    /// Verifies the coupon is updated when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateCoupon_WithExistingCoupon_UpdatesIt()
+    public async Task HandleUpdateCouponCommand_WithExistentCoupon_UpdatesIt()
     {
         var couponId = CouponId.Create(1);
         var coupon = CouponUtils.CreateCoupon(id: couponId);
-        var command = UpdateCouponCommandUtils.CreateCommand(couponId: couponId.ToString());
+        var command = UpdateCouponCommandUtils.CreateCommand(
+            couponId: couponId.ToString()
+        );
 
         _mockCouponRepository
             .Setup(r => r.FindByIdAsync(
@@ -70,10 +72,10 @@ public class UpdateCouponCommandHandlerTests
     }
 
     /// <summary>
-    /// Verifies when the coupon does not exist an exception is thrown.
+    /// Verifies an exception is thrown when the coupon does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateCoupon_WithNonexistingCoupon_ThrowsError()
+    public async Task HandleUpdateCouponCommand_WithNonExistentCoupon_ThrowsError()
     {
         var command = UpdateCouponCommandUtils.CreateCommand();
 

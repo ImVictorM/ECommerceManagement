@@ -1,9 +1,11 @@
 using Application.Products.Commands.CreateProduct;
 using Application.Products.Commands.DeactivateProduct;
 using Application.Products.Commands.UpdateProduct;
-using Application.Products.Commands.UpdateProductInventory;
+using Application.Products.Commands.AddStock;
 using Application.Products.Queries.GetProductById;
 using Application.Products.Queries.GetProducts;
+using Application.Products.DTOs.Filters;
+using Application.Common.DTOs.Pagination;
 
 using Contracts.Products;
 
@@ -63,8 +65,8 @@ public sealed class ProductEndpoints : ICarterModule
             });
 
         productGroup
-            .MapGet("/", GetAllProducts)
-            .WithName(nameof(GetAllProducts))
+            .MapGet("/", GetProducts)
+            .WithName(nameof(GetProducts))
             .WithOpenApi(operation => new(operation)
             {
                 Summary = "Get Products",
@@ -160,13 +162,13 @@ public sealed class ProductEndpoints : ICarterModule
             .RequireAuthorization();
 
         productGroup
-            .MapPut("/{id:long}/inventory", UpdateProductInventory)
-            .WithName(nameof(UpdateProductInventory))
+            .MapPut("/{id:long}/inventory", AddStock)
+            .WithName(nameof(AddStock))
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Update Product Inventory",
+                Summary = "Add Stock",
                 Description =
-                "Increments the inventory quantity available for an active product." +
+                "Increases the quantity available in inventory for an active product." +
                 " Admin authentication is required.",
                 Parameters =
                 [
@@ -215,7 +217,7 @@ public sealed class ProductEndpoints : ICarterModule
         return TypedResults.Created($"/products/{createdResponse.Id}");
     }
 
-    internal async Task<Ok<IEnumerable<ProductResponse>>> GetAllProducts(
+    internal async Task<Ok<List<ProductResponse>>> GetProducts(
         ISender sender,
         IMapper mapper,
         [FromQuery(Name = "page")] int? page = null,
@@ -223,11 +225,18 @@ public sealed class ProductEndpoints : ICarterModule
         [FromQuery(Name = "category")] string[]? categories = null
     )
     {
-        var query = new GetProductsQuery(page, pageSize, categories);
+        var paginationParams = new PaginationParams(page, pageSize);
+        var filters = new ProductFilters(categories);
+
+        var query = new GetProductsQuery(paginationParams, filters);
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<ProductResponse>));
+        var response = result
+            .Select(mapper.Map<ProductResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 
     internal async Task<Results<
@@ -273,15 +282,15 @@ public sealed class ProductEndpoints : ICarterModule
         NotFound,
         UnauthorizedHttpResult,
         ForbidHttpResult
-    >> UpdateProductInventory
+    >> AddStock
     (
         [FromRoute] string id,
-        [FromBody] UpdateProductInventoryRequest request,
+        [FromBody] AddStockRequest request,
         IMapper mapper,
         ISender sender
     )
     {
-        var command = mapper.Map<UpdateProductInventoryCommand>((id, request));
+        var command = mapper.Map<AddStockCommand>((id, request));
 
         await sender.Send(command);
 

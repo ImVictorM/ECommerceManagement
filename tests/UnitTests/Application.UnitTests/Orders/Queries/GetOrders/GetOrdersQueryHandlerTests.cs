@@ -1,18 +1,17 @@
 using Application.Common.Persistence.Repositories;
 using Application.Orders.Queries.GetOrders;
 using Application.UnitTests.Orders.Queries.TestUtils;
+using Application.UnitTests.Orders.TestUtils.Extensions;
 
-using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.UnitTests.TestUtils;
 using Domain.UserAggregate.ValueObjects;
 
-using SharedKernel.Interfaces;
-
 using Microsoft.Extensions.Logging;
 using FluentAssertions;
 using Moq;
+using Application.UnitTests.Orders.TestUtils.Projections;
 
 namespace Application.UnitTests.Orders.Queries.GetOrders;
 
@@ -25,77 +24,51 @@ public class GetOrdersQueryHandlerTests
     private readonly Mock<IOrderRepository> _mockOrderRepository;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GetOrdersQueryHandlerTests"/> class.
+    /// Initializes a new instance of the
+    /// <see cref="GetOrdersQueryHandlerTests"/> class.
     /// </summary>
     public GetOrdersQueryHandlerTests()
     {
         _mockOrderRepository = new Mock<IOrderRepository>();
-        var mockLogger = new Mock<ILogger<GetOrdersQueryHandler>>();
 
-        _handler = new GetOrdersQueryHandler(_mockOrderRepository.Object, mockLogger.Object);
+        _handler = new GetOrdersQueryHandler(
+            _mockOrderRepository.Object,
+            Mock.Of<ILogger<GetOrdersQueryHandler>>()
+        );
     }
 
     /// <summary>
     /// Verifies all orders are retrieved without the status filter.
     /// </summary>
     [Fact]
-    public async Task HandleGetOrders_WithoutStatusFilter_ReturnsAllOrders()
+    public async Task HandleGetOrdersQuery_WithValidQuery_ReturnsOrderResults()
     {
         var query = GetOrdersQueryUtils.CreateQuery();
 
         var orders = new List<Order>
         {
-            await OrderUtils.CreateOrderAsync(id: OrderId.Create(1), ownerId: UserId.Create("1")),
-            await OrderUtils.CreateOrderAsync(id: OrderId.Create(2), ownerId: UserId.Create("2"))
-        };
-
-        _mockOrderRepository
-            .Setup(repo => repo.FindSatisfyingAsync(
-                It.IsAny<ISpecificationQuery<Order>>(),
-                It.IsAny<CancellationToken>()
-            ))
-            .ReturnsAsync(orders);
-
-        var result = await _handler.Handle(query, default);
-
-        result.Should().NotBeNull();
-        result.Select(r => r.Order).Should().BeEquivalentTo(orders);
-    }
-
-    /// <summary>
-    /// Verifies orders are retrieved with the status filter.
-    /// </summary>
-    [Fact]
-    public async Task HandleGetOrders_WithStatusFilter_ReturnsFilteredOrders()
-    {
-        var query = GetOrdersQueryUtils.CreateQuery(status: OrderStatus.Pending.Name);
-
-        var orders = new List<Order>
-        {
             await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(1),
-                ownerId: UserId.Create("1"),
-                initialOrderStatus: OrderStatus.Pending
+                ownerId: UserId.Create("1")
             ),
             await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(2),
-                ownerId: UserId.Create("2"),
-                initialOrderStatus: OrderStatus.Paid
+                ownerId: UserId.Create("2")
             )
         };
 
-        var ordersPending = orders.Where(o => o.OrderStatus == OrderStatus.Pending);
+        var orderProjections = OrderProjectionUtils.CreateProjections(orders);
 
         _mockOrderRepository
-            .Setup(repo => repo.FindSatisfyingAsync(
-                It.IsAny<ISpecificationQuery<Order>>(),
+            .Setup(repo => repo.GetOrdersAsync(
+                query.Filters,
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(ordersPending);
+            .ReturnsAsync(orderProjections);
 
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
-        result.Select(r => r.Order).Should().BeEquivalentTo(ordersPending);
+        result.EnsureCorrespondsTo(orderProjections);
     }
 }

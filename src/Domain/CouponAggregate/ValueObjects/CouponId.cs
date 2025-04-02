@@ -27,7 +27,8 @@ public sealed class CouponId : ValueObject
     /// </summary>
     /// <param name="value">The identifier value.</param>
     /// <returns>
-    /// A new instance of <see cref="CouponId"/> class with the specified identifier.
+    /// A new instance of <see cref="CouponId"/> class with the specified
+    /// identifier.
     /// </returns>
     public static CouponId Create(long value)
     {
@@ -39,7 +40,8 @@ public sealed class CouponId : ValueObject
     /// </summary>
     /// <param name="value">The identifier value.</param>
     /// <returns>
-    /// A new instance of <see cref="CouponId"/> class with the specified identifier.
+    /// A new instance of <see cref="CouponId"/> class with the specified
+    /// identifier.
     /// </returns>
     public static CouponId Create(string value)
     {

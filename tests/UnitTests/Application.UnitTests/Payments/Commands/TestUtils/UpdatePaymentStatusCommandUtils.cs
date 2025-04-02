@@ -13,9 +13,11 @@ public static class UpdatePaymentStatusCommandUtils
     /// <summary>
     /// Creates a new instance of the <see cref="UpdatePaymentStatusCommand"/> class.
     /// </summary>
-    /// <param name="paymentId">The payment id.</param>
+    /// <param name="paymentId">The payment identifier.</param>
     /// <param name="status">The payment status.</param>
-    /// <returns>A new instance of the <see cref="UpdatePaymentStatusCommand"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="UpdatePaymentStatusCommand"/> class.
+    /// </returns>
     public static UpdatePaymentStatusCommand CreateCommand(
         string? paymentId = null,
         string? status = null

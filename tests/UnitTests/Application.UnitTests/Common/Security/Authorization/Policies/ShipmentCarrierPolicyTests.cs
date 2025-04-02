@@ -26,7 +26,8 @@ public class ShipmentCarrierPolicyTests
     private readonly Mock<IIdentityProvider> _mockIdentityProvider;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ShipmentCarrierPolicyTests"/> class.
+    /// Initializes a new instance of the
+    /// <see cref="ShipmentCarrierPolicyTests"/> class.
     /// </summary>
     public ShipmentCarrierPolicyTests()
     {
@@ -46,7 +47,10 @@ public class ShipmentCarrierPolicyTests
     public async Task IsAuthorizedAsync_WhenShipmentIsNull_ReturnsTrue()
     {
         var shipmentId = ShipmentId.Create(1);
-        var request = new RequestUtils.TestRequestWithoutAuthShipmentRelated(shipmentId.ToString());
+        var request = new RequestUtils.TestRequestWithoutAuthShipmentRelated(
+            shipmentId.ToString()
+        );
+
         var identity = new IdentityUser("1", [Role.Carrier]);
 
         _mockIdentityProvider
@@ -60,13 +64,17 @@ public class ShipmentCarrierPolicyTests
             ))
             .ReturnsAsync((Shipment?)null);
 
-        var result = await _policy.IsAuthorizedAsync(request, new IdentityUser("1", [Role.Carrier]));
+        var result = await _policy.IsAuthorizedAsync(
+            request,
+            new IdentityUser("1", [Role.Carrier])
+        );
 
         result.Should().BeTrue();
     }
 
     /// <summary>
-    /// Verifies the policy returns true when the current user is the shipment carrier.
+    /// Verifies the policy returns true when the current user is the shipment
+    /// carrier.
     /// </summary>
     [Fact]
     public async Task IsAuthorizedAsync_WhenCarrierOwnsShipment_ReturnsTrue()
@@ -77,7 +85,9 @@ public class ShipmentCarrierPolicyTests
             id: shipmentId,
             carrierId: CarrierId.Create(identity.Id)
         );
-        var request = new RequestUtils.TestRequestWithoutAuthShipmentRelated(shipmentId.ToString());
+        var request = new RequestUtils.TestRequestWithoutAuthShipmentRelated(
+            shipmentId.ToString()
+        );
 
         _mockIdentityProvider
             .Setup(ip => ip.GetCurrentUserIdentity())
@@ -96,7 +106,8 @@ public class ShipmentCarrierPolicyTests
     }
 
     /// <summary>
-    /// Verifies the policy returns false when the current user is not the shipment carrier.
+    /// Verifies the policy returns false when the current user is not the
+    /// shipment carrier.
     /// </summary>
     [Fact]
     public async Task IsAuthorizedAsync_WhenCarrierDoesNotOwnShipment_ReturnsFalse()
@@ -107,7 +118,9 @@ public class ShipmentCarrierPolicyTests
             id: shipmentId,
             carrierId: CarrierId.Create("2")
         );
-        var request = new RequestUtils.TestRequestWithoutAuthShipmentRelated(shipmentId.ToString());
+        var request = new RequestUtils.TestRequestWithoutAuthShipmentRelated(
+            shipmentId.ToString()
+        );
 
         _mockIdentityProvider
             .Setup(ip => ip.GetCurrentUserIdentity())

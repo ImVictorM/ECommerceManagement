@@ -1,11 +1,12 @@
+using Microsoft.Extensions.Logging;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Common.Validation;
 
-internal sealed partial class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+internal sealed partial class ValidationBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : IRequest<TResponse>
 {
     private readonly IValidator<TRequest>? _validator;
 
@@ -18,7 +19,6 @@ internal sealed partial class ValidationBehavior<TRequest, TResponse> : IPipelin
         _validator = validator;
     }
 
-    /// <inheritdoc/>
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
@@ -34,7 +34,10 @@ internal sealed partial class ValidationBehavior<TRequest, TResponse> : IPipelin
             return await next();
         }
 
-        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        var validationResult = await _validator.ValidateAsync(
+            request,
+            cancellationToken
+        );
 
         if (validationResult.IsValid)
         {

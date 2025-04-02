@@ -10,7 +10,7 @@ namespace Domain.UnitTests.CarrierAggregate;
 public class CarrierTests
 {
     /// <summary>
-    /// List containing valid carrier creation parameters.
+    /// Provides a list containing valid carrier creation parameters.
     /// </summary>
     public static readonly IEnumerable<object[]> CarrierValidCreationParameters =
     [
@@ -19,11 +19,13 @@ public class CarrierTests
     ];
 
     /// <summary>
-    /// Tests that a carrier can be created successfully.
+    /// Verifies that a carrier can be created successfully.
     /// </summary>
     [Theory]
     [MemberData(nameof(CarrierValidCreationParameters))]
-    public void CreateCarrier_WithValidParameters_CreatesWithoutThrowing(string name)
+    public void Create_WithValidParameters_CreatesWithoutThrowing(
+        string name
+    )
     {
         var actionResult = FluentActions
             .Invoking(() => CarrierUtils.CreateCarrier(name: name))

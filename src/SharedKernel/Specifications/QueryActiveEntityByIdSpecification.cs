@@ -1,11 +1,12 @@
-using System.Linq.Expressions;
 using SharedKernel.Interfaces;
 using SharedKernel.Models;
+
+using System.Linq.Expressions;
 
 namespace SharedKernel.Specifications;
 
 /// <summary>
-/// Query specification to retrieve an entity that is active by id.
+/// Query specification to retrieve an entity that is active by its identifier.
 /// </summary>
 public class QueryActiveEntityByIdSpecification<TEntity, TEntityId>
     : CompositeQuerySpecification<TEntity>
@@ -16,9 +17,10 @@ public class QueryActiveEntityByIdSpecification<TEntity, TEntityId>
 
     /// <summary>
     /// Initiates a new instance of the
-    /// <see cref="QueryActiveEntityByIdSpecification{TEntity, TEntityId}"/> class.
+    /// <see cref="QueryActiveEntityByIdSpecification{TEntity, TEntityId}"/>
+    /// class.
     /// </summary>
-    /// <param name="id">The entity id.</param>
+    /// <param name="id">The entity identifier.</param>
     public QueryActiveEntityByIdSpecification(TEntityId id)
     {
         _id = id;

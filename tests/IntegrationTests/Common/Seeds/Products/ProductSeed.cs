@@ -165,12 +165,11 @@ public sealed class ProductSeed
         params CategoryId[] categoryIds
     )
     {
-        return ListAll()
-            .Where(p =>
-                p.ProductCategories
-                    .Select(pc => pc.CategoryId)
-                    .Any(id => categoryIds.Contains(id))
-            ).ToList();
+        return ListAll(p =>
+            p.ProductCategories
+                .Select(pc => pc.CategoryId)
+                .Any(id => categoryIds.Contains(id))
+        );
     }
 
     /// <inheritdoc/>

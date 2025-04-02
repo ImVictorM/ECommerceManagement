@@ -14,7 +14,7 @@ public class QueryActiveUserSpecificationTests
     /// Verifies that the specification returns true when the user is active.
     /// </summary>
     [Fact]
-    public void QueryActiveUserSpecification_WhenUserIsActive_ReturnsTrue()
+    public void QueryActiveUser_WithActiveUser_ReturnsTrue()
     {
         var user = UserUtils.CreateCustomer(active: true);
 
@@ -29,7 +29,7 @@ public class QueryActiveUserSpecificationTests
     /// Verifies that the specification returns false when the user is not active.
     /// </summary>
     [Fact]
-    public void QueryActiveUserSpecification_WhenUserIsNotActive_ReturnsFalse()
+    public void QueryActiveUser_WithoutActiveUser_ReturnsFalse()
     {
         var user = UserUtils.CreateCustomer(active: false);
 

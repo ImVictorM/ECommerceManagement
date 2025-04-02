@@ -7,9 +7,11 @@ using Infrastructure.Common.Persistence;
 
 namespace Infrastructure.ShippingMethods;
 
-internal sealed class ShippingMethodRepository : BaseRepository<ShippingMethod, ShippingMethodId>, IShippingMethodRepository
+internal sealed class ShippingMethodRepository
+    : BaseRepository<ShippingMethod, ShippingMethodId>, IShippingMethodRepository
 {
-    public ShippingMethodRepository(IECommerceDbContext dbContext) : base(dbContext)
+    public ShippingMethodRepository(IECommerceDbContext dbContext)
+        : base(dbContext)
     {
     }
 }

@@ -7,7 +7,8 @@ using MediatR;
 
 namespace Application.Orders.Events;
 
-internal sealed class PaymentCanceledCancelOrderHandler : INotificationHandler<PaymentCanceled>
+internal sealed class PaymentCanceledCancelOrderHandler
+    : INotificationHandler<PaymentCanceled>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
@@ -21,18 +22,22 @@ internal sealed class PaymentCanceledCancelOrderHandler : INotificationHandler<P
         _orderRepository = orderRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(PaymentCanceled notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        PaymentCanceled notification,
+        CancellationToken cancellationToken
+    )
     {
         var orderId = notification.Payment.OrderId;
 
         var order = await _orderRepository.FindByIdAsync(orderId, cancellationToken);
 
-        if (order != null)
+        if (order == null)
         {
-            order.Cancel("The payment was canceled");
-
-            await _unitOfWork.SaveChangesAsync();
+            return;
         }
+
+        order.Cancel("The payment was canceled");
+
+        await _unitOfWork.SaveChangesAsync();
     }
 }

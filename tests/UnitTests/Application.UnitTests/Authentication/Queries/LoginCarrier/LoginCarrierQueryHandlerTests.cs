@@ -29,7 +29,8 @@ public class LoginCarrierQueryHandlerTests
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="LoginCarrierQueryHandlerTests"/> class.
+    /// Initiates a new instance of the <see cref="LoginCarrierQueryHandlerTests"/>
+    /// class.
     /// </summary>
     public LoginCarrierQueryHandlerTests()
     {
@@ -46,10 +47,11 @@ public class LoginCarrierQueryHandlerTests
     }
 
     /// <summary>
-    /// Verifies the carrier is successfully authenticated when the carrier exists and the credentials are valid.
+    /// Verifies the carrier is successfully authenticated when the carrier exists
+    /// and the credentials are valid.
     /// </summary>
     [Fact]
-    public async Task HandleLoginCarrierQuery_WithValidCredentials_ReturnsCarrierWithAuthenticationToken()
+    public async Task HandleLoginCarrierQuery_WithValidCredentials_ReturnsAuthenticationResult()
     {
         var generatedToken = "generated-token";
 
@@ -68,19 +70,22 @@ public class LoginCarrierQueryHandlerTests
             .ReturnsAsync(carrier);
 
         _mockJwtTokenService
-            .Setup(jwtTokenService => jwtTokenService.GenerateToken(It.IsAny<IdentityUser>()))
+            .Setup(jwtTokenService => jwtTokenService.GenerateToken(
+                It.IsAny<IdentityUser>()
+            ))
             .Returns(generatedToken);
 
         _mockPasswordHasher
-            .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
+            .Setup(hasher => hasher.Verify(
+                It.IsAny<string>(),
+                It.IsAny<PasswordHash>()
+            ))
             .Returns(true);
 
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
-
-        result.AuthenticatedIdentity.Email.ToString().Should().Be(query.Email);
-
+        result.User.Email.Should().Be(query.Email);
         result.Token.Should().Be(generatedToken);
     }
 
@@ -107,7 +112,8 @@ public class LoginCarrierQueryHandlerTests
     }
 
     /// <summary>
-    /// Verifies and exception is thrown when the carrier email is correct and the password is incorrect.
+    /// Verifies and exception is thrown when the carrier email is correct and the
+    /// password is incorrect.
     /// </summary>
     [Fact]
     public async Task HandleLoginCarrierQuery_WithCorrectEmailAndWrongPassword_ThrowsError()
@@ -122,7 +128,10 @@ public class LoginCarrierQueryHandlerTests
             .ReturnsAsync(CarrierUtils.CreateCarrier());
 
         _mockPasswordHasher
-            .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
+            .Setup(hasher => hasher.Verify(
+                It.IsAny<string>(),
+                It.IsAny<PasswordHash>()
+            ))
             .Returns(false);
 
         await FluentActions

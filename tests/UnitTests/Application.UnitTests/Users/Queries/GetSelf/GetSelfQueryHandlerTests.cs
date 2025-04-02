@@ -25,7 +25,8 @@ public class GetSelfQueryHandlerTests
     private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GetSelfQueryHandlerTests"/> class.
+    /// Initializes a new instance of the <see cref="GetSelfQueryHandlerTests"/>
+    /// class.
     /// </summary>
     public GetSelfQueryHandlerTests()
     {
@@ -35,12 +36,13 @@ public class GetSelfQueryHandlerTests
         _handler = new GetSelfQueryHandler(
             _mockIdentityProvider.Object,
             _mockUserRepository.Object,
-            new Mock<ILogger<GetSelfQueryHandler>>().Object
+            Mock.Of<ILogger<GetSelfQueryHandler>>()
         );
     }
 
     /// <summary>
-    /// Verifies that the handler retrieves and returns the current user's information.
+    /// Verifies that the handler retrieves and returns the current user's
+    /// information.
     /// </summary>
     [Fact]
     public async Task HandleGetSelfQuery_WhenUserExists_ReturnsUserResult()
@@ -49,7 +51,7 @@ public class GetSelfQueryHandlerTests
         var currentUserId = UserId.Create(currentUserIdentity.Id);
 
         var user = UserUtils.CreateCustomer(
-            id: UserId.Create(currentUserIdentity.Id)
+            id: currentUserId
         );
 
         _mockIdentityProvider
@@ -68,11 +70,13 @@ public class GetSelfQueryHandlerTests
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
-        result.User.Should().Be(user);
+        result.Id.Should().Be(currentUserId.ToString());
+        result.Email.Should().Be(user.Email.ToString());
     }
 
     /// <summary>
-    /// Verifies that the handler throws a <see cref="UserNotFoundException"/> when the user does not exist.
+    /// Verifies that the handler throws a <see cref="UserNotFoundException"/>
+    /// when the user does not exist.
     /// </summary>
     [Fact]
     public async Task HandleGetSelfQuery_WhenUserDoesNotExist_ThrowsException()

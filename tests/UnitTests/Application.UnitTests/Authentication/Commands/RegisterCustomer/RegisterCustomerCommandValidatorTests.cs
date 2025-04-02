@@ -15,7 +15,8 @@ public class RegisterCustomerCommandValidatorTests
     private readonly RegisterCustomerCommandValidator _validator;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="RegisterCustomerCommandValidatorTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="RegisterCustomerCommandValidatorTests"/> class.
     /// </summary>
     public RegisterCustomerCommandValidatorTests()
     {
@@ -23,7 +24,7 @@ public class RegisterCustomerCommandValidatorTests
     }
 
     /// <summary>
-    /// Pairs of invalid password and expected error messages.
+    /// Provides pairs of invalid password and expected error messages.
     /// </summary>
     public static IEnumerable<object[]> InvalidPasswords =>
     [
@@ -61,13 +62,16 @@ public class RegisterCustomerCommandValidatorTests
     ];
 
     /// <summary>
-    /// Tests when the name is invalid the name should have validation errors.
+    /// Verifies when the name is invalid the name should have validation errors.
     /// </summary>
     /// <param name="name">The invalid name.</param>
     /// <param name="expectedErrorMessages">The expected error messages.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.Name.InvalidNames), MemberType = typeof(ValidationTestData.Name))]
-    public void ValidateRegisterCustomerCommand_WhenNameIsInvalid_ShouldHaveValidationError(
+    [MemberData(
+        nameof(ValidationTestData.Name.InvalidNames),
+        MemberType = typeof(ValidationTestData.Name)
+    )]
+    public void ValidateRegisterCustomerCommand_WithInvalidName_ShouldHaveValidationErrors(
         string name,
         IEnumerable<string> expectedErrorMessages
     )
@@ -85,13 +89,16 @@ public class RegisterCustomerCommandValidatorTests
     }
 
     /// <summary>
-    /// Tests when the email is invalid the email should have validation errors.
+    /// Verifies when the email is invalid the email should have validation errors.
     /// </summary>
     /// <param name="email">The invalid email.</param>
     /// <param name="expectedErrorMessages">The expected error messages.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.Email.InvalidEmails), MemberType = typeof(ValidationTestData.Email))]
-    public void ValidateRegisterCustomerCommand_WhenEmailIsInvalid_ShouldHaveValidationError(
+    [MemberData(
+        nameof(ValidationTestData.Email.InvalidEmails),
+        MemberType = typeof(ValidationTestData.Email)
+    )]
+    public void ValidateRegisterCustomerCommand_WithInvalidEmail_ShouldHaveValidationErrors(
         string email,
         IEnumerable<string> expectedErrorMessages
     )
@@ -109,18 +116,21 @@ public class RegisterCustomerCommandValidatorTests
     }
 
     /// <summary>
-    /// Tests when the password is invalid the password should have validation errors.
+    /// Verifies when the password is invalid the password should have validation
+    /// errors.
     /// </summary>
     /// <param name="password">The invalid password.</param>
     /// <param name="expectedErrorMessages">The expected error messages.</param>
     [Theory]
     [MemberData(nameof(InvalidPasswords))]
-    public void ValidateRegisterCustomerCommand_WhenPasswordIsInvalid_ShouldHaveValidationError(
+    public void ValidateRegisterCustomerCommand_WithInvalidPassword_ShouldHaveValidationError(
         string password,
         IEnumerable<string> expectedErrorMessages
     )
     {
-        var command = RegisterCustomerCommandUtils.CreateCommand(password: password);
+        var command = RegisterCustomerCommandUtils.CreateCommand(
+            password: password
+        );
 
         var result = _validator.TestValidate(command);
 
@@ -128,7 +138,9 @@ public class RegisterCustomerCommandValidatorTests
 
         foreach (var error in expectedErrorMessages)
         {
-            result.ShouldHaveValidationErrorFor(c => c.Password).WithErrorMessage(error);
+            result
+                .ShouldHaveValidationErrorFor(c => c.Password)
+                .WithErrorMessage(error);
         }
     }
 }

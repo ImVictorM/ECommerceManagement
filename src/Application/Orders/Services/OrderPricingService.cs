@@ -23,7 +23,6 @@ internal sealed class OrderPricingService : IOrderPricingService
         _couponApplicationService = couponApplicationService;
     }
 
-    /// <inheritdoc/>
     public async Task<decimal> CalculateTotalAsync(
         IEnumerable<OrderLineItem> lineItems,
         ShippingMethodId shippingMethodId,

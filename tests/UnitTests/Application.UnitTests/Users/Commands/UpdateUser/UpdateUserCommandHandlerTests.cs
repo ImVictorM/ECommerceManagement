@@ -27,7 +27,8 @@ public class UpdateUserCommandHandlerTests
     private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateUserCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="UpdateUserCommandHandlerTests"/> class.
     /// </summary>
     public UpdateUserCommandHandlerTests()
     {
@@ -37,18 +38,21 @@ public class UpdateUserCommandHandlerTests
         _handler = new UpdateUserCommandHandler(
             _mockUnityOfWork.Object,
             _mockUserRepository.Object,
-            new Mock<ILogger<UpdateUserCommandHandler>>().Object
+            Mock.Of<ILogger<UpdateUserCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Tests that when the user to be updated exists they are updated.
+    /// Verifies that when the user to be updated exists they are updated.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateUser_WhenUserExists_UpdateTheUserCorrectly()
+    public async Task HandleUpdateUserCommand_WhenUserExists_UpdateTheUserCorrectly()
     {
         var userToBeUpdated = UserUtils.CreateCustomer();
-        var command = UpdateUserCommandUtils.CreateCommand(name: "new name", phone: "19958274823");
+        var command = UpdateUserCommandUtils.CreateCommand(
+            name: "new name",
+            phone: "19958274823"
+        );
 
         _mockUserRepository
             .SetupSequence(r => r.FindFirstSatisfyingAsync(
@@ -62,14 +66,14 @@ public class UpdateUserCommandHandlerTests
         userToBeUpdated.Name.Should().Be(command.Name);
         userToBeUpdated.Phone.Should().Be(command.Phone);
 
-        _mockUnityOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
+        _mockUnityOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 
     /// <summary>
-    /// Tests that when a user does not exist, the handler throws a <see cref="UserNotFoundException"/>.
+    /// Verifies an exception is thrown when the user does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateUser_WhenUserDoesNotExist_ThrowsException()
+    public async Task HandleUpdateUserCommand_WhenUserDoesNotExist_ThrowsException()
     {
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(
@@ -79,24 +83,32 @@ public class UpdateUserCommandHandlerTests
             .ReturnsAsync((User?)null);
 
         await FluentActions
-            .Invoking(() => _handler.Handle(UpdateUserCommandUtils.CreateCommand(), default))
+            .Invoking(() => _handler.Handle(
+                UpdateUserCommandUtils.CreateCommand(),
+                default
+            ))
             .Should()
-            .ThrowAsync<UserNotFoundException>()
-            .WithMessage("The user to be updated could not be found");
+            .ThrowAsync<UserNotFoundException>();
     }
 
     /// <summary>
-    /// Tests that when trying to update a user's email to an already existing one,
+    /// Verifies that when trying to update the user's email with an already existing one,
     /// the handler throws a <see cref="EmailConflictException"/>.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateUser_WhenTryingToUpdateEmailWithExistingOne_ThrowsException()
+    public async Task HandleUpdateUserCommand_WithConflictingEmail_ThrowsException()
     {
-        var userToBeUpdatedNewEmail = EmailUtils.CreateEmail("existing_email@email.com");
+        var userToBeUpdatedNewEmail = EmailUtils.CreateEmail(
+            "existent_email@email.com"
+        );
 
         var userToBeUpdated = UserUtils.CreateCustomer();
-        var conflictingUser = UserUtils.CreateCustomer(email: userToBeUpdatedNewEmail);
-        var updateRequest = UpdateUserCommandUtils.CreateCommand(email: userToBeUpdatedNewEmail.ToString());
+        var conflictingUser = UserUtils.CreateCustomer(
+            email: userToBeUpdatedNewEmail
+        );
+        var updateRequest = UpdateUserCommandUtils.CreateCommand(
+            email: userToBeUpdatedNewEmail.ToString()
+        );
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(

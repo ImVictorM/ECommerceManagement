@@ -35,14 +35,15 @@ Authorization: Bearer {{token}}
 }
 
 
-### Increments the inventory quantity available for an active product. Admin authentication is required.
+### Increases the quantity available in inventory for an active product.
+### Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
 PUT {{base_endpoint}}/{{id_product}}/inventory
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "quantityToIncrement": 25
+  "quantityToAdd": 25
 }
 
 ### Deactivates a product and set the inventory to 0 items. Admin authentication is required.
@@ -56,9 +57,9 @@ Authorization: Bearer {{token}}
 ### - `page={number}` (default: 1): Specifies the page number.
 ### - `pageSize={number}` (default: 20): Defines the number of products per page.
 ### No authentication required.
-### Returns an 200 OK response in case of success.
+### Returns a 200 OK response in case of success.
 GET {{base_endpoint}}?category=1&page=1&pageSize=20
 
 ### Retrieves an active product by its identifier. No authentication is required.
-### Returns an OK response in case of success.
+### Returns a OK response in case of success.
 GET {{base_endpoint}}/{{id_product}}

@@ -24,7 +24,8 @@ public class DeleteCategoryCommandHandlerTests
     private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="DeleteCategoryCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="DeleteCategoryCommandHandlerTests"/> class.
     /// </summary>
     public DeleteCategoryCommandHandlerTests()
     {
@@ -39,14 +40,16 @@ public class DeleteCategoryCommandHandlerTests
     }
 
     /// <summary>
-    /// Tests when the category exists it is deleted.
+    /// Verifies the category is deleted when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteCategory_WhenCategoryExists_DeletesIt()
+    public async Task HandleDeleteCategoryCommand_WhenCategoryExists_DeletesIt()
     {
         var categoryId = CategoryId.Create(1);
         var category = CategoryUtils.CreateCategory(id: categoryId);
-        var command = DeleteCategoryCommandUtils.CreateCommand(id: categoryId.ToString());
+        var command = DeleteCategoryCommandUtils.CreateCommand(
+            id: categoryId.ToString()
+        );
 
         _mockCategoryRepository
             .Setup(r => r.FindByIdAsync(
@@ -57,15 +60,18 @@ public class DeleteCategoryCommandHandlerTests
 
         await _handler.Handle(command, default);
 
-        _mockCategoryRepository.Verify(r => r.RemoveOrDeactivate(category), Times.Once());
+        _mockCategoryRepository.Verify(
+            r => r.RemoveOrDeactivate(category),
+            Times.Once()
+        );
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once());
     }
 
     /// <summary>
-    /// Tests when the category does not exist an exception is thrown.
+    /// Verifies  an exception is thrown when the category does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteCategory_WhenCategoryDoesNotExist_ThrowsError()
+    public async Task HandleDeleteCategoryCommand_WhenCategoryDoesNotExist_ThrowsError()
     {
         var command = DeleteCategoryCommandUtils.CreateCommand();
 

@@ -23,7 +23,8 @@ public class CreateShippingMethodTests : BaseIntegrationTest
     private readonly string? _endpoint;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="CreateShippingMethodTests"/> class.
+    /// Initiates a new instance of the <see cref="CreateShippingMethodTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>

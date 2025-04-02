@@ -10,7 +10,7 @@ namespace Domain.CouponAggregate.ValueObjects;
 public class CouponProduct : ValueObject
 {
     /// <summary>
-    /// Gets the product id.
+    /// Gets the product identifier.
     /// </summary>
     public ProductId ProductId { get; } = null!;
 
@@ -24,7 +24,7 @@ public class CouponProduct : ValueObject
     /// <summary>
     /// Creates a new instance of the <see cref="CouponProduct"/> class.
     /// </summary>
-    /// <param name="productId">The product id.</param>
+    /// <param name="productId">The product identifier.</param>
     /// <returns>
     /// A new instance of the <see cref="CouponProduct"/> class.
     /// </returns>

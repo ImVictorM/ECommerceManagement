@@ -1,23 +1,29 @@
-using System.Linq.Expressions;
 using Domain.CategoryAggregate.ValueObjects;
+
 using SharedKernel.Models;
+
+using System.Linq.Expressions;
 
 namespace Domain.ProductAggregate.Specifications;
 
 /// <summary>
-/// Specification to get products that contain all specified categories.
+/// Specification to retrieve products that contain all specified categories.
 /// </summary>
-public class QueryProductsContainingCategoriesSpecification : CompositeQuerySpecification<Product>
+public class QueryProductsContainingCategoriesSpecification
+    : CompositeQuerySpecification<Product>
 {
-    private readonly IEnumerable<CategoryId> _categoryIds;
+    private readonly List<CategoryId> _categoryIds;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="QueryProductsContainingCategoriesSpecification"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="QueryProductsContainingCategoriesSpecification"/> class.
     /// </summary>
     /// <param name="categoryIds">The categories a product must contain.</param>
-    public QueryProductsContainingCategoriesSpecification(IEnumerable<CategoryId> categoryIds) : base()
+    public QueryProductsContainingCategoriesSpecification(
+        IEnumerable<CategoryId> categoryIds
+    ) : base()
     {
-        _categoryIds = categoryIds;
+        _categoryIds = categoryIds.ToList();
     }
 
     /// <inheritdoc/>
@@ -26,5 +32,5 @@ public class QueryProductsContainingCategoriesSpecification : CompositeQuerySpec
             .Where(pc => _categoryIds.Contains(pc.CategoryId))
             .Select(pc => pc.CategoryId)
             .Distinct()
-            .Count() == _categoryIds.Count();
+            .Count() == _categoryIds.Count;
 }

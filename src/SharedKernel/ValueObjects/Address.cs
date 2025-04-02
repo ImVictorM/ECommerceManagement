@@ -10,11 +10,11 @@ public sealed class Address : ValueObject
     /// <summary>
     /// Gets the address postal code.
     /// </summary>
-    public string PostalCode { get; } = string.Empty;
+    public string PostalCode { get; } = null!;
     /// <summary>
     /// Gets the address street.
     /// </summary>
-    public string Street { get; } = string.Empty;
+    public string Street { get; } = null!;
     /// <summary>
     /// Gets the address neighborhood.
     /// </summary>
@@ -22,11 +22,11 @@ public sealed class Address : ValueObject
     /// <summary>
     /// Gets the address state.
     /// </summary>
-    public string State { get; } = string.Empty;
+    public string State { get; } = null!;
     /// <summary>
     /// Gets the address city.
     /// </summary>
-    public string City { get; } = string.Empty;
+    public string City { get; } = null!;
 
     private Address() { }
 

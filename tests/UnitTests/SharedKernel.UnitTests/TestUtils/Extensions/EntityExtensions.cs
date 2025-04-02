@@ -8,17 +8,21 @@ namespace SharedKernel.UnitTests.TestUtils.Extensions;
 public static class EntityExtensions
 {
     /// <summary>
-    /// Sets the id of an entity using reflection.
+    /// Sets the identifier of an entity using reflection.
     /// </summary>
-    /// <typeparam name="TId">The entity id type.</typeparam>
+    /// <typeparam name="TId">The entity identifier type.</typeparam>
     /// <param name="entity">The current entity.</param>
-    /// <param name="id">The id to set.</param>
-    /// <exception cref="InvalidOperationException">Thrown when it was not possible to get the entity id property.</exception>
-    public static void SetIdUsingReflection<TId>(this Entity<TId> entity, TId id) where TId : notnull
+    /// <param name="id">The identifier to set.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when it was not possible to get the entity identifier property.
+    /// </exception>
+    public static void SetIdUsingReflection<TId>(this Entity<TId> entity, TId id)
+        where TId : notnull
     {
         var idProperty = typeof(Entity<TId>).GetProperty(
             nameof(entity.Id),
-            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
+            System.Reflection.BindingFlags.Public
+            | System.Reflection.BindingFlags.Instance
         );
 
         if (idProperty != null && idProperty.CanWrite)
@@ -27,7 +31,9 @@ public static class EntityExtensions
         }
         else
         {
-            throw new InvalidOperationException("It was not possible to set the entity id");
+            throw new InvalidOperationException(
+                "It was not possible to set the entity identifier"
+            );
         }
     }
 }

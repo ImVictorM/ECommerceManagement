@@ -43,7 +43,7 @@ public class CreateProductTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests that when an authenticated user without admin privileges tries
+    /// Verifies when an authenticated user without admin privileges tries
     /// to create a product, the response status is Forbidden.
     /// Ensures that only admins are allowed to create products.
     /// </summary>
@@ -69,7 +69,7 @@ public class CreateProductTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests that when an unauthenticated user attempts to create a product,
+    /// Verifies when an unauthenticated user attempts to create a product,
     /// the response status is Unauthorized. Ensures that only authenticated
     /// users with the required admin role can create products.
     /// </summary>
@@ -87,7 +87,7 @@ public class CreateProductTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests that when an authenticated admin user creates a product,
+    /// Verifies when an authenticated admin user creates a product,
     /// the product is created successfully and the response status
     /// is Created. Confirms that admins have permission to create products.
     /// </summary>
@@ -101,7 +101,6 @@ public class CreateProductTests : BaseIntegrationTest
         };
 
         var productCategoryIds = productCategories.Select(c => c.Id.ToString());
-        var productCategoryNames = productCategories.Select(c => c.Name);
 
         var request = CreateProductRequestUtils.CreateRequest(
             name: "Techy pen",
@@ -132,8 +131,8 @@ public class CreateProductTests : BaseIntegrationTest
         responseCreate.StatusCode.Should().Be(HttpStatusCode.Created);
         responseGetCreated.StatusCode.Should().Be(HttpStatusCode.OK);
         responseGetCreatedContent.EnsureCreatedFromRequest(request);
-        responseGetCreatedContent.Categories
+        responseGetCreatedContent.CategoryIds
             .Should()
-            .BeEquivalentTo(productCategoryNames);
+            .BeEquivalentTo(productCategoryIds);
     }
 }

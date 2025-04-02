@@ -1,4 +1,4 @@
-using Application.Authentication.DTOs;
+using Application.Authentication.DTOs.Results;
 
 using MediatR;
 
@@ -9,4 +9,7 @@ namespace Application.Authentication.Queries.LoginUser;
 /// </summary>
 /// <param name="Email">The user email.</param>
 /// <param name="Password">The user password.</param>
-public record LoginUserQuery(string Email, string Password) : IRequest<AuthenticationResult>;
+public record LoginUserQuery(
+    string Email,
+    string Password
+) : IRequest<AuthenticationResult>;

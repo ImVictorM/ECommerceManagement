@@ -19,14 +19,14 @@ internal sealed class IdentityProvider : IIdentityProvider
         {
             throw new InvalidOperationException(
                 "HttpContext is not available. " +
-                "Ensure that IHttpContextAccessor is properly configured and the request context is valid."
+                "Ensure that IHttpContextAccessor is properly " +
+                "configured and the request context is valid"
             );
         }
 
         _httpContext = httpContextAccessor.HttpContext;
     }
 
-    /// <inheritdoc/>
     public IdentityUser GetCurrentUserIdentity()
     {
         var id = GetSingleClaimValue(JwtRegisteredClaimNames.Sub);

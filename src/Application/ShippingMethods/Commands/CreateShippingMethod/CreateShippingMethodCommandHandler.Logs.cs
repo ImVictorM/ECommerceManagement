@@ -9,21 +9,27 @@ internal sealed partial class CreateShippingMethodCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating new shipping method creation. Shipping method name: {ShippingMethodName}."
+        Message =
+        "Initiating new shipping method creation. " +
+        "Shipping method name: {ShippingMethodName}."
     )]
     private partial void LogCreatingShippingMethod(string shippingMethodName);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Shipping method created successfully. Initiating persistence."
+        Message =
+        "The shipping method has been created. " +
+        "Initiating persistence."
     )]
     private partial void LogShippingMethodCreated();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "Shipping method saved successfully. Generated identifier: {Id}."
+        Message =
+        "The new shipping method has been created and saved with" +
+        " the identifier '{Id}'. The operation was completed successfully."
     )]
     private partial void LogShippingMethodSaved(string id);
 }

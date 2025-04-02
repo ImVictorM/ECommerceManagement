@@ -41,11 +41,13 @@ public class PaymentStatus : BaseEnumeration
     }
 
     /// <summary>
-    /// List all the available payment statuses.
+    /// Lists all of the defined payment status.
     /// </summary>
-    /// <returns>All the available payment statuses.</returns>
+    /// <returns>
+    /// A list containing all the defined <see cref="PaymentStatus"/>.
+    /// </returns>
     public static IReadOnlyList<PaymentStatus> List()
     {
-        return GetAll<PaymentStatus>().ToList().AsReadOnly();
+        return GetAll<PaymentStatus>().ToList();
     }
 }

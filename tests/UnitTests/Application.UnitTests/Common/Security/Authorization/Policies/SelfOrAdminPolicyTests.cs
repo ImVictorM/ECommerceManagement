@@ -17,7 +17,8 @@ public class SelfOrAdminPolicyTests
     private readonly SelfOrAdminPolicy<IUserSpecificResource> _policy;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelfOrAdminPolicyTests"/> class.
+    /// Initializes a new instance of the <see cref="SelfOrAdminPolicyTests"/>
+    /// class.
     /// </summary>
     public SelfOrAdminPolicyTests()
     {

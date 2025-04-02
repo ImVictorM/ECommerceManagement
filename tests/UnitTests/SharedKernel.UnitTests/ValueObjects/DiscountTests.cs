@@ -12,7 +12,7 @@ namespace SharedKernel.UnitTests.ValueObjects;
 public class DiscountTests
 {
     /// <summary>
-    /// List of valid starting and ending dates.
+    /// Provides a list of valid starting and ending dates.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidDiscountDates =
     [
@@ -27,7 +27,7 @@ public class DiscountTests
     ];
 
     /// <summary>
-    /// List of invalid starting and ending dates.
+    /// Provides a list of invalid starting and ending dates.
     /// </summary>
     public static readonly IEnumerable<object[]> InvalidDiscountDates =
     [
@@ -42,7 +42,8 @@ public class DiscountTests
     ];
 
     /// <summary>
-    /// Defines pairs of discount and the expected return value when validating if the discount is valid to date.
+    /// Provides pairs of discount and the expected return value when validating
+    /// if the discount is valid to date.
     /// </summary>
     public static readonly IEnumerable<object[]> DiscountAndExpectedValidToDatePairs =
     [
@@ -70,16 +71,23 @@ public class DiscountTests
     ];
 
     /// <summary>
-    /// Tests if it is possible to create a new instance of discount with valid parameters.
+    /// Verifies it is possible to create a new discount instance with valid
+    /// parameters.
     /// </summary>
     /// <param name="startingDate">The starting date of the discount.</param>
     /// <param name="endingDate">The ending date of the discount.</param>
     [Theory]
     [MemberData(nameof(ValidDiscountDates))]
-    public void CreateDiscount_WithValidStartingAndEndingDate_CreatesWithoutThrowing(DateTimeOffset startingDate, DateTimeOffset endingDate)
+    public void CreateDiscount_WithValidStartingAndEndingDate_CreatesWithoutThrowing(
+        DateTimeOffset startingDate,
+        DateTimeOffset endingDate
+    )
     {
         var actionResult = FluentActions
-            .Invoking(() => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate))
+            .Invoking(() => DiscountUtils.CreateDiscount(
+                startingDate: startingDate,
+                endingDate: endingDate
+            ))
             .Should()
             .NotThrow();
 
@@ -87,7 +95,7 @@ public class DiscountTests
     }
 
     /// <summary>
-    /// Tests if it throws an error when the dates are invalid.
+    /// Verifies an exception is thrown when the dates are invalid.
     /// </summary>
     /// <param name="startingDate">The starting date of the discount.</param>
     /// <param name="endingDate">The ending date of the discount.</param>
@@ -99,14 +107,20 @@ public class DiscountTests
     )
     {
         FluentActions
-            .Invoking(() => DiscountUtils.CreateDiscount(startingDate: startingDate, endingDate: endingDate))
+            .Invoking(() => DiscountUtils.CreateDiscount(
+                startingDate: startingDate,
+                endingDate: endingDate
+            ))
             .Should()
             .Throw<OutOfRangeException>()
-            .WithMessage("The date range between the starting and ending date is invalid");
+            .WithMessage(
+                "The date range between the starting and ending date is invalid"
+            );
     }
 
     /// <summary>
-    /// Tests if it throws an error when the percentage of the discount is not between 1 and 100.
+    /// Verifies an exception is thrown when the percentage of the discount is
+    /// not between 1 and 100.
     /// </summary>
     /// <param name="percentage">The discount percentage.</param>
     [Theory]
@@ -118,20 +132,29 @@ public class DiscountTests
     public void CreateDiscount_WithInvalidPercentage_ThrowsError(int percentage)
     {
         FluentActions
-            .Invoking(() => DiscountUtils.CreateDiscount(percentage: PercentageUtils.Create(percentage)))
+            .Invoking(() => DiscountUtils.CreateDiscount(
+                percentage: PercentageUtils.Create(percentage)
+            ))
             .Should()
             .Throw<OutOfRangeException>()
             .WithMessage("Discount percentage must be between 1 and 100");
     }
 
     /// <summary>
-    /// Tests if the discount is valid to date.
+    /// Verifies the <see cref="Discount.IsValidToDate"/> property returns the
+    /// correct boolean value for different discounts.
     /// </summary>
     /// <param name="discount">The discount.</param>
-    /// <param name="expectedValidToDate">The expected value indicating if the discount should be applied.</param>
+    /// <param name="expectedValidToDate">
+    /// The expected value indicating if the discount should be considered
+    /// valid to date.
+    /// </param>
     [Theory]
     [MemberData(nameof(DiscountAndExpectedValidToDatePairs))]
-    public void IsValidToDate_WhenChecking_ReturnsExpected(Discount discount, bool expectedValidToDate)
+    public void IsValidToDate_WithDifferentDiscounts_ReturnsExpectedBoolean(
+        Discount discount,
+        bool expectedValidToDate
+    )
     {
         discount.IsValidToDate.Should().Be(expectedValidToDate);
     }

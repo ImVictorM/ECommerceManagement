@@ -26,7 +26,9 @@ internal sealed partial class GetCouponsQueryHandler
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "{Count} coupons were retrieved. Operation complete successfully."
+        Message =
+        "{Count} coupons were retrieved. " +
+        "The operation was completed successfully."
     )]
     private partial void LogCouponsRetrievedSuccessfully(int count);
 }

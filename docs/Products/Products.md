@@ -91,9 +91,9 @@ Example Request:
 - 403 FORBIDDEN: The current user is not an administrator.
 - 404 NOT_FOUND: The product to be updated does not exist.
 
-## Update Product Inventory
+## Add Stock
 
-Increments the inventory quantity available for an active product. Admin authentication is required.
+Increases the quantity available in inventory for an active product. Admin authentication is required.
 
 ```js
 PUT "/products/{{id_product}}/inventory"
@@ -108,13 +108,13 @@ PUT "/products/{{id_product}}/inventory"
 
 Field Specifications:
 
-- `quantityToIncrement` - The quantity to increment in the stock (≥ 1).
+- `quantityToAdd` - The quantity to increase in the stock (≥ 1).
 
 Example Request:
 
 ```json
 {
-  "quantityToIncrement": 25
+  "quantityToAdd": 25
 }
 ```
 
@@ -174,7 +174,7 @@ Example Response:
     "basePrice": 200,
     "priceWithDiscount": 200,
     "quantityAvailable": 73,
-    "categories": ["sports_outdoor"],
+    "categoryIds": ["1"],
     "images": ["jacket.png"]
   }
 ]
@@ -203,7 +203,7 @@ Example Response:
   "basePrice": 200,
   "priceWithDiscount": 200,
   "quantityAvailable": 73,
-  "categories": ["sports_outdoor"],
+  "categoryIds": ["1"],
   "images": ["jacket.png"]
 }
 ```

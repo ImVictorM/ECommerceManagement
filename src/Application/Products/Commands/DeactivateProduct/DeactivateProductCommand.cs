@@ -7,8 +7,9 @@ using MediatR;
 namespace Application.Products.Commands.DeactivateProduct;
 
 /// <summary>
-/// Command to deactivate a product.
+/// Represents a command to deactivate a product.
 /// </summary>
-/// <param name="Id">The product id.</param>
+/// <param name="Id">The product identifier.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record DeactivateProductCommand(string Id) : IRequestWithAuthorization<Unit>;
+public record DeactivateProductCommand(string Id)
+    : IRequestWithAuthorization<Unit>;

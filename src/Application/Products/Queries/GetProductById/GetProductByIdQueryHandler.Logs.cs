@@ -9,20 +9,23 @@ internal sealed partial class GetProductByIdQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating retrieving product by id. Product id: {Id}.")]
-    private partial void LogInitiateRetrievingProductById(string id);
+        Message = "Initiating retrieval of product with identifier '{Id}'."
+    )]
+    private partial void LogInitiatingProductRetrieval(string id);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The product cannot be found. Either the product does not exist or it is inactive."
+        Message =
+        "The product could not be found. " +
+        "Either the product does not exist or is inactive."
     )]
     private partial void LogProductDoesNotExist();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The product was retrieved with its corresponding category names."
+        Message = "The product has been found and retrieved."
     )]
     private partial void LogProductRetrieved();
 
@@ -36,8 +39,9 @@ internal sealed partial class GetProductByIdQueryHandler
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Debug,
-        Message = "The product was retrieved with its category names and calculate price on sale." +
-        " Operation complete successfully."
+        Message =
+        "The product has been retrieved, and its sale price has been calculated. " +
+        "The operation was completed successfully."
     )]
     private partial void LogProductRetrievedSuccessfully();
 }

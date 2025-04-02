@@ -59,7 +59,7 @@ public class PlaceOrderCommandHandlerTests
     /// creating an order and saving it.
     /// </summary>
     [Fact]
-    public async Task HandlePlaceOrder_WithValidRequest_CreatesOrder()
+    public async Task HandlePlaceOrderCommand_WithValidRequest_CreatesOrder()
     {
         var mockIdentityUser = new IdentityUser("1", [Role.Customer]);
 

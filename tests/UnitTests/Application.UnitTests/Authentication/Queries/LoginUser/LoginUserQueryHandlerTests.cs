@@ -30,7 +30,7 @@ public class LoginUserQueryHandlerTests
     private readonly Mock<IPasswordHasher> _mockPasswordHasher;
 
     /// <summary>
-    /// List of valid login queries.
+    /// Provides a list of valid login queries.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidLoginQueries =
     [
@@ -40,7 +40,8 @@ public class LoginUserQueryHandlerTests
     ];
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="LoginUserQueryHandlerTests"/> class.
+    /// Initiates a new instance of the <see cref="LoginUserQueryHandlerTests"/>
+    /// class.
     /// </summary>
     public LoginUserQueryHandlerTests()
     {
@@ -57,12 +58,14 @@ public class LoginUserQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests if it is possible to authenticate an user with valid credentials.
+    /// Verifies it is possible to authenticate a user with valid credentials.
     /// </summary>
     /// <param name="query">The login query.</param>
     [Theory]
     [MemberData(nameof(ValidLoginQueries))]
-    public async Task HandleLoginUserQuery_WithValidCredentials_ReturnsUserWithAuthenticationToken(LoginUserQuery query)
+    public async Task HandleLoginUserQuery_WithValidCredentials_ReturnsAuthenticationResult(
+        LoginUserQuery query
+    )
     {
         var generatedToken = "generated-token";
 
@@ -79,24 +82,29 @@ public class LoginUserQueryHandlerTests
             .ReturnsAsync(user);
 
         _mockJwtTokenService
-            .Setup(jwtTokenService => jwtTokenService.GenerateToken(It.IsAny<IdentityUser>()))
+            .Setup(jwtTokenService => jwtTokenService.GenerateToken(
+                It.IsAny<IdentityUser>()
+            ))
             .Returns(generatedToken);
 
         _mockPasswordHasher
-            .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
+            .Setup(hasher => hasher.Verify(
+                It.IsAny<string>(),
+                It.IsAny<PasswordHash>()
+            ))
             .Returns(true);
 
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
 
-        result.AuthenticatedIdentity.Email.ToString().Should().Be(query.Email);
+        result.User.Email.Should().Be(query.Email);
 
         result.Token.Should().Be(generatedToken);
     }
 
     /// <summary>
-    /// Tests when the user is not found by email in the database.
+    /// Verifies an exception is thrown when the email is incorrect.
     /// </summary>
     [Fact]
     public async Task HandleLoginUserQuery_WithIncorrectEmail_ThrowsError()
@@ -118,10 +126,10 @@ public class LoginUserQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests if it is not possible to authenticate an user with invalid password.
+    /// Verifies an exception is thrown when the password is incorrect.
     /// </summary>
     [Fact]
-    public async Task HandleLoginUserQuery_WithCorrectEmailAndWrongPassword_ThrowsError()
+    public async Task HandleLoginUserQuery_WithWrongPassword_ThrowsError()
     {
         var query = LoginUserQueryUtils.CreateQuery();
 
@@ -133,7 +141,10 @@ public class LoginUserQueryHandlerTests
             .ReturnsAsync(UserUtils.CreateCustomer());
 
         _mockPasswordHasher
-            .Setup(hasher => hasher.Verify(It.IsAny<string>(), It.IsAny<PasswordHash>()))
+            .Setup(hasher => hasher.Verify(
+                It.IsAny<string>(),
+                It.IsAny<PasswordHash>()
+            ))
             .Returns(false);
 
         await FluentActions
@@ -144,7 +155,7 @@ public class LoginUserQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests if it is not possible to authenticate an inactive user.
+    /// Verifies an exception is thrown when the user is inactive.
     /// </summary>
     [Fact]
     public async Task HandleLoginUserQuery_WhenUserIsInactive_ThrowsError()

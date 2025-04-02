@@ -8,37 +8,32 @@ namespace Domain.ProductAggregate.ValueObjects;
 public sealed class ProductImage : ValueObject
 {
     /// <summary>
-    /// Gets the image url.
+    /// Gets the image uri.
     /// </summary>
-    public Uri Url { get; } = null!;
+    public Uri Uri { get; } = null!;
 
-    /// <summary>
-    /// Initiates a new instance of the <see cref="ProductImage"/> class.
-    /// </summary>
     private ProductImage() { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProductImage"/> class.
-    /// </summary>
-    /// <param name="url">The image url.</param>
-    private ProductImage(Uri url)
+    private ProductImage(Uri uri)
     {
-        Url = url;
+        Uri = uri;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProductImage"/> class.
     /// </summary>
-    /// <param name="url">The image url.</param>
-    /// <returns>A new instance of the <see cref="ProductImage"/> class.</returns>
-    public static ProductImage Create(Uri url)
+    /// <param name="uri">The image uri.</param>
+    /// <returns>
+    /// A new instance of the <see cref="ProductImage"/> class.
+    /// </returns>
+    public static ProductImage Create(Uri uri)
     {
-        return new ProductImage(url);
+        return new ProductImage(uri);
     }
 
     /// <inheritdoc/>
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return Url;
+        yield return Uri;
     }
 }

@@ -1,3 +1,5 @@
+using Application.Common.DTOs.Pagination;
+using Application.Products.DTOs.Filters;
 using Application.Products.Queries.GetProducts;
 
 namespace Application.UnitTests.Products.Queries.TestUtils;
@@ -8,18 +10,21 @@ namespace Application.UnitTests.Products.Queries.TestUtils;
 public static class GetProductsQueryUtils
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="GetProductsQuery"/> with default limit.
+    /// Creates a new instance of the <see cref="GetProductsQuery"/> class.
     /// </summary>
-    /// <param name="page">The current page.</param>
-    /// <param name="pageSize">The page size.</param>
-    /// <param name="categories">The categories the products should have.</param>
-    /// <returns>A new instance of the <see cref="GetProductsQuery"/> class.</returns>
+    /// <param name="paginationParams">The pagination parameters.</param>
+    /// <param name="filters">The product filters.</param>
+    /// <returns>
+    /// A new instance of the <see cref="GetProductsQuery"/> class.
+    /// </returns>
     public static GetProductsQuery CreateQuery(
-        int? page = null,
-        int? pageSize = null,
-        IEnumerable<string>? categories = null
+        PaginationParams? paginationParams = null,
+        ProductFilters? filters = null
     )
     {
-        return new GetProductsQuery(page, pageSize, categories);
+        return new GetProductsQuery(
+            paginationParams ?? new(),
+            filters ?? new()
+        );
     }
 }

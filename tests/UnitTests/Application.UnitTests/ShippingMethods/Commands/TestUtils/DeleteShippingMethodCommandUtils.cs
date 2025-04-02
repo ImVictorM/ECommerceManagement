@@ -10,14 +10,19 @@ namespace Application.UnitTests.ShippingMethods.Commands.TestUtils;
 public static class DeleteShippingMethodCommandUtils
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="DeleteShippingMethodCommand"/> class.
+    /// Creates a new instance of the <see cref="DeleteShippingMethodCommand"/>
+    /// class.
     /// </summary>
-    /// <param name="shippingMethodId">The shipping method id.</param>
-    /// <returns>A new instance of the <see cref="DeleteShippingMethodCommand"/> class.</returns>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
+    /// <returns>
+    /// A new instance of the <see cref="DeleteShippingMethodCommand"/> class.
+    /// </returns>
     public static DeleteShippingMethodCommand CreateCommand(
         string? shippingMethodId = null
     )
     {
-        return new DeleteShippingMethodCommand(shippingMethodId ?? NumberUtils.CreateRandomLongAsString());
+        return new DeleteShippingMethodCommand(
+            shippingMethodId ?? NumberUtils.CreateRandomLongAsString()
+        );
     }
 }

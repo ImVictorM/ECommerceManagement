@@ -20,7 +20,7 @@ public static class UpdateProductRequestUtils
     /// <param name="description">The product description.</param>
     /// <param name="basePrice">The product base price.</param>
     /// <param name="images">The product images.</param>
-    /// <param name="categoryIds">The product categories.</param>
+    /// <param name="categoryIds">The product category identifiers.</param>
     /// <returns>
     /// A new instance of the <see cref="UpdateProductRequest"/> class.
     /// </returns>

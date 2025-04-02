@@ -11,35 +11,30 @@ public class EntityTests
 {
 
     /// <summary>
-    /// A list of ids.
+    /// Defines a list of different identifiers.
     /// </summary>
-    public static IEnumerable<object[]> Ids
-    {
-        get
-        {
-            yield return new object[] { 1 };
-            yield return new object[] { "1" };
-            yield return new object[] { Guid.NewGuid() };
-        }
-    }
+    public static readonly IEnumerable<object[]> Ids =
+    [
+        [1],
+        ["1"],
+        [Guid.NewGuid()]
+    ];
 
     /// <summary>
-    /// A list of pairs of different ids.
+    /// Defines a list of different identifier pairs.
     /// </summary>
-    public static IEnumerable<object[]> IdsDifferentPairs
-    {
-        get
-        {
-            yield return new object[] { 1, "1" };
-            yield return new object[] { "1", "5" };
-            yield return new object[] { Guid.NewGuid(), 7 };
-        }
-    }
+    public static readonly IEnumerable<object[]> IdsDifferentPairs =
+    [
+        [1, "1"],
+        ["1", "5"],
+        [Guid.NewGuid(), 7]
+    ];
 
     /// <summary>
-    /// Tests that comparing two entities with the same ID returns true for equality.
+    /// Verifies that comparing two entities with the same identifier returns
+    /// true for equality.
     /// </summary>
-    /// <param name="id">The ID used to create both entities.</param>
+    /// <param name="id">The identifier used to create both entities.</param>
     [Theory]
     [MemberData(nameof(Ids))]
     public void CompareEntity_WithSameId_ReturnsTrue(object id)
@@ -52,10 +47,11 @@ public class EntityTests
     }
 
     /// <summary>
-    /// Tests that comparing two entities with different IDs returns false for equality.
+    /// Verifies that comparing two entities with different identifiers returns
+    /// false for equality.
     /// </summary>
-    /// <param name="id1">The ID of the first entity.</param>
-    /// <param name="id2">The ID of the second entity.</param>
+    /// <param name="id1">The identifier of the first entity.</param>
+    /// <param name="id2">The identifier of the second entity.</param>
     [Theory]
     [MemberData(nameof(IdsDifferentPairs))]
     public void CompareEntity_WithDifferentId_ReturnsFalse(object id1, object id2)
@@ -68,9 +64,10 @@ public class EntityTests
     }
 
     /// <summary>
-    /// Tests that comparing an entity with a different type (but same ID) returns false for equality.
+    /// Verifies that comparing an entity with a different type and same
+    /// identifier returns false for equality.
     /// </summary>
-    /// <param name="id">The ID used to create the entity.</param>
+    /// <param name="id">The identifier used to create the entities.</param>
     [Theory]
     [MemberData(nameof(Ids))]
     public void CompareEntity_WithDifferentTypeAndSameId_ReturnsFalse(object id)
@@ -82,9 +79,9 @@ public class EntityTests
     }
 
     /// <summary>
-    /// Tests that two entities with the same ID have the same hash code.
+    /// Verifies that two entities with the same identifier have the same hash code.
     /// </summary>
-    /// <param name="id">The ID used to create both entities.</param>
+    /// <param name="id">The identifier used to create both entities.</param>
     [Theory]
     [MemberData(nameof(Ids))]
     public void CompareEntity_WhenTheyAreEqual_TheHashCodesAreEqual(object id)
@@ -96,13 +93,17 @@ public class EntityTests
     }
 
     /// <summary>
-    /// Tests that two entities with different IDs have different hash codes.
+    /// Verifies that two entities with different identifiers have different
+    /// hash codes.
     /// </summary>
-    /// <param name="id1">The ID of the first entity.</param>
-    /// <param name="id2">The ID of the second entity.</param>
+    /// <param name="id1">The identifier of the first entity.</param>
+    /// <param name="id2">The identifier of the second entity.</param>
     [Theory]
     [MemberData(nameof(IdsDifferentPairs))]
-    public void CompareEntity_WhenTheyAreDifferent_TheHashCodesAreDifferent(object id1, object id2)
+    public void CompareEntity_WhenTheyAreDifferent_TheHashCodesAreDifferent(
+        object id1,
+        object id2
+    )
     {
         var entity1 = EntityUtils.UserEntity.Create(id1);
         var entity2 = EntityUtils.UserEntity.Create(id2);
@@ -111,10 +112,11 @@ public class EntityTests
     }
 
     /// <summary>
-    /// Tests that adding a domain event increases the count of domain events in the entity.
+    /// Verifies that adding a domain event increases the count of domain events
+    /// in the entity.
     /// </summary>
     [Fact]
-    public void DomainEvent_WhenAdding_IncreasesCount()
+    public void AddDomainEvent_WithValidDomainEvent_IncreasesCount()
     {
         var userEntity = EntityUtils.UserEntity.Create(1);
 
@@ -125,14 +127,18 @@ public class EntityTests
     }
 
     /// <summary>
-    /// Tests that clearing domain events resets the count of domain events in the entity to zero.
+    /// Verifies that clearing domain events resets the count of domain events
+    /// in the entity to zero.
     /// </summary>
     [Fact]
-    public void DomainEvent_WhenClearing_Resets()
+    public void ClearDomainEvents_WithMultipleEvents_ShouldRemoveAllTheEvents()
     {
         var initialDomainEventsCount = 10;
 
-        var userEntity = EntityUtils.UserEntity.Create(1, initialDomainEventsCount);
+        var userEntity = EntityUtils.UserEntity.Create(
+            1,
+            initialDomainEventsCount
+        );
 
         userEntity.DomainEvents.Count.Should().Be(initialDomainEventsCount);
 

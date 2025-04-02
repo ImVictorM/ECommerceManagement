@@ -242,8 +242,8 @@ Example Response:
     "amount": 400,
     "installments": 1,
     "status": "Pending",
-    "description": "does not matter",
-    "paymentType": "credit_card"
+    "details": "does not matter",
+    "paymentMethod": "CreditCard"
   },
   "shipment": {
     "shipmentId": "1",
@@ -348,8 +348,8 @@ Example Response:
     "amount": 400,
     "installments": 1,
     "status": "Pending",
-    "description": "does not matter",
-    "paymentType": "credit_card"
+    "details": "does not matter",
+    "paymentMethod": "CreditCard"
   },
   "shipment": {
     "shipmentId": "1",

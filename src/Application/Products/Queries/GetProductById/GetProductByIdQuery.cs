@@ -1,4 +1,4 @@
-using Application.Products.DTOs;
+using Application.Products.DTOs.Results;
 
 using MediatR;
 

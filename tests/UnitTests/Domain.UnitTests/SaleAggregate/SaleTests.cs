@@ -18,219 +18,293 @@ namespace Domain.UnitTests.SaleAggregate;
 public class SaleTests
 {
     /// <summary>
-    /// List containing valid sale inputs to create a sale.
+    /// Provides a list containing valid sale inputs to create a sale.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidSaleInputs =
     [
         [
             DiscountUtils.CreateDiscount(PercentageUtils.Create(15)),
-            new HashSet<CategoryReference>
+            new HashSet<SaleCategory>
             {
-                CategoryReference.Create(CategoryId.Create(3))
+                SaleCategory.Create(CategoryId.Create(3))
             },
-            new HashSet<ProductReference>
+            new HashSet<SaleProduct>
             {
-                ProductReference.Create(ProductId.Create(5))
+                SaleProduct.Create(ProductId.Create(5))
             },
-            new HashSet<ProductReference>
+            new HashSet<SaleProduct>
             {
-                ProductReference.Create(ProductId.Create(6))
+                SaleProduct.Create(ProductId.Create(6))
             }
         ]
     ];
+
     /// <summary>
-    /// Ensures that a sale is created successfully with valid inputs using custom values.
+    /// Verifies that a sale is created successfully with valid inputs.
     /// </summary>
     [Theory]
     [MemberData(nameof(ValidSaleInputs))]
-    public void CreateSale_WithValidInputs_ShouldCreateSaleWithExpectedValues(
+    public void Create_WithValidInputs_CreatesWithoutThrowing(
         Discount discount,
-        HashSet<CategoryReference> categoriesInSale,
-        HashSet<ProductReference> productsInSale,
-        HashSet<ProductReference> productsExcludedFromSale
+        HashSet<SaleCategory> categoriesOnSale,
+        HashSet<SaleProduct> productsOnSale,
+        HashSet<SaleProduct> productsExcludedFromSale
     )
     {
-        var sale = SaleUtils.CreateSale(
-            discount: discount,
-            categoriesInSale: categoriesInSale,
-            productsInSale: productsInSale,
-            productsExcludeFromSale:
-            productsExcludedFromSale
-        );
+        var act = FluentActions
+            .Invoking(() => Sale.Create(
+                discount: discount,
+                categoriesOnSale: categoriesOnSale,
+                productsOnSale: productsOnSale,
+                productsExcludedFromSale: productsExcludedFromSale
+            ))
+            .Should()
+            .NotThrow();
+
+        var sale = act.Subject;
 
         sale.Discount.Should().BeEquivalentTo(discount);
-        sale.CategoriesInSale.Should().BeEquivalentTo(categoriesInSale);
-        sale.ProductsInSale.Should().BeEquivalentTo(productsInSale);
-        sale.ProductsExcludedFromSale.Should().BeEquivalentTo(productsExcludedFromSale);
+        sale.CategoriesOnSale.Should().BeEquivalentTo(categoriesOnSale);
+        sale.ProductsOnSale.Should().BeEquivalentTo(productsOnSale);
+        sale.ProductsExcludedFromSale
+            .Should().BeEquivalentTo(productsExcludedFromSale);
     }
 
     /// <summary>
-    /// Ensures that creating a sale with no categories or products throws an exception.
+    /// Verifies that creating a sale with empty categories and products on sale
+    /// throws an exception.
     /// </summary>
     [Fact]
-    public void CreateSale_WithNoCategoriesOrProducts_ShouldThrowDomainValidationException()
+    public void Create_WithEmptyCategoriesAndProductsOnSale_ThrowsError()
     {
-        var emptyCategories = new HashSet<CategoryReference>();
-        var emptyProducts = new HashSet<ProductReference>();
-
-        FluentActions
-            .Invoking(() => SaleUtils.CreateSale(categoriesInSale: emptyCategories, productsInSale: emptyProducts))
-            .Should()
-            .Throw<InvalidSaleStateException>()
-            .WithMessage("A sale must contain at least one category or one product.");
-    }
-
-    /// <summary>
-    /// Ensures that creating a sale with no categories and products excluded equal to the products included throws an exception.
-    /// </summary>
-    [Fact]
-    public void CreateSale_WithNoCategoriesAndProductsExcludedAreEqualToProductsIncluded_ShouldThrowDomainValidationException()
-    {
-        var emptyCategories = new HashSet<CategoryReference>();
-        var productsIncluded = new HashSet<ProductReference>()
-        {
-            ProductReference.Create(ProductId.Create(1)),
-            ProductReference.Create(ProductId.Create(2)),
-        };
-        var productsExcluded = new HashSet<ProductReference>()
-        {
-            ProductReference.Create(ProductId.Create(1)),
-            ProductReference.Create(ProductId.Create(2)),
-        };
+        var emptyCategories = new HashSet<SaleCategory>();
+        var emptyProducts = new HashSet<SaleProduct>();
 
         FluentActions
             .Invoking(() => SaleUtils.CreateSale(
-                categoriesInSale: emptyCategories,
-                productsInSale: productsIncluded,
-                productsExcludeFromSale: productsExcluded
+                categoriesOnSale: emptyCategories,
+                productsOnSale: emptyProducts
             ))
             .Should()
-            .Throw<InvalidSaleStateException>()
-            .WithMessage("A sale must contain at least one category or one product.");
+            .Throw<InvalidSaleStateException>();
     }
 
     /// <summary>
-    /// List of discounts and expected value when calling the <see cref="Sale.IsValidToDate"/> method.
+    /// Verifies that creating a sale with no categories and products excluded equal
+    /// to the products included throws an exception.
     /// </summary>
-    public static readonly IEnumerable<object[]> IsValidToDateDiscountInputs =
-    [
-        [
-            DiscountUtils.CreateDiscount
-            (
-                startingDate: DateTimeOffset.UtcNow.AddHours(-5),
-                endingDate: DateTimeOffset.UtcNow.AddDays(2)
-            ),
-            true,
-        ],
-        [
-            DiscountUtils.CreateDiscount
-            (
-                startingDate: DateTimeOffset.UtcNow.AddDays(2),
-                endingDate: DateTimeOffset.UtcNow.AddDays(5)
-            ),
-            false
-        ],
-        [
-            DiscountUtils.CreateDiscount
-            (
-                startingDate: DateTimeOffset.UtcNow.AddHours(-15),
-                endingDate: DateTimeOffset.UtcNow.AddHours(-5)
-            ),
-            false
-        ]
-    ];
+    [Fact]
+    public void Create_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
+    {
+        var emptyCategories = new HashSet<SaleCategory>();
+        var productsOnSale = new HashSet<SaleProduct>()
+        {
+            SaleProduct.Create(ProductId.Create(1)),
+            SaleProduct.Create(ProductId.Create(2)),
+        };
+        var productsExcluded = new HashSet<SaleProduct>()
+        {
+            SaleProduct.Create(ProductId.Create(1)),
+            SaleProduct.Create(ProductId.Create(2)),
+        };
+
+        FluentActions
+           .Invoking(() => SaleUtils.CreateSale(
+               categoriesOnSale: emptyCategories,
+               productsOnSale: productsOnSale,
+               productsExcludedFromSale: productsExcluded
+           ))
+           .Should()
+           .Throw<InvalidSaleStateException>();
+    }
 
     /// <summary>
-    /// Ensures the <see cref="Sale.IsValidToDate"/> method returns the correct value.
+    /// Verifies that updating a sale with valid parameters updates the sale correctly.
     /// </summary>
     [Theory]
-    [MemberData(nameof(IsValidToDateDiscountInputs))]
-    public void IsValidToDate_WhenVerifiedWithSpecificDiscount_ReturnsExpectedValue(
-        Discount discount,
-        bool expected
+    [MemberData(nameof(ValidSaleInputs))]
+    public void Update_WithValidParameters_UpdatesCorrectly(
+        Discount newDiscount,
+        HashSet<SaleCategory> newCategoriesOnSale,
+        HashSet<SaleProduct> newProductsOnSale,
+        HashSet<SaleProduct> newProductsExcludedFromSale
     )
     {
-        var sale = SaleUtils.CreateSale(discount: discount);
+        var sale = SaleUtils.CreateSale();
 
-        var isValid = sale.IsValidToDate();
+        sale.Update(
+            newDiscount,
+            newCategoriesOnSale,
+            newProductsOnSale,
+            newProductsExcludedFromSale
+        );
 
-        isValid.Should().Be(expected);
+        sale.Discount.Should().BeEquivalentTo(newDiscount);
+        sale.CategoriesOnSale.Should().BeEquivalentTo(newCategoriesOnSale);
+        sale.ProductsOnSale.Should().BeEquivalentTo(newProductsOnSale);
+        sale.ProductsExcludedFromSale
+            .Should()
+            .BeEquivalentTo(newProductsExcludedFromSale);
     }
 
     /// <summary>
-    /// Provides test data for validating if a product is in a sale.
+    /// Verifies that updating a sale with no categories and products excluded equal
+    /// to the products included throws an exception.
     /// </summary>
-    public static IEnumerable<object[]> IsProductInSaleData =>
+    [Fact]
+    public void Update_WithoutCategoriesAndProductsOnSaleEqualToProductsExcluded_ThrowsError()
+    {
+        var sale = SaleUtils.CreateSale();
+
+        var emptyCategories = new HashSet<SaleCategory>();
+        var productsOnSale = new HashSet<SaleProduct>()
+        {
+            SaleProduct.Create(ProductId.Create(1)),
+            SaleProduct.Create(ProductId.Create(2)),
+        };
+        var productsExcluded = new HashSet<SaleProduct>()
+        {
+            SaleProduct.Create(ProductId.Create(1)),
+            SaleProduct.Create(ProductId.Create(2)),
+        };
+
+        FluentActions
+            .Invoking(() => sale.Update(
+                DiscountUtils.CreateDiscount(PercentageUtils.Create(20)),
+                emptyCategories,
+                productsOnSale,
+                productsExcluded
+            ))
+            .Should()
+            .Throw<InvalidSaleStateException>();
+    }
+
+    /// <summary>
+    /// Verifies that updating a sale with empty categories and products on sale
+    /// throws an exception.
+    /// </summary>
+    [Fact]
+    public void Update_WithEmptyCategoriesAndProductsOnSale_ThrowsError()
+    {
+        var sale = SaleUtils.CreateSale();
+
+        var emptyCategories = new HashSet<SaleCategory>();
+        var emptyProducts = new HashSet<SaleProduct>();
+
+        FluentActions
+            .Invoking(() => sale.Update(
+                discount: sale.Discount,
+                categoriesOnSale: emptyCategories,
+                productsOnSale: emptyProducts,
+                productsExcludedFromSale: []
+            ))
+            .Should()
+            .Throw<InvalidSaleStateException>();
+    }
+
+    /// <summary>
+    /// Provides test data for validating if a product is on sale.
+    /// </summary>
+    public static IEnumerable<object[]> IsProductOnSaleData =>
     [
         [
-            SaleProduct.Create(
+            SaleEligibleProduct.Create(
                 ProductId.Create(1),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(1)
-                }
+                ]
             ),
             true
         ],
         [
-            SaleProduct.Create(
+            SaleEligibleProduct.Create(
                 ProductId.Create(3),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(1)
-                }
+                ]
             ),
             true
         ],
         [
-            SaleProduct.Create(
+            SaleEligibleProduct.Create(
                 ProductId.Create(2),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(1)
-                }
+                ]
             ),
             false
         ],
         [
-            SaleProduct.Create(
+            SaleEligibleProduct.Create(
                 ProductId.Create(3),
-                new HashSet<CategoryId>()
-                {
+                [
                     CategoryId.Create(3)
-                }
+                ]
             ),
             false
         ],
     ];
 
     /// <summary>
-    /// Validates whether a product is correctly identified as being in a sale.
+    /// Validates whether a product is on sale correctly.
     /// </summary>
     /// <param name="product">The product to check.</param>
     /// <param name="expectedResult">The expected result.</param>
     [Theory]
-    [MemberData(nameof(IsProductInSaleData))]
-    public void IsProductInSale_WhenChecked_ShouldReturnExpectedResult(SaleProduct product, bool expectedResult)
+    [MemberData(nameof(IsProductOnSaleData))]
+    public void IsProductOnSale_WithDifferentEligibleProducts_ReturnExpectedResult(
+        SaleEligibleProduct product,
+        bool expectedResult
+    )
     {
         var sale = SaleUtils.CreateSale(
-            productsInSale: new HashSet<ProductReference>()
-            {
-                ProductReference.Create(ProductId.Create(1)),
-                ProductReference.Create(ProductId.Create(2))
-            },
-            categoriesInSale: new HashSet<CategoryReference>()
-            {
-                CategoryReference.Create(CategoryId.Create(1)),
-            },
-            productsExcludeFromSale: new HashSet<ProductReference>()
-            {
-                ProductReference.Create(ProductId.Create(2))
-            }
+            productsOnSale:
+            [
+                SaleProduct.Create(ProductId.Create(1)),
+                SaleProduct.Create(ProductId.Create(2))
+            ],
+            categoriesOnSale:
+            [
+                SaleCategory.Create(CategoryId.Create(1)),
+            ],
+            productsExcludedFromSale:
+            [
+                SaleProduct.Create(ProductId.Create(2))
+            ]
         );
 
-        var result = sale.IsProductInSale(product);
+        var result = sale.IsProductOnSale(product);
 
         result.Should().Be(expectedResult);
+    }
+
+    /// <summary>
+    /// Validates the product is not on sale if the sale discount is not valid
+    /// to date.
+    /// </summary>
+    [Fact]
+    public void IsProductOnSale_WithDiscountNotValidToDate_ReturnFalse()
+    {
+        var product = SaleEligibleProduct.Create(
+            ProductId.Create(1),
+            [
+                CategoryId.Create(2)
+            ]
+        );
+
+        var sale = SaleUtils.CreateSale(
+            productsOnSale:
+            [
+                SaleProduct.Create(product.ProductId),
+            ],
+            discount: DiscountUtils.CreateDiscount(
+                startingDate: DateTimeOffset.UtcNow.AddDays(4),
+                endingDate: DateTimeOffset.UtcNow.AddDays(15)
+            )
+        );
+
+        var result = sale.IsProductOnSale(product);
+
+        result.Should().BeFalse();
     }
 }

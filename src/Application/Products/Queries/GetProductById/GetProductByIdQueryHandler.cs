@@ -1,5 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.Products.DTOs;
+using Application.Products.DTOs.Results;
 using Application.Products.Errors;
 
 using Domain.ProductAggregate.Services;
@@ -28,28 +28,32 @@ internal sealed partial class GetProductByIdQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<ProductResult> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ProductResult> Handle(
+        GetProductByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiateRetrievingProductById(request.Id);
+        LogInitiatingProductRetrieval(request.Id);
 
         var productId = ProductId.Create(request.Id);
 
-        var productWithCategories = await _productRepository.GetProductWithCategoriesSatisfyingAsync(
+        var product = await _productRepository.FindFirstSatisfyingAsync(
             new QueryActiveProductByIdSpecification(productId),
             cancellationToken
         );
 
-        if (productWithCategories == null)
+        if (product == null)
         {
             LogProductDoesNotExist();
-            throw new ProductNotFoundException($"The product with id {productId} does not exist");
+
+            throw new ProductNotFoundException()
+                .WithContext("ProductId", productId.ToString());
         }
 
         LogProductRetrieved();
 
-        var productPrice = await _productPricingService.CalculateProductPriceApplyingSaleAsync(
-            productWithCategories.Product,
+        var productPrice = await _productPricingService.CalculateDiscountedPriceAsync(
+            product,
             cancellationToken
         );
 
@@ -57,9 +61,8 @@ internal sealed partial class GetProductByIdQueryHandler
 
         LogProductRetrievedSuccessfully();
 
-        return new ProductResult(
-            productWithCategories.Product,
-            productWithCategories.CategoryNames,
+        return ProductResult.FromProductWithDiscountedPrice(
+            product,
             productPrice
         );
     }

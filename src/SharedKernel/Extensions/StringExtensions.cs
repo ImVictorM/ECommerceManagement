@@ -3,7 +3,7 @@ using SharedKernel.Errors;
 namespace SharedKernel.Extensions;
 
 /// <summary>
-/// Define shared string extensions.
+/// Defines shared extension methods for string operations.
 /// </summary>
 public static class StringExtensions
 {

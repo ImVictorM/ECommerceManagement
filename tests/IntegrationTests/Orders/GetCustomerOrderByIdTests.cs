@@ -27,7 +27,8 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     private readonly IOrderSeed _seedOrder;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetCustomerOrderByIdTests"/> class.
+    /// Initiates a new instance of the <see cref="GetCustomerOrderByIdTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -63,7 +64,8 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Ensures that a customer cannot retrieve another customer's order, returning Forbidden.
+    /// Verifies that a customer cannot retrieve another customer's order,
+    /// returning Forbidden.
     /// </summary>
     [Fact]
     public async Task GetCustomerOrderById_WithoutSelfCustomer_ReturnsForbidden()
@@ -89,19 +91,19 @@ public class GetCustomerOrderByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when the order does not exists it is returned a not found response.
+    /// Verifies a not found response is returned when the order does not exists.
     /// </summary>
     [Fact]
-    public async Task GetCustomerOrderById_WithNonexistingOrderId_ReturnsNotFound()
+    public async Task GetCustomerOrderById_WithNonExistentOrderId_ReturnsNotFound()
     {
-        var nonexistingOrderId = "404";
+        var nonExistentOrderId = "404";
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CustomerOrderEndpoints.GetCustomerOrderById),
             new
             {
                 userId = "1",
-                orderId = nonexistingOrderId
+                orderId = nonExistentOrderId
             }
         );
 

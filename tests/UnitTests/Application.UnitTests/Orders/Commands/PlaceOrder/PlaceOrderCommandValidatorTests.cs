@@ -13,7 +13,8 @@ public class PlaceOrderCommandValidatorTests
     private readonly PlaceOrderCommandValidator _validator;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="PlaceOrderCommandValidatorTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="PlaceOrderCommandValidatorTests"/> class.
     /// </summary>
     public PlaceOrderCommandValidatorTests()
     {
@@ -21,31 +22,40 @@ public class PlaceOrderCommandValidatorTests
     }
 
     /// <summary>
-    /// Tests when the product list are empty the validator should have an error.
+    /// Verifies when the product list are empty the validator should have an error.
     /// </summary>
     [Fact]
-    public void ValidatePlaceOrderCommand_WhenProductsAreEmpty_ShouldHaveValidationError()
+    public void ValidatePlaceOrderCommand_WithEmptyProducts_ShouldHaveValidationError()
     {
         var command = PlaceOrderCommandUtils.CreateCommand(products: []);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(c => c.Products).WithErrorMessage("'Products' must not be empty.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.Products)
+            .WithErrorMessage("'Products' must not be empty.");
     }
 
     /// <summary>
-    /// Tests when the installments are less than zero the validator should have an error.
+    /// Verifies when the installments are less than zero the validator should
+    /// have an error.
     /// </summary>
     /// <param name="installments">The negative installment quantity.</param>
     [Theory]
     [InlineData(-1)]
     [InlineData(-55)]
-    public void ValidatePlaceOrderCommand_WhenInstallmentsAreZeroOrLess_ShouldHaveValidationError(int installments)
+    public void ValidatePlaceOrderCommand_WithZeroOrLessInstallments_ShouldHaveValidationError(
+        int installments
+    )
     {
-        var command = PlaceOrderCommandUtils.CreateCommand(installments: installments);
+        var command = PlaceOrderCommandUtils.CreateCommand(
+            installments: installments
+        );
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(c => c.Installments).WithErrorMessage("'Installments' must be greater than '0'.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.Installments)
+            .WithErrorMessage("'Installments' must be greater than '0'.");
     }
 }

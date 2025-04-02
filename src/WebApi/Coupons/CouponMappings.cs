@@ -1,7 +1,7 @@
 using Application.Coupons.Commands.CreateCoupon;
 using Application.Coupons.Commands.UpdateCoupon;
-using Application.Coupons.DTOs;
 using Application.Coupons.DTOs.Restrictions;
+using Application.Coupons.DTOs.Results;
 
 using Contracts.Coupons;
 using Contracts.Coupons.Restrictions;
@@ -12,7 +12,6 @@ namespace WebApi.Coupons;
 
 internal sealed class CouponMappings : IRegister
 {
-    /// <inheritdoc/>
     public void Register(TypeAdapterConfig config)
     {
         config

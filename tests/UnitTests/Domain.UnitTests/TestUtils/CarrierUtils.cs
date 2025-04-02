@@ -15,7 +15,7 @@ public static class CarrierUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Carrier"/> class.
     /// </summary>
-    /// <param name="id">The carrier id.</param>
+    /// <param name="id">The carrier identifier.</param>
     /// <param name="name">The carrier name.</param>
     /// <param name="email">The carrier email.</param>
     /// <param name="passwordHash">The carrier password hash.</param>

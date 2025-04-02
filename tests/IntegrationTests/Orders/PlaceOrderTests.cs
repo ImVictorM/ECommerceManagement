@@ -266,10 +266,10 @@ public class PlaceOrderTests : BaseIntegrationTest
             .Select(c => c.CategoryId)
             .ToHashSet();
 
-        var saleProduct = SaleProduct.Create(product.Id, productCategoryIds);
+        var eligibleProduct = SaleEligibleProduct.Create(product.Id, productCategoryIds);
 
         var discounts = _seedSale
-            .ListAll(s => s.IsProductInSale(saleProduct))
+            .ListAll(s => s.IsProductOnSale(eligibleProduct))
             .Select(s => s.Discount);
 
         return _discountService.CalculateDiscountedPrice(

@@ -13,7 +13,9 @@ public static class DeactivateUserCommandUtils
     /// Creates a new instance of the <see cref="DeactivateUserCommand"/> class.
     /// </summary>
     /// <param name="userId">The user id.</param>
-    /// <returns>A new instance of the <see cref="DeactivateUserCommand"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="DeactivateUserCommand"/> class.
+    /// </returns>
     public static DeactivateUserCommand CreateCommand(
         string? userId = null
     )

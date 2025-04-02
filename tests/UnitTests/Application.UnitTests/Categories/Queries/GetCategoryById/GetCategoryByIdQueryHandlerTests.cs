@@ -23,7 +23,8 @@ public class GetCategoryByIdQueryHandlerTests
     private readonly Mock<ICategoryRepository> _mockCategoryRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetCategoryByIdQueryHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetCategoryByIdQueryHandlerTests"/> class.
     /// </summary>
     public GetCategoryByIdQueryHandlerTests()
     {
@@ -36,10 +37,10 @@ public class GetCategoryByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests an exception is thrown when the category does not exist.
+    /// Verifies an exception is thrown when the category does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleGetCategoryById_WhenCategoryDoesNotExist_ThrowsError()
+    public async Task HandleGetCategoryByIdQuery_WhenCategoryDoesNotExist_ThrowsError()
     {
         var query = GetCategoryByIdQueryUtils.CreateQuery();
 
@@ -57,15 +58,17 @@ public class GetCategoryByIdQueryHandlerTests
     }
 
     /// <summary>
-    /// Tests when the category exists it is returned.
+    /// Verifies the category is returned when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleGetCategoryById_WhenCategoryExists_RetrievesIt()
+    public async Task HandleGetCategoryByIdQuery_WhenCategoryExists_ReturnsIt()
     {
         var categoryId = CategoryId.Create(1);
         var category = CategoryUtils.CreateCategory(id: categoryId);
 
-        var query = GetCategoryByIdQueryUtils.CreateQuery(id: categoryId.ToString());
+        var query = GetCategoryByIdQueryUtils.CreateQuery(
+            id: categoryId.ToString()
+        );
 
         _mockCategoryRepository
             .Setup(r => r.FindByIdAsync(

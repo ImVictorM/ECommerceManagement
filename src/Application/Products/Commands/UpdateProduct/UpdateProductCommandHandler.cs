@@ -11,7 +11,8 @@ using MediatR;
 
 namespace Application.Products.Commands.UpdateProduct;
 
-internal sealed partial class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
+internal sealed partial class UpdateProductCommandHandler
+    : IRequestHandler<UpdateProductCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
@@ -27,13 +28,21 @@ internal sealed partial class UpdateProductCommandHandler : IRequestHandler<Upda
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(
+        UpdateProductCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingProductUpdate(request.Id);
 
         var productId = ProductId.Create(request.Id);
-        var productCategoryIds = request.CategoryIds.Select(CategoryId.Create);
+
+        var productImages = request.Images
+            .Select(ProductImage.Create);
+
+        var productCategories = request.CategoryIds
+            .Select(CategoryId.Create)
+            .Select(ProductCategory.Create);
 
         var productToUpdate = await _productRepository.FindFirstSatisfyingAsync(
             new QueryActiveProductByIdSpecification(productId),
@@ -44,15 +53,18 @@ internal sealed partial class UpdateProductCommandHandler : IRequestHandler<Upda
         {
             LogProductDoesNotExist();
 
-            throw new ProductNotFoundException($"The product with id {productId} could not be updated because it does not exist");
+            throw new ProductNotFoundException(
+                $"The product with id {productId} could not be updated because" +
+                $" it does not exist"
+            );
         }
 
-        productToUpdate.UpdateProduct(
+        productToUpdate.Update(
             request.Name,
             request.Description,
             request.BasePrice,
-            request.Images.Select(ProductImage.Create),
-            productCategoryIds.Select(ProductCategory.Create)
+            productImages,
+            productCategories
         );
 
         await _unitOfWork.SaveChangesAsync();

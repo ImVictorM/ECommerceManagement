@@ -18,7 +18,10 @@ public static class LoginUserQueryUtils
     /// <param name="email">The input email.</param>
     /// <param name="password">The input password.</param>
     /// <returns>A new instance of the <see cref="LoginUserQuery"/>.</returns>
-    public static LoginUserQuery CreateQuery(string? email = null, string? password = null)
+    public static LoginUserQuery CreateQuery(
+        string? email = null,
+        string? password = null
+    )
     {
         return new LoginUserQuery(
             email ?? EmailUtils.CreateEmailAddress(),

@@ -1,11 +1,12 @@
-using Application.ShippingMethods.DTOs;
+using Application.ShippingMethods.DTOs.Results;
 
 using MediatR;
 
 namespace Application.ShippingMethods.Queries.GetShippingMethodById;
 
 /// <summary>
-/// Represents a query to get a shipping method by id.
+/// Represents a query to get a shipping method by its identifier.
 /// </summary>
-/// <param name="ShippingMethodId">The shipping method.</param>
-public record GetShippingMethodByIdQuery(string ShippingMethodId) : IRequest<ShippingMethodResult>;
+/// <param name="ShippingMethodId">The shipping method identifier.</param>
+public record GetShippingMethodByIdQuery(string ShippingMethodId)
+    : IRequest<ShippingMethodResult>;

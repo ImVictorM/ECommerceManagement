@@ -1,18 +1,17 @@
 using Application.Common.Persistence.Repositories;
 using Application.Orders.Queries.GetCustomerOrders;
+using Application.UnitTests.Orders.TestUtils.Extensions;
 using Application.UnitTests.Orders.Queries.TestUtils;
 
-using Domain.OrderAggregate.Enumerations;
 using Domain.OrderAggregate.ValueObjects;
 using Domain.OrderAggregate;
 using Domain.UserAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
-using SharedKernel.Interfaces;
-
 using Microsoft.Extensions.Logging;
 using FluentAssertions;
 using Moq;
+using Application.UnitTests.Orders.TestUtils.Projections;
 
 namespace Application.UnitTests.Orders.Queries.GetCustomerOrders;
 
@@ -25,24 +24,24 @@ public class GetCustomerOrdersQueryHandlerTests
     private readonly Mock<IOrderRepository> _mockOrderRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetCustomerOrdersQueryHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetCustomerOrdersQueryHandlerTests"/> class.
     /// </summary>
     public GetCustomerOrdersQueryHandlerTests()
     {
         _mockOrderRepository = new Mock<IOrderRepository>();
-        var mockLogger = new Mock<ILogger<GetCustomerOrdersQueryHandler>>();
 
         _handler = new GetCustomerOrdersQueryHandler(
             _mockOrderRepository.Object,
-            mockLogger.Object
+            Mock.Of<ILogger<GetCustomerOrdersQueryHandler>>()
         );
     }
 
     /// <summary>
-    /// Verifies all the user orders are retrieved without the status filter.
+    /// Verifies all the user orders are retrieved without the any filter.
     /// </summary>
     [Fact]
-    public async Task HandleGetCustomerOrders_WithoutStatusFilter_ReturnsAllOrders()
+    public async Task HandleGetCustomerOrdersQuery_WithValidQuery_ReturnsOrderResults()
     {
         var query = GetCustomerOrdersQueryUtils.CreateQuery();
 
@@ -50,59 +49,29 @@ public class GetCustomerOrdersQueryHandlerTests
 
         var orders = new List<Order>
         {
-            await OrderUtils.CreateOrderAsync(id: OrderId.Create(1), ownerId: orderOwnerId),
-            await OrderUtils.CreateOrderAsync(id: OrderId.Create(2), ownerId: orderOwnerId)
-        };
-
-        _mockOrderRepository
-            .Setup(repo => repo.FindSatisfyingAsync(
-                It.IsAny<ISpecificationQuery<Order>>(),
-                It.IsAny<CancellationToken>()
-            ))
-            .ReturnsAsync(orders);
-
-        var result = await _handler.Handle(query, default);
-
-        result.Should().NotBeNull();
-        result.Select(r => r.Order).Should().BeEquivalentTo(orders);
-    }
-
-    /// <summary>
-    /// Verifies the user orders are retrieved with the status filter.
-    /// </summary>
-    [Fact]
-    public async Task HandleGetCustomerOrders_WithStatusFilter_ReturnsFilteredOrders()
-    {
-        var query = GetCustomerOrdersQueryUtils.CreateQuery(status: OrderStatus.Pending.Name);
-
-        var orderOwnerId = UserId.Create(query.UserId);
-
-        var orders = new List<Order>
-        {
             await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(1),
-                ownerId: orderOwnerId,
-                initialOrderStatus: OrderStatus.Pending
+                ownerId: orderOwnerId
             ),
             await OrderUtils.CreateOrderAsync(
                 id: OrderId.Create(2),
-                ownerId: orderOwnerId,
-                initialOrderStatus: OrderStatus.Paid
+                ownerId: orderOwnerId
             )
         };
 
-        var ordersPending = orders.Where(o => o.OrderStatus == OrderStatus.Pending);
+        var orderProjections = OrderProjectionUtils.CreateProjections(orders);
 
         _mockOrderRepository
-            .Setup(repo => repo.FindSatisfyingAsync(
-                It.IsAny<ISpecificationQuery<Order>>(),
+            .Setup(repo => repo.GetCustomerOrdersAsync(
+                orderOwnerId,
+                query.Filters,
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(ordersPending);
+            .ReturnsAsync(orderProjections);
 
         var result = await _handler.Handle(query, default);
 
         result.Should().NotBeNull();
-        result.Select(r => r.Order).Should().BeEquivalentTo(ordersPending);
+        result.EnsureCorrespondsTo(orderProjections);
     }
 }

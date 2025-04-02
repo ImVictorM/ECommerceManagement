@@ -91,7 +91,7 @@ public class CreateCouponTests : BaseIntegrationTest
     /// and posting a valid request without coupon restrictions.
     /// </summary>
     [Fact]
-    public async Task CreateCoupon_WithAdminAuthenticationAndValidRequest_ReturnsCreated()
+    public async Task CreateCoupon_WithAdminAuthenticationWithoutRestrictions_ReturnsCreated()
     {
         var request = CreateCouponRequestUtils.CreateRequest(
             code: "SAVE20",
@@ -120,7 +120,7 @@ public class CreateCouponTests : BaseIntegrationTest
     /// and posting a valid request with coupon restrictions.
     /// </summary>
     [Fact]
-    public async Task CreateCoupon_WithAdminAuthenticationAndValidRequestWithRestrictions_ReturnsCreated()
+    public async Task CreateCoupon_WithAdminAuthenticationWithRestrictions_ReturnsCreated()
     {
         var request = CreateCouponRequestUtils.CreateRequest(
             code: "SAVE20",

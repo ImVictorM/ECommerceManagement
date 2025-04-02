@@ -16,13 +16,19 @@ internal sealed class RestrictedUpdatePolicy<TRequest> : IPolicy<TRequest>
         _userRepository = userRepository;
     }
 
-    /// <inheritdoc/>
-    public async Task<bool> IsAuthorizedAsync(TRequest request, IdentityUser currentUser)
+    public async Task<bool> IsAuthorizedAsync(
+        TRequest request,
+        IdentityUser currentUser,
+        CancellationToken cancellationToken = default
+    )
     {
         var userToBeUpdatedId = request.UserId;
         var currentUserIsAdmin = currentUser.IsAdmin();
 
-        var userToBeUpdated = await _userRepository.FindByIdAsync(UserId.Create(userToBeUpdatedId));
+        var userToBeUpdated = await _userRepository.FindByIdAsync(
+            UserId.Create(userToBeUpdatedId),
+            cancellationToken
+        );
 
         if (userToBeUpdated == null)
         {
@@ -31,6 +37,7 @@ internal sealed class RestrictedUpdatePolicy<TRequest> : IPolicy<TRequest>
 
         var userToBeUpdatedIsAdmin = userToBeUpdated.IsAdmin();
 
-        return currentUser.Id == userToBeUpdatedId || (currentUserIsAdmin && !userToBeUpdatedIsAdmin);
+        return currentUser.Id == userToBeUpdatedId
+            || (currentUserIsAdmin && !userToBeUpdatedIsAdmin);
     }
 }

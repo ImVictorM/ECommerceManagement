@@ -13,7 +13,9 @@ public static class PaymentAuthorizedUtils
     /// Creates a new instance of the <see cref="PaymentAuthorized"/> class.
     /// </summary>
     /// <param name="payment">The payment.</param>
-    /// <returns>A new instance of the <see cref="PaymentAuthorized"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="PaymentAuthorized"/> class.
+    /// </returns>
     public static PaymentAuthorized CreateEvent(
         Payment? payment = null
     )

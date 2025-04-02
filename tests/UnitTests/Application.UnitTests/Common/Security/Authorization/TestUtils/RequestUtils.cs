@@ -1,5 +1,6 @@
 using Application.Common.Security.Authorization.Policies;
 using Application.Common.Security.Authorization.Requests;
+
 using SharedKernel.ValueObjects;
 
 namespace Application.UnitTests.Common.Security.Authorization.TestUtils;
@@ -10,7 +11,8 @@ namespace Application.UnitTests.Common.Security.Authorization.TestUtils;
 public static class RequestUtils
 {
     /// <summary>
-    /// Represents a test request that implements <see cref="IRequestWithAuthorization{T}"/>.
+    /// Represents a test request that implements
+    /// <see cref="IRequestWithAuthorization{T}"/>.
     /// </summary>
     public interface ITestRequest : IRequestWithAuthorization<TestResponse>;
 
@@ -28,14 +30,16 @@ public static class RequestUtils
     /// <summary>
     /// Represents a user related request without authorization attributes.
     /// </summary>
-    /// <param name="UserId">The user id.</param>
-    public record TestRequestWithoutAuthUserRelated(string UserId) : ITestRequest, IUserSpecificResource;
+    /// <param name="UserId">The user identifier.</param>
+    public record TestRequestWithoutAuthUserRelated(string UserId)
+        : ITestRequest, IUserSpecificResource;
 
     /// <summary>
     /// Represents a shipment related request without authorization attributes.
     /// </summary>
-    /// <param name="ShipmentId">The shipment id.</param>
-    public record TestRequestWithoutAuthShipmentRelated(string ShipmentId) : ITestRequest, IShipmentSpecificResource;
+    /// <param name="ShipmentId">The shipment identifier.</param>
+    public record TestRequestWithoutAuthShipmentRelated(string ShipmentId)
+        : ITestRequest, IShipmentSpecificResource;
 
     /// <summary>
     /// Represents a request with a role authorization attribute.

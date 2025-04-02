@@ -22,7 +22,7 @@ public static class CouponUtils
     /// <summary>
     /// Creates a new instance of the <see cref="Coupon"/> class.
     /// </summary>
-    /// <param name="id">The coupon id.</param>
+    /// <param name="id">The coupon identifier.</param>
     /// <param name="discount">The coupon discount.</param>
     /// <param name="code">The coupon code.</param>
     /// <param name="usageLimit">The coupon usage limit.</param>
@@ -81,7 +81,7 @@ public static class CouponUtils
     /// </summary>
     /// <param name="count">The quantity of coupons to be created.</param>
     /// <returns>A collection of <see cref="Coupon"/>.</returns>
-    public static IReadOnlyCollection<Coupon> CreateCoupons(int count = 1)
+    public static IReadOnlyList<Coupon> CreateCoupons(int count = 1)
     {
         return Enumerable
             .Range(0, count)

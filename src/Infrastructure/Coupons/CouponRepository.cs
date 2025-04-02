@@ -1,6 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.Coupons.DTOs;
-
+using Application.Coupons.DTOs.Filters;
 using Domain.CouponAggregate;
 using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Enumerations;
@@ -19,7 +18,7 @@ internal sealed class CouponRepository
     {
     }
 
-    public async Task<IEnumerable<Coupon>> GetCouponsAsync(
+    public async Task<IReadOnlyList<Coupon>> GetCouponsAsync(
         CouponFilters filters,
         CancellationToken cancellationToken = default
     )
@@ -28,17 +27,20 @@ internal sealed class CouponRepository
 
         if (filters.Active.HasValue)
         {
-            query = query.Where(c => c.IsActive == filters.Active);
+            query = query
+                .Where(c => c.IsActive == filters.Active);
         }
 
         if (filters.ExpiringAfter.HasValue)
         {
-            query = query.Where(c => c.Discount.EndingDate > filters.ExpiringAfter);
+            query = query
+                .Where(c => c.Discount.EndingDate > filters.ExpiringAfter);
         }
 
         if (filters.ExpiringBefore.HasValue)
         {
-            query = query.Where(c => c.Discount.EndingDate < filters.ExpiringBefore);
+            query = query
+                .Where(c => c.Discount.EndingDate < filters.ExpiringBefore);
         }
 
         if (filters.ValidForDate.HasValue)
@@ -56,7 +58,7 @@ internal sealed class CouponRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Coupon>> GetCouponsByIdsAsync(
+    public async Task<IReadOnlyList<Coupon>> GetCouponsByIdsAsync(
         IEnumerable<CouponId> couponIds,
         CancellationToken cancellationToken = default
     )

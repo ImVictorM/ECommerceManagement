@@ -9,14 +9,20 @@ internal sealed partial class GetOrdersQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating orders retrieval. Filter status condition: {FilterStatusCondition}."
+        Message =
+        "Initiating orders retrieval with filters: " +
+        "Status={Status}"
     )]
-    private partial void LogInitiatingOrdersRetrieval(string? filterStatusCondition);
+    private partial void LogInitiatingOrdersRetrieval(
+        string? status
+    );
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Orders retrieved successfully. Quantity of orders found: {Count}."
+        Message =
+        "{QuantityFound} orders has been retrieved. " +
+        "The operation was completed successfully."
     )]
-    private partial void LogOrdersRetrievedSuccessfully(int count);
+    private partial void LogOrdersRetrievedSuccessfully(int quantityFound);
 }

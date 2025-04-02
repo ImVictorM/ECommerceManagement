@@ -15,7 +15,7 @@ public class Payment : AggregateRoot<PaymentId>
     private long _paymentStatusId;
 
     /// <summary>
-    /// The payment order id.
+    /// The payment order identifier.
     /// </summary>
     public OrderId OrderId { get; } = null!;
 
@@ -30,7 +30,11 @@ public class Payment : AggregateRoot<PaymentId>
 
     private Payment() { }
 
-    private Payment(PaymentId id, OrderId orderId, PaymentStatus paymentStatus) : base(id)
+    private Payment(
+        PaymentId id,
+        OrderId orderId,
+        PaymentStatus paymentStatus
+    ) : base(id)
     {
         OrderId = orderId;
 
@@ -40,11 +44,15 @@ public class Payment : AggregateRoot<PaymentId>
     /// <summary>
     /// Creates a new instance of the <see cref="Payment"/> class.
     /// </summary>
-    /// <param name="id">The payment id.</param>
-    /// <param name="orderId">The order id.</param>
+    /// <param name="id">The payment identifier.</param>
+    /// <param name="orderId">The order identifier.</param>
     /// <param name="paymentStatus">The initial payment status.</param>
     /// <returns>A new instance of the <see cref="Payment"/> class.</returns>
-    public static Payment Create(PaymentId id, OrderId orderId, PaymentStatus paymentStatus)
+    public static Payment Create(
+        PaymentId id,
+        OrderId orderId,
+        PaymentStatus paymentStatus
+    )
     {
         return new Payment(id, orderId, paymentStatus);
     }

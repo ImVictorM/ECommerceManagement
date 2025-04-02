@@ -7,7 +7,8 @@ using Infrastructure.Common.Persistence;
 
 namespace Infrastructure.Payments;
 
-internal sealed class PaymentRepository : BaseRepository<Payment, PaymentId>, IPaymentRepository
+internal sealed class PaymentRepository
+    : BaseRepository<Payment, PaymentId>, IPaymentRepository
 {
     public PaymentRepository(IECommerceDbContext dbContext) : base(dbContext)
     {

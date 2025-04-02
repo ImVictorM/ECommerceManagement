@@ -8,5 +8,15 @@ public enum SaleSeedType
     /// <summary>
     /// Represents a computer sale.
     /// </summary>
-    COMPUTER_SALE
+    COMPUTER_SALE,
+
+    /// <summary>
+    /// Represents a technology category sales.
+    /// </summary>
+    TECH_SALE,
+
+    /// <summary>
+    /// Represents a sports sale coming soon.
+    /// </summary>
+    SPORTS_COMING_SALE
 }

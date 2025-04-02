@@ -49,7 +49,7 @@ public sealed class CategoryEndpoints : ICarterModule
             {
                 Summary = "Delete Category",
                 Description =
-                "Deletes an existing category. " +
+                "Deletes an existent category. " +
                 "Admin authentication is required.",
                 Parameters =
                 [
@@ -72,7 +72,7 @@ public sealed class CategoryEndpoints : ICarterModule
             {
                 Summary = "Update Category",
                 Description =
-                "Updates an existing category. " +
+                "Updates an existent category. " +
                 "Admin authentication is required.",
                 Parameters =
                 [
@@ -102,7 +102,7 @@ public sealed class CategoryEndpoints : ICarterModule
             .WithName(nameof(GetCategoryById))
             .WithOpenApi(operation => new(operation)
             {
-                Summary = "Get Category By Identifier",
+                Summary = "Get Category By Id",
                 Description = "Retrieves a category by its identifier.",
                 Parameters =
                 [
@@ -173,7 +173,7 @@ public sealed class CategoryEndpoints : ICarterModule
         return TypedResults.NoContent();
     }
 
-    internal async Task<Ok<IEnumerable<CategoryResponse>>> GetCategories(
+    internal async Task<Ok<List<CategoryResponse>>> GetCategories(
         ISender sender,
         IMapper mapper
     )
@@ -182,7 +182,11 @@ public sealed class CategoryEndpoints : ICarterModule
 
         var result = await sender.Send(query);
 
-        return TypedResults.Ok(result.Select(mapper.Map<CategoryResponse>));
+        var response = result
+            .Select(mapper.Map<CategoryResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 
     internal async Task<Results<Ok<CategoryResponse>, NotFound>> GetCategoryById(

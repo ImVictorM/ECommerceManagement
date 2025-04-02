@@ -2,7 +2,8 @@ using FluentValidation;
 
 namespace Application.ShippingMethods.Commands.CreateShippingMethod;
 
-internal class CreateShippingMethodCommandValidator : AbstractValidator<CreateShippingMethodCommand>
+internal class CreateShippingMethodCommandValidator
+    : AbstractValidator<CreateShippingMethodCommand>
 {
     public CreateShippingMethodCommandValidator()
     {

@@ -7,15 +7,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Shipments;
 
-internal sealed class ShipmentStatusConfigurations : EntityTypeConfigurationDependency<ShipmentStatus>
+internal sealed class ShipmentStatusConfigurations
+    : EntityTypeConfigurationDependency<ShipmentStatus>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<ShipmentStatus> builder)
     {
         ConfigureShipmentStatusesTable(builder);
     }
 
-    private static void ConfigureShipmentStatusesTable(EntityTypeBuilder<ShipmentStatus> builder)
+    private static void ConfigureShipmentStatusesTable(
+        EntityTypeBuilder<ShipmentStatus> builder
+    )
     {
         builder.ToTable("shipment_statuses");
 

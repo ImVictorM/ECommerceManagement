@@ -52,7 +52,7 @@ public class CouponTests
     /// </param>
     [Theory]
     [MemberData(nameof(GetCouponValidParameters))]
-    public void CreateCoupon_WithValidParameters_CreatesWithoutThrowing(
+    public void Create_WithValidParameters_CreatesWithoutThrowing(
         Discount discount,
         string code,
         int usageLimit,

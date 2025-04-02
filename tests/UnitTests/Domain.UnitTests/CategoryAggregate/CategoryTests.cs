@@ -11,14 +11,17 @@ namespace Domain.UnitTests.CategoryAggregate;
 public class CategoryTests
 {
     /// <summary>
-    /// Tests the category is created correctly with different valid names.
+    /// Verifies the category is created correctly with different valid names.
     /// </summary>
     /// <param name="inputName">The category name input.</param>
     /// <param name="expectedName">The expected category name.</param>
     [Theory]
     [InlineData("BookingStationery", "booking_stationery")]
     [InlineData("TECH", "tech")]
-    public void CreateCategory_WithDifferentValidNames_ReturnsCategoryWithExpectedName(string inputName, string expectedName)
+    public void Create_WithDifferentValidNames_ReturnsCategoryWithExpectedName(
+        string inputName,
+        string expectedName
+    )
     {
         var category = CategoryUtils.CreateCategory(name: inputName);
 
@@ -26,10 +29,10 @@ public class CategoryTests
     }
 
     /// <summary>
-    /// Tests it is possible to update the category name.
+    /// Verifies it is possible to update the category name.
     /// </summary>
     [Fact]
-    public void UpdateCategory_WithValidInput_UpdatesCategoryName()
+    public void Update_WithValidInput_UpdatesTheCategoryName()
     {
         var newCategoryName = "TECHNOLOGY";
 

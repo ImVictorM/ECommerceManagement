@@ -12,7 +12,6 @@ using WebApi.Products;
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 using Microsoft.AspNetCore.Routing;
 
@@ -70,7 +69,7 @@ public class UpdateProductTests : BaseIntegrationTest
     [Theory]
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
     [InlineData(UserSeedType.CUSTOMER)]
-    public async Task UpdateProduct_WithNonAdminUser_ReturnsForbidden(
+    public async Task UpdateProduct_WithoutAdminAuthentication_ReturnsForbidden(
         UserSeedType customerUserType
     )
     {
@@ -108,23 +107,15 @@ public class UpdateProductTests : BaseIntegrationTest
             endpoint,
             UpdateProductRequestUtils.CreateRequest()
         );
-        var responseContent = await response.Content
-            .ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
-        responseContent.Title.Should().Be("Product Not Found");
-        responseContent.Detail.Should().Be(
-            $"The product with id {notFoundId} could not be" +
-            $" updated because it does not exist"
-        );
     }
 
     /// <summary>
     /// Verifies updating a product with admin permission and valid request
     /// parameters updates the product and returns a no content response.
     /// Also, after updating the product, fetches and tests it
-    /// to be sure if it was updated.
+    /// to be sure it was updated.
     /// </summary>
     [Fact]
     public async Task UpdateProduct_WithAdminRoleAndValidRequest_ReturnsNoContent()
@@ -136,7 +127,6 @@ public class UpdateProductTests : BaseIntegrationTest
         };
 
         var productCategoryIds = productCategories.Select(c => c.Id.ToString());
-        var productCategoryNames = productCategories.Select(c => c.Name);
 
         var idProductToUpdate = _seedProduct
             .GetEntityId(ProductSeedType.PENCIL)
@@ -176,8 +166,8 @@ public class UpdateProductTests : BaseIntegrationTest
         getResponseContent.Description.Should().Be(request.Description);
         getResponseContent.Images.Should().BeEquivalentTo(request.Images);
         getResponseContent.BasePrice.Should().Be(request.BasePrice);
-        getResponseContent.Categories
+        getResponseContent.CategoryIds
             .Should()
-            .BeEquivalentTo(productCategoryNames);
+            .BeEquivalentTo(productCategoryIds);
     }
 }

@@ -1,5 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.Products.DTOs;
+using Application.Common.DTOs.Pagination;
 using Application.Products.Queries.GetProducts;
 using Application.UnitTests.Products.Queries.TestUtils;
 
@@ -8,9 +8,10 @@ using Domain.ProductAggregate.Services;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
-using SharedKernel.Models;
+using SharedKernel.Interfaces;
 
 using Microsoft.Extensions.Logging;
+using FluentAssertions;
 using Moq;
 
 namespace Application.UnitTests.Products.Queries.GetProducts;
@@ -41,28 +42,18 @@ public class GetProductsQueryHandlerTests
     }
 
     /// <summary>
-    /// Verifies getting the products without specifying pagination details
-    /// retrieves the first 20 products.
+    /// Verifies the products are retrieved correctly with default pagination.
     /// </summary>
     [Fact]
-    public async Task HandleGetAllProducts_WithoutSpecifyingPagination_RetrievesFirstTwentyProducts()
+    public async Task HandleGetProductsQuery_WithValidRequest_ReturnsProductResults()
     {
         var query = GetProductsQueryUtils.CreateQuery();
 
-        var queryResult = new[]
+        var products = new[]
         {
-            new ProductWithCategoriesQueryResult(
-                ProductUtils.CreateProduct(id: ProductId.Create(1)),
-                ["category_1", "category_2"]
-            ),
-
-            new ProductWithCategoriesQueryResult(
-                ProductUtils.CreateProduct(id: ProductId.Create(2)),
-                ["category_1"]
-            ),
+            ProductUtils.CreateProduct(id: ProductId.Create(1)),
+            ProductUtils.CreateProduct(id: ProductId.Create(2))
         };
-
-        var products = queryResult.Select(qr => qr.Product);
 
         var productPrices = products.ToDictionary(
             p => p.Id,
@@ -70,88 +61,29 @@ public class GetProductsQueryHandlerTests
         );
 
         _mockProductRepository
-            .Setup(r => r.GetProductsWithCategoriesSatisfyingAsync(
-                It.IsAny<CompositeQuerySpecification<Product>>(),
-                It.IsAny<int>(),
-                It.IsAny<int>(),
+            .Setup(r => r.GetProductsSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<Product>>(),
+                It.IsAny<PaginationParams>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(queryResult);
+            .ReturnsAsync(products);
 
         _mockProductPricingService
-            .Setup(s => s.CalculateProductsPriceApplyingSaleAsync(
+            .Setup(s => s.CalculateDiscountedPricesAsync(
                 products,
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(productPrices);
 
-        await _handler.Handle(query, default);
+        var result = await _handler.Handle(query, default);
 
-        _mockProductRepository.Verify(r => r.GetProductsWithCategoriesSatisfyingAsync(
-            It.IsAny<CompositeQuerySpecification<Product>>(),
-            1,
-            20,
+        _mockProductRepository.Verify(r => r.GetProductsSatisfyingAsync(
+            It.IsAny<ISpecificationQuery<Product>>(),
+            It.Is<PaginationParams>(p => p.Page == 1 && p.PageSize == 20),
             It.IsAny<CancellationToken>()
         ));
-    }
 
-    /// <summary>
-    /// Verifies it is possible to fetch products including pagination details.
-    /// </summary>
-    [Fact]
-    public async Task HandleGetAllProducts_SpecifyingPaginationDetails_RetrievesWithPagination()
-    {
-        var page = 1;
-        var pageSize = 5;
-
-        var query = GetProductsQueryUtils.CreateQuery(
-            page: page,
-            pageSize: pageSize
-        );
-
-        var queryResult = new[]
-        {
-            new ProductWithCategoriesQueryResult(
-                ProductUtils.CreateProduct(id: ProductId.Create(1)),
-                ["category_1", "category_2"]
-            ),
-
-            new ProductWithCategoriesQueryResult(
-                ProductUtils.CreateProduct(id: ProductId.Create(2)),
-                ["category_1"]
-            ),
-        };
-
-        var products = queryResult.Select(qr => qr.Product);
-
-        var productPrices = products.ToDictionary(
-            p => p.Id,
-            p => p.BasePrice
-        );
-
-        _mockProductRepository
-            .Setup(r => r.GetProductsWithCategoriesSatisfyingAsync(
-                It.IsAny<CompositeQuerySpecification<Product>>(),
-                It.IsAny<int>(),
-                It.IsAny<int>(),
-                It.IsAny<CancellationToken>()
-            ))
-            .ReturnsAsync(queryResult);
-
-        _mockProductPricingService
-            .Setup(s => s.CalculateProductsPriceApplyingSaleAsync(
-                products,
-                It.IsAny<CancellationToken>()
-            ))
-            .ReturnsAsync(productPrices);
-
-        await _handler.Handle(query, default);
-
-        _mockProductRepository.Verify(r => r.GetProductsWithCategoriesSatisfyingAsync(
-            It.IsAny<CompositeQuerySpecification<Product>>(),
-            page,
-            pageSize,
-            It.IsAny<CancellationToken>()
-        ));
+        result.Select(p => p.Id).Should()
+            .BeEquivalentTo(products.Select(p => p.Id.ToString()));
     }
 }

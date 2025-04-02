@@ -8,11 +8,13 @@ namespace Domain.ShipmentAggregate.Errors;
 public class ShipmentCannotBeCanceledException : BaseException
 {
     private const string DefaultTitle = "Shipment Cannot Be Canceled";
-    private const string DefaultMessage = "The shipment cannot be canceled because it is no longer pending";
+    private const string DefaultMessage =
+        "The shipment cannot be canceled because it is no longer pending";
 
     private static readonly ErrorCode _defaultErrorCode = ErrorCode.InvalidOperation;
 
-    internal ShipmentCannotBeCanceledException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
+    internal ShipmentCannotBeCanceledException()
+        : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
     {
     }
 

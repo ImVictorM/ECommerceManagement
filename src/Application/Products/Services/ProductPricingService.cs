@@ -10,7 +10,7 @@ namespace Application.Products.Services;
 
 internal sealed class ProductPricingService : IProductPricingService
 {
-    private readonly ISaleApplicationService _saleService;
+    private readonly ISaleApplicationService _saleApplicationService;
     private readonly IDiscountService _discountService;
 
     public ProductPricingService(
@@ -18,34 +18,32 @@ internal sealed class ProductPricingService : IProductPricingService
         IDiscountService discountService
     )
     {
-        _saleService = saleService;
+        _saleApplicationService = saleService;
         _discountService = discountService;
     }
 
-    /// <inheritdoc/>
-    public async Task<decimal> CalculateProductPriceApplyingSaleAsync(
+    public async Task<decimal> CalculateDiscountedPriceAsync(
         Product product,
         CancellationToken cancellationToken = default
     )
     {
-        var result = await CalculateProductsPriceApplyingSaleAsync([product], cancellationToken);
+        var result = await CalculateDiscountedPricesAsync([product], cancellationToken);
 
         return result[product.Id];
     }
 
-    /// <inheritdoc/>
-    public async Task<Dictionary<ProductId, decimal>> CalculateProductsPriceApplyingSaleAsync(
+    public async Task<Dictionary<ProductId, decimal>> CalculateDiscountedPricesAsync(
         IEnumerable<Product> products,
         CancellationToken cancellationToken = default
     )
     {
-        var saleProducts = products.Select(p => SaleProduct.Create(
+        var eligibleProducts = products.Select(p => SaleEligibleProduct.Create(
             p.Id,
-            p.ProductCategories.Select(c => c.CategoryId).ToHashSet())
+            p.ProductCategories.Select(c => c.CategoryId))
         );
 
-        var productSales = await _saleService.GetApplicableSalesForProductsAsync(
-            saleProducts,
+        var productSales = await _saleApplicationService.GetApplicableSalesForProductsAsync(
+            eligibleProducts,
             cancellationToken
         );
 
@@ -53,10 +51,7 @@ internal sealed class ProductPricingService : IProductPricingService
             p => p.Id,
             p => _discountService.CalculateDiscountedPrice(
                 p.BasePrice,
-                productSales[p.Id]
-                    .Where(s => s.IsValidToDate())
-                    .Select(s => s.Discount)
-                    .ToArray()
+                productSales[p.Id].Select(s => s.Discount)
             )
         );
     }

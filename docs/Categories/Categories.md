@@ -40,7 +40,7 @@ Example Request:
 
 ## Delete Product Category
 
-Deletes an existing product category. Admin authentication is required.
+Deletes an existent product category. Admin authentication is required.
 
 ```js
 DELETE "/products/categories/{{id_category}}"
@@ -59,7 +59,7 @@ DELETE "/products/categories/{{id_category}}"
 
 ## Update Product Category
 
-Updates an existing product category name. Admin authentication is required.
+Updates an existent product category. Admin authentication is required.
 
 ```js
 PUT "/products/categories/{{id_category}}"

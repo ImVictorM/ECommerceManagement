@@ -1,6 +1,10 @@
-using Domain.PaymentAggregate.Enumerations;
-
+using Application.Common.PaymentGateway.Requests;
+using Application.Common.PaymentGateway.Responses;
+using Application.Common.PaymentGateway.PaymentMethods;
 using Application.Common.PaymentGateway;
+
+using Domain.PaymentAggregate.Enumerations;
+using Domain.PaymentAggregate.ValueObjects;
 
 using SharedKernel.Models;
 
@@ -8,15 +12,15 @@ namespace Infrastructure.PaymentGateway;
 
 internal sealed class MockPaymentGateway : IPaymentGateway
 {
-
-    /// <inheritdoc/>
-    public async Task<PaymentResponse> AuthorizePaymentAsync(AuthorizePaymentInput input)
+    public async Task<PaymentResponse> AuthorizePaymentAsync(
+        AuthorizePaymentRequest request
+    )
     {
         await Task.CompletedTask;
 
         return new PaymentResponse(
-            PaymentId: Guid.NewGuid().ToString(),
-            PaymentMethod: "credit_card",
+            PaymentId: PaymentId.Create(Guid.NewGuid().ToString()),
+            PaymentMethod: new CreditCard("tokenized-card-data"),
             Amount: 120m,
             Installments: 1,
             Status: BaseEnumeration.FromDisplayName<PaymentStatus>("Pending"),
@@ -25,8 +29,9 @@ internal sealed class MockPaymentGateway : IPaymentGateway
         );
     }
 
-    /// <inheritdoc/>
-    public async Task<PaymentStatusResponse> CapturePaymentAsync(string paymentId)
+    public async Task<PaymentStatusResponse> CapturePaymentAsync(
+        PaymentId paymentId
+    )
     {
         await Task.CompletedTask;
 
@@ -37,8 +42,9 @@ internal sealed class MockPaymentGateway : IPaymentGateway
         );
     }
 
-    /// <inheritdoc/>
-    public async Task<PaymentStatusResponse> CancelAuthorizationAsync(string paymentId)
+    public async Task<PaymentStatusResponse> CancelAuthorizationAsync(
+        PaymentId paymentId
+    )
     {
         await Task.CompletedTask;
 
@@ -49,8 +55,10 @@ internal sealed class MockPaymentGateway : IPaymentGateway
         );
     }
 
-    /// <inheritdoc/>
-    public async Task<PaymentRefundResponse> RefundPaymentAsync(string paymentId, decimal amount)
+    public async Task<PaymentRefundResponse> RefundPaymentAsync(
+        PaymentId paymentId,
+        decimal amount
+    )
     {
         await Task.CompletedTask;
 
@@ -64,14 +72,16 @@ internal sealed class MockPaymentGateway : IPaymentGateway
         );
     }
 
-    /// <inheritdoc/>
-    public async Task<PaymentResponse> GetPaymentByIdAsync(string paymentId)
+    public async Task<PaymentResponse> GetPaymentByIdAsync(
+        PaymentId paymentId,
+        CancellationToken cancellationToken = default
+    )
     {
         await Task.CompletedTask;
 
         return new PaymentResponse(
             PaymentId: paymentId,
-            PaymentMethod: "credit_card",
+            PaymentMethod:  new CreditCard("tokenized-card-data"),
             Amount: 120m,
             Installments: 1,
             Status: BaseEnumeration.FromDisplayName<PaymentStatus>("Pending"),

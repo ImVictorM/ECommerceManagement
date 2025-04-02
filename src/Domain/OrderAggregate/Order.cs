@@ -27,7 +27,7 @@ public sealed class Order : AggregateRoot<OrderId>
     /// </summary>
     public decimal Total { get; private set; }
     /// <summary>
-    /// Gets the order owner id.
+    /// Gets the order owner identifier.
     /// </summary>
     public UserId OwnerId { get; private set; } = null!;
     /// <summary>

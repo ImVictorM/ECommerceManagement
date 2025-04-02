@@ -15,7 +15,6 @@ namespace Infrastructure.Sales;
 
 internal sealed class SaleConfigurations : EntityTypeConfigurationDependency<Sale>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Sale> builder)
     {
         ConfigureSalesTable(builder);
@@ -36,12 +35,17 @@ internal sealed class SaleConfigurations : EntityTypeConfigurationDependency<Sal
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.OwnsOne(s => s.Discount, DiscountNavigationBuilderConfigurations.Configure);
+        builder.OwnsOne(
+            s => s.Discount,
+            DiscountNavigationBuilderConfigurations.Configure
+        );
     }
 
-    private static void ConfigureOwnedSaleCategoriesTable(EntityTypeBuilder<Sale> builder)
+    private static void ConfigureOwnedSaleCategoriesTable(
+        EntityTypeBuilder<Sale> builder
+    )
     {
-        builder.OwnsMany(s => s.CategoriesInSale, saleCategoriesBuilder =>
+        builder.OwnsMany(s => s.CategoriesOnSale, saleCategoriesBuilder =>
         {
             saleCategoriesBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
@@ -75,7 +79,9 @@ internal sealed class SaleConfigurations : EntityTypeConfigurationDependency<Sal
         });
     }
 
-    private static void ConfigureOwnedSaleExcludedProductsTable(EntityTypeBuilder<Sale> builder)
+    private static void ConfigureOwnedSaleExcludedProductsTable(
+        EntityTypeBuilder<Sale> builder
+    )
     {
         builder.OwnsMany(s => s.ProductsExcludedFromSale, saleProductsExcludedBuilder =>
         {
@@ -111,9 +117,11 @@ internal sealed class SaleConfigurations : EntityTypeConfigurationDependency<Sal
         });
     }
 
-    private static void ConfigureOwnedSaleProductsTable(EntityTypeBuilder<Sale> builder)
+    private static void ConfigureOwnedSaleProductsTable(
+        EntityTypeBuilder<Sale> builder
+    )
     {
-        builder.OwnsMany(s => s.ProductsInSale, saleProductsBuilder =>
+        builder.OwnsMany(s => s.ProductsOnSale, saleProductsBuilder =>
         {
             saleProductsBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
 

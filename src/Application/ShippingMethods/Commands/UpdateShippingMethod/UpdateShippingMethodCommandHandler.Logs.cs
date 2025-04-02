@@ -9,7 +9,8 @@ internal sealed partial class UpdateShippingMethodCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating shipping method update. Shipping method identifier: {Id}."
+        Message =
+        "Initiating shipping method update. Shipping method identifier: '{Id}'."
     )]
     private partial void LogInitiatingShippingMethodUpdate(string id);
 
@@ -23,14 +24,16 @@ internal sealed partial class UpdateShippingMethodCommandHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The shipping method was updated successfully. Initiating persistence."
+        Message = "The shipping method has been updated. Initiating persistence."
     )]
     private partial void LogShippingMethodUpdated();
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "The shipping method changes was saved successfully."
+        Message =
+        "The shipping method has been updated and saved. " +
+        "The operation was completed successfully."
     )]
     private partial void LogShippingMethodChangesSaved();
 }

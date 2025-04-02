@@ -11,12 +11,14 @@ internal sealed partial class GetCategoriesQueryHandler
         Level = LogLevel.Debug,
         Message = "Starting query for all the categories."
     )]
-    private partial void LogStartQueryingAllCategories();
+    private partial void LogInitiatingCategoriesRetrieval();
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "All categories fetched successfully."
+        Message =
+        "{Quantity} categories has been retrieved. " +
+        "The operation was completed successfully."
     )]
-    private partial void LogAllCategoriesFetched();
+    private partial void LogCategoriesRetrievedSuccessfully(int quantity);
 }

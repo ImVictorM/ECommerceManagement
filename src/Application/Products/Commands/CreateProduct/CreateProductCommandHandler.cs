@@ -1,6 +1,6 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
+using Application.Common.DTOs.Results;
 
 using Domain.CategoryAggregate.ValueObjects;
 using Domain.ProductAggregate;
@@ -28,8 +28,10 @@ internal sealed partial class CreateProductCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<CreatedResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResult> Handle(
+        CreateProductCommand request,
+        CancellationToken cancellationToken
+    )
     {
         LogInitiatingProductCreation(request.Name);
 
@@ -50,8 +52,10 @@ internal sealed partial class CreateProductCommandHandler
 
         await _unitOfWork.SaveChangesAsync();
 
-        LogProductPersistedSuccessfully(newProduct.Id.ToString());
+        var productId = newProduct.Id.ToString();
 
-        return new CreatedResult(newProduct.Id.ToString());
+        LogProductPersistedSuccessfully(productId);
+
+        return CreatedResult.FromId(productId);
     }
 }

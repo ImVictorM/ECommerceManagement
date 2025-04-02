@@ -1,13 +1,14 @@
 using Application.Common.Errors;
 using Application.Common.Security.Authorization.Requests;
 
-using MediatR;
 using Microsoft.Extensions.Logging;
+using MediatR;
 
 namespace Application.Common.Security.Authorization;
 
-internal sealed partial class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequestWithAuthorization<TResponse>
+internal sealed partial class AuthorizationBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : IRequestWithAuthorization<TResponse>
 {
     private readonly IAuthorizationService _authorizationService;
 
@@ -20,7 +21,6 @@ internal sealed partial class AuthorizationBehavior<TRequest, TResponse> : IPipe
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
@@ -29,14 +29,20 @@ internal sealed partial class AuthorizationBehavior<TRequest, TResponse> : IPipe
     {
         LogAuthorizingRequest(typeof(TRequest).Name);
 
-        var authorizationMetadata = AuthorizeAttribute.GetAuthorizationMetadata(request.GetType());
+        var authorizationMetadata = AuthorizeAttribute.GetAuthorizationMetadata(
+            request.GetType()
+        );
 
-        LogRequiredRoles(authorizationMetadata.Roles.Count);
-        LogRequiredPolicies(authorizationMetadata.Policies.Count);
+        LogRequiredRolesQuantity(authorizationMetadata.Roles.Count);
+        LogRequiredPoliciesQuantity(authorizationMetadata.Policies.Count);
 
         LogCheckingUserAuthorization();
 
-        var isAuthorized = await _authorizationService.IsCurrentUserAuthorizedAsync(request, authorizationMetadata);
+        var isAuthorized = await _authorizationService.IsCurrentUserAuthorizedAsync(
+            request,
+            authorizationMetadata,
+            cancellationToken
+        );
 
         if (isAuthorized)
         {

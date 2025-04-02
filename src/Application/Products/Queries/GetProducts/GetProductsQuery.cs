@@ -1,17 +1,18 @@
-using Application.Products.DTOs;
+using Application.Common.DTOs.Pagination;
+using Application.Products.DTOs.Filters;
+using Application.Products.DTOs.Results;
 
 using MediatR;
 
 namespace Application.Products.Queries.GetProducts;
 
 /// <summary>
-/// Query to get all active products.
+/// Represents a query to retrieve all the active products.
+/// The query has support for pagination and filters.
 /// </summary>
-/// <param name="Page">The current products page.</param>
-/// <param name="PageSize">The quantity of products to be fetched.</param>
-/// <param name="Categories">The categories the product should have.</param>
+/// <param name="Filters">The filtering criteria.</param>
+/// <param name="PaginationParams">The pagination parameters.</param>
 public record GetProductsQuery(
-    int? Page,
-    int? PageSize,
-    IEnumerable<string>? Categories = null
-) : IRequest<IEnumerable<ProductResult>>;
+    PaginationParams PaginationParams,
+    ProductFilters Filters
+) : IRequest<IReadOnlyList<ProductResult>>;

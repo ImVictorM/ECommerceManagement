@@ -1,5 +1,6 @@
-using System.Linq.Expressions;
 using SharedKernel.Models;
+
+using System.Linq.Expressions;
 
 namespace SharedKernel.UnitTests.Models.TestUtils;
 
@@ -8,7 +9,8 @@ namespace SharedKernel.UnitTests.Models.TestUtils;
 /// </summary>
 public static class CompositeQuerySpecificationUtils
 {
-    private sealed class TestCompositeQuerySpecification<T> : CompositeQuerySpecification<T> where T : class
+    private sealed class TestCompositeQuerySpecification<T>
+        : CompositeQuerySpecification<T> where T : class
     {
         public TestCompositeQuerySpecification(Expression<Func<T, bool>> criteria)
         {
@@ -19,12 +21,17 @@ public static class CompositeQuerySpecificationUtils
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CompositeQuerySpecification{T}"/> class.
+    /// Creates a new instance of the <see cref="CompositeQuerySpecification{T}"/>
+    /// class.
     /// </summary>
     /// <typeparam name="T">The type of the entity.</typeparam>
     /// <param name="expression">The expression.</param>
-    /// <returns>A new instance of the <see cref="CompositeQuerySpecification{T}"/> class.</returns>
-    public static CompositeQuerySpecification<T> CreateCompositeSpecification<T>(Expression<Func<T, bool>> expression) where T : class
+    /// <returns>
+    /// A new instance of the <see cref="CompositeQuerySpecification{T}"/> class.
+    /// </returns>
+    public static CompositeQuerySpecification<T> CreateCompositeSpecification<T>(
+        Expression<Func<T, bool>> expression
+    ) where T : class
     {
         return new TestCompositeQuerySpecification<T>(expression);
     }

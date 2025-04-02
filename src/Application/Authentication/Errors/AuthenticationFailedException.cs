@@ -11,11 +11,13 @@ public sealed class AuthenticationFailedException : BaseException
     private const string DefaultMessage = "User email or password is incorrect";
     private static readonly ErrorCode _defaultErrorCode = ErrorCode.InvalidOperation;
 
-    internal AuthenticationFailedException() : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
+    internal AuthenticationFailedException()
+        : base(DefaultMessage, DefaultTitle, _defaultErrorCode)
     {
     }
 
-    internal AuthenticationFailedException(string message) : base(message, DefaultTitle, _defaultErrorCode)
+    internal AuthenticationFailedException(string message)
+        : base(message, DefaultTitle, _defaultErrorCode)
     {
     }
 

@@ -37,7 +37,9 @@ public sealed class ShipmentTrackingEntry : ValueObject
     /// Creates a new instance of the <see cref="ShipmentTrackingEntry"/> class.
     /// </summary>
     /// <param name="shipmentStatus">The shipment status.</param>
-    /// <returns>A new instance of the <see cref="ShipmentTrackingEntry"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="ShipmentTrackingEntry"/> class.
+    /// </returns>
     public static ShipmentTrackingEntry Create(ShipmentStatus shipmentStatus)
     {
         return new ShipmentTrackingEntry(shipmentStatus);

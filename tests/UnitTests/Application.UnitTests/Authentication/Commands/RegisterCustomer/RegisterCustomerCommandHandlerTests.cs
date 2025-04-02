@@ -33,7 +33,8 @@ public class RegisterCustomerCommandHandlerTests
     private readonly Mock<IUserRepository> _mockUserRepository;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="RegisterCustomerCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="RegisterCustomerCommandHandlerTests"/> class.
     /// </summary>
     public RegisterCustomerCommandHandlerTests()
     {
@@ -52,7 +53,7 @@ public class RegisterCustomerCommandHandlerTests
     }
 
     /// <summary>
-    /// List containing valid register commands.
+    /// Provides a list containing valid register commands.
     /// </summary>
     public static IEnumerable<object[]> ValidRegisterCommands =>
     [
@@ -63,12 +64,14 @@ public class RegisterCustomerCommandHandlerTests
     ];
 
     /// <summary>
-    /// Tests if a user is correctly created when the user is valid.
+    /// Verifies a user is correctly created when the command is valid.
     /// </summary>
     /// <param name="registerCommand">The register command.</param>
     [Theory]
     [MemberData(nameof(ValidRegisterCommands))]
-    public async Task HandleRegisterCustomerCommand_WithValidCommand_ReturnsCreatedUserWithAuthenticationToken(RegisterCustomerCommand registerCommand)
+    public async Task HandleRegisterCustomerCommand_WithValidCommand_ReturnsAuthenticationResult(
+        RegisterCustomerCommand registerCommand
+    )
     {
         var generatedToken = "generated-token";
         var createdUserId = UserId.Create(2);
@@ -88,17 +91,22 @@ public class RegisterCustomerCommandHandlerTests
             .Setup(r => r.GenerateToken(It.IsAny<IdentityUser>()))
             .Returns(generatedToken);
 
-        _mockUnitOfWork.MockSetEntityIdBehavior<IUserRepository, User, UserId>(_mockUserRepository, createdUserId);
+        _mockUnitOfWork.MockSetEntityIdBehavior
+            <IUserRepository, User, UserId>(_mockUserRepository, createdUserId);
 
         var result = await _handler.Handle(registerCommand, default);
 
         result.Should().NotBeNull();
-        result.AuthenticatedIdentity.Id.Should().Be(createdUserId.ToString());
-        result.AuthenticatedIdentity.Name.Should().Be(registerCommand.Name);
-        result.AuthenticatedIdentity.Email.Should().Be(registerCommand.Email);
+        result.User.Should().NotBeNull();
+        result.User.Id.Should().Be(createdUserId.ToString());
+        result.User.Name.Should().Be(registerCommand.Name);
+        result.User.Email.Should().Be(registerCommand.Email);
         result.Token.Should().Be(generatedToken);
 
-        _mockPasswordHasher.Verify(m => m.Hash(registerCommand.Password), Times.Once);
+        _mockPasswordHasher.Verify(
+            m => m.Hash(registerCommand.Password),
+            Times.Once
+        );
 
         _mockJwtTokenService.Verify(m => m.GenerateToken(It.Is<IdentityUser>(i =>
             i.Id == createdUserId.ToString()
@@ -116,23 +124,27 @@ public class RegisterCustomerCommandHandlerTests
     }
 
     /// <summary>
-    /// Tests if it throws an error when a user with the same email already exists.
+    /// Verifies an exception is thrown when a user with the same email already exists.
     /// </summary>
     [Fact]
     public async Task HandleRegisterCustomerCommand_WithEmailAlreadyInUse_ThrowsError()
     {
-        var testEmail = EmailUtils.CreateEmail();
+        var email = EmailUtils.CreateEmail();
+        var existentUserWithSameEmail = UserUtils.CreateCustomer(email: email);
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(
                 It.IsAny<QueryUserByEmailSpecification>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(UserUtils.CreateCustomer(email: testEmail));
+            .ReturnsAsync(existentUserWithSameEmail);
 
-        var registerCommand = RegisterCustomerCommandUtils.CreateCommand(email: testEmail.ToString());
+        var registerCommand = RegisterCustomerCommandUtils.CreateCommand(
+            email: email.ToString()
+        );
 
-        await FluentActions.Invoking(() => _handler.Handle(registerCommand, default))
+        await FluentActions
+            .Invoking(() => _handler.Handle(registerCommand, default))
            .Should()
            .ThrowAsync<EmailConflictException>();
     }

@@ -12,9 +12,11 @@ public static class UpdateCategoryCommandUtils
     /// <summary>
     /// Creates a new instance of the <see cref="UpdateCategoryCommand"/> class.
     /// </summary>
-    /// <param name="id">The category id.</param>
+    /// <param name="id">The category identifier.</param>
     /// <param name="name">The new category name.</param>
-    /// <returns>A new instance of the <see cref="UpdateCategoryCommand"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="UpdateCategoryCommand"/> class.
+    /// </returns>
     public static UpdateCategoryCommand CreateCommand(
         string? id = null,
         string? name = null

@@ -1,11 +1,12 @@
 using SharedKernel.Extensions;
 using SharedKernel.Models;
+
 using System.Globalization;
 
 namespace Domain.CategoryAggregate.ValueObjects;
 
 /// <summary>
-/// Represents the identifier for the <see cref="Category"/> aggregate root.
+/// Represents an identifier for a <see cref="Category"/>.
 /// </summary>
 public class CategoryId : ValueObject
 {
@@ -25,7 +26,10 @@ public class CategoryId : ValueObject
     /// Creates a new instance of the <see cref="CategoryId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="CategoryId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CategoryId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static CategoryId Create(long value)
     {
         return new CategoryId(value);
@@ -35,7 +39,10 @@ public class CategoryId : ValueObject
     /// Creates a new instance of the <see cref="CategoryId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="CategoryId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="CategoryId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static CategoryId Create(string value)
     {
         return new CategoryId(value.ToLongId());

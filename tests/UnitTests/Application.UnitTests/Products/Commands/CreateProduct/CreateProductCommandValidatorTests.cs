@@ -15,7 +15,8 @@ public class CreateProductCommandValidatorTests
     private readonly CreateProductCommandValidator _validator;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="CreateProductCommandValidatorTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="CreateProductCommandValidatorTests"/> class.
     /// </summary>
     public CreateProductCommandValidatorTests()
     {
@@ -23,94 +24,134 @@ public class CreateProductCommandValidatorTests
     }
 
     /// <summary>
-    /// Tests when the product name is empty the name should contain validation errors.
+    /// Verifies when the product name is empty the name should contain
+    /// validation errors.
     /// </summary>
     /// <param name="empty">The empty name.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.EmptyStrings), MemberType = typeof(ValidationTestData))]
-    public void ValidateCreateProductCommand_WhenNameIsEmpty_ShouldHaveValidationErrors(string empty)
+    [MemberData(
+        nameof(ValidationTestData.EmptyStrings),
+        MemberType = typeof(ValidationTestData)
+    )]
+    public void ValidateCreateProductCommand_WithEmptyName_ShouldHaveValidationError(
+        string empty
+    )
     {
         var command = CreateProductCommandUtils.CreateCommand(name: empty);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Name).WithErrorMessage("'Name' must not be empty.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.Name)
+            .WithErrorMessage("'Name' must not be empty.");
     }
 
     /// <summary>
-    /// Tests when the product description is empty the description should contain validation errors.
+    /// Verifies when the product description is empty the description should
+    /// contain validation errors.
     /// </summary>
     /// <param name="empty">The empty description.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.EmptyStrings), MemberType = typeof(ValidationTestData))]
-    public void ValidateCreateProductCommand_WhenDescriptionIsEmpty_ShouldHaveValidationErrors(string empty)
+    [MemberData(
+        nameof(ValidationTestData.EmptyStrings),
+        MemberType = typeof(ValidationTestData)
+    )]
+    public void ValidateCreateProductCommand_WithEmptyDescription_ShouldHaveValidationError(
+        string empty
+    )
     {
         var command = CreateProductCommandUtils.CreateCommand(description: empty);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Description).WithErrorMessage("'Description' must not be empty.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.Description)
+            .WithErrorMessage("'Description' must not be empty.");
     }
 
     /// <summary>
-    /// Tests when the base price of a product is not greater than zero the base price should have validation errors.
+    /// Verifies when the product base price is non-positive the base price should
+    /// contain validation errors.
     /// </summary>
     /// <param name="invalidPrice">The invalid price.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.NonPositiveNumbers), MemberType = typeof(ValidationTestData))]
-    public void ValidateCreateProductCommand_WhenBasePriceIsNotGreaterThanZero_ShouldHaveValidationErrors(int invalidPrice)
+    [MemberData(
+        nameof(ValidationTestData.NonPositiveNumbers),
+        MemberType = typeof(ValidationTestData)
+    )]
+    public void ValidateCreateProductCommand_WithNonPositiveBasePrice_ShouldHaveValidationError(
+        int invalidPrice
+    )
     {
-        var command = CreateProductCommandUtils.CreateCommand(basePrice: invalidPrice);
+        var command = CreateProductCommandUtils.CreateCommand(
+            basePrice: invalidPrice
+        );
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.BasePrice).WithErrorMessage("'Base Price' must be greater than '0'.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.BasePrice)
+            .WithErrorMessage("'Base Price' must be greater than '0'.");
     }
 
     /// <summary>
-    /// Tests when the initial quantity of a product is not greater than zero the initial quantity should have validation errors.
+    /// Verifies when the initial quantity of a product is non-positive
+    /// the initial quantity should have validation errors.
     /// </summary>
     /// <param name="invalidInitialQuantity">The invalid initial quantity.</param>
     [Theory]
-    [MemberData(nameof(ValidationTestData.NonPositiveNumbers), MemberType = typeof(ValidationTestData))]
-    public void ValidateCreateProductCommand_WhenInitialQuantityIsNotGreaterThanZero_ShouldHaveValidationErrors(int invalidInitialQuantity)
+    [MemberData(
+        nameof(ValidationTestData.NonPositiveNumbers),
+        MemberType = typeof(ValidationTestData)
+    )]
+    public void ValidateCreateProductCommand_WithNonPositiveInitialQuantity_ShouldHaveValidationError(
+        int invalidInitialQuantity
+    )
     {
-        var command = CreateProductCommandUtils.CreateCommand(initialQuantity: invalidInitialQuantity);
+        var command = CreateProductCommandUtils
+            .CreateCommand(initialQuantity: invalidInitialQuantity);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.InitialQuantity).WithErrorMessage("'Initial Quantity' must be greater than '0'.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.InitialQuantity)
+            .WithErrorMessage("'Initial Quantity' must be greater than '0'.");
     }
 
     /// <summary>
-    /// Tests when the categories of a product is empty the categories should have validation errors.
+    /// Verifies when the categories of a product is empty the categories should have
+    /// validation errors.
     /// </summary>
     [Fact]
-    public void ValidateCreateProductCommand_WhenCategoriesAreEmpty_ShouldHaveValidationErrors()
+    public void ValidateCreateProductCommand_WithEmptyCategoryIds_ShouldHaveValidationError()
     {
         var command = CreateProductCommandUtils.CreateCommand(categoryIds: []);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.CategoryIds).WithErrorMessage("'Category Ids' must not be empty.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.CategoryIds)
+            .WithErrorMessage("'Category Ids' must not be empty.");
     }
 
     /// <summary>
-    /// Tests when the images of a product is empty the images should have validation errors.
+    /// Verifies when the images of a product is empty the images should have validation errors.
     /// </summary>
     [Fact]
-    public void ValidateCreateProductCommand_WhenImagesAreEmpty_ShouldHaveValidationErrors()
+    public void ValidateCreateProductCommand_WithEmptyImages_ShouldHaveValidationError()
     {
         var command = CreateProductCommandUtils.CreateCommand(images: []);
 
         var result = _validator.TestValidate(command);
 
         result.IsValid.Should().BeFalse();
-        result.ShouldHaveValidationErrorFor(c => c.Images).WithErrorMessage("'Images' must not be empty.");
+        result
+            .ShouldHaveValidationErrorFor(c => c.Images)
+            .WithErrorMessage("'Images' must not be empty.");
     }
 }

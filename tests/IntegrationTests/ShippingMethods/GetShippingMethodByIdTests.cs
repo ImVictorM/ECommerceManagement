@@ -22,7 +22,8 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
     private readonly HttpClient _client;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetShippingMethodByIdTests"/> class.
+    /// Initiates a new instance of the <see cref="GetShippingMethodByIdTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -55,18 +56,19 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies getting an existing shipping method returns ok containing the shipping method.
+    /// Verifies getting an existent shipping method returns ok containing the
+    /// shipping method.
     /// </summary>
     [Fact]
     public async Task GetShippingMethodById_WhenShippingMethodExists_ReturnsOk()
     {
-        var existingShippingMethod = _seedShippingMethod.GetEntity(
+        var existentShippingMethod = _seedShippingMethod.GetEntity(
             ShippingMethodSeedType.EXPRESS
         );
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.GetShippingMethodById),
-            new { id = existingShippingMethod.Id.ToString() }
+            new { id = existentShippingMethod.Id.ToString() }
         );
 
         var response = await _client.GetAsync(endpoint);
@@ -75,11 +77,11 @@ public class GetShippingMethodByIdTests : BaseIntegrationTest
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        responseContent.Id.Should().Be(existingShippingMethod.Id.ToString());
-        responseContent.Name.Should().Be(existingShippingMethod.Name);
-        responseContent.Price.Should().Be(existingShippingMethod.Price);
+        responseContent.Id.Should().Be(existentShippingMethod.Id.ToString());
+        responseContent.Name.Should().Be(existentShippingMethod.Name);
+        responseContent.Price.Should().Be(existentShippingMethod.Price);
         responseContent.EstimatedDeliveryDays
             .Should()
-            .Be(existingShippingMethod.EstimatedDeliveryDays);
+            .Be(existentShippingMethod.EstimatedDeliveryDays);
     }
 }

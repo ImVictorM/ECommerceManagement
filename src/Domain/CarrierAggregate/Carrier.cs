@@ -39,7 +39,12 @@ public sealed class Carrier : AggregateRoot<CarrierId>
 
     private Carrier() { }
 
-    private Carrier(string name, Email email, PasswordHash passwordHash, string? phone = null)
+    private Carrier(
+        string name,
+        Email email,
+        PasswordHash passwordHash,
+        string? phone = null
+    )
     {
         Name = name;
         Email = email;
@@ -57,7 +62,13 @@ public sealed class Carrier : AggregateRoot<CarrierId>
     /// <param name="passwordHash">The carrier password hash.</param>
     /// <param name="phone">The carrier phone.</param>
     /// <returns>A new instance of the <see cref="Carrier"/> class.</returns>
-    public static Carrier Create(string name, Email email, PasswordHash passwordHash, string? phone = null)
+    public static Carrier Create(
+        string name,
+        Email email,
+        PasswordHash
+        passwordHash,
+        string? phone = null
+    )
     {
         return new Carrier(name, email, passwordHash, phone);
     }

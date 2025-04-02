@@ -7,8 +7,8 @@ using Carter;
 namespace WebApi;
 
 /// <summary>
-/// Provides extension methods for registering services from the Presentation (WebApi) layer
-/// into the dependency injection pipeline.
+/// Provides extension methods for registering services from the Presentation
+/// (WebApi) layer into the dependency injection pipeline.
 /// </summary>
 public static class ServicesRegistration
 {
@@ -17,15 +17,21 @@ public static class ServicesRegistration
     /// <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">
-    /// The <see cref="IServiceCollection"/> to which the Presentation services will be added.
+    /// The <see cref="IServiceCollection"/> to which the Presentation services
+    /// will be added.
     /// </param>
     /// <param name="configuration">
-    /// The <see cref="IConfigurationManager"/> that provides access to the application's configuration settings.
+    /// The <see cref="IConfigurationManager"/> that provides access to the
+    /// application's configuration settings.
     /// </param>
     /// <returns>
-    /// The same <see cref="IServiceCollection"/> instance with the Presentation services registered.
+    /// The same <see cref="IServiceCollection"/> instance with the Presentation
+    /// services registered.
     /// </returns>
-    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfigurationManager configuration)
+    public static IServiceCollection AddPresentation(
+        this IServiceCollection services,
+        IConfigurationManager configuration
+    )
     {
         services.AddCarter();
         services.AddHttpContextAccessor();
@@ -40,7 +46,9 @@ public static class ServicesRegistration
         return services;
     }
 
-    private static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
+    private static IServiceCollection AddSwaggerDocumentation(
+        this IServiceCollection services
+    )
     {
         services.AddSwaggerGen(setup =>
         {
@@ -52,7 +60,9 @@ public static class ServicesRegistration
 
             var jwtSecurityScheme = new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme. Insert only your JWT Bearer token on the textbox below",
+                Description =
+                "JWT Authorization header using the Bearer scheme. " +
+                "Insert only your JWT Bearer token on the textbox below",
                 Name = "JWT Authentication",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.Http,
@@ -64,7 +74,10 @@ public static class ServicesRegistration
                 }
             };
 
-            setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+            setup.AddSecurityDefinition(
+                jwtSecurityScheme.Reference.Id,
+                jwtSecurityScheme
+            );
 
             setup.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
@@ -80,6 +93,8 @@ public static class ServicesRegistration
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(typeof(ServicesRegistration).Assembly);
 
+        config.AllowImplicitDestinationInheritance = true;
+
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
 
@@ -90,8 +105,11 @@ public static class ServicesRegistration
     {
         options.CustomizeProblemDetails = context =>
         {
-            context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
-            context.ProblemDetails.Extensions["userAgent"] = context.HttpContext.Request.Headers.UserAgent.ToString();
+            var traceId = context.HttpContext.TraceIdentifier;
+            var userAgent = context.HttpContext.Request.Headers.UserAgent.ToString();
+
+            context.ProblemDetails.Extensions["traceId"] = traceId;
+            context.ProblemDetails.Extensions["userAgent"] = userAgent;
         };
     }
 }

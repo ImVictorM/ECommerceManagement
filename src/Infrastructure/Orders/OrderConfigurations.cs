@@ -17,9 +17,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Orders;
 
-internal sealed class OrderConfigurations : EntityTypeConfigurationDependency<Order>
+internal sealed class OrderConfigurations
+    : EntityTypeConfigurationDependency<Order>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Order> builder)
     {
         ConfigureOrdersTable(builder);
@@ -72,7 +72,10 @@ internal sealed class OrderConfigurations : EntityTypeConfigurationDependency<Or
 
         builder
             .Property(order => order.OrderStatus)
-            .HasConversion(status => status.Id, id => BaseEnumeration.FromValue<OrderStatus>(id));
+            .HasConversion(
+                status => status.Id,
+                id => BaseEnumeration.FromValue<OrderStatus>(id)
+            );
 
         builder
             .Property(order => order.Total)
@@ -84,7 +87,9 @@ internal sealed class OrderConfigurations : EntityTypeConfigurationDependency<Or
             .IsRequired();
     }
 
-    private static void ConfigureOwnedOrdersCouponsTable(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOwnedOrdersCouponsTable(
+        EntityTypeBuilder<Order> builder
+    )
     {
         builder.OwnsMany(o => o.CouponsApplied, orderCouponBuilder =>
         {
@@ -120,7 +125,9 @@ internal sealed class OrderConfigurations : EntityTypeConfigurationDependency<Or
         });
     }
 
-    private static void ConfigureOwnedOrdersProductsTable(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOwnedOrdersProductsTable(
+        EntityTypeBuilder<Order> builder
+    )
     {
         builder.OwnsMany(order => order.Products, orderProductsBuilder =>
         {
@@ -169,41 +176,51 @@ internal sealed class OrderConfigurations : EntityTypeConfigurationDependency<Or
                 .Property(orderProduct => orderProduct.PurchasedPrice)
                 .IsRequired();
 
-            orderProductsBuilder
-                .OwnsMany(orderProduct => orderProduct.ProductCategoryIds, categoryBuilder =>
-                {
-                    categoryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
-
-                    categoryBuilder.ToTable("order_product_category_ids");
-
-                    categoryBuilder
-                        .Property<long>("id")
-                        .ValueGeneratedOnAdd()
-                        .IsRequired();
-
-                    categoryBuilder.HasKey("id");
-
-                    categoryBuilder
-                        .Property(categoryId => categoryId.Value)
-                        .HasColumnName("id_category")
-                        .IsRequired();
-
-                    categoryBuilder
-                        .WithOwner()
-                        .HasForeignKey("id_order_product");
-
-                    categoryBuilder
-                        .Property("id_order_product")
-                        .IsRequired();
-                });
+            ConfigureOwnedOrderProductCategoryIdsTable(orderProductsBuilder);
         });
     }
 
-    private static void ConfigureOwnedOrderStatusHistoriesTable(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOwnedOrderProductCategoryIdsTable(
+        OwnedNavigationBuilder<Order, OrderLineItem> orderProductsBuilder
+    )
+    {
+        orderProductsBuilder
+            .OwnsMany(op => op.ProductCategoryIds, categoryIdBuilder =>
+            {
+                categoryIdBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
+                categoryIdBuilder.ToTable("order_product_category_ids");
+
+                categoryIdBuilder
+                    .Property<long>("id")
+                    .ValueGeneratedOnAdd()
+                    .IsRequired();
+
+                categoryIdBuilder.HasKey("id");
+
+                categoryIdBuilder
+                    .Property(categoryId => categoryId.Value)
+                    .HasColumnName("id_category")
+                    .IsRequired();
+
+                categoryIdBuilder
+                    .WithOwner()
+                    .HasForeignKey("id_order_product");
+
+                categoryIdBuilder
+                    .Property("id_order_product")
+                    .IsRequired();
+            });
+    }
+
+    private static void ConfigureOwnedOrderStatusHistoriesTable(
+        EntityTypeBuilder<Order> builder
+    )
     {
         builder.OwnsMany(o => o.OrderTrackingEntries, orderTrackingEntryBuilder =>
         {
-            orderTrackingEntryBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+            orderTrackingEntryBuilder
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             orderTrackingEntryBuilder.ToTable("order_tracking_entries");
 

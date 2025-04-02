@@ -20,15 +20,15 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     private long _shipmentStatusId;
 
     /// <summary>
-    /// Gets the shipment order id.
+    /// Gets the shipment order identifier.
     /// </summary>
     public OrderId OrderId { get; private set; } = null!;
     /// <summary>
-    /// Gets the shipment carrier id.
+    /// Gets the shipment carrier identifier.
     /// </summary>
     public CarrierId CarrierId { get; private set; } = null!;
     /// <summary>
-    /// Gets the shipping method id.
+    /// Gets the shipping method identifier.
     /// </summary>
     public ShippingMethodId ShippingMethodId { get; private set; } = null!;
     /// <summary>
@@ -47,7 +47,8 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// <summary>
     /// Gets the shipment tracking entries.
     /// </summary>
-    public IReadOnlyList<ShipmentTrackingEntry> ShipmentTrackingEntries => _shipmentTrackingEntries.AsReadOnly();
+    public IReadOnlyList<ShipmentTrackingEntry> ShipmentTrackingEntries
+        => _shipmentTrackingEntries.AsReadOnly();
 
     private Shipment() { }
 
@@ -69,8 +70,8 @@ public sealed class Shipment : AggregateRoot<ShipmentId>
     /// <summary>
     /// Creates a new instance of the <see cref="Shipment"/> class.
     /// </summary>
-    /// <param name="orderId">The shipment order id.</param>
-    /// <param name="carrierId">The shipment carrier id.</param>
+    /// <param name="orderId">The shipment order identifier.</param>
+    /// <param name="carrierId">The shipment carrier identifier.</param>
     /// <param name="deliveryAddress">The shipment delivery address.</param>
     /// <param name="shippingMethodId">The shipping method.</param>
     /// <returns>A new instance of the <see cref="Shipment"/> class.</returns>

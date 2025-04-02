@@ -1,5 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.Categories.DTOs;
+using Application.Categories.DTOs.Results;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
@@ -7,7 +7,7 @@ using MediatR;
 namespace Application.Categories.Queries.GetCategories;
 
 internal sealed partial class GetCategoriesQueryHandler
-    : IRequestHandler<GetCategoriesQuery, IEnumerable<CategoryResult>>
+    : IRequestHandler<GetCategoriesQuery, IReadOnlyList<CategoryResult>>
 {
     private readonly ICategoryRepository _categoryRepository;
 
@@ -20,14 +20,23 @@ internal sealed partial class GetCategoriesQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<IEnumerable<CategoryResult>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<CategoryResult>> Handle(
+        GetCategoriesQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        LogStartQueryingAllCategories();
+        LogInitiatingCategoriesRetrieval();
 
-        var categories = await _categoryRepository.FindAllAsync(cancellationToken: cancellationToken);
+        var categories = await _categoryRepository.FindAllAsync(
+            cancellationToken: cancellationToken
+        );
 
-        LogAllCategoriesFetched();
-        return categories.Select(c => new CategoryResult(c.Id.ToString(), c.Name));
+        var result = categories
+            .Select(CategoryResult.FromCategory)
+            .ToList();
+
+        LogCategoriesRetrievedSuccessfully(result.Count);
+
+        return result;
     }
 }

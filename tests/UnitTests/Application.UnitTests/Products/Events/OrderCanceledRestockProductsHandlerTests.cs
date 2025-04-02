@@ -7,14 +7,16 @@ using Domain.ProductAggregate;
 using Domain.ProductAggregate.ValueObjects;
 using Domain.UnitTests.TestUtils;
 
-using System.Linq.Expressions;
+using SharedKernel.Interfaces;
+
 using FluentAssertions;
 using Moq;
 
 namespace Application.UnitTests.Products.Events;
 
 /// <summary>
-/// Unit tests for the <see cref="OrderCanceledRestockProductsHandler"/> event handler.
+/// Unit tests for the <see cref="OrderCanceledRestockProductsHandler"/>
+/// event handler.
 /// </summary>
 public class OrderCanceledRestockProductsHandlerTests
 {
@@ -23,7 +25,8 @@ public class OrderCanceledRestockProductsHandlerTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="OrderCanceledRestockProductsHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="OrderCanceledRestockProductsHandlerTests"/> class.
     /// </summary>
     public OrderCanceledRestockProductsHandlerTests()
     {
@@ -58,7 +61,7 @@ public class OrderCanceledRestockProductsHandlerTests
             ),
         };
 
-        var reservedProducts = new[]
+        var lineItemDrafts = new[]
         {
             OrderUtils.CreateOrderLineItemDraft(productId: products[0].Id, 1),
             OrderUtils.CreateOrderLineItemDraft(productId: products[1].Id, 2),
@@ -66,14 +69,14 @@ public class OrderCanceledRestockProductsHandlerTests
         };
 
         var order = await OrderUtils.CreateOrderAsync(
-            orderLineItemDrafts: reservedProducts
+            orderLineItemDrafts: lineItemDrafts
         );
 
         var notification = await OrderCanceledUtils.CreateEventAsync(order: order);
 
         _mockProductRepository
-            .Setup(r => r.FindAllAsync(
-                It.IsAny<Expression<Func<Product, bool>>>(),
+            .Setup(r => r.FindSatisfyingAsync(
+                It.IsAny<ISpecificationQuery<Product>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(products);

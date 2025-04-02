@@ -37,7 +37,12 @@ internal sealed class CouponApplicationService : ICouponApplicationService
             cancellationToken
         );
 
-        await ValidateCouponsApplication(coupons, couponToApplyIds, order, cancellationToken);
+        await ValidateCouponsApplication(
+            coupons,
+            couponToApplyIds,
+            order,
+            cancellationToken
+        );
 
         var couponDiscounts = coupons.Select(c => c.Discount);
 

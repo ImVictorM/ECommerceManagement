@@ -9,28 +9,30 @@ internal sealed partial class PlaceOrderCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Starting to place order."
+        Message = "Initiating order placement process."
     )]
-    private partial void LogInitiatingPlaceOrder();
+    private partial void LogInitiatingOrderPlacement();
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Customer placing order identifier: {OwnerId}."
+        Message = "Customer placing order identifier: '{OwnerId}'."
     )]
-    private partial void LogOrderCustomerId(string ownerId);
+    private partial void LogOrderOwnerIdentifier(string ownerId);
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The order was created successfully."
+        Message = "The order object has been created successfully."
     )]
     private partial void LogOrderCreated();
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "The order was placed. The process was complete successfully."
+        Message =
+        "The order has been placed. " +
+        "The operation was completed successfully."
     )]
     private partial void LogOrderPlacedSuccessfully();
 }

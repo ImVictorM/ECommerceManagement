@@ -8,15 +8,21 @@ using Infrastructure.Common.Persistence;
 
 namespace Infrastructure.Shipments;
 
-internal sealed class ShipmentRepository : BaseRepository<Shipment, ShipmentId>, IShipmentRepository
+internal sealed class ShipmentRepository
+    : BaseRepository<Shipment, ShipmentId>, IShipmentRepository
 {
     public ShipmentRepository(IECommerceDbContext dbContext) : base(dbContext)
     {
     }
 
-    /// <inheritdoc/>
-    public Task<Shipment?> GetShipmentByOrderId(OrderId orderId, CancellationToken cancellationToken = default)
+    public Task<Shipment?> GetShipmentByOrderId(
+        OrderId orderId,
+        CancellationToken cancellationToken = default
+    )
     {
-        return FirstOrDefaultAsync(shipment => shipment.OrderId == orderId, cancellationToken);
+        return FirstOrDefaultAsync(
+            shipment => shipment.OrderId == orderId,
+            cancellationToken
+        );
     }
 }

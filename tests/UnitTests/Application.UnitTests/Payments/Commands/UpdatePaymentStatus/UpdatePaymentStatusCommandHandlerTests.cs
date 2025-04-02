@@ -25,7 +25,8 @@ public class UpdatePaymentStatusCommandHandlerTests
     private readonly UpdatePaymentStatusCommandHandler _handler;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="UpdatePaymentStatusCommandHandlerTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="UpdatePaymentStatusCommandHandlerTests"/> class.
     /// </summary>
     public UpdatePaymentStatusCommandHandlerTests()
     {
@@ -35,15 +36,15 @@ public class UpdatePaymentStatusCommandHandlerTests
         _handler = new UpdatePaymentStatusCommandHandler(
             _mockUnitOfWork.Object,
             _mockPaymentRepository.Object,
-            new Mock<ILogger<UpdatePaymentStatusCommandHandler>>().Object
+            Mock.Of<ILogger<UpdatePaymentStatusCommandHandler>>()
         );
     }
 
     /// <summary>
-    /// Verifies when the payment does not exist a not found exception is thrown.
+    /// Verifies an exception is thrown when the payment does not exist.
     /// </summary>
     [Fact]
-    public async Task HandleUpdatePaymentStatus_WhenPaymentDoesNotExist_ThrowsError()
+    public async Task HandleUpdatePaymentStatusCommand_WhenPaymentDoesNotExist_ThrowsError()
     {
         var command = UpdatePaymentStatusCommandUtils.CreateCommand();
 
@@ -64,12 +65,17 @@ public class UpdatePaymentStatusCommandHandlerTests
     /// Verifies the payment is updated correctly when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdatePaymentStatus_WhenPaymentExists_UpdatesIt()
+    public async Task HandleUpdatePaymentStatusCommand_WhenPaymentExists_UpdatesIt()
     {
         var newStatus = PaymentStatus.Authorized;
-        var command = UpdatePaymentStatusCommandUtils.CreateCommand(status: newStatus.Name);
+        var command = UpdatePaymentStatusCommandUtils.CreateCommand(
+            status: newStatus.Name
+        );
         var paymentId = PaymentId.Create(command.PaymentId);
-        var payment = PaymentUtils.CreatePayment(paymentId: paymentId, paymentStatus: PaymentStatus.Pending);
+        var payment = PaymentUtils.CreatePayment(
+            paymentId: paymentId,
+            paymentStatus: PaymentStatus.Pending
+        );
 
         _mockPaymentRepository
             .Setup(r => r.FindByIdAsync(

@@ -1,6 +1,6 @@
 using Application.Common.Persistence.Repositories;
-using Application.Coupons.DTOs;
 using Application.Coupons.Queries.GetCoupons;
+using Application.Coupons.DTOs.Results;
 using Application.UnitTests.Coupons.Queries.TestUtils;
 
 using Domain.UnitTests.TestUtils;
@@ -37,7 +37,7 @@ public class GetCouponsQueryHandlerTests
     /// Verifies when there are coupons matching the filters, they are returned.
     /// </summary>
     [Fact]
-    public async Task HandleGetCoupons_WithMatchingCoupons_ReturnsCoupons()
+    public async Task HandleGetCouponsQuery_WithMatchingCoupons_ReturnsCoupons()
     {
         var query = GetCouponsQueryUtils.CreateQuery();
 
@@ -60,7 +60,7 @@ public class GetCouponsQueryHandlerTests
     /// Verifies when no coupons match the filters, an empty collection is returned.
     /// </summary>
     [Fact]
-    public async Task HandleGetCoupons_WithNoMatchingCoupons_ReturnsEmptyCollection()
+    public async Task HandleGetCouponsQuery_WithNoMatchingCoupons_ReturnsEmptyCollection()
     {
         var query = GetCouponsQueryUtils.CreateQuery();
 

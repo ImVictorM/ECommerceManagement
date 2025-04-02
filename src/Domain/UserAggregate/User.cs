@@ -8,7 +8,7 @@ using SharedKernel.ValueObjects;
 namespace Domain.UserAggregate;
 
 /// <summary>
-/// Represents an user.
+/// Represents a user.
 /// </summary>
 public sealed class User : AggregateRoot<UserId>, IActivatable
 {
@@ -18,7 +18,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <summary>
     /// Gets the user name.
     /// </summary>
-    public string Name { get; private set; } = string.Empty;
+    public string Name { get; private set; } = null!;
     /// <summary>
     /// Gets the user email.
     /// </summary>
@@ -128,7 +128,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <param name="name">The new user name.</param>
     /// <param name="phone">The new user phone.</param>
     /// <param name="email">The new user email.</param>
-    public void UpdateDetails(
+    public void Update(
         string? name = null,
         string? phone = null,
         Email? email = null)
@@ -141,7 +141,9 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     /// <summary>
     /// Verifies if the current user is an administrator.
     /// </summary>
-    /// <returns>A bool value indicating if the user is an administrator.</returns>
+    /// <returns>
+    /// A bool value indicating if the user is an administrator.
+    /// </returns>
     public bool IsAdmin()
     {
         return UserRoles.Any(ur => ur.Role == Role.Admin);
@@ -154,7 +156,7 @@ public sealed class User : AggregateRoot<UserId>, IActivatable
     }
 
     /// <summary>
-    /// Adds addresses to the user.
+    /// Assign addresses to the user.
     /// </summary>
     /// <param name="addresses">The addresses to be added.</param>
     public void AssignAddress(params Address[] addresses)

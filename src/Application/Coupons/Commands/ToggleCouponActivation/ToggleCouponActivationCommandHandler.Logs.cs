@@ -9,28 +9,29 @@ internal sealed partial class ToggleCouponActivationCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating toggle coupon activation for coupon with id {CouponId}."
+        Message =
+        "Initiating toggle coupon activation for coupon with identifier '{CouponId}'."
     )]
     private partial void LogInitiatingToggleCouponActivation(string couponId);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "Coupon not found. Operation failed."
+        Message = "The coupon could not be found. The operation failed."
     )]
     private partial void LogCouponNotFound();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The current state of the coupon is {State}."
+        Message = "The current active state of the coupon is {State}."
     )]
     private partial void LogCurrentCouponState(bool state);
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "The coupon state was toggled to {State}."
+        Message = "The coupon active state was toggled to {State}."
     )]
     private partial void LogCouponStateToggledTo(bool state);
 
@@ -38,7 +39,8 @@ internal sealed partial class ToggleCouponActivationCommandHandler
         EventId = 5,
         Level = LogLevel.Debug,
         Message =
-        "The coupon state was changed and saved. Operation complete successfully."
+        "The coupon state has been changed and saved. " +
+        "The operation was completed successfully."
     )]
     private partial void LogCouponStateChangedSuccessfully();
 }

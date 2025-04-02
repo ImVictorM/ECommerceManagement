@@ -19,7 +19,9 @@ public static class AddressContractUtils
     /// <param name="state">The address state.</param>
     /// <param name="city">The address city.</param>
     /// <param name="neighborhood">The address neighborhood.</param>
-    /// <returns>A new instance of the <see cref="AddressContract"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="AddressContract"/> class.
+    /// </returns>
     public static AddressContract CreateAddress(
         string? postalCode = null,
         string? street = null,

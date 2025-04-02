@@ -1,6 +1,6 @@
 using Application.Common.Persistence.Repositories;
-using Application.Categories.DTOs;
 using Application.Categories.Errors;
+using Application.Categories.DTOs.Results;
 
 using Domain.CategoryAggregate.ValueObjects;
 
@@ -23,14 +23,19 @@ internal sealed partial class GetCategoryByIdQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<CategoryResult> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
+    public async Task<CategoryResult> Handle(
+        GetCategoryByIdQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        LogInitiatingGetCategory(request.Id);
+        LogInitiatingCategoryRetrieval(request.Id);
 
         var categoryId = CategoryId.Create(request.Id);
 
-        var category = await _categoryRepository.FindByIdAsync(categoryId, cancellationToken);
+        var category = await _categoryRepository.FindByIdAsync(
+            categoryId,
+            cancellationToken
+        );
 
         if (category == null)
         {
@@ -38,7 +43,7 @@ internal sealed partial class GetCategoryByIdQueryHandler
             throw new CategoryNotFoundException();
         }
 
-        LogCategoryRetrieved();
-        return new CategoryResult(category.Id.ToString(), category.Name);
+        LogCategoryRetrievedSuccessfully();
+        return CategoryResult.FromCategory(category);
     }
 }

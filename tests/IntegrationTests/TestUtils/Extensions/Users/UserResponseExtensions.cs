@@ -14,8 +14,7 @@ namespace IntegrationTests.TestUtils.Extensions.Users;
 public static class UserResponseExtensions
 {
     /// <summary>
-    /// Set of assertions to ensure the response user corresponds to the given
-    /// user.
+    /// Ensures the response corresponds to the given user.
     /// </summary>
     /// <param name="response">The current response.</param>
     /// <param name="expectedUser">The user to be checked against.</param>
@@ -40,8 +39,8 @@ public static class UserResponseExtensions
     }
 
     /// <summary>
-    /// Set of assertions to ensure the collection of responses correspond to the
-    /// expected collection of users.
+    /// Ensures a list of user responses corresponds to the given list of
+    /// expected users.
     /// </summary>
     /// <param name="responseUsers">The response user list.</param>
     /// <param name="expectedUsers">The expected users list.</param>

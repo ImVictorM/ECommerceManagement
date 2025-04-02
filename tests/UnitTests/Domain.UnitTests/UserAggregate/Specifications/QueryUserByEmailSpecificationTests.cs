@@ -13,10 +13,11 @@ namespace Domain.UnitTests.UserAggregate.Specifications;
 public class QueryUserByEmailSpecificationTests
 {
     /// <summary>
-    /// Verifies that the specification returns true when the user's email matches the provided email.
+    /// Verifies that the specification returns true when the user's email
+    /// matches the provided email.
     /// </summary>
     [Fact]
-    public void QueryUserByEmailSpecification_WhenEmailMatches_ReturnsTrue()
+    public void QueryUserByEmail_WithMatchingEmail_ReturnsTrue()
     {
         var email = EmailUtils.CreateEmail("test@example.com");
         var user = UserUtils.CreateCustomer(email: email);
@@ -29,13 +30,16 @@ public class QueryUserByEmailSpecificationTests
     }
 
     /// <summary>
-    /// Verifies that the specification returns false when the user's email does not match the provided email.
+    /// Verifies that the specification returns false when the user's email
+    /// does not match the provided email.
     /// </summary>
     [Fact]
-    public void QueryUserByEmailSpecification_WhenEmailDoesNotMatch_ReturnsFalse()
+    public void QueryUserByEmail_WithoutMatchingEmail_ReturnsFalse()
     {
         var email = EmailUtils.CreateEmail("test@example.com");
-        var user = UserUtils.CreateCustomer(email: EmailUtils.CreateEmail("other@example.com"));
+        var user = UserUtils.CreateCustomer(
+            email: EmailUtils.CreateEmail("other@example.com")
+        );
 
         var specification = new QueryUserByEmailSpecification(email);
 

@@ -14,7 +14,7 @@ namespace Domain.UnitTests.UserAggregate;
 public class UserTests
 {
     /// <summary>
-    /// List of valid parameters to create new users.
+    /// Provides a list of valid parameters to create new users.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidUserCreationParameters =
     [
@@ -32,7 +32,8 @@ public class UserTests
     ];
 
     /// <summary>
-    /// List of users containing the expected return value for the <see cref="User.IsAdmin"/> method.
+    /// Provides a list of users containing the expected return value when calling
+    /// the <see cref="User.IsAdmin"/> method.
     /// </summary>
     public static readonly IEnumerable<object[]> UsersAndExpectedIsAdminReturnValue =
     [
@@ -47,7 +48,7 @@ public class UserTests
     ];
 
     /// <summary>
-    /// Tests a customer user is created correctly.
+    /// Verifies a customer user is created correctly.
     /// </summary>
     [Theory]
     [MemberData(nameof(ValidUserCreationParameters))]
@@ -80,7 +81,7 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests an admin user is created correctly.
+    /// Verifies an admin user is created correctly.
     /// </summary>
     [Theory]
     [MemberData(nameof(ValidUserCreationParameters))]
@@ -116,7 +117,7 @@ public class UserTests
     /// Test if it is possible to make the user inactive.
     /// </summary>
     [Fact]
-    public void DeactivateUser_WhenCallingDeactivateMethod_TheActiveFieldIsSetToFalse()
+    public void Deactivate_WithActiveUser_DeactivatesCorrectly()
     {
         var user = UserUtils.CreateCustomer();
 
@@ -126,7 +127,7 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests if it is possible to add a new address to a user.
+    /// Verifies if it is possible to add a new address to a user.
     /// </summary>
     [Fact]
     public void AssignAddress_WithValidAddress_AddsTheAddress()
@@ -141,11 +142,11 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests the <see cref="User.UpdateDetails(string?, string?, SharedKernel.ValueObjects.Email?)"/> method updates the
+    /// Verifies the <see cref="User.Update"/> method updates the
     /// user data correctly.
     /// </summary>
     [Fact]
-    public void UpdateUserDetails_WhenCalledWithValidParameters_UpdatesTheUserData()
+    public void Update_WithValidParameters_UpdatesCorrectly()
     {
         var user = UserUtils.CreateCustomer();
 
@@ -153,7 +154,7 @@ public class UserTests
         var newUserPhone = "199485924738";
         var newUserEmail = EmailUtils.CreateEmail("new_email@email.com");
 
-        user.UpdateDetails(name: newUserName, phone: newUserPhone, email: newUserEmail);
+        user.Update(name: newUserName, phone: newUserPhone, email: newUserEmail);
 
         user.Name.Should().Be(newUserName);
         user.Phone.Should().Be(newUserPhone);
@@ -167,7 +168,10 @@ public class UserTests
     /// <param name="expectedIsAdminReturnValue">The expected response.</param>
     [Theory]
     [MemberData(nameof(UsersAndExpectedIsAdminReturnValue))]
-    public void IsAdmin_WhenCalled_ReturnsExpectedBoolean(User user, bool expectedIsAdminReturnValue)
+    public void IsAdmin_WithDifferentUsers_ReturnsExpectedBoolean(
+        User user,
+        bool expectedIsAdminReturnValue
+    )
     {
         user.IsAdmin().Should().Be(expectedIsAdminReturnValue);
     }

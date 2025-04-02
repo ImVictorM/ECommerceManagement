@@ -186,15 +186,19 @@ public sealed class ShippingMethodEndpoints : ICarterModule
         return TypedResults.Ok(mapper.Map<ShippingMethodResponse>(response));
     }
 
-    internal async Task<Ok<IEnumerable<ShippingMethodResponse>>> GetShippingMethods(
+    internal async Task<Ok<List<ShippingMethodResponse>>> GetShippingMethods(
         ISender sender,
         IMapper mapper
     )
     {
         var query = new GetShippingMethodsQuery();
 
-        var response = await sender.Send(query);
+        var result = await sender.Send(query);
 
-        return TypedResults.Ok(response.Select(mapper.Map<ShippingMethodResponse>));
+        var response = result
+            .Select(mapper.Map<ShippingMethodResponse>)
+            .ToList();
+
+        return TypedResults.Ok(response);
     }
 }

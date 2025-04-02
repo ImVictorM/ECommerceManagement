@@ -1,6 +1,7 @@
-using System.Globalization;
 using SharedKernel.Models;
 using SharedKernel.Extensions;
+
+using System.Globalization;
 
 namespace Domain.SaleAggregate.ValueObjects;
 
@@ -25,7 +26,10 @@ public class SaleId : ValueObject
     /// Creates a new instance of the <see cref="SaleId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="SaleId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="SaleId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static SaleId Create(long value)
     {
         return new SaleId(value);
@@ -35,7 +39,10 @@ public class SaleId : ValueObject
     /// Creates a new instance of the <see cref="SaleId"/> class.
     /// </summary>
     /// <param name="value">The identifier value.</param>
-    /// <returns>A new instance of the <see cref="SaleId"/> class with the specified identifier.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="SaleId"/> class with the specified
+    /// identifier.
+    /// </returns>
     public static SaleId Create(string value)
     {
         return new SaleId(value.ToLongId());

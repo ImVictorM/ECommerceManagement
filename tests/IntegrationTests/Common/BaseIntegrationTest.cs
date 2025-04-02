@@ -24,7 +24,7 @@ public class BaseIntegrationTest : IAsyncLifetime
     public ITestOutputHelper Output { get; }
 
     /// <summary>
-    /// Gets the seed manager for test data initialization.
+    /// Gets the seed manager for test data initialization and retrieval.
     /// </summary>
     public ISeedManager SeedManager { get; }
 
@@ -51,16 +51,16 @@ public class BaseIntegrationTest : IAsyncLifetime
         _factory = factory;
         Output = output;
 
-        using var scope = _factory.Services.CreateScope();
-        SeedManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
-        RequestService = scope.ServiceProvider.GetRequiredService<IRequestService>();
-        LinkGenerator = scope.ServiceProvider.GetRequiredService<LinkGenerator>();
+        SeedManager = factory.Services.GetRequiredService<ISeedManager>();
+        RequestService = factory.Services.GetRequiredService<IRequestService>();
+        LinkGenerator = factory.Services.GetRequiredService<LinkGenerator>();
     }
 
     /// <inheritdoc/>
     public async Task InitializeAsync()
     {
         await _factory.ResetDatabaseAsync();
+
         await SeedDataAsync();
     }
 

@@ -1,4 +1,4 @@
-using Application.Coupons.DTOs;
+using Application.Coupons.DTOs.Filters;
 using Application.Coupons.Queries.GetCoupons;
 
 namespace Application.UnitTests.Coupons.Queries.TestUtils;

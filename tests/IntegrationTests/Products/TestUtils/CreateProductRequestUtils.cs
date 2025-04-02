@@ -20,7 +20,7 @@ public static class CreateProductRequestUtils
     /// <param name="description">The product description.</param>
     /// <param name="initialQuantity">The product initial quantity.</param>
     /// <param name="basePrice">The product base price.</param>
-    /// <param name="categoryIds">The product categories.</param>
+    /// <param name="categoryIds">The product category identifiers.</param>
     /// <param name="images">The product images.</param>
     /// <returns>
     /// A new instance of the <see cref="CreateProductRequest"/> class.

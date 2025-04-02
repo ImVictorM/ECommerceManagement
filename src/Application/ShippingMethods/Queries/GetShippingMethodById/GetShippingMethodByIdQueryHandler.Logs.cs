@@ -9,21 +9,24 @@ internal sealed partial class GetShippingMethodByIdQueryHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating retrieval of shipping method with identifier {Id}."
+        Message = "Initiating retrieval of shipping method with identifier '{Id}'."
     )]
-    private partial void LogInitiatingGetShippingMethodByIdQuery(string id);
+    private partial void LogInitiatingShippingMethodRetrieval(string id);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The shipping method could not be retrieved because it does not exist."
+        Message =
+        "The shipping method could not be retrieved because it does not exist."
     )]
     private partial void LogShippingMethodNotFound();
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "The shipping method was retrieved successfully."
+        Message =
+        "The shipping method has been retrieved. " +
+        "The operation was completed successfully."
     )]
     private partial void LogShippingMethodRetrievedSuccessfully();
 }

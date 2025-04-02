@@ -23,29 +23,32 @@ internal sealed partial class GetProductsQueryHandler
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Debug,
-        Message = "Categories filtering details - Filter by categories: {Categories}"
+        Message =
+        "Categories filtering details - " +
+        "Filter by categories: {CategoryIds}"
     )]
-    private partial void LogCategoriesFilterDetails(string? categories);
+    private partial void LogCategoriesFilterDetails(string? categoryIds);
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Debug,
-        Message = "The products were retrieved. Quantity of products found: {Quantity}."
+        Message = "{Quantity} products has been retrieved."
     )]
     private partial void LogProductsRetrieved(int quantity);
 
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Debug,
-        Message = "The product prices on sale were calculated successfully for each product."
+        Message = "The discounted price has been calculated for each product."
    )]
-    private partial void LogProductsPriceCalculated();
+    private partial void LogProductsDiscountedPriceCalculated();
 
     [LoggerMessage(
         EventId = 6,
         Level = LogLevel.Debug,
-        Message = "The products were retrieved with their respective price on sale and categories." +
-        " Operation complete successfully."
+        Message =
+        "The products has been retrieved with their respective discounted price." +
+        " The operation was completed successfully."
     )]
     private partial void LogProductsRetrievedSuccessfully();
 }

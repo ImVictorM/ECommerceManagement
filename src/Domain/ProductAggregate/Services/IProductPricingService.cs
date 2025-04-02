@@ -20,7 +20,7 @@ public interface IProductPricingService
     /// <returns>
     /// The final price of the product after applying any sales discounts.
     /// </returns>
-    Task<decimal> CalculateProductPriceApplyingSaleAsync(
+    Task<decimal> CalculateDiscountedPriceAsync(
         Product product,
         CancellationToken cancellationToken = default
     );
@@ -39,7 +39,7 @@ public interface IProductPricingService
     /// A dictionary where the keys are product ids and values are their respective
     /// final prices.
     /// </returns>
-    Task<Dictionary<ProductId, decimal>> CalculateProductsPriceApplyingSaleAsync(
+    Task<Dictionary<ProductId, decimal>> CalculateDiscountedPricesAsync(
         IEnumerable<Product> products,
         CancellationToken cancellationToken = default
     );

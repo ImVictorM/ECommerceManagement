@@ -16,9 +16,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Shipments;
 
-internal sealed class ShipmentConfigurations : EntityTypeConfigurationDependency<Shipment>
+internal sealed class ShipmentConfigurations
+    : EntityTypeConfigurationDependency<Shipment>
 {
-    /// <inheritdoc/>
     public override void Configure(EntityTypeBuilder<Shipment> builder)
     {
         ConfigureShipmentsTable(builder);
@@ -94,14 +94,20 @@ internal sealed class ShipmentConfigurations : EntityTypeConfigurationDependency
 
         builder.Ignore(s => s.ShipmentStatus);
 
-        builder.OwnsOne(order => order.DeliveryAddress, AddressNavigationBuilderConfigurations.Configure);
+        builder.OwnsOne(
+            order => order.DeliveryAddress,
+            AddressNavigationBuilderConfigurations.Configure
+        );
     }
 
-    private static void ConfigureOwnedShipmentTrackingEntriesTable(EntityTypeBuilder<Shipment> builder)
+    private static void ConfigureOwnedShipmentTrackingEntriesTable(
+        EntityTypeBuilder<Shipment> builder
+    )
     {
         builder.OwnsMany(s => s.ShipmentTrackingEntries, shipmentTrackingEntriesBuilder =>
         {
-            shipmentTrackingEntriesBuilder.UsePropertyAccessMode(PropertyAccessMode.Field);
+            shipmentTrackingEntriesBuilder
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             shipmentTrackingEntriesBuilder.ToTable("shipment_tracking_entries");
 

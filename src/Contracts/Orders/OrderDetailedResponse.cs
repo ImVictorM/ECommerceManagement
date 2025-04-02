@@ -3,8 +3,8 @@ namespace Contracts.Orders;
 /// <summary>
 /// Represents a detailed order response.
 /// </summary>
-/// <param name="Id">The order id.</param>
-/// <param name="OwnerId">The order owner id.</param>
+/// <param name="Id">The order identifier.</param>
+/// <param name="OwnerId">The order owner identifier.</param>
 /// <param name="Description">The order description.</param>
 /// <param name="Status">The order status.</param>
 /// <param name="Total">The order total.</param>

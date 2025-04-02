@@ -20,7 +20,7 @@ namespace Domain.UnitTests.ShipmentAggregate;
 public class ShipmentTests
 {
     /// <summary>
-    /// List of valid shipment creation parameters.
+    /// Provides a list of valid shipment creation parameters.
     /// </summary>
     public static readonly IEnumerable<object[]> ShipmentValidCreationParameters =
     [
@@ -33,15 +33,15 @@ public class ShipmentTests
     ];
 
     /// <summary>
-    /// Tests it is possible to create a shipment correctly.
+    /// Verifies it is possible to create a shipment correctly.
     /// </summary>
-    /// <param name="orderId">The order id.</param>
-    /// <param name="carrierId">The carrier id.</param>
-    /// <param name="shippingMethodId">The shipping method id.</param>
+    /// <param name="orderId">The order identifier.</param>
+    /// <param name="carrierId">The carrier identifier.</param>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
     /// <param name="deliveryAddress">The delivery address.</param>
     [Theory]
     [MemberData(nameof(ShipmentValidCreationParameters))]
-    public void CreateShipment_WithValidParameters_CreatesWithoutThrowing(
+    public void Create_WithValidParameters_CreatesWithoutThrowing(
         OrderId orderId,
         CarrierId carrierId,
         ShippingMethodId shippingMethodId,
@@ -66,11 +66,12 @@ public class ShipmentTests
         shipment.DeliveryAddress.Should().Be(deliveryAddress);
         shipment.ShipmentStatus.Should().Be(ShipmentStatus.Pending);
         shipment.ShipmentTrackingEntries.Should().HaveCount(1);
-        shipment.ShipmentTrackingEntries.Should().Contain(s => s.ShipmentStatus == ShipmentStatus.Pending);
+        shipment.ShipmentTrackingEntries
+            .Should().Contain(s => s.ShipmentStatus == ShipmentStatus.Pending);
     }
 
     /// <summary>
-    /// Tests advancing shipment status moves to the next status correctly.
+    /// Verifies advancing shipment status moves to the next status correctly.
     /// </summary>
     [Fact]
     public void AdvanceShipmentStatus_WhenNotDelivered_MovesToNextStatus()
@@ -99,10 +100,11 @@ public class ShipmentTests
     }
 
     /// <summary>
-    /// Tests that trying to advance shipment status after it has been delivered throws an exception.
+    /// Verifies that trying to advance shipment status after it has been delivered
+    /// throws an exception.
     /// </summary>
     [Fact]
-    public void AdvanceShipmentStatus_WhenDelivered_ThrowsOutOfRangeException()
+    public void AdvanceShipmentStatus_WhenDelivered_ThrowsError()
     {
         var shipment = ShipmentUtils.CreateShipment();
 
@@ -126,10 +128,10 @@ public class ShipmentTests
     }
 
     /// <summary>
-    /// Tests that a pending shipment can be canceled.
+    /// Verifies that a pending shipment can be canceled.
     /// </summary>
     [Fact]
-    public void Cancel_WhenShipmentIsPending_UpdatesStatusToCanceled()
+    public void Cancel_WithPendingShipment_UpdatesStatusToCanceled()
     {
         var shipment = ShipmentUtils.CreateShipment();
 
@@ -141,10 +143,11 @@ public class ShipmentTests
     }
 
     /// <summary>
-    /// Tests that attempting to cancel a shipment that is not pending throws an exception.
+    /// Verifies that attempting to cancel a shipment that is not pending
+    /// throws an exception.
     /// </summary>
     [Fact]
-    public void Cancel_WhenShipmentIsNotPending_ThrowsShipmentCannotBeCanceledException()
+    public void Cancel_WithoutPendingShipment_ThrowsError()
     {
         var shipment = ShipmentUtils.CreateShipment();
 

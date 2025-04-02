@@ -12,7 +12,7 @@ namespace IntegrationTests.Common.Seeds.Abstracts;
 /// The type of the seed entity.
 /// </typeparam>
 /// <typeparam name="TEntityId">
-/// The type of the entity id.
+/// The type of the entity identifier.
 /// </typeparam>
 public interface IDataSeed<TEnum, TEntity, TEntityId> : ISeed
     where TEnum : Enum
@@ -27,10 +27,10 @@ public interface IDataSeed<TEnum, TEntity, TEntityId> : ISeed
     TEntity GetEntity(TEnum key);
 
     /// <summary>
-    /// Retrieves a seed entity id by key.
+    /// Retrieves a seed entity identifier by key.
     /// </summary>
     /// <param name="key">The key of the <typeparamref name="TEnum"/>.</param>
-    /// <returns>The seed entity id.</returns>
+    /// <returns>The seed entity identifier.</returns>
     TEntityId GetEntityId(TEnum key);
 
     /// <summary>

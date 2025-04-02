@@ -1,7 +1,7 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Persistence.Repositories;
 using Application.Coupons.Extensions;
+using Application.Common.DTOs.Results;
 
 using Domain.CouponAggregate;
 
@@ -27,7 +27,6 @@ internal sealed partial class CreateCouponCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<CreatedResult> Handle(
         CreateCouponCommand request,
         CancellationToken cancellationToken
@@ -66,6 +65,6 @@ internal sealed partial class CreateCouponCommandHandler
 
         LogCouponCreatedAndSavedSuccessfully(couponGeneratedId);
 
-        return new CreatedResult(couponGeneratedId);
+        return CreatedResult.FromId(couponGeneratedId);
     }
 }

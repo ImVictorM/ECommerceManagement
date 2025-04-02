@@ -33,7 +33,9 @@ public class CouponProductRestriction : CouponRestriction
     /// <exception cref="EmptyArgumentException">
     /// Thrown when the products allowed list is empty.
     /// </exception>
-    public static CouponProductRestriction Create(IEnumerable<CouponProduct> productsAllowed)
+    public static CouponProductRestriction Create(
+        IEnumerable<CouponProduct> productsAllowed
+    )
     {
         if (!productsAllowed.Any())
         {

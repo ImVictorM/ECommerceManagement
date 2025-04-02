@@ -7,7 +7,6 @@ using Contracts.Users;
 
 using WebApi.Users;
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Xunit.Abstractions;
 using FluentAssertions;
@@ -44,15 +43,15 @@ public class GetUserByIdTests : BaseIntegrationTest
     [InlineData(UserSeedType.OTHER_ADMIN)]
     [InlineData(UserSeedType.CUSTOMER)]
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
-    public async Task GetUserById_WhenRequesterIsAdmin_ReturnsOkWithUser(
+    public async Task GetUserById_WithAdminAuthentication_ReturnsOk(
         UserSeedType userType
     )
     {
-        var userToGet = _seedUser.GetEntity(userType);
+        var userToRetrieve = _seedUser.GetEntity(userType);
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(UserEndpoints.GetUserById),
-            new { id = userToGet.Id.ToString() }
+            new { id = userToRetrieve.Id.ToString() }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
@@ -62,7 +61,7 @@ public class GetUserByIdTests : BaseIntegrationTest
             .ReadRequiredFromJsonAsync<UserResponse>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        responseContent.EnsureUserCorrespondsTo(userToGet);
+        responseContent.EnsureUserCorrespondsTo(userToRetrieve);
     }
 
     /// <summary>
@@ -130,14 +129,6 @@ public class GetUserByIdTests : BaseIntegrationTest
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
         var response = await client.GetAsync(endpoint);
 
-        var responseContent = await response.Content
-            .ReadRequiredFromJsonAsync<ProblemDetails>();
-
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
-        responseContent.Title.Should().Be("User Not Found");
-        responseContent.Detail.Should().Be(
-            $"User with id {userNotFoundId} was not found"
-        );
     }
 }

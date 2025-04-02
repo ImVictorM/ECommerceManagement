@@ -12,9 +12,11 @@ public static class GetCustomerOrderByIdQueryUtils
     /// <summary>
     /// Creates a new instance of the <see cref="GetCustomerOrderByIdQuery"/> class.
     /// </summary>
-    /// <param name="userId">The user id.</param>
-    /// <param name="orderId">The order id.</param>
-    /// <returns>A new instance of the <see cref="GetCustomerOrderByIdQuery"/> class.</returns>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="orderId">The order identifier.</param>
+    /// <returns>
+    /// A new instance of the <see cref="GetCustomerOrderByIdQuery"/> class.
+    /// </returns>
     public static GetCustomerOrderByIdQuery CreateQuery(
         string? userId = null,
         string? orderId = null

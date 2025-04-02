@@ -12,6 +12,7 @@ public static class ValidationBehaviorUtils
     /// </summary>
     /// <param name="Message">The response message.</param>
     public record TestResponse(string Message);
+
     /// <summary>
     /// Represents a request.
     /// </summary>

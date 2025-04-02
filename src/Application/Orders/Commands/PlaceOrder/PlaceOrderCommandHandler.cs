@@ -1,7 +1,7 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
 using Application.Common.Security.Identity;
 using Application.Common.Persistence.Repositories;
+using Application.Common.DTOs.Results;
 
 using Domain.CouponAggregate.ValueObjects;
 using Domain.OrderAggregate.Factories;
@@ -43,18 +43,18 @@ internal sealed partial class PlaceOrderCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
     public async Task<CreatedResult> Handle(
         PlaceOrderCommand request,
         CancellationToken cancellationToken
     )
     {
-        LogInitiatingPlaceOrder();
+        LogInitiatingOrderPlacement();
 
         var currentUser = _identityProvider.GetCurrentUserIdentity();
+
         var ownerId = UserId.Create(currentUser.Id);
 
-        LogOrderCustomerId(currentUser.Id);
+        LogOrderOwnerIdentifier(currentUser.Id);
 
         var shippingMethodId = ShippingMethodId.Create(request.ShippingMethodId);
 
@@ -89,6 +89,6 @@ internal sealed partial class PlaceOrderCommandHandler
 
         LogOrderPlacedSuccessfully();
 
-        return new CreatedResult(order.Id.ToString());
+        return CreatedResult.FromId(order.Id.ToString());
     }
 }

@@ -1,5 +1,5 @@
-using Application.Common.DTOs;
 using Application.Common.Persistence;
+using Application.Common.DTOs.Results;
 using Application.Common.Persistence.Repositories;
 
 using Domain.CategoryAggregate;
@@ -26,10 +26,13 @@ internal sealed partial class CreateCategoryCommandHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<CreatedResult> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResult> Handle(
+        CreateCategoryCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        LogCreatingCategory(request.Name);
+        LogInitiatingCategoryCreation(request.Name);
+
         var category = Category.Create(request.Name);
 
         await _categoryRepository.AddAsync(category);
@@ -38,6 +41,6 @@ internal sealed partial class CreateCategoryCommandHandler
 
         LogCategoryCreatedAndSaved();
 
-        return new CreatedResult(category.Id.ToString());
+        return CreatedResult.FromId(category.Id.ToString());
     }
 }

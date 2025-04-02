@@ -9,14 +9,18 @@ internal sealed partial class AdvanceShipmentStatusCommandHandler
     [LoggerMessage(
         EventId = 1,
         Level = LogLevel.Debug,
-        Message = "Initiating to advance the shipment status. Shipment id: {ShipmentId}"
+        Message =
+        "Initiating to advance the shipment status. " +
+        "Shipment identifier: '{ShipmentId}'"
     )]
     private partial void LogInitiatingAdvanceShipmentStatus(string shipmentId);
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Debug,
-        Message = "The shipment status could not be advanced because the shipment was not found."
+        Message =
+        "The shipment status could not be advanced because " +
+        "the shipment was not found."
     )]
     private partial void LogShipmentNotFound();
 
@@ -37,7 +41,9 @@ internal sealed partial class AdvanceShipmentStatusCommandHandler
     [LoggerMessage(
         EventId = 5,
         Level = LogLevel.Debug,
-        Message = "The shipment status was successfully advanced."
+        Message =
+        "The shipment status has been advanced. " +
+        "The operation was completed successfully."
     )]
     private partial void LogShipmentStatusAdvancedSuccessfully();
 }

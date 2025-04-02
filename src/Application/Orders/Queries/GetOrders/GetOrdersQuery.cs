@@ -1,13 +1,15 @@
 using Application.Common.Security.Authorization.Requests;
-using Application.Orders.DTOs;
+using Application.Orders.DTOs.Filters;
+using Application.Orders.DTOs.Results;
 
 using SharedKernel.ValueObjects;
 
 namespace Application.Orders.Queries.GetOrders;
 
 /// <summary>
-/// Represents a query to fetch all orders.
+/// Represents a query to fetch all the orders with filtering support.
 /// </summary>
-/// <param name="Status">The status filter condition.</param>
+/// <param name="Filters">The filtering criteria.</param>
 [Authorize(roleName: nameof(Role.Admin))]
-public record GetOrdersQuery(string? Status = null) : IRequestWithAuthorization<IEnumerable<OrderResult>>;
+public record GetOrdersQuery(OrderFilters Filters)
+    : IRequestWithAuthorization<IReadOnlyList<OrderResult>>;

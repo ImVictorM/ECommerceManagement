@@ -1,5 +1,5 @@
 using Application.Common.Persistence.Repositories;
-using Application.ShippingMethods.DTOs;
+using Application.ShippingMethods.DTOs.Results;
 
 using Microsoft.Extensions.Logging;
 using MediatR;
@@ -7,7 +7,7 @@ using MediatR;
 namespace Application.ShippingMethods.Queries.GetShippingMethods;
 
 internal sealed partial class GetShippingMethodsQueryHandler
-    : IRequestHandler<GetShippingMethodsQuery, IEnumerable<ShippingMethodResult>>
+    : IRequestHandler<GetShippingMethodsQuery, IReadOnlyList<ShippingMethodResult>>
 {
     private readonly IShippingMethodRepository _shippingMethodRepository;
 
@@ -20,17 +20,20 @@ internal sealed partial class GetShippingMethodsQueryHandler
         _logger = logger;
     }
 
-    /// <inheritdoc/>
-    public async Task<IEnumerable<ShippingMethodResult>> Handle(
+    public async Task<IReadOnlyList<ShippingMethodResult>> Handle(
         GetShippingMethodsQuery request,
         CancellationToken cancellationToken
     )
     {
         LogInitiatingShippingMethodsRetrieval();
 
-        var shippingMethods = await _shippingMethodRepository.FindAllAsync(cancellationToken: cancellationToken);
+        var shippingMethods = await _shippingMethodRepository.FindAllAsync(
+            cancellationToken: cancellationToken
+        );
 
-        var result = shippingMethods.Select(s => new ShippingMethodResult(s)).ToList();
+        var result = shippingMethods
+            .Select(ShippingMethodResult.FromShippingMethod)
+            .ToList();
 
         LogShippingMethodsQuantityRetrieved(result.Count);
 

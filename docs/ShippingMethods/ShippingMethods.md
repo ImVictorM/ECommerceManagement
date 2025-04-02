@@ -83,7 +83,7 @@ Example Request:
 
 ## Delete Shipping Method
 
-Deletes an existing shipping method. Admin authentication is required.
+Deletes an existent shipping method. Admin authentication is required.
 
 ```js
 DELETE "/shipping/methods/{{id_shipping_method}}"

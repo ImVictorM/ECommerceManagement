@@ -8,7 +8,8 @@ using MediatR;
 
 namespace Application.Payments.Events;
 
-internal sealed class PaymentAuthorizedCapturePaymentHandler : INotificationHandler<PaymentAuthorized>
+internal sealed class PaymentAuthorizedCapturePaymentHandler
+    : INotificationHandler<PaymentAuthorized>
 {
     private readonly IPaymentGateway _paymentGateway;
     private readonly IPaymentRepository _paymentRepository;
@@ -25,12 +26,14 @@ internal sealed class PaymentAuthorizedCapturePaymentHandler : INotificationHand
         _unitOfWork = unitOfWork;
     }
 
-    /// <inheritdoc/>
-    public async Task Handle(PaymentAuthorized notification, CancellationToken cancellationToken)
+    public async Task Handle(
+        PaymentAuthorized notification,
+        CancellationToken cancellationToken
+    )
     {
         var payment = notification.Payment;
 
-        var captureResponse = await _paymentGateway.CapturePaymentAsync(payment.Id.ToString());
+        var captureResponse = await _paymentGateway.CapturePaymentAsync(payment.Id);
 
         payment.UpdatePaymentStatus(captureResponse.Status);
 
