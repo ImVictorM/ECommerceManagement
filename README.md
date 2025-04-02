@@ -143,7 +143,13 @@ Command to run all tests:
 dotnet test ECommerceManagement.sln
 ```
 
-Command to run the unit tests:
+Command to run all unit tests:
+
+```
+dotnet test .\ECommerceManagement.sln --filter UnitTests
+```
+
+Command to run unit tests per layer:
 
 > Replace `{layer_name}` with the specific layer you want to test, such as `Domain`, `Application`, or `SharedKernel`.
 
