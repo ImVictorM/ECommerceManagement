@@ -1,61 +1,62 @@
+using Domain.ProductReviewAggregate;
 using Domain.UserAggregate.ValueObjects;
-using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
 
-using Contracts.ProductFeedback;
+using Contracts.ProductReviews;
+
+using WebApi.ProductReviews;
 
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.Common.Seeds.ProductFeedback;
+using IntegrationTests.Common.Seeds.ProductReviews;
 using IntegrationTests.TestUtils.Extensions.Http;
-using IntegrationTests.TestUtils.Extensions.ProductFeedback;
-
-using WebApi.ProductFeedback;
+using IntegrationTests.TestUtils.Extensions.ProductReviews;
 
 using Microsoft.AspNetCore.Routing;
 using Xunit.Abstractions;
 using FluentAssertions;
 using System.Net;
 
-namespace IntegrationTests.ProductFeedback;
+namespace IntegrationTests.ProductReviews;
 
 /// <summary>
-/// Integration tests for the get customer product feedback feature.
+/// Integration tests for the get customer product reviews feature.
 /// </summary>
-public class GetCustomerProductFeedbackTests : BaseIntegrationTest
+public class GetCustomerProductReviewsTests : BaseIntegrationTest
 {
     private readonly IUserSeed _seedUser;
-    private readonly IProductFeedbackSeed _seedProductFeedback;
+    private readonly IProductReviewSeed _seedProductReview;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetCustomerProductFeedbackTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="GetCustomerProductReviewsTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public GetCustomerProductFeedbackTests(
+    public GetCustomerProductReviewsTests(
         IntegrationTestWebAppFactory factory,
         ITestOutputHelper output
     ) : base(factory, output)
     {
         _seedUser = SeedManager.GetSeed<IUserSeed>();
-        _seedProductFeedback = SeedManager.GetSeed<IProductFeedbackSeed>();
+        _seedProductReview = SeedManager.GetSeed<IProductReviewSeed>();
     }
 
     /// <summary>
-    /// Verifies it is not possible to retrieve customer product feedback without
+    /// Verifies it is not possible to retrieve reviews without
     /// authentication.
     /// </summary>
     [Fact]
-    public async Task GetCustomerProductFeedback_WithoutAuthentication_ReturnsUnauthorized()
+    public async Task GetCustomerProductReviews_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var existingUserId = _seedUser
+        var existentUserId = _seedUser
             .GetEntityId(UserSeedType.CUSTOMER)
             .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(CustomerProductFeedbackEndpoints.GetCustomerProductFeedback),
+            nameof(CustomerProductReviewEndpoints.GetCustomerProductReviews),
             new
             {
-                userId = existingUserId
+                userId = existentUserId
             }
         );
 
@@ -65,11 +66,11 @@ public class GetCustomerProductFeedbackTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies it is not possible to retrieve customer product feedback when the
-    /// authenticated user is not feedback owner or admin.
+    /// Verifies it is not possible to retrieve reviews when the
+    /// authenticated user is not the reviews' owner or admin.
     /// </summary>
     [Fact]
-    public async Task GetCustomerProductFeedback_WithoutSelfOrAdminAuthentication_ReturnsForbidden()
+    public async Task GetCustomerProductReviews_WithoutSelfOrAdminAuthentication_ReturnsForbidden()
     {
         var currentCustomerType = UserSeedType.CUSTOMER;
         var otherCustomerType = UserSeedType.CUSTOMER_WITH_ADDRESS;
@@ -78,7 +79,7 @@ public class GetCustomerProductFeedbackTests : BaseIntegrationTest
             .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(CustomerProductFeedbackEndpoints.GetCustomerProductFeedback),
+            nameof(CustomerProductReviewEndpoints.GetCustomerProductReviews),
             new
             {
                 userId = otherCustomerId
@@ -92,30 +93,30 @@ public class GetCustomerProductFeedbackTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies it is possible to retrieve customer product feedback when the
-    /// authenticated user is feedback owner or admin.
+    /// Verifies it is possible to retrieve reviews when the authenticated user
+    /// is the reviews' owner or admin.
     /// </summary>
     /// <param name="currentUserType">The current authenticate user type.</param>
     [Theory]
     [InlineData(UserSeedType.CUSTOMER)]
     [InlineData(UserSeedType.ADMIN)]
-    public async Task GetCustomerProductFeedback_WithSelfOrAdminAuthentication_ReturnsOk(
+    public async Task GetCustomerProductReviews_WithSelfOrAdminAuthentication_ReturnsOk(
         UserSeedType currentUserType
     )
     {
-        var userToRetrieveFeedbackType = UserSeedType.CUSTOMER;
-        var userToRetrieveFeedbackId = _seedUser
-            .GetEntityId(userToRetrieveFeedbackType);
+        var userToRetrieveReviewType = UserSeedType.CUSTOMER;
+        var userToRetrieveReviewId = _seedUser
+            .GetEntityId(userToRetrieveReviewType);
 
-        var expectedProductFeedbackResponse = GetUserProductFeedbackActiveItems(
-            userToRetrieveFeedbackId
+        var expectedReviews = GetActiveCustomerReviews(
+            userToRetrieveReviewId
         );
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(CustomerProductFeedbackEndpoints.GetCustomerProductFeedback),
+            nameof(CustomerProductReviewEndpoints.GetCustomerProductReviews),
             new
             {
-                userId = userToRetrieveFeedbackId.ToString()
+                userId = userToRetrieveReviewId.ToString()
             }
         );
 
@@ -123,16 +124,16 @@ public class GetCustomerProductFeedbackTests : BaseIntegrationTest
         var response = await client.GetAsync(endpoint);
 
         var responseContent = await response.Content
-            .ReadRequiredFromJsonAsync<IEnumerable<ProductFeedbackResponse>>();
+            .ReadRequiredFromJsonAsync<IEnumerable<ProductReviewResponse>>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        responseContent.EnsureCorrespondsTo(expectedProductFeedbackResponse);
+        responseContent.EnsureCorrespondsTo(expectedReviews);
     }
 
-    private IEnumerable<DomainProductFeedback> GetUserProductFeedbackActiveItems(
+    private IEnumerable<ProductReview> GetActiveCustomerReviews(
         UserId userId
     )
     {
-        return _seedProductFeedback.ListAll(f => f.UserId == userId && f.IsActive);
+        return _seedProductReview.ListAll(r => r.UserId == userId && r.IsActive);
     }
 }

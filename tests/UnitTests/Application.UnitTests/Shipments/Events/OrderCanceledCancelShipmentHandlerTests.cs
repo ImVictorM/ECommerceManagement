@@ -42,7 +42,7 @@ public class OrderCanceledCancelShipmentHandlerTests
     /// Verifies the handler cancels the related shipment.
     /// </summary>
     [Fact]
-    public async Task HandleOrderCanceled_WithExistingShipment_CancelsIt()
+    public async Task HandleOrderCanceled_WithExistentShipment_CancelsIt()
     {
         var orderId = OrderId.Create(1);
         var order = await OrderUtils.CreateOrderAsync(id: orderId);

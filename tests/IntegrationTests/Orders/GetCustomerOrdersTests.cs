@@ -64,7 +64,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Ensures that a customer cannot retrieve another customer's orders,
+    /// Verifies that a customer cannot retrieve another customer's orders,
     /// returning Forbidden.
     /// </summary>
     [Fact]
@@ -140,7 +140,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
         var status = BaseEnumeration.FromDisplayName<OrderStatus>(statusName);
         var customerWithOrdersType = UserSeedType.CUSTOMER;
         var customerWithOrders = _seedUser.GetEntity(customerWithOrdersType);
-        var expectedFilteredOrders = GetUserOrderByStatus(
+        var expectedFilteredOrders = GetUserOrdersByStatus(
             customerWithOrders.Id,
             status
         );
@@ -170,7 +170,7 @@ public class GetCustomerOrdersTests : BaseIntegrationTest
             .ListAll(o => o.OwnerId == ownerId);
     }
 
-    private IReadOnlyList<Order> GetUserOrderByStatus(
+    private IReadOnlyList<Order> GetUserOrdersByStatus(
         UserId ownerId,
         OrderStatus status
     )

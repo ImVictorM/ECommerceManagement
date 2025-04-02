@@ -13,7 +13,8 @@ public class TestHttpClientFactory<TStartup> : IHttpClientFactory
     private readonly WebApplicationFactory<TStartup> _appFactory;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="TestHttpClientFactory{TStartup}"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="TestHttpClientFactory{TStartup}"/> class.
     /// </summary>
     /// <param name="appFactory">The app factory used to create the client.</param>
     public TestHttpClientFactory(WebApplicationFactory<TStartup> appFactory)

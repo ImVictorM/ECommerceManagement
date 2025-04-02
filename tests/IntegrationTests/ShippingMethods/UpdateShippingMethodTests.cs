@@ -23,7 +23,8 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
 {
     private readonly IShippingMethodSeed _seedShippingMethod;
     /// <summary>
-    /// Initiates a new instance of the <see cref="CreateShippingMethodTests"/> class.
+    /// Initiates a new instance of the <see cref="CreateShippingMethodTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -42,14 +43,14 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateShippingMethod_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var idExistingShippingMethod = _seedShippingMethod
+        var idExistentShippingMethod = _seedShippingMethod
             .GetEntityId(ShippingMethodSeedType.EXPRESS)
             .ToString();
 
         var request = UpdateShippingMethodRequestUtils.CreateRequest();
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.UpdateShippingMethod),
-            new { id = idExistingShippingMethod }
+            new { id = idExistentShippingMethod }
         );
 
         var response = await RequestService.CreateClient().PutAsJsonAsync(
@@ -67,14 +68,14 @@ public class UpdateShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateShippingMethod_WithoutAdminPermission_ReturnsForbidden()
     {
-        var idExistingShippingMethod = _seedShippingMethod
+        var idExistentShippingMethod = _seedShippingMethod
             .GetEntityId(ShippingMethodSeedType.EXPRESS)
             .ToString();
 
         var request = UpdateShippingMethodRequestUtils.CreateRequest();
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.UpdateShippingMethod),
-            new { id = idExistingShippingMethod }
+            new { id = idExistentShippingMethod }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);

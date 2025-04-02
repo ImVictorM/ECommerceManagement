@@ -60,7 +60,9 @@ public class DeleteSaleTests : BaseIntegrationTest
     /// <summary>
     /// Verifies it is not possible to delete a sale without the admin role.
     /// </summary>
-    /// <param name="customerType">The customer without the admin role type.</param>
+    /// <param name="customerType">
+    /// The customer without the admin role type.
+    /// </param>
     [Theory]
     [InlineData(UserSeedType.CUSTOMER)]
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]

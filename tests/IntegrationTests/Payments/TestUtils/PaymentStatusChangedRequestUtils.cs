@@ -14,11 +14,14 @@ public static class PaymentStatusChangedRequestUtils
     private static readonly Faker _faker = new();
 
     /// <summary>
-    /// Creates a new instance of the <see cref="PaymentStatusChangedRequest"/> class.
+    /// Creates a new instance of the <see cref="PaymentStatusChangedRequest"/>
+    /// class.
     /// </summary>
-    /// <param name="paymentId">The payment id.</param>
+    /// <param name="paymentId">The payment identifier.</param>
     /// <param name="paymentStatus">The payment status.</param>
-    /// <returns>A new instance of the <see cref="PaymentStatusChangedRequest"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="PaymentStatusChangedRequest"/> class.
+    /// </returns>
     public static PaymentStatusChangedRequest CreateRequest(
         string? paymentId = null,
         string? paymentStatus = null

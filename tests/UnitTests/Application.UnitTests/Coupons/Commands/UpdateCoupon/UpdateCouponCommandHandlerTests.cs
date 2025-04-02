@@ -45,7 +45,7 @@ public class UpdateCouponCommandHandlerTests
     /// Verifies the coupon is updated when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateCouponCommand_WithExistingCoupon_UpdatesIt()
+    public async Task HandleUpdateCouponCommand_WithExistentCoupon_UpdatesIt()
     {
         var couponId = CouponId.Create(1);
         var coupon = CouponUtils.CreateCoupon(id: couponId);

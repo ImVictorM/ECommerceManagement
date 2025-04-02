@@ -5,17 +5,22 @@ namespace IntegrationTests.Common.Seeds.Abstracts;
 /// <summary>
 /// Provides access to authentication credentials for integration tests.
 /// </summary>
-/// <typeparam name="TEnum">The type of the enum used to identify seed data.</typeparam>
+/// <typeparam name="TEnum">
+/// The type of the enum used to identify seed data.
+/// </typeparam>
 public abstract class CredentialsProvider<TEnum> : ICredentialsProvider<TEnum>
     where TEnum : Enum
 {
     private readonly Dictionary<TEnum, AuthenticationCredentials> _credentials;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="CredentialsProvider{TEnum}"/> class.
+    /// Initiates a new instance of the <see cref="CredentialsProvider{TEnum}"/>
+    /// class.
     /// </summary>
-    /// <param name="credentials">The credentials.</param>
-    protected CredentialsProvider(Dictionary<TEnum, AuthenticationCredentials> credentials)
+    /// <param name="credentials">The credentials.</param>W
+    protected CredentialsProvider(
+        Dictionary<TEnum, AuthenticationCredentials> credentials
+    )
     {
         _credentials = credentials;
     }
@@ -28,7 +33,9 @@ public abstract class CredentialsProvider<TEnum> : ICredentialsProvider<TEnum>
             return result;
         }
 
-        throw new InvalidOperationException($"Credentials with type {nameof(seedType)} does not exist");
+        throw new InvalidOperationException(
+            $"Credentials with type {nameof(seedType)} does not exist"
+        );
     }
 
     /// <inheritdoc/>

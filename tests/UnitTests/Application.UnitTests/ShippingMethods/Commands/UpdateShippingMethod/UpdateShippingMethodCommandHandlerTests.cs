@@ -44,7 +44,7 @@ public class UpdateShippingMethodCommandHandlerTests
     /// Verifies the shipping method is updated when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleUpdateShippingMethodCommand_WithExistingShippingMethod_UpdatesIt()
+    public async Task HandleUpdateShippingMethodCommand_WithExistentShippingMethod_UpdatesIt()
     {
         var newName = "SuperFastUltraDeliveryMethod";
         var newPrice = 20m;

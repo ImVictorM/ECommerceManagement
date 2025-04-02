@@ -1,13 +1,13 @@
 using Domain.ProductAggregate;
 using Domain.UserAggregate.ValueObjects;
 
+using WebApi.ProductReviews;
+
 using IntegrationTests.Common;
 using IntegrationTests.Common.Seeds.Orders;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Users;
-using IntegrationTests.ProductFeedback.TestUtils;
-
-using WebApi.ProductFeedback;
+using IntegrationTests.ProductReviews.TestUtils;
 
 using Microsoft.AspNetCore.Routing;
 using System.Net.Http.Json;
@@ -15,23 +15,24 @@ using Xunit.Abstractions;
 using FluentAssertions;
 using System.Net;
 
-namespace IntegrationTests.ProductFeedback;
+namespace IntegrationTests.ProductReviews;
 
 /// <summary>
-/// Integration tests for the leave product feedback feature.
+/// Integration tests for the leave product review feature.
 /// </summary>
-public class LeaveProductFeedbackTests : BaseIntegrationTest
+public class LeaveProductReviewTests : BaseIntegrationTest
 {
     private readonly IProductSeed _seedProduct;
     private readonly IOrderSeed _seedOrder;
     private readonly IUserSeed _seedUser;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="LeaveProductFeedbackTests"/> class.
+    /// Initiates a new instance of the <see cref="LeaveProductReviewTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public LeaveProductFeedbackTests(
+    public LeaveProductReviewTests(
         IntegrationTestWebAppFactory factory,
         ITestOutputHelper output
     ) : base(factory, output)
@@ -42,20 +43,20 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies it is not possible to leave feedback without authentication.
+    /// Verifies it is not possible to leave a review without authentication.
     /// </summary>
     [Fact]
-    public async Task LeaveProductFeedback_WithoutAuthorization_ReturnsUnauthorized()
+    public async Task LeaveProductReview_WithoutAuthorization_ReturnsUnauthorized()
     {
-        var idExistingProduct = _seedProduct
+        var idExistentProduct = _seedProduct
             .GetEntityId(ProductSeedType.PENCIL)
             .ToString();
 
-        var request = LeaveProductFeedbackRequestUtils.CreateRequest();
+        var request = LeaveProductReviewRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
-            new { productId = idExistingProduct }
+            nameof(ProductReviewEndpoints.LeaveProductReview),
+            new { productId = idExistentProduct }
         );
 
         var response = await RequestService.CreateClient().PostAsJsonAsync(
@@ -67,20 +68,20 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies it is not possible to leave feedback without the customer role.
+    /// Verifies it is not possible to leave a review without the customer role.
     /// </summary>
     [Fact]
-    public async Task LeaveProductFeedback_WithoutCustomerRole_ReturnsForbidden()
+    public async Task LeaveProductReview_WithoutCustomerRole_ReturnsForbidden()
     {
-        var idExistingProduct = _seedProduct
+        var idExistentProduct = _seedProduct
             .GetEntityId(ProductSeedType.PENCIL)
             .ToString();
 
-        var request = LeaveProductFeedbackRequestUtils.CreateRequest();
+        var request = LeaveProductReviewRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
-            new { productId = idExistingProduct }
+            nameof(ProductReviewEndpoints.LeaveProductReview),
+            new { productId = idExistentProduct }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
@@ -90,49 +91,51 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies it is not possible to leave feedback without having purchased the product.
+    /// Verifies it is not possible to leave a review without having purchased
+    /// the product.
     /// </summary>
     [Fact]
-    public async Task LeaveProductFeedback_WithoutHavingPurchasedTheProduct_ReturnsForbidden()
+    public async Task LeaveProductReview_WithoutHavingPurchasedTheProduct_ReturnsForbidden()
     {
-        var userLeavingFeedbackType = UserSeedType.CUSTOMER;
-        var userLeavingFeedback = _seedUser.GetEntity(userLeavingFeedbackType);
+        var userLeavingReviewType = UserSeedType.CUSTOMER;
+        var userLeavingReview = _seedUser.GetEntity(userLeavingReviewType);
 
-        var productNotAllowedToLeaveFeedback = GetFirstProductNotPurchased(
-            userLeavingFeedback.Id
+        var productNotAllowedToLeaveReview = GetFirstProductNotPurchased(
+            userLeavingReview.Id
         );
 
-        var request = LeaveProductFeedbackRequestUtils.CreateRequest();
+        var request = LeaveProductReviewRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
-            new { productId = productNotAllowedToLeaveFeedback.Id }
+            nameof(ProductReviewEndpoints.LeaveProductReview),
+            new { productId = productNotAllowedToLeaveReview.Id }
         );
 
-        var client = await RequestService.LoginAsAsync(userLeavingFeedbackType);
+        var client = await RequestService.LoginAsAsync(userLeavingReviewType);
         var response = await client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     /// <summary>
-    /// Verifies it is possible to leave feedback when the customer has purchased the product.
+    /// Verifies it is possible to leave a review when the customer has purchased
+    /// the product.
     /// </summary>
     [Fact]
-    public async Task LeaveProductFeedback_WhenTheCustomerPurchasedTheProduct_ReturnsCreated()
+    public async Task LeaveProductReview_WhenTheCustomerPurchasedTheProduct_ReturnsCreated()
     {
-        var userLeavingFeedbackType = UserSeedType.CUSTOMER;
-        var userLeavingFeedback = _seedUser.GetEntity(userLeavingFeedbackType);
+        var userLeavingReviewType = UserSeedType.CUSTOMER;
+        var userLeavingReview = _seedUser.GetEntity(userLeavingReviewType);
 
-        var productToLeaveFeedback = GetFirstProductPurchased(userLeavingFeedback.Id);
-        var request = LeaveProductFeedbackRequestUtils.CreateRequest();
+        var productToLeaveReview = GetFirstProductPurchased(userLeavingReview.Id);
+        var request = LeaveProductReviewRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductFeedbackEndpoints.LeaveProductFeedback),
-            new { productId = productToLeaveFeedback.Id }
+            nameof(ProductReviewEndpoints.LeaveProductReview),
+            new { productId = productToLeaveReview.Id }
         );
 
-        var client = await RequestService.LoginAsAsync(userLeavingFeedbackType);
+        var client = await RequestService.LoginAsAsync(userLeavingReviewType);
         var response = await client.PostAsJsonAsync(endpoint, request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -143,7 +146,9 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
         var customerOrders = _seedOrder.ListAll(o => o.OwnerId == customerId);
 
         var productsNotPurchased = _seedProduct.ListAll(p =>
-            customerOrders.Any(o => !o.Products.Select(p => p.ProductId).Contains(p.Id))
+            customerOrders.Any(o =>
+                !o.Products.Select(p => p.ProductId).Contains(p.Id)
+            )
         );
 
         return productsNotPurchased[0];
@@ -154,7 +159,9 @@ public class LeaveProductFeedbackTests : BaseIntegrationTest
         var customerOrders = _seedOrder.ListAll(o => o.OwnerId == customerId);
 
         var productsPurchased = _seedProduct.ListAll(p =>
-            customerOrders.Any(o => o.Products.Select(p => p.ProductId).Contains(p.Id))
+            customerOrders.Any(o =>
+                o.Products.Select(p => p.ProductId).Contains(p.Id)
+            )
         );
 
         return productsPurchased[0];

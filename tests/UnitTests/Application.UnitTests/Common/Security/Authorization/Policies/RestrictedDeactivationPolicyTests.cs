@@ -146,10 +146,10 @@ public class RestrictedDeactivationPolicyTests
     public async Task IsAuthorizedAsync_WhenUserToBeDeactivatedDoesNotExist_ReturnsFalse()
     {
         var currentAdminUserId = UserId.Create("1");
-        var nonExistingUserId = UserId.Create("9999");
+        var nonExistentUserId = UserId.Create("9999");
 
         var request = new TestRequestWithoutAuthUserRelated(
-            nonExistingUserId.ToString()
+            nonExistentUserId.ToString()
         );
 
         var currentUser = new IdentityUser(
@@ -159,7 +159,7 @@ public class RestrictedDeactivationPolicyTests
 
         _mockUserRepository
             .Setup(r => r.FindByIdAsync(
-                nonExistingUserId,
+                nonExistentUserId,
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync((User?)null);

@@ -11,13 +11,14 @@ using WebApi.Products;
 using FluentAssertions;
 using Xunit.Abstractions;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace IntegrationTests.Products;
 
 /// <summary>
-/// Integration tests for the get all products feature.
+/// Integration tests for the get products feature.
 /// </summary>
-public class GetAllProductsTests : BaseIntegrationTest
+public class GetProductsTests : BaseIntegrationTest
 {
     private readonly IProductSeed _seedProduct;
     private readonly ICategorySeed _seedCategory;
@@ -25,11 +26,11 @@ public class GetAllProductsTests : BaseIntegrationTest
     private readonly HttpClient _client;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetAllProductsTests"/> class.
+    /// Initiates a new instance of the <see cref="GetProductsTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public GetAllProductsTests(
+    public GetProductsTests(
         IntegrationTestWebAppFactory factory,
         ITestOutputHelper output
     ) : base(factory, output)
@@ -38,7 +39,7 @@ public class GetAllProductsTests : BaseIntegrationTest
         _seedCategory = SeedManager.GetSeed<ICategorySeed>();
 
         _endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductEndpoints.GetAllProducts)
+            nameof(ProductEndpoints.GetProducts)
         );
 
         _client = RequestService.CreateClient();
@@ -49,7 +50,7 @@ public class GetAllProductsTests : BaseIntegrationTest
     /// by default.
     /// </summary>
     [Fact]
-    public async Task GetAllProducts_WithValidRequest_ReturnsOk()
+    public async Task GetProducts_WithValidRequest_ReturnsOk()
     {
         var activeProduct = _seedProduct.ListAll(product => product.IsActive);
 
@@ -65,7 +66,7 @@ public class GetAllProductsTests : BaseIntegrationTest
     /// Verifies an OK response is returned containing the paginated products subset.
     /// </summary>
     [Fact]
-    public async Task GetAllProducts_WithPagination_ReturnsOk()
+    public async Task GetProducts_WithPagination_ReturnsOk()
     {
         var page = 1;
         var pageSize = 2;
@@ -77,7 +78,7 @@ public class GetAllProductsTests : BaseIntegrationTest
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         responseContent.Count().Should().Be(pageSize);
     }
 
@@ -86,22 +87,24 @@ public class GetAllProductsTests : BaseIntegrationTest
     /// category.
     /// </summary>
     [Fact]
-    public async Task GetAllProducts_WithCategoryFilter_ReturnsOkContainingCorrectProducts()
+    public async Task GetProducts_WithCategoryFilter_ReturnsOk()
     {
-        var fashionCategory = _seedCategory.GetEntity(CategorySeedType.FASHION);
+        var fashionCategoryId = _seedCategory
+            .GetEntityId(CategorySeedType.FASHION)
+            .ToString();
 
         var response = await _client.GetAsync(
-            $"{_endpoint}?category={fashionCategory.Id}"
+            $"{_endpoint}?category={fashionCategoryId}"
         );
 
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<IEnumerable<ProductResponse>>();
 
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         foreach (var product in responseContent)
         {
-            product.Categories.Should().Contain(fashionCategory.Name);
+            product.CategoryIds.Should().Contain(fashionCategoryId);
         }
     }
 }

@@ -91,8 +91,8 @@ public class UpdateUserTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when a customer tries to update their email to one that already
-    /// exists a conflict response is returned.
+    /// Verifies a conflict response is returned when a customer tries to update
+    /// their email with an already existing email.
     /// </summary>
     [Fact]
     public async Task UpdateUser_WhenCustomerTriesToUpdateEmailWithExistingOne_ReturnsConflict()

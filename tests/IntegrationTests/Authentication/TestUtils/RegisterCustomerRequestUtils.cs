@@ -9,7 +9,7 @@ using Bogus;
 namespace IntegrationTests.Authentication.TestUtils;
 
 /// <summary>
-/// Utilities related to the the <see cref="RegisterCustomerRequest"/> class.
+/// Utilities for the <see cref="RegisterCustomerRequest"/> class.
 /// </summary>
 public static class RegisterCustomerRequestUtils
 {

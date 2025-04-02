@@ -47,7 +47,7 @@ public class AdvanceShipmentStatusCommandHandlerTests
     /// Verifies the shipment status advances when the shipment exists and is not pending.
     /// </summary>
     [Fact]
-    public async Task HandleAdvanceShipmentStatusCommand_WithExistingPreparingShipment_AdvancesStatusToTheNextState()
+    public async Task HandleAdvanceShipmentStatusCommand_WithExistentPreparingShipment_AdvancesStatusToTheNextState()
     {
         var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
         var shipment = ShipmentUtils.CreateShipment(
@@ -73,7 +73,7 @@ public class AdvanceShipmentStatusCommandHandlerTests
     /// Verifies an error is thrown when trying to advance a pending shipment manually.
     /// </summary>
     [Fact]
-    public async Task HandleAdvanceShipmentStatusCommand_WithExistingPendingShipment_ThrowsError()
+    public async Task HandleAdvanceShipmentStatusCommand_WithExistentPendingShipment_ThrowsError()
     {
         var command = AdvanceShipmentStatusCommandUtils.CreateCommand();
         var shipment = ShipmentUtils.CreateShipment(id: ShipmentId.Create(1));

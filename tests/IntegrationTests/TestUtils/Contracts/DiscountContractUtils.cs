@@ -20,7 +20,9 @@ public static class DiscountContractUtils
     /// <param name="description">The discount description.</param>
     /// <param name="startingDate">The discount starting date.</param>
     /// <param name="endingDate">The discount ending date.</param>
-    /// <returns>A new instance of the <see cref="DiscountContract"/> class.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="DiscountContract"/> class.
+    /// </returns>
     public static DiscountContract CreateDiscount(
         int? percentage = null,
         string description = "Default discount description",

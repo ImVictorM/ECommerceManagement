@@ -92,14 +92,14 @@ public class UpdateUserCommandHandlerTests
     }
 
     /// <summary>
-    /// Verifies that when trying to update a user's email to an already existing one,
+    /// Verifies that when trying to update the user's email with an already existing one,
     /// the handler throws a <see cref="EmailConflictException"/>.
     /// </summary>
     [Fact]
     public async Task HandleUpdateUserCommand_WithConflictingEmail_ThrowsException()
     {
         var userToBeUpdatedNewEmail = EmailUtils.CreateEmail(
-            "existing_email@email.com"
+            "existent_email@email.com"
         );
 
         var userToBeUpdated = UserUtils.CreateCustomer();

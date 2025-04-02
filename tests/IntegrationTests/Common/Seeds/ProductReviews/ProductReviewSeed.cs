@@ -1,5 +1,5 @@
-using DomainProductFeedback = Domain.ProductFeedbackAggregate.ProductFeedback;
-using Domain.ProductFeedbackAggregate.ValueObjects;
+using Domain.ProductReviewAggregate.ValueObjects;
+using Domain.ProductReviewAggregate;
 using Domain.UnitTests.TestUtils;
 
 using Infrastructure.Common.Persistence;
@@ -8,50 +8,51 @@ using IntegrationTests.Common.Seeds.Abstracts;
 using IntegrationTests.Common.Seeds.Products;
 using IntegrationTests.Common.Seeds.Users;
 
-namespace IntegrationTests.Common.Seeds.ProductFeedback;
+namespace IntegrationTests.Common.Seeds.ProductReviews;
 
 /// <summary>
-/// Provides seed data for product feedback in the database.
+/// Provides seed data for product reviews in the database.
 /// </summary>
-public sealed class ProductFeedbackSeed :
-    DataSeed<ProductFeedbackSeedType, DomainProductFeedback, ProductFeedbackId>,
-    IProductFeedbackSeed
+public sealed class ProductReviewSeed :
+    DataSeed<ProductReviewSeedType, ProductReview, ProductReviewId>,
+    IProductReviewSeed
 {
     /// <inheritdoc/>
     public override int Order { get; }
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="ProductFeedbackSeed"/> class.
+    /// Initiates a new instance of the <see cref="ProductReviewSeed"/> class.
     /// </summary>
     /// <param name="productSeed">The product seed.</param>
     /// <param name="userSeed">The user seed.</param>
-    public ProductFeedbackSeed(IProductSeed productSeed, IUserSeed userSeed)
+    public ProductReviewSeed(IProductSeed productSeed, IUserSeed userSeed)
         : base(CreateSeedData(productSeed, userSeed))
     {
         Order = productSeed.Order + userSeed.Order + 20;
     }
 
     private static Dictionary<
-        ProductFeedbackSeedType,
-        DomainProductFeedback
+        ProductReviewSeedType,
+        ProductReview
     > CreateSeedData(IProductSeed productSeed, IUserSeed userSeed)
     {
         return new()
         {
-            [ProductFeedbackSeedType.COMPUTER_ON_SALE_FEEDBACK_1] = ProductFeedbackUtils
-                .CreateProductFeedback(
-                    id: ProductFeedbackId.Create(-1),
+            [ProductReviewSeedType.COMPUTER_ON_SALE_REVIEW_1] = ProductReviewUtils
+                .CreateProductReview(
+                    id: ProductReviewId.Create(-1),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
-                    productId: productSeed.GetEntityId(ProductSeedType.COMPUTER_ON_SALE),
+                    productId: productSeed
+                        .GetEntityId(ProductSeedType.COMPUTER_ON_SALE),
                     title: "Great value but has some flaws",
                     content: "The computer is fast and works well for the price," +
                     " Although the fan can get quite loud under heavy use.",
                     starRating: StarRating.Create(4)
                 ),
 
-            [ProductFeedbackSeedType.PENCIL_FEEDBACK_1] = ProductFeedbackUtils
-                .CreateProductFeedback(
-                    id: ProductFeedbackId.Create(-2),
+            [ProductReviewSeedType.PENCIL_REVIEW_1] = ProductReviewUtils
+                .CreateProductReview(
+                    id: ProductReviewId.Create(-2),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER_WITH_ADDRESS),
                     productId: productSeed.GetEntityId(ProductSeedType.PENCIL),
                     title: "Decent pencils, but not the best",
@@ -61,9 +62,9 @@ public sealed class ProductFeedbackSeed :
                     starRating: StarRating.Create(3)
                 ),
 
-            [ProductFeedbackSeedType.PENCIL_FEEDBACK_2] = ProductFeedbackUtils
-                .CreateProductFeedback(
-                    id: ProductFeedbackId.Create(-3),
+            [ProductReviewSeedType.PENCIL_REVIEW_2] = ProductReviewUtils
+                .CreateProductReview(
+                    id: ProductReviewId.Create(-3),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
                     productId: productSeed.GetEntityId(ProductSeedType.PENCIL),
                     title: "Perfect for everyday use",
@@ -73,9 +74,9 @@ public sealed class ProductFeedbackSeed :
                     starRating: StarRating.Create(5)
                 ),
 
-            [ProductFeedbackSeedType.TSHIRT_FEEDBACK_1] = ProductFeedbackUtils
-                .CreateProductFeedback(
-                    id: ProductFeedbackId.Create(-4),
+            [ProductReviewSeedType.TSHIRT_REVIEW_1] = ProductReviewUtils
+                .CreateProductReview(
+                    id: ProductReviewId.Create(-4),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER_WITH_ADDRESS),
                     productId: productSeed.GetEntityId(ProductSeedType.TSHIRT),
                     title: "Comfortable but shrinks after washing",
@@ -85,9 +86,9 @@ public sealed class ProductFeedbackSeed :
                     starRating: StarRating.Create(2)
                 ),
 
-            [ProductFeedbackSeedType.TSHIRT_FEEDBACK_2_INACTIVE] = ProductFeedbackUtils
-                .CreateProductFeedback(
-                    id: ProductFeedbackId.Create(-5),
+            [ProductReviewSeedType.TSHIRT_REVIEW_2_INACTIVE] = ProductReviewUtils
+                .CreateProductReview(
+                    id: ProductReviewId.Create(-5),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
                     productId: productSeed.GetEntityId(ProductSeedType.TSHIRT),
                     title: "AAAAAAAAA",
@@ -95,20 +96,20 @@ public sealed class ProductFeedbackSeed :
                     starRating: StarRating.Create(1)
                 ),
 
-            [ProductFeedbackSeedType.CHAIN_BRACELET_FEEDBACK_1] = ProductFeedbackUtils
-                .CreateProductFeedback(
-                    id: ProductFeedbackId.Create(-6),
+            [ProductReviewSeedType.CHAIN_BRACELET_REVIEW_1] = ProductReviewUtils
+                .CreateProductReview(
+                    id: ProductReviewId.Create(-6),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
                     productId: productSeed.GetEntityId(ProductSeedType.CHAIN_BRACELET),
                     title: "Beautiful but fragile",
-                    content: "The bracelet looks stunning, but the chain broke after just" +
-                    " a week of wear. " +
+                    content: "The bracelet looks stunning, but the chain broke " +
+                    "after just a week of wear. " +
                     "It's not durable enough for daily use.",
                     starRating: StarRating.Create(2)
                 ),
-            [ProductFeedbackSeedType.JACKET_INACTIVE_FEEDBACK_1_INACTIVE] = ProductFeedbackUtils
-                .CreateProductFeedback(
-                    id: ProductFeedbackId.Create(-7),
+            [ProductReviewSeedType.JACKET_INACTIVE_REVIEW_1_INACTIVE] = ProductReviewUtils
+                .CreateProductReview(
+                    id: ProductReviewId.Create(-7),
                     userId: userSeed.GetEntityId(UserSeedType.CUSTOMER),
                     productId: productSeed.GetEntityId(ProductSeedType.CHAIN_BRACELET),
                     title: "Came in the wrong color",
@@ -121,6 +122,6 @@ public sealed class ProductFeedbackSeed :
     /// <inheritdoc/>
     public override async Task SeedAsync(IECommerceDbContext context)
     {
-        await context.ProductFeedback.AddRangeAsync(ListAll());
+        await context.ProductReviews.AddRangeAsync(ListAll());
     }
 }

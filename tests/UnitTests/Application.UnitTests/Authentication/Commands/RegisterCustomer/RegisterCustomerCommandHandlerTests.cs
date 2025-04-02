@@ -130,14 +130,14 @@ public class RegisterCustomerCommandHandlerTests
     public async Task HandleRegisterCustomerCommand_WithEmailAlreadyInUse_ThrowsError()
     {
         var email = EmailUtils.CreateEmail();
-        var existingUserWithSameEmail = UserUtils.CreateCustomer(email: email);
+        var existentUserWithSameEmail = UserUtils.CreateCustomer(email: email);
 
         _mockUserRepository
             .Setup(r => r.FindFirstSatisfyingAsync(
                 It.IsAny<QueryUserByEmailSpecification>(),
                 It.IsAny<CancellationToken>()
             ))
-            .ReturnsAsync(existingUserWithSameEmail);
+            .ReturnsAsync(existentUserWithSameEmail);
 
         var registerCommand = RegisterCustomerCommandUtils.CreateCommand(
             email: email.ToString()

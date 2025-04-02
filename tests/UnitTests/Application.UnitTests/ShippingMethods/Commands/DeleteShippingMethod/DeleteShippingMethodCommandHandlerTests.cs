@@ -44,7 +44,7 @@ public class DeleteShippingMethodCommandHandlerTests
     /// Verifies the shipping method is deleted when it exists.
     /// </summary>
     [Fact]
-    public async Task HandleDeleteShippingMethodCommand_WithExistingShippingMethod_DeletesIt()
+    public async Task HandleDeleteShippingMethodCommand_WithExistentShippingMethod_DeletesIt()
     {
         var request = DeleteShippingMethodCommandUtils.CreateCommand();
         var shippingMethodToBeDeleted = ShippingMethodUtils.CreateShippingMethod(

@@ -132,7 +132,7 @@ public class DeactivateUserTests : BaseIntegrationTest
         );
 
         var endpointGetDeactivateUsers = LinkGenerator.GetPathByName(
-            nameof(UserEndpoints.GetAllUsers),
+            nameof(UserEndpoints.GetUsers),
             new { active = "false" }
         );
 
@@ -173,7 +173,7 @@ public class DeactivateUserTests : BaseIntegrationTest
         );
 
         var endpointGetDeactivateUsers = LinkGenerator.GetPathByName(
-            nameof(UserEndpoints.GetAllUsers),
+            nameof(UserEndpoints.GetUsers),
             new { active = "false" }
         );
 

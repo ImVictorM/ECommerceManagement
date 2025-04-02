@@ -44,7 +44,7 @@ public class OrderCreatedAssignUserAddressesHandlerTests
     /// Verifies the handler assigns the billing and delivery addresses to the user.
     /// </summary>
     [Fact]
-    public async Task HandleOrderCreated_WithExistingUser_ShouldAssignAddresses()
+    public async Task HandleOrderCreated_WithExistentUser_ShouldAssignAddresses()
     {
         var user = UserUtils.CreateCustomer(id: UserId.Create(1));
 

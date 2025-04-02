@@ -203,7 +203,7 @@ public static class OrderUtils
     {
         var mock = new Mock<IPaymentMethod>();
 
-        mock.SetupGet(pm => pm.Type).Returns("mock_payment");
+        mock.SetupGet(pm => pm.Name).Returns("mock_payment");
 
         return mock.Object;
     }

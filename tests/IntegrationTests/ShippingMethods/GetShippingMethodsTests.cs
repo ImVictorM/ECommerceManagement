@@ -22,7 +22,8 @@ public class GetShippingMethodsTests : BaseIntegrationTest
     private readonly HttpClient _client;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetShippingMethodsTests"/> class.
+    /// Initiates a new instance of the <see cref="GetShippingMethodsTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -41,8 +42,7 @@ public class GetShippingMethodsTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies an OK response containing all shipping methods is returned
-    /// when requested.
+    /// Verifies an OK response containing all shipping methods is returned.
     /// </summary>
     [Fact]
     public async Task GetShippingMethods_WithValidRequest_ReturnsOk()

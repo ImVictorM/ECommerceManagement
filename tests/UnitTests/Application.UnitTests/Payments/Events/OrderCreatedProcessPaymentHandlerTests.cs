@@ -81,7 +81,7 @@ public class OrderCreatedProcessPaymentHandlerTests
                 It.Is<AuthorizePaymentRequest>(
                     input => input.requestId == notification.RequestId
                     && input.order == order
-                    && input.paymentMethod.Type == notification.PaymentMethod.Type
+                    && input.paymentMethod.Name == notification.PaymentMethod.Name
                     && input.payer == payer
                     && input.billingAddress == notification.BillingAddress
                     && input.installments == notification.Installments

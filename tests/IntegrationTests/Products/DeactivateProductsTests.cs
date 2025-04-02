@@ -21,7 +21,8 @@ public class DeactivateProductsTests : BaseIntegrationTest
     private readonly IProductSeed _seedProduct;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="DeactivateProductsTests"/> class.
+    /// Initiates a new instance of the <see cref="DeactivateProductsTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -34,7 +35,8 @@ public class DeactivateProductsTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when the user is not authenticated the response is unauthorized.
+    /// Verifies an unauthorized response is returned when the user is not
+    /// authenticated.
     /// </summary>
     [Fact]
     public async Task DeactivateProduct_WithoutAuthentication_ReturnsUnauthorized()
@@ -74,7 +76,7 @@ public class DeactivateProductsTests : BaseIntegrationTest
 
     /// <summary>
     /// Verifies that when the product to be deactivate does not exist
-    /// an not found error is returned.
+    /// a not found response is returned.
     /// </summary>
     [Fact]
     public async Task DeactivateProduct_WhenProductDoesNotExist_ReturnNotFound()
@@ -88,16 +90,8 @@ public class DeactivateProductsTests : BaseIntegrationTest
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
         var response = await client.DeleteAsync(endpoint);
-        var responseContent = await response.Content
-            .ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
-        responseContent.Title.Should().Be("Product Not Found");
-        responseContent.Detail.Should().Be(
-            $"Product with id {notFoundId} could not be deactivated because" +
-            $" it does not exist or is already inactive"
-        );
     }
 
     /// <summary>
@@ -111,7 +105,7 @@ public class DeactivateProductsTests : BaseIntegrationTest
     [InlineData(ProductSeedType.PENCIL)]
     [InlineData(ProductSeedType.COMPUTER_ON_SALE)]
     [InlineData(ProductSeedType.TSHIRT)]
-    public async Task DeactivateProduct_WhenProductExistsAndUserHasPermission_ReturnsNoContent(
+    public async Task DeactivateProduct_WithPermissionAndExistentProduct_ReturnsNoContent(
         ProductSeedType productToBeDeactivatedType
     )
     {

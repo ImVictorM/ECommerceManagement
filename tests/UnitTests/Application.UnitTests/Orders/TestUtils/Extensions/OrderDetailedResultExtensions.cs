@@ -48,7 +48,7 @@ public static class OrderDetailedResultExtensions
         result.Payment.PaymentId.Should().Be(projection.PaymentId.ToString());
         result.Payment.Amount.Should().Be(paymentResponse.Amount);
         result.Payment.Status.Should().Be(paymentResponse.Status.Name);
-        result.Payment.PaymentMethod.Should().Be(paymentResponse.PaymentMethod.Type);
+        result.Payment.PaymentMethod.Should().Be(paymentResponse.PaymentMethod.Name);
         result.Payment.Details.Should().Be(paymentResponse.Details);
     }
 }

@@ -52,7 +52,7 @@ public class RegisterCustomerTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// List of valid register request objects with unique emails.
+    /// Provides a list of valid register request objects with unique emails.
     /// </summary>
     public static readonly IEnumerable<object[]> ValidRequests =
     [
@@ -76,13 +76,14 @@ public class RegisterCustomerTests : BaseIntegrationTest
     ];
 
     /// <summary>
-    /// Tests if it is possible to create users with valid requests.
-    /// Also tests it is possible to authenticate using the login endpoint after register.
+    /// Verifies it is possible to create customers with valid requests.
+    /// Also verifies it is possible to authenticate using the login endpoint
+    /// after registration.
     /// </summary>
-    /// <param name="registerRequest">The request object.</param>
+    /// <param name="registerRequest">The request.</param>
     [Theory]
     [MemberData(nameof(ValidRequests))]
-    public async Task RegisterCustomer_WithValidParameters_CreatesNewUserAndAuthenticateThem(
+    public async Task RegisterCustomer_WithValidParameters_ReturnsCreatedWithToken(
         RegisterCustomerRequest registerRequest
     )
     {
@@ -91,41 +92,36 @@ public class RegisterCustomerTests : BaseIntegrationTest
             registerRequest.Password
         );
 
-        var registerHttpResponse = await _client.PostAsJsonAsync(
+        var registerResponse = await _client.PostAsJsonAsync(
             _registerEndpoint,
             registerRequest
         );
-        var loginHttpResponse = await _client.PostAsJsonAsync(
+        var loginResponse = await _client.PostAsJsonAsync(
             _loginEndpoint,
             loginRequest
         );
 
-        var registerHttpResponseContent = await registerHttpResponse.Content
+        var registerResponseContent = await registerResponse.Content
             .ReadRequiredFromJsonAsync<AuthenticationResponse>();
-        var loginHttpResponseContent = await loginHttpResponse.Content
+        var loginResponseContent = await loginResponse.Content
             .ReadRequiredFromJsonAsync<AuthenticationResponse>();
 
-        registerHttpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        loginHttpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        registerHttpResponseContent.EnsureCreatedFromRequest(registerRequest);
-        loginHttpResponseContent.EnsureCreatedFromRequest(registerRequest);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        registerResponseContent.EnsureCreatedFromRequest(registerRequest);
+        loginResponseContent.EnsureCreatedFromRequest(registerRequest);
     }
 
     /// <summary>
-    /// Tests creating a user with duplicated email returns a conflict error.
+    /// Verifies creating a user with duplicated email returns a conflict error.
     /// </summary>
     [Fact]
-    public async Task RegisterCustomer_WithDuplicatedEmail_ReturnsConflictErrorResponse()
+    public async Task RegisterCustomer_WithDuplicatedEmail_ReturnsConflict()
     {
-        var existingUser = _userSeed.GetEntity(UserSeedType.CUSTOMER);
+        var existentUser = _userSeed.GetEntity(UserSeedType.CUSTOMER);
 
         var registerRequest = RegisterCustomerRequestUtils.CreateRequest(
-            email: existingUser.Email.ToString()
-        );
-
-        await _client.PostAsJsonAsync(
-            _registerEndpoint,
-            registerRequest
+            email: existentUser.Email.ToString()
         );
 
         var response = await _client.PostAsJsonAsync(
@@ -140,6 +136,8 @@ public class RegisterCustomerTests : BaseIntegrationTest
         responseContent.Should().NotBeNull();
         responseContent.Status.Should().Be((int)HttpStatusCode.Conflict);
         responseContent.Title.Should().Be("Email Conflict");
-        responseContent.Detail.Should().Be("The email you entered is already in use");
+        responseContent.Detail.Should().Be(
+            "The email you entered is already in use"
+        );
     }
 }

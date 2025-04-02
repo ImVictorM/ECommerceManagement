@@ -103,7 +103,7 @@ public class ToggleCouponActivationCommandHandlerTests
     /// Verifies when the coupon does not exist an exception is thrown.
     /// </summary>
     [Fact]
-    public async Task HandleToggleCouponActivationCommand_WithNonexistingCoupon_ThrowsError()
+    public async Task HandleToggleCouponActivationCommand_WithNonExistentCoupon_ThrowsError()
     {
         var command = ToggleCouponActivationCommandUtils.CreateCommand();
 

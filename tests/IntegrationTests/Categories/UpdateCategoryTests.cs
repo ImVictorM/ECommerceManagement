@@ -43,7 +43,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateCategory_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var idExistingCategory = _seedCategory
+        var idExistentCategory = _seedCategory
             .GetEntityId(CategorySeedType.JEWELRY)
             .ToString();
 
@@ -51,7 +51,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.UpdateCategory),
-            new { id = idExistingCategory }
+            new { id = idExistentCategory }
         );
 
         var response = await RequestService.CreateClient().PutAsJsonAsync(
@@ -68,7 +68,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
     [Fact]
     public async Task UpdateCategory_WithoutAdminPermission_ReturnsForbidden()
     {
-        var idExistingCategory = _seedCategory
+        var idExistentCategory = _seedCategory
             .GetEntityId(CategorySeedType.JEWELRY)
             .ToString();
 
@@ -76,7 +76,7 @@ public class UpdateCategoryTests : BaseIntegrationTest
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(CategoryEndpoints.UpdateCategory),
-            new { id = idExistingCategory }
+            new { id = idExistentCategory }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);

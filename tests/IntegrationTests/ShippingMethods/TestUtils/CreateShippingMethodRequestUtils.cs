@@ -12,7 +12,8 @@ public static class CreateShippingMethodRequestUtils
     private static readonly Faker _faker = new();
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CreateShippingMethodRequest"/> class.
+    /// Creates a new instance of the <see cref="CreateShippingMethodRequest"/>
+    /// class.
     /// </summary>
     /// <param name="name">The shipping method name.</param>
     /// <param name="price">The shipping method price.</param>

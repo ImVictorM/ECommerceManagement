@@ -10,7 +10,7 @@ namespace IntegrationTests.Common.Seeds.Abstracts;
 /// </summary>
 /// <typeparam name="TEnum">The seed available data type.</typeparam>
 /// <typeparam name="TEntity">The seed entity type.</typeparam>
-/// <typeparam name="TEntityId">The seed entity id type.</typeparam>
+/// <typeparam name="TEntityId">The seed entity identifier type.</typeparam>
 public abstract class DataSeed<TEnum, TEntity, TEntityId>
     : IDataSeed<TEnum, TEntity, TEntityId>
     where TEnum : Enum
@@ -28,7 +28,8 @@ public abstract class DataSeed<TEnum, TEntity, TEntityId>
     public abstract int Order { get; }
 
     /// <summary>
-    /// Initializes a new instance with an existing dictionary.
+    /// Initializes a new instance of the
+    /// <see cref="DataSeed{TEnum, TEntity, TEntityId}"/> class.
     /// </summary>
     /// <param name="data">A dictionary containing the seed data.</param>
     protected DataSeed(Dictionary<TEnum, TEntity> data)
@@ -56,7 +57,9 @@ public abstract class DataSeed<TEnum, TEntity, TEntityId>
     }
 
     /// <inheritdoc/>
-    public virtual IReadOnlyList<TEntity> ListAll(Func<TEntity, bool>? filter = null)
+    public virtual IReadOnlyList<TEntity> ListAll(
+        Func<TEntity, bool>? filter = null
+    )
     {
         return filter != null
             ? Data.Values.Where(filter).ToList()

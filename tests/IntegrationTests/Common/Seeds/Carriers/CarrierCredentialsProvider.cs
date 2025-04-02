@@ -21,7 +21,8 @@ public class CarrierCredentialsProvider
     };
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="CarrierCredentialsProvider"/> class.
+    /// Initiates a new instance of the <see cref="CarrierCredentialsProvider"/>
+    /// class.
     /// </summary>
     public CarrierCredentialsProvider() : base(_credentials)
     {

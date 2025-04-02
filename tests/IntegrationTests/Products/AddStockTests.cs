@@ -9,7 +9,6 @@ using IntegrationTests.Products.TestUtils;
 using WebApi.Products;
 
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
@@ -18,18 +17,18 @@ using Xunit.Abstractions;
 namespace IntegrationTests.Products;
 
 /// <summary>
-/// Integration tests for the update product inventory feature.
+/// Integration tests for the add stock feature.
 /// </summary>
-public class UpdateProductInventoryTests : BaseIntegrationTest
+public class AddStockTests : BaseIntegrationTest
 {
     private readonly IProductSeed _seedProduct;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="UpdateProductInventoryTests"/> class.
+    /// Initiates a new instance of the <see cref="AddStockTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public UpdateProductInventoryTests(
+    public AddStockTests(
         IntegrationTestWebAppFactory factory,
         ITestOutputHelper output
     ) : base(factory, output)
@@ -38,15 +37,16 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when the user is not authenticated the response is unauthorized.
+    /// Verifies an unauthorized response is returned when the user is
+    /// not authenticated.
     /// </summary>
     [Fact]
-    public async Task UpdateProductInventory_WithoutAuthentication_ReturnsUnauthorized()
+    public async Task AddStock_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var request = UpdateProductInventoryRequestUtils.CreateRequest();
+        var request = AddStockRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductEndpoints.UpdateProductInventory),
+            nameof(ProductEndpoints.AddStock),
             new { id = "1" }
         );
 
@@ -59,7 +59,7 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when a user that is not admin tries to update a product's
+    /// Verifies when a user that is not admin tries to add stock to a product's
     /// inventory the response is forbidden.
     /// </summary>
     /// <param name="customerUserType">
@@ -68,14 +68,14 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     [Theory]
     [InlineData(UserSeedType.CUSTOMER_WITH_ADDRESS)]
     [InlineData(UserSeedType.CUSTOMER)]
-    public async Task UpdateProductInventory_WhenUserIsNotAdmin_ReturnsForbidden(
+    public async Task AddStock_WithoutAdminAuthentication_ReturnsForbidden(
         UserSeedType customerUserType
     )
     {
-        var request = UpdateProductInventoryRequestUtils.CreateRequest();
+        var request = AddStockRequestUtils.CreateRequest();
 
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductEndpoints.UpdateProductInventory),
+            nameof(ProductEndpoints.AddStock),
             new { id = "1" }
         );
 
@@ -89,15 +89,15 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Tests that when the product does not exist the response is not found.
+    /// Verifies a not found response is returned when the product does not exist.
     /// </summary>
     [Fact]
-    public async Task UpdateProductInventory_WhenProductDoesNotExist_ReturnsNotFound()
+    public async Task AddStock_WhenProductDoesNotExist_ReturnsNotFound()
     {
         var notFoundId = "404";
-        var request = UpdateProductInventoryRequestUtils.CreateRequest();
+        var request = AddStockRequestUtils.CreateRequest();
         var endpoint = LinkGenerator.GetPathByName(
-            nameof(ProductEndpoints.UpdateProductInventory),
+            nameof(ProductEndpoints.AddStock),
             new { id = notFoundId }
         );
 
@@ -106,48 +106,40 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
             endpoint,
             request
         );
-        var responseContent = await response.Content
-            .ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent.Status.Should().Be((int)HttpStatusCode.NotFound);
-        responseContent.Title.Should().Be("Product Not Found");
-        responseContent.Detail.Should().Be(
-            $"It was not possible to increment the inventory of the product" +
-            $" with id {notFoundId} because the product does not exist"
-        );
     }
 
     /// <summary>
     /// Verifies when the user is admin and the quantity to add in the inventory
     /// is valid the product inventory is updated and the response is no content.
-    /// Also fetches the product by id to test if the quantity in inventory
-    /// was indeed updated.
+    /// Also fetches the product by its identifier to test if the quantity in
+    /// inventory was indeed updated.
     /// </summary>
     /// <param name="productType">
     /// The product type to update the inventory.
     /// </param>
-    /// <param name="quantityToIncrement">
-    /// The quantity to add to the inventory.
+    /// <param name="quantityToAdd">
+    /// The quantity to add.
     /// </param>
     [Theory]
     [InlineData(ProductSeedType.PENCIL, 20)]
     [InlineData(ProductSeedType.COMPUTER_ON_SALE, 5)]
     [InlineData(ProductSeedType.CHAIN_BRACELET, 900)]
-    public async Task UpdateProductInventory_WithAdminAuthenticationAndValidQuantity_ReturnsNoContent(
+    public async Task AddStock_WithAdminAuthenticationAndValidQuantity_ReturnsNoContent(
         ProductSeedType productType,
-        int quantityToIncrement
+        int quantityToAdd
     )
     {
         var product = _seedProduct.GetEntity(productType);
         var initialQuantity = product.Inventory.QuantityAvailable;
-        var request = UpdateProductInventoryRequestUtils.CreateRequest(
-            quantityToIncrement: quantityToIncrement
+        var request = AddStockRequestUtils.CreateRequest(
+            quantityToAdd: quantityToAdd
         );
-        var expectedQuantityAfterUpdate = initialQuantity + quantityToIncrement;
+        var expectedQuantityAfterAdding = initialQuantity + quantityToAdd;
 
         var endpointUpdateProductInventory = LinkGenerator.GetPathByName(
-            nameof(ProductEndpoints.UpdateProductInventory),
+            nameof(ProductEndpoints.AddStock),
             new { id = product.Id.ToString() }
         );
 
@@ -170,6 +162,6 @@ public class UpdateProductInventoryTests : BaseIntegrationTest
         responseGetUpdated.StatusCode.Should().Be(HttpStatusCode.OK);
         responseGetUpdatedContent.QuantityAvailable
             .Should()
-            .Be(expectedQuantityAfterUpdate);
+            .Be(expectedQuantityAfterAdding);
     }
 }

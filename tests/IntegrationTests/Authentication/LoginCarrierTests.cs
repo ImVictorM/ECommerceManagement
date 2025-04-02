@@ -95,14 +95,16 @@ public class LoginCarrierTests : BaseIntegrationTest
             request
         );
 
-        var authenticationResponse = await response.Content
+        var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        authenticationResponse.Should().NotBeNull();
-        authenticationResponse.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        authenticationResponse.Title.Should().Be("Authentication Failed");
-        authenticationResponse.Detail.Should().Be("User email or password is incorrect");
+        responseContent.Should().NotBeNull();
+        responseContent.Status.Should().Be((int)HttpStatusCode.BadRequest);
+        responseContent.Title.Should().Be("Authentication Failed");
+        responseContent.Detail.Should().Be(
+            "User email or password is incorrect"
+        );
     }
 
     /// <summary>
@@ -111,7 +113,8 @@ public class LoginCarrierTests : BaseIntegrationTest
     [Fact]
     public async Task LoginCarrier_WithIncorrectPassword_ReturnsBadRequest()
     {
-        var credentials = _credentialsProvider.GetCredentials(CarrierSeedType.INTERNAL);
+        var credentials = _credentialsProvider
+            .GetCredentials(CarrierSeedType.INTERNAL);
         var request = new LoginCarrierRequest(
             credentials.Email,
             "IncorrectPassword123"
@@ -122,13 +125,15 @@ public class LoginCarrierTests : BaseIntegrationTest
             request
         );
 
-        var authenticationResponse = await response.Content
+        var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<ProblemDetails>();
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        authenticationResponse.Should().NotBeNull();
-        authenticationResponse.Status.Should().Be((int)HttpStatusCode.BadRequest);
-        authenticationResponse.Title.Should().Be("Authentication Failed");
-        authenticationResponse.Detail.Should().Be("User email or password is incorrect");
+        responseContent.Should().NotBeNull();
+        responseContent.Status.Should().Be((int)HttpStatusCode.BadRequest);
+        responseContent.Title.Should().Be("Authentication Failed");
+        responseContent.Detail.Should().Be(
+            "User email or password is incorrect"
+        );
     }
 }

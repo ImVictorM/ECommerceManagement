@@ -1,8 +1,6 @@
 using Application.Common.Security.Authentication;
 
 using Contracts.Orders;
-
-using WebApi.Common.Utilities;
 using WebApi.Orders;
 using WebApi.Payments;
 
@@ -19,6 +17,7 @@ using System.Text;
 using Xunit.Abstractions;
 using FluentAssertions;
 using System.Net;
+using WebApi.Common.Utils;
 
 namespace IntegrationTests.Payments;
 
@@ -33,7 +32,8 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     private readonly HttpClient _client;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="HandlePaymentStatusChangedTests"/> class.
+    /// Initiates a new instance of the
+    /// <see cref="HandlePaymentStatusChangedTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -120,16 +120,16 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when notifications have correct signature and existing payment id
+    /// Verifies when notifications have correct signature and existent payment
     /// a no content response is returned.
     /// </summary>
     [Fact]
-    public async Task HandlePaymentStatusChanged_WithValidSignatureAndExistingPayment_ReturnsNoContent()
+    public async Task HandlePaymentStatusChanged_WithValidSignatureAndExistentPayment_ReturnsNoContent()
     {
-        var existingPayment = await GetExistingOrderPayment();
+        var existentPayment = await GetExistentOrderPayment();
 
         var request = PaymentStatusChangedRequestUtils.CreateRequest(
-            paymentId: existingPayment.PaymentId
+            paymentId: existentPayment.PaymentId
         );
 
         var validSignature = _hmacSignatureProvider.ComputeHmac(
@@ -172,13 +172,13 @@ public class HandlePaymentStatusChangedTests : BaseIntegrationTest
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
-    private async Task<OrderPaymentResponse> GetExistingOrderPayment()
+    private async Task<OrderPaymentResponse> GetExistentOrderPayment()
     {
-        var existingOrder = _seedOrder.GetEntity(OrderSeedType.CUSTOMER_ORDER_PENDING);
+        var existentOrder = _seedOrder.GetEntity(OrderSeedType.CUSTOMER_ORDER_PENDING);
 
         var endpointGetOrderById = LinkGenerator.GetPathByName(
             nameof(OrderEndpoints.GetOrderById),
-            new { id = existingOrder.Id.ToString() }
+            new { id = existentOrder.Id.ToString() }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);

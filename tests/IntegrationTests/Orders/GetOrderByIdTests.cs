@@ -36,8 +36,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when the order does not exists it is
-    /// returned a not found response.
+    /// Verifies a not found response is returned when the order does not exist.
     /// </summary>
     [Fact]
     public async Task GetOrderById_WhenOrderDoesNotExist_ReturnsNotFound()
@@ -59,13 +58,13 @@ public class GetOrderByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when the user is not authenticated an
-    /// unauthorized response is returned.
+    /// Verifies an unauthorized response is returned when the user is not
+    /// authenticated.
     /// </summary>
     [Fact]
-    public async Task GetOrderById_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
+    public async Task GetOrderById_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var idExistingOrder = _seedOrder
+        var idExistentOrder = _seedOrder
             .GetEntityId(OrderSeedType.CUSTOMER_ORDER_PENDING)
             .ToString();
 
@@ -73,7 +72,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
             nameof(OrderEndpoints.GetOrderById),
             new
             {
-                id = idExistingOrder,
+                id = idExistentOrder,
             }
         );
 
@@ -83,13 +82,13 @@ public class GetOrderByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when the user is not authorized to read an order
-    /// an forbidden response is returned.
+    /// Verifies a forbidden response is returned when the user is not an
+    /// administrator.
     /// </summary>
     [Fact]
-    public async Task GetOrderById_WhenUserIsNotAllowedToReadOrder_ReturnsForbidden()
+    public async Task GetOrderById_WithoutAdminAuthentication_ReturnsForbidden()
     {
-        var existingOrderId = _seedOrder
+        var existentOrderId = _seedOrder
             .GetEntityId(OrderSeedType.CUSTOMER_ORDER_PENDING)
             .ToString();
 
@@ -97,7 +96,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
             nameof(OrderEndpoints.GetOrderById),
             new
             {
-                id = existingOrderId,
+                id = existentOrderId,
             }
         );
 
@@ -110,14 +109,13 @@ public class GetOrderByIdTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies when the user is allowed to read the order the an
-    /// ok response is returned containing the order.
+    /// Verifies an OK response is returned when the user is an administrator.
     /// </summary>
-    /// <param name="allowedUser">Allowed user types.</param>
+    /// <param name="allowedUserType">The allowed user type.</param>
     [Theory]
     [InlineData(UserSeedType.ADMIN)]
     public async Task GetOrderById_WhenUserIsAllowed_ReturnsOk(
-        UserSeedType allowedUser
+        UserSeedType allowedUserType
     )
     {
         var order = _seedOrder.GetEntity(OrderSeedType.CUSTOMER_ORDER_PENDING);
@@ -130,7 +128,7 @@ public class GetOrderByIdTests : BaseIntegrationTest
             }
         );
 
-        var client = await RequestService.LoginAsAsync(allowedUser);
+        var client = await RequestService.LoginAsAsync(allowedUserType);
         var response = await client.GetAsync(endpoint);
         var responseContent = await response.Content
             .ReadRequiredFromJsonAsync<OrderDetailedResponse>();

@@ -19,7 +19,8 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
     private readonly IShippingMethodSeed _seedShippingMethod;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="DeleteShippingMethodTests"/> class.
+    /// Initiates a new instance of the <see cref="DeleteShippingMethodTests"/>
+    /// class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
@@ -32,18 +33,19 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies deleting a shipping method without authentication returns unauthorized.
+    /// Verifies deleting a shipping method without authentication returns
+    /// unauthorized.
     /// </summary>
     [Fact]
     public async Task DeleteShippingMethod_WithoutAuthentication_ReturnsUnauthorized()
     {
-        var idExistingShippingMethod = _seedShippingMethod
+        var idExistentShippingMethod = _seedShippingMethod
             .GetEntityId(ShippingMethodSeedType.FREE)
             .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.DeleteShippingMethod),
-            new { id = idExistingShippingMethod }
+            new { id = idExistentShippingMethod }
         );
 
         var response = await RequestService
@@ -60,13 +62,13 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteShippingMethod_WithoutAdminPermission_ReturnsForbidden()
     {
-        var idExistingShippingMethod = _seedShippingMethod
+        var idExistentShippingMethod = _seedShippingMethod
             .GetEntityId(ShippingMethodSeedType.FREE)
             .ToString();
 
         var endpoint = LinkGenerator.GetPathByName(
             nameof(ShippingMethodEndpoints.DeleteShippingMethod),
-            new { id = idExistingShippingMethod }
+            new { id = idExistentShippingMethod }
         );
 
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
@@ -76,7 +78,8 @@ public class DeleteShippingMethodTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies deleting a shipping method with admin role deletes the shipping method correctly.
+    /// Verifies deleting a shipping method with admin role deletes the shipping
+    /// method correctly.
     /// </summary>
     [Fact]
     public async Task DeleteShippingMethod_WithAdminPermission_ReturnsNoContent()

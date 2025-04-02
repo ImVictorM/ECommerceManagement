@@ -14,16 +14,18 @@ namespace IntegrationTests.Orders.TestUtils;
 public static class PlaceOrderRequestUtils
 {
     /// <summary>
-    /// Creates a new place order request object.
+    /// Creates a new instance of the <see cref="PlaceOrderRequest"/> class.
     /// </summary>
-    /// <param name="shippingMethodId">The shipping method id.</param>
+    /// <param name="shippingMethodId">The shipping method identifier.</param>
     /// <param name="products">The order products.</param>
     /// <param name="billingAddress">The order billing address.</param>
     /// <param name="deliveryAddress">The order delivery address.</param>
     /// <param name="paymentMethod">The order payment method.</param>
-    /// <param name="couponAppliedIds">The coupon applied ids.</param>
+    /// <param name="couponAppliedIds">The coupon applied identifiers.</param>
     /// <param name="installments">The order installments.</param>
-    /// <returns>A new place order object.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="PlaceOrderRequest"/> class.
+    /// </returns>
     public static PlaceOrderRequest CreateRequest(
         string? shippingMethodId = null,
         IEnumerable<OrderLineItemRequest>? products = null,
@@ -46,7 +48,7 @@ public static class PlaceOrderRequestUtils
             products ?? requestOrderProducts,
             billingAddress ?? AddressContractUtils.CreateAddress(),
             deliveryAddress ?? AddressContractUtils.CreateAddress(),
-            paymentMethod ?? new CreditCard("token"),
+            paymentMethod ?? new CreditCard("tokenized-data"),
             couponAppliedIds,
             installments
         );

@@ -19,17 +19,17 @@ namespace IntegrationTests.Users;
 /// <summary>
 /// Integration tests for the get all users feature.
 /// </summary>
-public class GetAllUsersTests : BaseIntegrationTest
+public class GetUsersTests : BaseIntegrationTest
 {
     private readonly IUserSeed _seedUser;
     private readonly string? _endpoint;
 
     /// <summary>
-    /// Initiates a new instance of the <see cref="GetAllUsersTests"/> class.
+    /// Initiates a new instance of the <see cref="GetUsersTests"/> class.
     /// </summary>
     /// <param name="factory">The test server factory.</param>
     /// <param name="output">The log helper.</param>
-    public GetAllUsersTests(
+    public GetUsersTests(
         IntegrationTestWebAppFactory factory,
         ITestOutputHelper output
     ) : base(factory, output)
@@ -37,7 +37,7 @@ public class GetAllUsersTests : BaseIntegrationTest
         _seedUser = SeedManager.GetSeed<IUserSeed>();
 
         _endpoint = LinkGenerator.GetPathByName(
-            nameof(UserEndpoints.GetAllUsers)
+            nameof(UserEndpoints.GetUsers)
         );
     }
 
@@ -46,7 +46,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// the admin role.
     /// </summary>
     [Fact]
-    public async Task GetAllUsers_WithAdminRole_ReturnsOk()
+    public async Task GetUsers_WithAdminRole_ReturnsOk()
     {
         var client = await RequestService.LoginAsAsync(UserSeedType.ADMIN);
         var response = await client.GetAsync(_endpoint);
@@ -55,11 +55,11 @@ public class GetAllUsersTests : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Verifies an forbidden response is returned when the authenticated user
+    /// Verifies a forbidden response is returned when the authenticated user
     /// does not have the admin role.
     /// </summary>
     [Fact]
-    public async Task GetAllUsers_WithoutAdminRole_ReturnsForbidden()
+    public async Task GetUsers_WithoutAdminRole_ReturnsForbidden()
     {
         var client = await RequestService.LoginAsAsync(UserSeedType.CUSTOMER);
         var response = await client.GetAsync(_endpoint);
@@ -72,7 +72,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     /// not authenticated.
     /// </summary>
     [Fact]
-    public async Task GetAllUsers_WithoutAuthentication_ReturnsUnauthorized()
+    public async Task GetUsers_WithoutAuthentication_ReturnsUnauthorized()
     {
         var response = await RequestService.CreateClient().GetAsync(_endpoint);
 
@@ -88,7 +88,7 @@ public class GetAllUsersTests : BaseIntegrationTest
     [InlineData(true)]
     [InlineData(false)]
     [InlineData(null)]
-    public async Task GetAllUsers_WithAuthorizationAndActiveFilter_ReturnsOk(
+    public async Task GetUsers_WithAuthorizationAndActiveFilter_ReturnsOk(
         bool? activeFilter
     )
     {
