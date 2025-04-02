@@ -33,18 +33,18 @@ Authorization: Bearer {{token}}
 GET {{base_endpoint}}
 Authorization: Bearer {{token}}
 
-### Deletes an existing coupon. Admin authentication is required.
+### Deletes an existent coupon. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
 DELETE {{base_endpoint}}/{{id_coupon}}
 Authorization: Bearer {{token}}
 
-### Toggles the active status of an existing coupon.
+### Toggles the active status of an existent coupon.
 ### Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
 PATCH {{base_endpoint}}/{{id_coupon}}
 Authorization: Bearer {{token}}
 
-### Updates the details of an existing coupon.
+### Updates the details of an existent coupon.
 ### Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
 PUT {{base_endpoint}}/{{id_coupon}}

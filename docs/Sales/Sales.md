@@ -60,7 +60,7 @@ Example Request:
 
 ## Update Sale
 
-Updates an existing sale. Admin authentication is required.
+Updates an existent sale. Admin authentication is required.
 
 ```js
 PUT "/sales/{{id_sale}}"
@@ -110,7 +110,7 @@ Example Request:
 
 ## Delete Sale
 
-Deletes an existing sale. Admin authentication is required.
+Deletes an existent sale. Admin authentication is required.
 
 ```js
 DELETE "/sales/{{id_sale}}"

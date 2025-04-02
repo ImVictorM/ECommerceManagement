@@ -12,12 +12,12 @@ Authorization: Bearer {{token}}
   "name": "fashion"
 }
 
-### Deletes an existing category. Admin authentication is required.
+### Deletes an existent category. Admin authentication is required.
 ### Returns a 204 NO_CONTENT in case of success.
 DELETE {{base_endpoint}}/{{id_category}}
 Authorization: Bearer {{token}}
 
-### Updates an existing category name. Admin authentication is required.
+### Updates an existent category name. Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
 PUT {{base_endpoint}}/{{id_category}}
 Content-Type: application/json

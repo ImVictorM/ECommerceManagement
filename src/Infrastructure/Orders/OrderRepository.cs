@@ -29,6 +29,7 @@ internal sealed class OrderRepository
     )
     {
         return await Context.Orders
+            .AsNoTracking()
             .Where(order => order.Id == orderId && order.OwnerId == ownerId)
             .Select(order => new OrderDetailedProjection(
                 order.Id,
@@ -67,6 +68,7 @@ internal sealed class OrderRepository
     )
     {
         return await Context.Orders
+            .AsNoTracking()
             .Where(order => order.Id == orderId)
             .Select(order => new OrderDetailedProjection(
                 order.Id,

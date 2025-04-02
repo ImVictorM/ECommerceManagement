@@ -21,7 +21,7 @@ Authorization: Bearer {{token}}
   "productExcludedFromSaleIds": []
 }
 
-### Updates an existing sale.
+### Updates an existent sale.
 ### Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
 PUT {{base_endpoint}}/{{id_sale}}
@@ -40,7 +40,7 @@ Authorization: Bearer {{token}}
   "productExcludedFromSaleIds": []
 }
 
-### Deletes an existing sale.
+### Deletes an existent sale.
 ### Admin authentication is required.
 ### Returns a 204 NO_CONTENT response in case of success.
 DELETE {{base_endpoint}}/{{id_sale}}
